@@ -18,6 +18,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ControlModule } from '@f2020/control';
 import { DriverCodesComponent } from './component/driver-codes/driver-codes.component';
+import { BidsComponent } from './component/bids/bids.component';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { DriverCodesComponent } from './component/driver-codes/driver-codes.comp
     RaceStatusComponent,
     BidComponent,
     DriverCodesComponent,
+    BidsComponent,
   ],
 })
 export class RaceModule {

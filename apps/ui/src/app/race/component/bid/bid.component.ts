@@ -42,22 +42,18 @@ export class BidComponent implements OnInit {
       share()
     );
     this.facade.bid$.pipe(
-      untilDestroyed(this)
-    ).subscribe(bid => this.fg.patchValue(bid || {}));
+      filter(bid => !bid.submitted),
+      untilDestroyed(this),
+    ).subscribe(bid => this.fg.patchValue(bid || {}, {emitEvent: false}));
+    this.facade.bid$.pipe(
+      filter(bid => bid.submitted),
+      untilDestroyed(this),
+    ).subscribe(() => this.fg.disable());
 
     this.route.params.pipe(
       pluck<Params, string>('country'),
       untilDestroyed(this),
     ).subscribe(country => this.facade.dispatch(RacesActions.selectRace({ country })));
-    this.fg.valueChanges.pipe(
-      debounceTime(400),
-      untilDestroyed(this),
-    ).subscribe(value => {
-      Object.keys(this.fg.controls)
-      .filter(key => this.fg.get(key).errors)
-      .forEach(key => console.log(key, this.fg.get(key).errors));
-      console.log(value)
-    });
     this.fg.valueChanges.pipe(
       debounceTime(3000),
       untilDestroyed(this),

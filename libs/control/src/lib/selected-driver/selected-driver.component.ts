@@ -47,7 +47,7 @@ export class SelectedDriverComponent extends AbstractControlComponent implements
 
   writeValue(value: SelectedDriverValue): void {
     if (value) {
-      this.fg.patchValue(value);
+      this.fg.patchValue(value, {emitEvent: false});
     } else {
       this.fg.reset();
     }

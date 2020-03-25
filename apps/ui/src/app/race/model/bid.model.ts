@@ -1,4 +1,5 @@
 import { SelectedDriverValue } from '@f2020/control';
+import { Player } from '@f2020/data';
 
 export interface Bid {
   qualify: [string, string, string, string, string, string];
@@ -7,4 +8,5 @@ export interface Bid {
   selectedDriver: SelectedDriverValue;
   polePositionTime: number;
   submitted?:  boolean;
+  player?: Player
 }

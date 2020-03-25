@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { CoordinateModel } from './coordinate.model';
 
-export type State = 'waiting' | 'opened' | 'closed' | 'completed';
+export type State = 'waiting' | 'open' | 'closed' | 'completed';
 
 export interface IRaceBasis {
   readonly round: number;

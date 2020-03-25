@@ -48,3 +48,8 @@ export const getCurrentBid = createSelector(
   getRacesState,
   state => state.currentBid
 );
+
+export const getBids = createSelector(
+  getRacesState,
+  state => state.bids
+);

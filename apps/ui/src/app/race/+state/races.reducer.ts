@@ -12,6 +12,7 @@ export interface State extends EntityState<IRace> {
   previousRace?: IRace;
   selectedId?: string; // which Races record has been selected
   currentBid?: Partial<Bid>;
+  bids?: Bid[];
   loaded: boolean; // has the Races list been loaded
   error?: string | null; // last none error (if any)
 }
@@ -46,6 +47,7 @@ const racesReducer = createReducer(
   on(
     RacesActions.loadRacesFailure, 
     RacesActions.loadBidFailure,
+    RacesActions.loadBidsFailure,
     RacesActions.updateBidFailure,
     (state, { error }) => {
       console.error(error);
@@ -54,6 +56,7 @@ const racesReducer = createReducer(
   ),
   on(RacesActions.selectRace, (state, { country }) => ({ ...state, selectedId: country })),
   on(RacesActions.loadBidSuccess, (state, { bid }) => ({ ...state, currentBid: bid })),
+  on(RacesActions.loadBidsSuccess, (state, { bids }) => ({ ...state, bids })),
 );
 
 export function reducer(state: State | undefined, action: Action) {

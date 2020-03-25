@@ -39,7 +39,7 @@ export class SelectDriverComponent extends AbstractControlComponent implements O
 
   writeValue(value: string): void {
     if (value) {
-      this.selectControl.patchValue(value);
+      this.selectControl.patchValue(value, {emitEvent: false});
     } else {
       this.selectControl.reset();
     }

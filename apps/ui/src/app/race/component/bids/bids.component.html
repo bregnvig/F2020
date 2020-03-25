@@ -1,0 +1,6 @@
+<mat-action-list>
+  <button mat-list-item *ngFor="let bid of bids">
+    <img matListAvatar [src]="bid.player.photoURL" [alt]="bid.player.displayName">
+    <span matLine>{{bid.player.displayName}}</span>
+  </button>
+</mat-action-list>

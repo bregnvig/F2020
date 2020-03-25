@@ -43,7 +43,7 @@ export class SelectDriversComponent extends AbstractControlComponent implements 
 
   writeValue(value: string[] | string): void {
     if (value) {
-      this.drivers.patchValue(Array.isArray(value) ? value : [value]);
+      this.drivers.patchValue(Array.isArray(value) ? value : [value], {emitEvent: false});
     } else {
       this.fg.reset();
     }

@@ -1,21 +1,32 @@
-<f2020-card-page *ngIf="race$ | async as race">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{race.name}}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content style="height: 33vh">
-      <google-map
-          width="100%"
-          height="100%"
-          [center]="center$ | async"
-          [options]="options">
-      </google-map>
-    </mat-card-content>
-    <mat-card-actions>
-      <a mat-button [href]="race.url" target="_blank">WIKI</a>
-    </mat-card-actions>
-  </mat-card>
-</f2020-card-page>
-<button mat-fab aria-label="Deltag i løbet" routerLink="bid">
-  <mat-icon>add</mat-icon>
-</button>
+<ng-container *ngIf="race$ | async as race; else loading">
+  <f2020-card-page >
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{race.name}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="height: 33vh">
+        <google-map
+            width="100%"
+            height="100%"
+            [center]="center$ | async"
+            [options]="options">
+        </google-map>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [href]="race.url" target="_blank">WIKI</a>
+      </mat-card-actions>
+    </mat-card>
+    <mat-card *ngIf="bids$ | async as bids">
+      <mat-card-header>
+        <mat-card-title>Bud</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <f2020-bids [bids]="bids"></f2020-bids>
+      </mat-card-content>
+    </mat-card>
+  </f2020-card-page>
+  <button mat-fab aria-label="Deltag i løbet" routerLink="bid" *ngIf="race.state === 'open' && !(bid$ | async)?.submitted">
+    <mat-icon>add</mat-icon>
+  </button>
+</ng-container>  
+<ng-template #loading><f2020-loading></f2020-loading></ng-template>

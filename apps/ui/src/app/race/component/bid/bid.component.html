@@ -68,7 +68,7 @@
         </div>
       </mat-expansion-panel>
     </mat-accordion>
-    <button mat-fab aria-label="Indsend bud" [disabled]="fg.invalid">
+    <button mat-fab aria-label="Indsend bud" [disabled]="fg.invalid" *ngIf="fg.enabled">
       <mat-icon>send</mat-icon>
     </button>
   </div>

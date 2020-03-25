@@ -33,6 +33,20 @@ const loadBidFailure = createAction(
   props<{ error: any }>(),
 );
 
+const loadBids = createAction(
+  '[Race page] Load bids',
+);
+
+const loadBidsSuccess = createAction(
+  '[Bid API] Load bids Success',
+  props<{ bids: Bid[] }>(),
+);
+
+const loadBidsFailure = createAction(
+  '[Bid API] Load bids Failure',
+  props<{ error: any }>(),
+);
+
 const updateBid = createAction(
   '[Bid page] Update the current bid',
   props<{bid: Bid}>()
@@ -51,6 +65,9 @@ export const RacesActions = {
   loadBid,
   loadBidSuccess,
   loadBidFailure,
+  loadBids,
+  loadBidsSuccess,
+  loadBidsFailure,
   updateBid,
   updateBidFailure,
 };

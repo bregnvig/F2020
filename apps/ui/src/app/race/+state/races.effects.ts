@@ -49,6 +49,21 @@ export class RacesEffects {
   ));
 
 
+  loadBids$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.loadBids),
+    concatMap(() => combineLatest([
+      this.seasonFacade.season$, 
+      this.facade.selectedRace$, 
+    ]).pipe(
+        takeUntil(this.actions$.pipe(ofType(RacesActions.loadBids))),
+        switchMap(([season, race]) => this.service.getBids(season.id, race.location.country)),
+        map(bids => RacesActions.loadBidsSuccess({ bids })),
+        catchError(error => of(RacesActions.loadBidFailure({ error }))),
+      ),
+    )
+  ));
+
+
   updateBid$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.updateBid),
     concatMap(({bid}) => combineLatest([
@@ -57,7 +72,7 @@ export class RacesEffects {
       this.playerFacade.player$
     ]).pipe(
       first(),
-      switchMap(([season, race, player]) => this.service.updateBid(season.id, race.location.country, player.uid, bid)),
+      switchMap(([season, race, player]) => this.service.updateBid(season.id, race.location.country, player, bid)),
       catchError(error => of(RacesActions.updateBidFailure({ error }))),
     ))
   ), {dispatch: false});
