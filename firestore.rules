@@ -3,45 +3,46 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /drivers/{Drivers} {
-      allow read: if getUserData().role.hasAny(['editor', 'admin', 'player']);
-      allow update, write, delete, create: if getUserData().role.hasAny(['editor', 'admin']);
+      allow read: if getUserData().roles.hasAny(['editor', 'admin', 'player']);
+      allow update, write, delete, create: if getUserData().roles.hasAny(['editor', 'admin']);
     }
     match /season/{Season} {
-      allow read: if getUserData().role.hasAny(['editor', 'admin', 'player']);
-      allow update, write, delete, create:  if getUserData().role.hasAny(['editor', 'admin']);
+      allow read: if getUserData().roles.hasAny(['editor', 'admin', 'player']);
+      allow update, write, delete, create:  if getUserData().roles.hasAny(['editor', 'admin']);
     }
     match /season/{Season}/races/{Races} {
-      allow read: if getUserData().role.hasAny(['editor', 'admin', 'player']);
-      allow update, write, delete, create:  if getUserData().role.hasAny(['editor', 'admin']);
+      allow read: if getUserData().roles.hasAny(['editor', 'admin', 'player']);
+      allow update, write, delete, create:  if getUserData().roles.hasAny(['editor', 'admin']);
     }
     match /season/{Season}/races/{Races}/bids/{Bids} {
      // allow to create bid if race is open and a bid does not already exsist 
-     allow create: if getUserData().role.hasAny(['player']) 
+     allow create: if getUserData().roles.hasAny(['player']) 
                     && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)).data.state == 'open' 
                     && !exists(/databases/$(database)/documents/season/$(Season)/races/$(Races)/bids/$(request.auth.uid));
-     allow update: if getUserData().role.hasAny(['player']) 
+     allow update: if getUserData().roles.hasAny(['player']) 
                     && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)).data.state == 'open' 
                     && request.auth.uid == Bids
-                    && ('submitted' in resource.data) == false;               
+                    && ('submitted' in resource.data) == false
+                    && notUpdating('submitted');               
      // allow to read bids if races is waiting or closed - or if bid is your own - or read all bids if you have made your bid             
-     allow read: if getUserData().role.hasAny(['player'])  
+     allow read: if getUserData().roles.hasAny(['player'])  
                     && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)).data.state != 'open' 
-                    || getUserData().role.hasAny(['player'])
+                    || getUserData().roles.hasAny(['player'])
                     &&  request.auth.uid == Bids 
-                    || getUserData().role.hasAny(['player']) 
+                    || getUserData().roles.hasAny(['player']) 
                     && exists(/databases/$(database)/documents/season/$(Season)/races/$(Races)/bids/$(request.auth.uid))
                     && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)/bids/$(request.auth.uid)).data.submitted != null;
     }
     match /player/{player} {
-      allow read: if request.auth.uid == player || getUserData().role.hasAny(['editor', 'admin']); 
-      allow update, write: if request.auth.uid == player && notUpdating('role') || request.auth.uid == player && notUpdating('uid') || getUserData().role.hasAny(['editor', 'admin']); 
-      allow create, delete: if getUserData().role.hasAny(['editor', 'admin']);
+      allow read: if request.auth.uid == player || getUserData().roles.hasAny(['editor', 'admin']); 
+      allow update, write: if request.auth.uid == player && notUpdating('roles') || request.auth.uid == player && notUpdating('uid') || getUserData().roles.hasAny(['editor', 'admin']); 
+      allow create, delete: if getUserData().roles.hasAny(['editor', 'admin']);
     }  
     function getUserData() {
       return get(/databases/$(database)/documents/player/$(request.auth.uid)).data
     }
     function notUpdating(field) {
-      // prevent update of specific document data object - like role 
+      // prevent update of specific document data object - like roles 
       return !(field in request.resource.data) || resource.data[field] == request.resource.data[field]
     }
   }
