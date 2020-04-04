@@ -6,40 +6,40 @@ service cloud.firestore {
       allow read: if getUserData().roles.hasAny(['editor', 'admin', 'player']);
       allow update, write, delete, create: if getUserData().roles.hasAny(['editor', 'admin']);
     }
-    match /season/{Season} {
+    match /seasons/{Seasons} {
       allow read: if getUserData().roles.hasAny(['editor', 'admin', 'player']);
       allow update, write, delete, create:  if getUserData().roles.hasAny(['editor', 'admin']);
     }
-    match /season/{Season}/races/{Races} {
+    match /seasons/{Seasons}/races/{Races} {
       allow read: if getUserData().roles.hasAny(['editor', 'admin', 'player']);
       allow update, write, delete, create:  if getUserData().roles.hasAny(['editor', 'admin']);
     }
-    match /season/{Season}/races/{Races}/bids/{Bids} {
+    match /seasons/{Seasons}/races/{Races}/bids/{Bids} {
      // allow to create bid if race is open and a bid does not already exsist 
      allow create: if getUserData().roles.hasAny(['player']) 
-                    && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)).data.state == 'open' 
-                    && !exists(/databases/$(database)/documents/season/$(Season)/races/$(Races)/bids/$(request.auth.uid));
+                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state == 'open' 
+                    && !exists(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid));
      allow update: if getUserData().roles.hasAny(['player']) 
-                    && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)).data.state == 'open' 
+                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state == 'open' 
                     && request.auth.uid == Bids
                     && ('submitted' in resource.data) == false
                     && notUpdating('submitted');               
      // allow to read bids if races is waiting or closed - or if bid is your own - or read all bids if you have made your bid             
      allow read: if getUserData().roles.hasAny(['player'])  
-                    && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)).data.state != 'open' 
+                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state != 'open' 
                     || getUserData().roles.hasAny(['player'])
                     &&  request.auth.uid == Bids 
                     || getUserData().roles.hasAny(['player']) 
-                    && exists(/databases/$(database)/documents/season/$(Season)/races/$(Races)/bids/$(request.auth.uid))
-                    && get(/databases/$(database)/documents/season/$(Season)/races/$(Races)/bids/$(request.auth.uid)).data.submitted != null;
+                    && exists(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid))
+                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid)).data.submitted != null;
     }
-    match /player/{player} {
-      allow read: if request.auth.uid == player || getUserData().roles.hasAny(['editor', 'admin']); 
-      allow update, write: if request.auth.uid == player && notUpdating('roles') || request.auth.uid == player && notUpdating('uid') || getUserData().roles.hasAny(['editor', 'admin']); 
+    match /players/{players} {
+      allow read: if request.auth.uid == players || getUserData().roles.hasAny(['editor', 'admin']); 
+      allow update, write: if request.auth.uid == players && notUpdating('roles') || request.auth.uid == players && notUpdating('uid') || getUserData().roles.hasAny(['editor', 'admin']); 
       allow create, delete: if getUserData().roles.hasAny(['editor', 'admin']);
     }  
     function getUserData() {
-      return get(/databases/$(database)/documents/player/$(request.auth.uid)).data
+      return get(/databases/$(database)/documents/players/$(request.auth.uid)).data
     }
     function notUpdating(field) {
       // prevent update of specific document data object - like roles 
