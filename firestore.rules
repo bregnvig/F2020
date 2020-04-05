@@ -20,8 +20,9 @@ service cloud.firestore {
                     && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state == 'open' 
                     && !exists(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid));
      allow update: if getUserData().roles.hasAny(['player']) 
-                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state == 'open' 
-                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid)).data.state != "completed";               
+                    && request.auth.uid == Bids
+                    && ('submitted' in resource.data) == false
+                    && notUpdating('submitted');                    
      // allow to read bids if races is waiting or closed - or if bid is your own - or read all bids if you have made your bid             
      allow read: if getUserData().roles.hasAny(['player']) 
                     && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state != 'open' 
