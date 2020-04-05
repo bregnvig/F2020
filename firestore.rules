@@ -29,7 +29,7 @@ service cloud.firestore {
                     || getUserData().roles.hasAny(['player']) &&  request.auth.uid == Bids 
                     || getUserData().roles.hasAny(['player']) 
                     && exists(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid))
-                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid)).data.state != "draft";  
+                    && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid)).data.submitted != "draft";  
     }
     match /players/{Players} {
       allow read: if request.auth.uid == Players 
