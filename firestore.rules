@@ -37,14 +37,14 @@ service cloud.firestore {
                     || getUserData().roles.hasAny(['editor', 'admin']); 
       allow update, write: if request.auth.uid == Players && notUpdating('roles') 
                     || request.auth.uid == Players && notUpdating('uid') 
-                    || getUserData().roles.hasAny(['editor', 'admin']); 
+                    || request.auth.uid == Players && notUpdating('balance') 
+                    || getUserData().roles.hasAny(['editor', 'admin']) && notUpdating('balance'); 
       allow create, delete: if getUserData().roles.hasAny(['editor', 'admin']);
     }
     match /transactions/{Transactions} {
       allow read: if getUserData().roles.hasAny(['editor', 'admin'])
                     || getUserData().roles.hasAny(['player']) && resource.data.to == request.auth.uid
-                    || getUserData().roles.hasAny(['player']) && resource.data.from == request.auth.uid; 
-      allow write: if getUserData().roles.hasAny(['editor', 'admin']);
+                    || getUserData().roles.hasAny(['player']) && resource.data.from == request.auth.uid;
     }  
     
     function getUserData() {
