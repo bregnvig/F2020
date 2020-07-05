@@ -1,3 +1,4 @@
+import { IDriver } from '@f2020/data';
 import { DateTime } from 'luxon';
 import * as firebase from 'firebase-admin'
 

@@ -1,7 +1,6 @@
-import { Bid } from './../model/bid.model';
-import { driverResult, driverResults } from './driver-result.mapper';
-import { IRaceResult } from './../model/race.model';
 import { ErgastRaceResult } from '../model';
+import { IRaceResult } from './../model/race.model';
+import { driverResult } from './driver-result.mapper';
 import { basisMap } from './race.mapper';
 
 export const map = (source: ErgastRaceResult): IRaceResult => {
