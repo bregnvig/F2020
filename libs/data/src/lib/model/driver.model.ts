@@ -53,7 +53,7 @@ export interface IDriverRaceResult {
   position: number;
   grid: number;
   status: string;
-  fastestLap: IFastestLap;
+  fastestLap?: IFastestLap;
 }
 
 export interface IDriverQualifying {

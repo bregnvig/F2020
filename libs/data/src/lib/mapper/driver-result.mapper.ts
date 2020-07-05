@@ -8,22 +8,25 @@ const toMillis = (time: string) => {
   const seconds = parseInt(groups[2], 10) * 1000;
   const millis = parseInt(groups[3], 10);
   return minutes + seconds + millis;
-}
+};
 
 export const driverResult = (result: ErgastDriverResult): IDriverRaceResult => {
-  return {
+  const converted: IDriverRaceResult = {
     driver: driver(result.Driver),
     points: parseInt(result.points, 10),
     position: parseInt(result.position, 10),
     grid: parseInt(result.grid, 10),
     status: result.status,
-    fastestLap: {
+  };
+  if (result.FastestLap) {
+    converted.fastestLap = {
       rank: parseInt(result.FastestLap.rank, 10),
       lap: parseInt(result.FastestLap.lap, 10),
       averageSpeed: parseFloat(result?.FastestLap.AverageSpeed.speed),
       time: toMillis(result.FastestLap.Time.time)
-    }
-  };
+    };
+  }
+  return converted;
 };
 
 export const driverResults = (_drivers: ErgastDriverResults) => _drivers.Results.map(driverResult);
