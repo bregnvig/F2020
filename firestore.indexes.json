@@ -15,6 +15,24 @@
       ]
     },
     {
+      "collectionGroup": "bids",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "submitted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "points",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "polePositionTimeDiff",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "races",
       "queryScope": "COLLECTION",
       "fields": [
