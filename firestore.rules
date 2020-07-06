@@ -17,6 +17,11 @@ service cloud.firestore {
       allow update, write, delete, create:  if getUserData().roles.hasAny(['admin']);
     }
 
+    match /seasons/{Seasons}/lastYear/{Country} {
+      allow read: if getUserData().roles.hasAny(['player']);
+      allow update, write, delete, create:  if false;
+    }
+
     match /seasons/{Seasons}/races/{Races}/bids/{Bids} {
      // allow to create bid if race is open and a bid does not already exsist 
      allow create: if getUserData().roles.hasAny(['player']) 
