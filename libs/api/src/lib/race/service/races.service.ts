@@ -1,6 +1,7 @@
+import { seasons } from './../../../../../../functions/src/test-utils/seasons.collections';
 import { Inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Bid, firestoreUtils, IRace, IRaceResult, mapper, Player, IQualifyResult } from '@f2020/data';
+import { Bid, firestoreUtils, IRace, IRaceResult, mapper, Player, IQualifyResult, RoundResult } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GoogleFunctions } from '@f2020/firebase';
@@ -13,7 +14,7 @@ import { ErgastService } from '../../service/ergast.service';
 export class RacesService {
 
   constructor(
-    private afs: AngularFirestore, 
+    private afs: AngularFirestore,
     private ergastService: ErgastService,
     @Inject(GoogleFunctions) private functions: firebase.functions.Functions) {
 
@@ -42,12 +43,14 @@ export class RacesService {
   }
 
   updateBid(seasonId: string, round: number, player: Player, bid: Bid): Promise<void> {
-    return this.afs.doc<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`).set({...bid, player: {
-      uid: player.uid,
-      displayName: player.displayName,
-      photoURL: player.photoURL,
-      email: player.email,
-    }});
+    return this.afs.doc<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`).set({
+      ...bid, player: {
+        uid: player.uid,
+        displayName: player.displayName,
+        photoURL: player.photoURL,
+        email: player.email,
+      }
+    });
   }
 
   getResult(seasonId: string | number, round: number): Observable<IRaceResult> {
@@ -58,6 +61,11 @@ export class RacesService {
     return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => mapper.qualifyResult(ergastData.MRData.RaceTable.Races[0]));
   }
 
+  getLastYearResult(seasonId: number, countryCode: string): Observable<RoundResult> {
+    return this.afs.doc<RoundResult>(`${SeasonService.seasonsURL}/${seasonId}/lastYear/${countryCode}`).get().pipe(
+      map(snapshot => snapshot.data() as RoundResult)
+    );
+  }
 
   async submitBid(bid: Bid, player: Player): Promise<true> {
     return this.functions.httpsCallable('submitBid')({
@@ -67,10 +75,12 @@ export class RacesService {
         photoURL: player.photoURL,
         tokens: player.tokens,
         email: player.email,
-      }}).then(() => true);
+      }
+    }).then(() => true);
   }
 
   async submitResult(result: Bid): Promise<true> {
     return this.functions.httpsCallable('submitResult')(result).then(() => true);
   }
+
 }

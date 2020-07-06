@@ -7,3 +7,4 @@ export * from './bid.model';
 export * from './wbc.model';
 export * from './transaction.model';
 export * from './ergast';
+export * from './round-result.model';

@@ -1,4 +1,4 @@
-import { Bid, IRace, IRaceResult } from '@f2020/data';
+import { Bid, IRace, RoundResult } from '@f2020/data';
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 import { RacesActions } from './races.actions';
@@ -14,6 +14,7 @@ export interface State extends EntityState<IRace> {
   bids?: Bid[];
   bid?: Partial<Bid>;
   result?: Bid;
+  lastYear?: RoundResult,
   updating: boolean; // Is something updating
   loaded: boolean; // has the Races list been loaded
   error?: string | null; // last none error (if any)
@@ -47,7 +48,7 @@ const racesReducer = createReducer(
     racesAdapter.setAll(races, { ...state, loaded: true }),
   ),
   on(
-    RacesActions.loadRacesFailure, 
+    RacesActions.loadRacesFailure,
     RacesActions.loadYourBidFailure,
     RacesActions.loadBidsFailure,
     RacesActions.loadBidFailure,
@@ -57,18 +58,19 @@ const racesReducer = createReducer(
     RacesActions.submitBidFailure,
     RacesActions.submitResultFailure,
     RacesActions.updateRaceDriversFailure,
+    RacesActions.loadLastYearFailure,
     (state, { type, error }) => {
       console.error(type, error);
-      return { ...state, error: error['message'] ?? error, updating: false, loaded: false }
+      return { ...state, error: error['message'] ?? error, updating: false, loaded: false };
     }
   ),
-  on(RacesActions.selectRace, (state, { country }) => ({ 
-      ...state, 
-      selectedId: country,
-      bids: null,
-      bid: null,
-      yourBid: null, 
-    })
+  on(RacesActions.selectRace, (state, { round }) => ({
+    ...state,
+    selectedId: round,
+    bids: null,
+    bid: null,
+    yourBid: null,
+  })
   ),
   on(RacesActions.loadYourBidSuccess, (state, { bid }) => ({ ...state, yourBid: bid })),
   on(RacesActions.loadBidsSuccess, (state, { bids }) => ({ ...state, bids })),
@@ -81,6 +83,8 @@ const racesReducer = createReducer(
   on(RacesActions.submitResultSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.updateRaceDrivers, (state) => ({ ...state, updating: true })),
   on(RacesActions.updateRaceDriversSuccess, (state) => ({ ...state, updating: false })),
+  on(RacesActions.loadLastYear, state => ({ ...state, lastYear: null })),
+  on(RacesActions.loadLastYearSuccess, (state, { result }) => ({ ...state, lastYear: result })),
 );
 
 export function reducer(state: State | undefined, action: Action) {

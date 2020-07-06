@@ -1,4 +1,4 @@
-import { Bid, IRace } from '@f2020/data';
+import { Bid, IRace, RoundResult } from '@f2020/data';
 import { createAction, props } from '@ngrx/store';
 
 export const RacesActions = {
@@ -17,7 +17,7 @@ export const RacesActions = {
 
   selectRace: createAction(
     '[Races] Select race',
-    props<{ country: string }>(),
+    props<{ round: string }>(),
   ),
 
   loadYourBid: createAction(
@@ -130,5 +130,19 @@ export const RacesActions = {
   updateRaceDriversFailure: createAction(
     '[Edit race drivers API] Update race drivers Failure',
     props<{ error: any }>(),
+  ),
+
+  loadLastYear: createAction(
+    '[Landing Page] Load last year',
+  ),
+
+  loadLastYearSuccess: createAction(
+    '[Result API] Load last year Success',
+    props<{ result: RoundResult; }>(),
+  ),
+
+  loadLastYearFailure: createAction(
+    '[Result API] Load last year Failure',
+    props<{ error: any; }>(),
   ),
 };

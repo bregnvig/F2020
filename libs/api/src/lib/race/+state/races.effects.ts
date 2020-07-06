@@ -147,6 +147,15 @@ export class RacesEffects {
     ))
   ));
 
+  loadLastYear$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.loadLastYear),
+    concatMap(() => this.facade.allRaces$.pipe(
+      map(races => races.find(r => r.state === 'open')),
+      switchMap(race => this.service.getLastYearResult(race.season, race.countryCode)),
+      map(result => RacesActions.loadLastYearSuccess({ result }))
+    ))
+  ));
+
   constructor(
     private actions$: Actions,
     private service: RacesService,
