@@ -18,7 +18,7 @@ export class RaceOutletComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.pipe(
       untilDestroyed(this),
-    ).subscribe(({country}) => this.facade.dispatch(RacesActions.selectRace({ country })));
+    ).subscribe(({round}) => this.facade.dispatch(RacesActions.selectRace({ round })));
   }
 
 }

@@ -13,7 +13,7 @@ const routes: Routes = [
     component: RacesComponent,
   },
   {
-    path: ':country',
+    path: ':round',
     component: RaceOutletComponent,
     children: [
       {
