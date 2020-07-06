@@ -20,7 +20,7 @@ export class StandingListComponent implements OnInit {
     this.standings$ = this.facade.loaded$.pipe(
       filter(loaded => loaded),
       switchMap(() => this.facade.standings$),
-      map(standings => [...standings].sort((a, b) => a.points - b.points || a.driver.name.localeCompare(b.driver.name))),
+      map(standings => [...standings].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name))),
       tap(standings => {
         if (!standings.length) {
           this.snackBar.open('Der findes ingen resultater endnu', null, {duration: 3000})
