@@ -25,6 +25,19 @@ export function clearFirestoreData(): Promise<void> {
   });
 }
 
+export const retry = <T>(promiseFn: () => Promise<T>, validatorFn?: (data: T) => boolean): Promise<T> => {
+  return new Promise(resolve => {
+    const intervalNo = setInterval(async () => {
+      const t: T = await promiseFn();
+      const fn = validatorFn || ((defaultData: T) => !!defaultData);
+      if (fn(t)) {
+        clearInterval(intervalNo);
+        resolve(t);
+      }
+    }, 1000);
+  });
+}
+
 export const shouldaFailed = () => fail('Should have resulted in an error, when bid is invalid');
 export const failedPrecondition = (_: any) => expect(_.code).toEqual('failed-precondition');
 export const notFound = (_: any) => expect(_.code).toEqual('not-found');

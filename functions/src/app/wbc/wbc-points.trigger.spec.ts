@@ -2,7 +2,7 @@ import { assertSucceeds } from '@firebase/testing';
 import { playersURL, seasonsURL } from '../../lib/collection-names';
 import { WBC } from '../../lib/model';
 import { collections } from '../../test-utils';
-import { adminApp, authedApp, clearFirestoreData } from '../../test-utils/firestore-test-utils';
+import { adminApp, authedApp, clearFirestoreData, retry } from '../../test-utils/firestore-test-utils';
 import { WBCPlayer } from './../../lib/model/wbc.model';
 
 const clone = require('clone');
@@ -15,22 +15,8 @@ describe('WBC points', () => {
   const writeBid = async (bid: any, uid: string, round: number) => adminFirestore.doc(`${seasonsURL}/9999/races/${round}/bids/${uid}`).set(bid);
   const byUid = (uid: string) => (wp: WBCPlayer): boolean => wp.player.uid === uid;
 
-  const readWBC = async (length = 1): Promise<WBC> => new Promise(resolve => {
-    const intervalNo = setInterval(async () => {
-      const wbc: WBC = await adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => ref.data()!.wbc);
-      if (wbc && wbc.length === length) {
-        clearInterval(intervalNo);
-        resolve(wbc);
-      }
-    }, 1000);
-  });
-  // const readWBC = async (): Promise<WBC> => adminFirestore.doc(`${seasonsURL}/9999`).get().then(async ref => ref.exists ? ref.data()!.wbc as WBC : new Promise(resolve => {
-  //   console.log('HHEHEHEHEH');
-    
-    
-  //   setTimeout(async () => resolve(await readWBC()), 1000)
-  // }));
-
+  const readWBC = (length = 1) => retry(() => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => ref.data()!.wbc), (wbc: WBC) => wbc && wbc.length === length); 
+  
   beforeEach(async () => {
     adminFirestore = adminApp();
     await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set({ ...collections.players.admin });
@@ -73,7 +59,6 @@ describe('WBC points', () => {
     await writeBid({ ...clone(collections.bids[1]), submitted: true }, collections.players.player.uid, collections.races[0].round);
 
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => readWBC(2))
       .then((wbc: WBC) => {
         expect(wbc.length).toEqual(2);
@@ -105,7 +90,6 @@ describe('WBC points', () => {
 
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => readWBC())
       .then((wbc: WBC) => {
         expect(wbc.length).toEqual(1);
@@ -133,7 +117,6 @@ describe('WBC points', () => {
 
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => readWBC())
       .then((wbc: WBC) => {
         expect(wbc.length).toEqual(1);
