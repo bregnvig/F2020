@@ -68,3 +68,8 @@ export const getUpdating = createSelector(
   getRacesState,
   state => state.updating
 );
+
+export const getLastYear = createSelector(
+  getRacesState,
+  state => state.lastYear
+);

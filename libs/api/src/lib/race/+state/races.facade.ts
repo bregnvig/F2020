@@ -1,10 +1,10 @@
-import { filter, distinctUntilChanged } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-
 import { Action, select, Store } from '@ngrx/store';
-
+import { filter } from 'rxjs/operators';
 import * as fromRaces from './races.reducer';
 import * as RacesSelectors from './races.selectors';
+
+
 
 @Injectable()
 export class RacesFacade {
@@ -15,6 +15,7 @@ export class RacesFacade {
   yourBid$ = this.store.pipe(select(RacesSelectors.getYourBid));
   bids$ = this.store.pipe(select(RacesSelectors.getBids));
   bid$ = this.store.pipe(select(RacesSelectors.getBid));
+  lastYear$ = this.store.pipe(select(RacesSelectors.getLastYear));
   result$ = this.store.pipe(select(RacesSelectors.getResult));
   error$ = this.store.pipe(select(RacesSelectors.getRacesError));
 

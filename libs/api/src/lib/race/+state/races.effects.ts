@@ -4,7 +4,7 @@ import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch } from '@nrwl/angular';
 import { combineLatest, of } from 'rxjs';
-import { catchError, concatMap, debounceTime, first, map, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, first, map, switchMap, takeUntil, filter } from 'rxjs/operators';
 import { SeasonFacade } from '../../season/+state/season.facade';
 import { RacesService } from '../service/races.service';
 import { buildResult } from './../service/result-builder';
@@ -151,8 +151,10 @@ export class RacesEffects {
     ofType(RacesActions.loadLastYear),
     concatMap(() => this.facade.allRaces$.pipe(
       map(races => races.find(r => r.state === 'open')),
+      filter(race => !!race),
       switchMap(race => this.service.getLastYearResult(race.season, race.countryCode)),
-      map(result => RacesActions.loadLastYearSuccess({ result }))
+      map(result => RacesActions.loadLastYearSuccess({ result })),
+      first()
     ))
   ));
 
