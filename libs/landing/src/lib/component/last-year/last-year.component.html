@@ -1,0 +1,19 @@
+<mat-card *ngIf="lastYear$ | async as lastYear">
+  <mat-card-header>
+    <i class="fas fa-undo-alt fa-2x" mat-card-avatar></i>
+    <mat-card-title>Sidste år</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      Sidste år endte {{lastYear.result.results[0].driver.name}}, {{lastYear.result.results[1].driver.name}} og {{lastYear.result.results[2].driver.name}} på podiet.
+    </p>
+    <p>
+      {{lastYear.qualify.results[0].driver.name}} fik pole position på {{lastYear.qualify.results[0].q3 | polePositionTime}}
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+      <a mat-button [routerLink]="['standings', 'lastYer', lastYear.qualify.countryCode]">
+        SE MERE
+      </a>
+  </mat-card-actions>
+</mat-card>

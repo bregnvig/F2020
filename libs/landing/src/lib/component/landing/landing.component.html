@@ -1,8 +1,8 @@
-<div fxFlex fxLayout="column" fxLayoutAlign="center center">
-  <ng-container *ngIf="player$ | async as player; else loading">
-    <img [src]="player.photoURL" alt="Spiller billede">
-  </ng-container>
-</div>
+<ng-container *ngIf="player$ | async as player; else loading">
+  <sha-card-page>
+    <f2020-last-year></f2020-last-year>
+  </sha-card-page>
+</ng-container>
 <ng-template #loading>
   <sha-loading></sha-loading>
 </ng-template>
