@@ -1,13 +1,13 @@
-import { buildResult } from './../service/result-builder';
 import { Injectable } from '@angular/core';
 import { PlayerActions, PlayerFacade } from '@f2020/player';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch } from '@nrwl/angular';
 import { combineLatest, of } from 'rxjs';
-import { catchError, concatMap, debounceTime, first, map, switchMap, takeUntil, tap, withLatestFrom, filter } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, first, map, switchMap, takeUntil } from 'rxjs/operators';
 import { SeasonFacade } from '../../season/+state/season.facade';
 import { RacesService } from '../service/races.service';
+import { buildResult } from './../service/result-builder';
 import { RacesActions } from './races.actions';
 import { RacesFacade } from './races.facade';
 
@@ -60,7 +60,7 @@ export class RacesEffects {
       switchMap(([season, race, submitted]) => submitted ? this.service.getBids(season.id, race.round) : of([])),
       map(bids => RacesActions.loadBidsSuccess({ bids })),
       catchError(error => {
-        const permissionError = error.code === 'permission-denied'
+        const permissionError = error.code === 'permission-denied';
         return of(permissionError ? RacesActions.loadBidsSuccess({ bids: [] }) : RacesActions.loadBidsFailure({ error }));
       }),
       takeUntil(this.actions$.pipe(ofType(RacesActions.loadBids, PlayerActions.logoutPlayer))),
@@ -93,7 +93,7 @@ export class RacesEffects {
       ])),
       map(([race, qualify, selectedDriver]) => {
         const result = buildResult(race, qualify, selectedDriver);
-        return RacesActions.loadResultSuccess({ result })
+        return RacesActions.loadResultSuccess({ result });
       }),
       first(),
       catchError(error => of(RacesActions.loadResultFailure({ error }))),
@@ -102,9 +102,11 @@ export class RacesEffects {
 
   submitBid$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.submitBid),
-    concatMap(({ bid }) => this.service.submitBid(bid)
-      .then(() => RacesActions.submitBidSuccess())
-      .catch(error => RacesActions.submitBidFailure({ error }))
+    concatMap(({ bid }) => this.playerFacade.player$.pipe(
+      switchMap(player => this.service.submitBid(bid, player)
+        .then(() => RacesActions.submitBidSuccess())
+        .catch(error => RacesActions.submitBidFailure({ error }))
+      ))
     )
   ));
 
@@ -126,12 +128,12 @@ export class RacesEffects {
       this.playerFacade.player$
     ]).pipe(
       first(),
-      switchMap(( [season, race, player]) => this.service.updateBid(season.id, race.round, player, bid)),
+      switchMap(([season, race, player]) => this.service.updateBid(season.id, race.round, player, bid)),
       map(() => RacesActions.updateYourBidSuccess()),
       catchError(error => of(RacesActions.updateYourBidFailure({ error }))),
     ))
   ));
-  
+
   updateRaceDrivers$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.updateRaceDrivers),
     concatMap(({ drivers }) => combineLatest([
@@ -139,7 +141,7 @@ export class RacesEffects {
       this.facade.selectedRace$,
     ]).pipe(
       first(),
-      switchMap(([season, race]) => this.service.updateRace(season.id, race.round, {drivers})),
+      switchMap(([season, race]) => this.service.updateRace(season.id, race.round, { drivers })),
       map(() => RacesActions.updateRaceDriversSuccess()),
       catchError(error => of(RacesActions.updateRaceDriversFailure({ error }))),
     ))
