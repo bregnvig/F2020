@@ -50,7 +50,7 @@ button[mat-fab] {
 }
 
 
-mat-card-actions > button {
+mat-card-actions > button, mat-card-actions > a  {
   text-transform: uppercase;
 }
 
