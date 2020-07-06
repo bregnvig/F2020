@@ -87,8 +87,8 @@ export class RacesEffects {
       debounceTime(200),
       truthy(),
       switchMap(race => combineLatest([
-        this.service.getResult(race.season - 1, race.round), // TODO Do not minus 1. Only for testing
-        this.service.getQualify(race.season - 1, race.round), // TODO Do not minus 1. Only for testing
+        this.service.getResult(race.season, race.round),
+        this.service.getQualify(race.season, race.round),
         of(race.selectedDriver),
       ])),
       map(([race, qualify, selectedDriver]) => {
