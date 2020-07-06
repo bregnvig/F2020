@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 import { currentSeason, converter } from './';
 import { racesURL, seasonsURL } from './collection-names';
 import { IRace } from "./model";
-const currentRaceURL = (seasonId: string) => `${seasonsURL}/${seasonId}/${racesURL}`
+const currentRaceURL = (seasonId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}`;
 
 export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | undefined> => {
   return currentSeason().then(season => admin.firestore()
@@ -13,9 +13,15 @@ export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | 
     .then(snapshot => {
       if (snapshot.docs.length === 1) {
         return snapshot.docs[0].data();
-      } else if(snapshot.docs.length > 1) {
+      } else if (snapshot.docs.length > 1) {
         return Promise.reject(`Found ${snapshot.docs.length} with state open`);
       }
       return undefined;
     }));
-}
+};
+
+export const updateRace = async (seasonId: number, round: number, race: Partial<IRace>): Promise<admin.firestore.WriteResult> => {
+  return admin.firestore()
+    .doc(`${currentRaceURL(seasonId)}/${round}`)
+    .update(race);
+};

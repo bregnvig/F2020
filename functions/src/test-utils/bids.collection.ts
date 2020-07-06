@@ -44,11 +44,11 @@ export const bids: Bid[] = [
     ]
   },
   {
-    firstCrash: [ 'max_verstappen' ],
+    firstCrash: [ 'no-points-1' ],
     polePositionTime: 71111,
-    podium: [ 'hamilton', 'bottas', 'grosjean' ],
-    selectedDriver: { finish: 12, grid: 12 },
-    fastestDriver: [ 'hamilton' ],
+    podium: ['no-points-1', 'no-points-2', 'no-points-3' ],
+    selectedDriver: { finish: 20, grid: 20 },
+    fastestDriver: [ 'no-points-1' ],
     player: {
       email: 'michael.bartrup@gmail.com',
       displayName: 'Michael Bartrup',
@@ -56,12 +56,12 @@ export const bids: Bid[] = [
       photoURL: 'https://lh3.googleusercontent.com/a-/AAuE7mBvw300XDtDrnheUmG5TjELjs4ldQKADf15MCQtLg'
     },
     qualify: [
-      'hamilton',
-      'grosjean',
-      'kevin_magnussen',
-      'leclerc',
-      'bottas',
-      'vettel'
+      'no-points-1',
+      'no-points-2',
+      'no-points-3',
+      'no-points-4',
+      'no-points-5',
+      'no-points-6'
     ]
   }
 ]

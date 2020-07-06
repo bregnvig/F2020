@@ -14,7 +14,22 @@ describe('WBC points', () => {
   // const readBid = async (uid: string): Promise<Bid> => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).get().then(ref => ref.data() as Bid);
   const writeBid = async (bid: any, uid: string, round: number) => adminFirestore.doc(`${seasonsURL}/9999/races/${round}/bids/${uid}`).set(bid);
   const byUid = (uid: string) => (wp: WBCPlayer): boolean => wp.player.uid === uid;
-  const readWBC = async (): Promise<WBC> => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => ref.data()!.wbc as WBC);
+
+  const readWBC = async (length = 1): Promise<WBC> => new Promise(resolve => {
+    const intervalNo = setInterval(async () => {
+      const wbc: WBC = await adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => ref.data()!.wbc);
+      if (wbc && wbc.length === length) {
+        clearInterval(intervalNo);
+        resolve(wbc);
+      }
+    }, 1000);
+  });
+  // const readWBC = async (): Promise<WBC> => adminFirestore.doc(`${seasonsURL}/9999`).get().then(async ref => ref.exists ? ref.data()!.wbc as WBC : new Promise(resolve => {
+  //   console.log('HHEHEHEHEH');
+    
+    
+  //   setTimeout(async () => resolve(await readWBC()), 1000)
+  // }));
 
   beforeEach(async () => {
     adminFirestore = adminApp();
@@ -37,7 +52,6 @@ describe('WBC points', () => {
 
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[1]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => readWBC())
       .then((wbc: WBC) => {
         expect(wbc.length).toEqual(1);
@@ -60,7 +74,7 @@ describe('WBC points', () => {
 
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => readWBC())
+      .then(() => readWBC(2))
       .then((wbc: WBC) => {
         expect(wbc.length).toEqual(2);
         expect(wbc[1]).toBeTruthy();
@@ -134,12 +148,11 @@ describe('WBC points', () => {
 
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[1]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => readWBC())
       .then((wbc: WBC) => {
         expect(wbc.length).toEqual(1);
         expect(wbc[0].players.length).toBe(3);
-        expect(wbc[0].players[2].points).toBe(0);
+        expect(wbc[0].players.find(p => p.player.uid === collections.players.player1.uid)!.points).toBe(0);
       })
   });
 

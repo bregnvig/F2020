@@ -38,7 +38,7 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.Docu
         email: b.player?.email,
         tokens: b.player?.tokens ?? [],
       } as Player,
-      points: wbcPoints[index] || 0
+      points: b.points && wbcPoints[index] || 0
     }))
   }
   bids.forEach((b, index) => {

@@ -89,7 +89,7 @@ export const races = [
       lng: '-46.6997'
     },
     raceStart: new Date(160546020000),
-    season: 2020,
+    season: 9999,
     countryCode: 'BR',
     open: new Date(160427160000),
     round: 14,
@@ -110,7 +110,7 @@ export const races = [
       lng: '-73.5228'
     },
     raceStart: new Date(159215820000),
-    season: 2020,
+    season: 9999,
     countryCode: 'CA',
     open: new Date(159156720000),
     round: 2,
@@ -126,7 +126,7 @@ export const races = [
       country: 'France'
     },
     raceStart: new Date(159334980000),
-    season: 2020,
+    season: 9999,
     countryCode: 'FR',
     open: new Date(159217200000),
     round: 3,
@@ -150,12 +150,12 @@ export const races = [
       lng: '19.2486'
     },
     raceStart: new Date(159637380000),
-    season: 2020,
+    season: 9999,
     countryCode: 'HU'
   },
   {
     raceStart: new Date(159939780000),
-    season: 2020,
+    season: 9999,
     countryCode: 'IT',
     open: new Date(159882480000),
     round: 8,
@@ -183,7 +183,7 @@ export const races = [
       country: 'Japan'
     },
     raceStart: new Date(160238940000),
-    season: 2020,
+    season: 9999,
     countryCode: 'JP',
     open: new Date(160124400000),
     round: 11,
@@ -204,7 +204,7 @@ export const races = [
       nationality: 'Mexico City'
     },
     raceStart: new Date(160425780000),
-    season: 2020,
+    season: 9999,
     countryCode: 'MX',
     open: new Date(160366680000),
     round: 13,
@@ -225,7 +225,7 @@ export const races = [
       nationality: 'Sochi'
     },
     raceStart: new Date(160120500000),
-    season: 2020,
+    season: 9999,
     countryCode: 'RU',
     open: new Date(160063920000)
   },
@@ -241,7 +241,7 @@ export const races = [
       nationality: 'Marina Bay'
     },
     raceStart: new Date(160060380000),
-    season: 2020,
+    season: 9999,
     countryCode: 'SG',
     open: new Date(159942960000),
     round: 9,
@@ -256,7 +256,7 @@ export const races = [
       nationality: 'Abu Dhabi'
     },
     raceStart: new Date(160665540000),
-    season: 2020,
+    season: 9999,
     countryCode: 'AE',
     open: new Date(160548120000),
     round: 15,
@@ -282,7 +282,7 @@ export const races = [
       country: 'UK'
     },
     raceStart: new Date(159516780000),
-    season: 2020,
+    season: 9999,
     countryCode: 'GB',
     open: new Date(159398640000)
   },
@@ -296,7 +296,7 @@ export const races = [
       lng: '-97.6411'
     },
     raceStart: new Date(160365300000),
-    season: 2020,
+    season: 9999,
     countryCode: 'US',
     open: new Date(160245360000),
     round: 12,

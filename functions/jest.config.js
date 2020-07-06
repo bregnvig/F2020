@@ -8,6 +8,7 @@ module.exports = {
   testEnvironment: 'node',
   verbose: true,
   rootDir: 'src',
+  testTimeout: 20000
 }
 
 

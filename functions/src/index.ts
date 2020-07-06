@@ -18,8 +18,10 @@ export * from './app/wbc/wbc-points.trigger';
 
 export * from './app/race/without-bid.call';
 export * from './app/race/drivers.trigger';
+export * from './app/race/open-race.trigger';
 
 export * from './app/race/reminder.pubsub';
+export * from './app/race/close-race.pubsub';
 
 export * from './app/player/migrate-account.call';
 export * from './app/player/manual-balance.call';
