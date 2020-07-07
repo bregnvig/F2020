@@ -15,6 +15,7 @@ export * from './app/transaction/balance.trigger';
 export * from './app/mail/no-funds.trigger';
 
 export * from './app/wbc/wbc-points.trigger';
+export * from './app/wbc/join-wbc.call';
 
 export * from './app/race/without-bid.call';
 export * from './app/race/drivers.trigger';
