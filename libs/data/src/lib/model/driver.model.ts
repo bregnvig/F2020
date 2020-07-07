@@ -1,4 +1,4 @@
-import { IRaceResult, IQualifyResult } from './race.model';
+import { IRaceResult } from './race.model';
 
 export interface IDriver {
   readonly name: string;
