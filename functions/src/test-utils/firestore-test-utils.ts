@@ -7,6 +7,7 @@ export interface AuthedAppData {
 }
 
 export async function authedApp(auth?: object): Promise<AuthedAppData> {
+  // await firebaseTesting.clearFirestoreData({ projectId: 'f1-serverless'})
   const app = firebaseTesting.initializeTestApp({ projectId: 'f1-serverless', auth });
   const firestore: firebaseTesting.firestore.Firestore = app.firestore();
   const functions: firebase.functions.Functions = app.functions('europe-west1');
@@ -20,9 +21,13 @@ export function adminApp() {
 }
 
 export function clearFirestoreData(): Promise<void> {
-  return firebaseTesting.clearFirestoreData({
-    projectId: 'f1-serverless'
-  });
+  return new Promise(resolve => {
+    setTimeout(() => {
+      return firebaseTesting.clearFirestoreData({
+        projectId: 'f1-serverless'
+      }).then(() => resolve());
+    }, 2);
+  },)
 }
 
 export const retry = <T>(promiseFn: () => Promise<T>, validatorFn?: (data: T) => boolean): Promise<T> => {

@@ -11,7 +11,6 @@ const validateBalance = (player: PlayerImpl): void => {
   if ((player.balance || 0) - 20 < -100) {
     throw logAndCreateError('failed-precondition', `${player.displayName} has insufficient funds. Balance: ${(player.balance || 0).toFixed(2)}`)
   }
-
 }
 
 export const submitBid = functions.region('europe-west1').https.onCall(async (data: Bid, context) => {
