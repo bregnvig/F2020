@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { IDriverQualifying } from '@f2020/data';
+import { IQualifyResult } from '@f2020/data';
 
 @Component({
   selector: 'f2020-driver-qualifying',
@@ -8,5 +8,5 @@ import { IDriverQualifying } from '@f2020/data';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DriverQualifyingComponent {
-  @Input() driverQualifying: IDriverQualifying[];
+  @Input() qualifyResults: IQualifyResult[];
 }

@@ -1,6 +1,6 @@
 <mat-list>
-  <mat-list-item *ngFor="let result of driverResult?.results">
-    <h5 matLine fxLayout><span fxFlex>{{result.race.name}}</span>{{result.position}}</h5>
-    <p matLine>{{result.status}}</p>
+  <mat-list-item *ngFor="let race of driverResult?.races">
+    <h5 matLine fxLayout><span fxFlex>{{race.name}}</span>{{race.results[0].position}}</h5>
+    <p matLine>{{race.results[0].status}}</p>
   </mat-list-item>
 </mat-list>

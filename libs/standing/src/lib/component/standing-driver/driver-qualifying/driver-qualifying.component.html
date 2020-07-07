@@ -1,6 +1,6 @@
 <mat-list>
-  <mat-list-item *ngFor="let qualifying of driverQualifying">
-    <h5 matLine fxLayout><span fxFlex>{{qualifying.race.name}}</span>{{qualifying.position}}</h5>
-    <p matLine><f2020-qualifying-times [qualifying]="qualifying"></f2020-qualifying-times></p>
+  <mat-list-item *ngFor="let result of qualifyResults">
+    <h5 matLine fxLayout><span fxFlex>{{result.name}}</span>{{result.results[0].position}}</h5>
+    <p matLine><f2020-qualifying-times [qualifying]="result.results[0]"></f2020-qualifying-times></p>
   </mat-list-item>
 </mat-list>

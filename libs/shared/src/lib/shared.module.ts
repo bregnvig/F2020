@@ -1,3 +1,4 @@
+import { PolePositionTimePipe } from './pipe/pole-position-time.pipe';
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -36,7 +37,8 @@ const exportComponents = [
 
 const pipes = [
   RelativeToNowPipe,
-  FlagURLPipe
+  FlagURLPipe,
+  PolePositionTimePipe
 ]
 
 @NgModule({
@@ -50,6 +52,9 @@ const pipes = [
     exportComponents,
     pipes,
     HasRoleDirective,
+  ],
+  providers: [
+    PolePositionTimePipe,
   ],
   imports: [
     CommonModule,

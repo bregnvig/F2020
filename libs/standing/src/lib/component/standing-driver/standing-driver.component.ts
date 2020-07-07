@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { StandingService } from '../../service/standing.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { SeasonFacade } from '@f2020/api';
-import { map, pluck, share, switchMap } from 'rxjs/operators';
-import { combineLatest, Observable } from 'rxjs';
-import { IDriverQualifying, IDriverResult } from '@f2020/data';
+import { IDriverResult, IQualifyResult } from '@f2020/data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { combineLatest, Observable } from 'rxjs';
+import { map, pluck, share, switchMap } from 'rxjs/operators';
+import { StandingService } from '../../service/standing.service';
 
 @UntilDestroy()
 @Component({
@@ -17,9 +17,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 export class StandingDriverComponent implements OnInit {
 
   currentSeasonResult$: Observable<IDriverResult>;
-  currentSeasonQualifying$: Observable<IDriverQualifying[]>;
+  currentSeasonQualifying$: Observable<IQualifyResult[]>;
   previousSeasonResult$: Observable<IDriverResult>;
-  previousSeasonQualifying$: Observable<IDriverQualifying[]>;
+  previousSeasonQualifying$: Observable<IQualifyResult[]>;
   driverId$: Observable<string>;
   currentYear: number;
   previousYear: number;

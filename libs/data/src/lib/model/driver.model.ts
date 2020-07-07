@@ -1,3 +1,5 @@
+import { IRaceResult, IQualifyResult } from './race.model';
+
 export interface IDriver {
   readonly name: string;
   readonly driverId: string;
@@ -42,7 +44,7 @@ export interface IDriverResult {
   retired: number;
   averageGridPosition: number;
   averageFinishPosition: number;
-  results: IDriverRaceResult[];
+  races: IRaceResult[];
 }
 
 export const finished = (status: string): boolean =>  /(\+[0-9] Lap)|(Finished)/.test(status);

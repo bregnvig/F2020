@@ -3,20 +3,20 @@
 </mat-toolbar>
 <sha-card-page fxFlexOffset="16px">
   <ng-container *ngIf="currentSeasonResult$ | async as result; else loading">
-    <f2020-number-card fxFlex.gt-xs="33" title="Start gennemsnit" [number]="result.averageGridPosition | number: '1.2-2'"></f2020-number-card>
-    <f2020-number-card fxFlex.gt-xs="33" title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'"></f2020-number-card>
-    <f2020-number-card fxFlex.gt-xs="33" title="Udgået" [number]="result.retired"></f2020-number-card>
+    <f2020-number-card fxFlex.gt-xs="33" title="Start gennemsnit" [number]="result.averageGridPosition | number: '1.2-2'" iconClasses="far fa-flag-checkered"></f2020-number-card>
+    <f2020-number-card fxFlex.gt-xs="33" title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" iconClasses="far fa-trophy-alt"></f2020-number-card>
+    <f2020-number-card fxFlex.gt-xs="33" title="Udgået" [number]="result.retired" iconClasses="far fa-car-crash"></f2020-number-card>
   </ng-container>
 </sha-card-page>
 <mat-tab-group fxFlexOffset="16px" *ngIf="currentSeasonResult$ | async as result" selectedIndex="1" (selectedIndexChange)="load($event)">
   <mat-tab [label]="'Kvalifikation ' + currentYear">
-    <f2020-driver-qualifying [driverQualifying]="currentSeasonQualifying$ | async"></f2020-driver-qualifying>
+    <f2020-driver-qualifying [qualifyResults]="currentSeasonQualifying$ | async"></f2020-driver-qualifying>
   </mat-tab>
   <mat-tab [label]="'Resultat ' + currentYear">
     <f2020-driver-result [driverResult]="result"></f2020-driver-result>
   </mat-tab>
   <mat-tab [label]="'Kvalifikation ' + previousYear">
-    <f2020-driver-qualifying [driverQualifying]="previousSeasonQualifying$ | async"></f2020-driver-qualifying>
+    <f2020-driver-qualifying [qualifyResults]="previousSeasonQualifying$ | async"></f2020-driver-qualifying>
   </mat-tab>
   <mat-tab [label]="'Resultat ' + previousYear">
     <f2020-driver-result [driverResult]="previousSeasonResult$ | async"></f2020-driver-result>

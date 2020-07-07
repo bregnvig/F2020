@@ -8,5 +8,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class NumberCardComponent {
   @Input() title: string;
+  @Input() iconClasses: string; 
   @Input() number: string | number;
 }
