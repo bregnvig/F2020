@@ -7,10 +7,8 @@ import { environment } from './environments/environment';
 // import { readUser } from './app/mysql/account';
 import { Transaction } from './app/model/mysq.model';
 import { buildPreviousRaceReult } from './app/previous-year-race-result';
-import { moveToNewWBCModel } from './app/move-to-new-wbc-model';
 
 
-moveToNewWBCModel();
 // buildPreviousRaceReult(2019).then(_ => console.log(JSON.stringify(_, null, '\t')))
 
 // buildNewSeason(environment.season)
