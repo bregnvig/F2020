@@ -13,15 +13,18 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-export const sendMail = async (emailAddress: string, subject: string, body: string): Promise<void> => {
+export const sendMail = async (emailAddress: string, subject: string, body: string): Promise<string> => {
   const msg = {
     from: 'f1-2020@bregnvig.dk',
     to: emailAddress,
     subject: subject,
     html: body
   };
+  if (functions.config().test) {
+    return Promise.resolve('In test environment');
+  }
 
-  return new Promise<void>(
+  return new Promise<string>(
     (resolve: (msg: any) => void,
       reject: (err: Error) => void) => {
       transporter.sendMail(
