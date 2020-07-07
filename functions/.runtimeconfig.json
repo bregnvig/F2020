@@ -5,6 +5,7 @@
     "user": "flemming@bregnvig.dk",
     "refresh": "1//04uVpqCykDgxhCgYIARAAGAQSNwF-L9IrH2KOfZ5WTncO1OtzgyddjHLMTeka8Q_6mZsqgHaKK6ZnVulX3VRMTrL9OHUXMrU9koQ"
   },
+  "test": true,
   "ci": {
     "token": "1//09XJ04D0D7JqRCgYIARAAGAkSNwF-L9IrT5OoVpGlwcQi9FBJhnH18Y-HajI6YoE15HoLTGtRdPLvvfWKdtPVmXbRQ0ZsLe1Udms"
   }
