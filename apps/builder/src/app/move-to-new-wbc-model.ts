@@ -1,10 +1,10 @@
-import { ISeason, WBCNew } from '@f2020/data';
+import { ISeason, WBC } from '@f2020/data';
 import { firebaseApp } from './firebase';
 
 export const moveToNewWBCModel = async () => {
 
   const oldSeason = await firebaseApp.datebase.doc(`seasons/2020`).get().then(snapshot => snapshot.data());
-  const wbc: WBCNew = { 
+  const wbc: WBC = { 
     latestWBCJoinDate: oldSeason.latestWBCJoinDate, 
     results: oldSeason.wbc,
   }
