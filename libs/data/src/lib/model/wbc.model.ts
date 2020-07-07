@@ -1,6 +1,11 @@
 import { Player } from './player.model';
+import { DateTime } from 'luxon';
 
-export type WBC = WBCResult[];
+export interface WBC {
+  results?: WBCResult[];
+  latestWBCJoinDate: DateTime;
+  participants?: string[];
+}
 
 export interface WBCResult {
   raceName: string;

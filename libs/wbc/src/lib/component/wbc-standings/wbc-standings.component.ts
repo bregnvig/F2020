@@ -24,8 +24,8 @@ export class WbcStandingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.standings$ = this.facade.season$.pipe(
-      map(season => season?.wbc || []),
-      map(wbc => Array.from<WBCPlayer>(wbc.map(r => r.players).flat().reduce(sum, new Map<string, WBCPlayer>()).values())),
+      map(season => season?.wbc?.results || []),
+      map(results => Array.from<WBCPlayer>(results.map(r => r.players).flat().reduce(sum, new Map<string, WBCPlayer>()).values())),
       map(players => players.sort((a, b) => b.points - a.points))
     );
   }

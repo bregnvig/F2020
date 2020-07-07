@@ -38,7 +38,7 @@ export class WbcPlayerComponent implements OnInit {
     const wbc$ = this.facade.season$.pipe(
       truthy(),
       filter(season => !!season.wbc),
-      map(season => season.wbc)
+      map(season => season.wbc.results)
     );
     this.races$ = wbc$.pipe(
       map(wbc => wbc.map(racePlayer(this.route.snapshot.params.uid)))

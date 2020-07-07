@@ -23,7 +23,7 @@ export class WbcRaceComponent implements OnInit {
       this.route.params.pipe(pluck<Params, string>('round')),
       this.facade.season$.pipe(map(season => season.wbc))
     ]).pipe(
-      map(([round, wbc]) => (wbc || []).find(result => result.round === parseInt(round, 10))),
+      map(([round, wbc]) => (wbc?.results || []).find(result => result.round === parseInt(round, 10))),
       shareLatest()
     );
   }

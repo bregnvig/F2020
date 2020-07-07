@@ -1,9 +1,8 @@
 import { assertSucceeds } from '@firebase/testing';
 import { playersURL, seasonsURL } from '../../lib/collection-names';
-import { WBC } from '../../lib/model';
 import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData, retry } from '../../test-utils/firestore-test-utils';
-import { WBCPlayer } from './../../lib/model/wbc.model';
+import { WBCPlayer, WBCResult } from './../../lib/model/wbc.model';
 
 const clone = require('clone');
 
@@ -15,7 +14,7 @@ describe('WBC points', () => {
   const writeBid = async (bid: any, uid: string, round: number) => adminFirestore.doc(`${seasonsURL}/9999/races/${round}/bids/${uid}`).set(bid);
   const byUid = (uid: string) => (wp: WBCPlayer): boolean => wp.player.uid === uid;
 
-  const readWBC = (length = 1) => retry(() => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => ref.data()!.wbc), (wbc: WBC) => wbc && wbc.length === length); 
+  const readWBC = (length = 1) => retry(() => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => (ref.data()?.wbc?.results ?? [])), (results: WBCResult[]) => results  && results.length === length); 
   
   beforeEach(async () => {
     adminFirestore = adminApp();
@@ -39,7 +38,7 @@ describe('WBC points', () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[1]))
       .then(() => readWBC())
-      .then((wbc: WBC) => {
+      .then((wbc: WBCResult[]) => {
         expect(wbc.length).toEqual(1);
         expect(wbc[0].raceName).toEqual('Azerbaijan Grand Prix');
         const admin: WBCPlayer = wbc[0].players[1];
@@ -60,7 +59,7 @@ describe('WBC points', () => {
 
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
       .then(() => readWBC(2))
-      .then((wbc: WBC) => {
+      .then((wbc: WBCResult[]) => {
         expect(wbc.length).toEqual(2);
         expect(wbc[1]).toBeTruthy();
         expect(wbc[1].raceName).toEqual('Austrian Grand Prix');
@@ -91,7 +90,7 @@ describe('WBC points', () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
       .then(() => readWBC())
-      .then((wbc: WBC) => {
+      .then((wbc: WBCResult[]) => {
         expect(wbc.length).toEqual(1);
         expect(wbc[0]).toBeTruthy();
         expect(wbc[0].raceName).toEqual('Azerbaijan Grand Prix');
@@ -118,7 +117,7 @@ describe('WBC points', () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
       .then(() => readWBC())
-      .then((wbc: WBC) => {
+      .then((wbc: WBCResult[]) => {
         expect(wbc.length).toEqual(1);
         expect(wbc[0].players.length).toBe(2)
       })
@@ -132,7 +131,7 @@ describe('WBC points', () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[1]))
       .then(() => readWBC())
-      .then((wbc: WBC) => {
+      .then((wbc: WBCResult[]) => {
         expect(wbc.length).toEqual(1);
         expect(wbc[0].players.length).toBe(3);
         expect(wbc[0].players.find(p => p.player.uid === collections.players.player1.uid)!.points).toBe(0);

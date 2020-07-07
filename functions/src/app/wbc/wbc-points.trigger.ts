@@ -22,7 +22,7 @@ export const wbcPointsTrigger = functions.region('europe-west1').firestore.docum
         .then(snapshot => snapshot.docs.map(s => s.data() as Bid));
       await createWBCRace(after, bids, db.doc(`${seasonsURL}/${context.params.seasonId}`));
     }
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   });
 
 const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.DocumentReference) => {
@@ -40,11 +40,13 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.Docu
       } as Player,
       points: b.points && wbcPoints[index] || 0
     }))
-  }
+  };
   bids.forEach((b, index) => {
     console.log(b.player?.displayName, 'Points', b.points, 'WBC', wbcPoints[index]);
-  })
+  });
   return ref.set({
-    wbc: admin.firestore.FieldValue.arrayUnion(entry)
-  }, { merge: true })
-}
+    wbc: {
+      results: admin.firestore.FieldValue.arrayUnion(entry)
+    }
+  }, { merge: true });
+};

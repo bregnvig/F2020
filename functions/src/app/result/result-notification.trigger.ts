@@ -16,8 +16,8 @@ export const resultNotificationTrigger = functions.region('europe-west1').firest
   .onUpdate(async (change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
     const before: WBC = change.before.data()?.wbc || [];
     const after: WBC = change.after.data()?.wbc || [];
-    if (before.length < after.length) {
-      const result: WBCResult = after[after.length - 1];
+    if ((after.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {
+      const result: WBCResult = after.results[after.results.length - 1];
       console.log('Race', result.raceName, 'Is now completed- lets send a result mails');
       return Promise.all(result.players.map(element => {
         const sendWBCResult = (place: string) => {
