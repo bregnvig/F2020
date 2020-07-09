@@ -17,7 +17,7 @@ export class LastYearComponent implements OnInit {
   constructor(private facade: RacesFacade) { }
 
   ngOnInit(): void {
-    this.lastYear$ = this.facade.lastYear$.pipe(tap(_ => console.log(_)),);
+    this.lastYear$ = this.facade.lastYear$;
     this.facade.dispatch(RacesActions.loadLastYear());
   }
 
