@@ -7,8 +7,8 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { LandingComponent } from './component/landing/landing.component';
-import { LastYearComponent } from './component/last-year/last-year.component';
-import { WhatElseComponent } from './what-else/what-else.component';
+import { LastYearComponent } from './component/card/last-year/last-year.component';
+import { WhatElseComponent } from './component/card/what-else/what-else.component';
 
 const MatModules = [
   MatCardModule,
