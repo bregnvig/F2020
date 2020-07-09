@@ -75,7 +75,8 @@ export class RacesService {
         photoURL: player.photoURL,
         tokens: player.tokens,
         email: player.email,
-      }
+      },
+      version: 2
     }).then(() => true);
   }
 

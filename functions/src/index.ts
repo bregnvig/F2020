@@ -14,6 +14,8 @@ export * from './app/transaction/balance.trigger';
 
 export * from './app/mail/no-funds.trigger';
 
+export * from './app/game/version.call';
+
 export * from './app/wbc/wbc-points.trigger';
 export * from './app/wbc/join-wbc.call';
 

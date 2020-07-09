@@ -2,12 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { RacesActions, RacesFacade, SeasonActions, SeasonFacade } from '@f2020/api';
+import { RacesActions, RacesFacade, SeasonActions, SeasonFacade, VersionService } from '@f2020/api';
 import { DriversActions, DriversFacade } from '@f2020/driver';
 import { GoogleMessaging } from '@f2020/firebase';
 import { PlayerFacade, PlayerActions } from '@f2020/player';
 import { truthy } from '@f2020/tools';
-import { filter, first, switchMap, startWith, pairwise, map } from 'rxjs/operators';
+import { filter, first, switchMap, startWith, pairwise, map, switchMapTo } from 'rxjs/operators';
 import * as equal from 'fast-deep-equal/es6'
 import { Player } from '@f2020/data';
 
@@ -24,6 +24,7 @@ export class AppComponent implements OnInit {
     private driverFacade: DriversFacade,
     private racesFacade: RacesFacade,
     private updates: SwUpdate,
+    private versionService: VersionService,
     private snackBar: MatSnackBar,
     private router: Router) {
 
@@ -67,6 +68,14 @@ export class AppComponent implements OnInit {
       switchMap(() => this.updates.activateUpdate()),
       first(),
     ).subscribe(() => location.reload());
+    this.updates.activated.subscribe(activatedEvent => this.versionService.setVersion(activatedEvent.current.appData['version']));
+    this.versionService.versionOK$.subscribe(ok => {
+      if (!ok) {
+        this.snackBar.open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', "OK").onAction().pipe(
+          switchMapTo(this.updates.checkForUpdate()),
+        ).subscribe();
+      }
+    })
 
     this.messaging.onMessage(message => this.snackBar.open(message.notification.body, null, { duration: 2000 }));
   }

@@ -38,6 +38,11 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   if (player.uid !== bid.player?.uid) {
     throw logAndCreateError('permission-denied', `${player.uid} tried to submit bid for ${bid.player?.displayName}, ${bid.player?.uid}`);
   }
+
+  // TODO Remove when every body has moved to new version
+  if ((<any>bid)['version'] !== 2) {
+    throw logAndCreateError('failed-precondition', 'Incorrect version of the client');
+  }
   
   const db = admin.firestore();
   validateBid(bid, race);

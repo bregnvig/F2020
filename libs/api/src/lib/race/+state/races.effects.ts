@@ -103,6 +103,7 @@ export class RacesEffects {
   submitBid$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.submitBid),
     concatMap(({ bid }) => this.playerFacade.player$.pipe(
+      first(),
       switchMap(player => this.service.submitBid(bid, player)
         .then(() => RacesActions.submitBidSuccess())
         .catch(error => RacesActions.submitBidFailure({ error }))
