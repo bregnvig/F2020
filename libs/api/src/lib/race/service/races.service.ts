@@ -1,4 +1,3 @@
-import { seasons } from './../../../../../../functions/src/test-utils/seasons.collections';
 import { Inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Bid, firestoreUtils, IRace, IRaceResult, mapper, Player, IQualifyResult, RoundResult } from '@f2020/data';
