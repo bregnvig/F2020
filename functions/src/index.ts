@@ -18,6 +18,7 @@ export * from './app/game/version.call';
 
 export * from './app/wbc/wbc-points.trigger';
 export * from './app/wbc/join-wbc.call';
+export * from './app/wbc/undo-join-wbc.call';
 
 export * from './app/race/without-bid.call';
 export * from './app/race/drivers.trigger';
