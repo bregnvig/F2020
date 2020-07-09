@@ -25,8 +25,8 @@ export class VersionService {
         actual: this.getVersion()
       })),
       map(versions => {
-        const uiOK = !versions.actual.ui || versions.actual.ui === versions.expected.ui;
-        const apiOK = !versions.actual.api || versions.actual.api === versions.expected.api;
+        const uiOK = versions.actual.ui === versions.expected.ui;
+        const apiOK = versions.actual.api === versions.expected.api;
         return uiOK && apiOK || window.location.href.startsWith('http://localhost');
       })
     );

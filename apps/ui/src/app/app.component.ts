@@ -68,12 +68,16 @@ export class AppComponent implements OnInit {
       switchMap(() => this.updates.activateUpdate()),
       first(),
     ).subscribe(() => location.reload());
-    this.updates.activated.subscribe(activatedEvent => this.versionService.setVersion(activatedEvent.current.appData['version']));
+    this.versionService.setVersion({
+      ui: 2,
+      api:2
+    });
     this.versionService.versionOK$.subscribe(ok => {
       if (!ok) {
         this.snackBar.open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', "OK").onAction().pipe(
-          switchMapTo(this.updates.checkForUpdate()),
-        ).subscribe();
+          switchMap(() => this.updates.checkForUpdate()),
+          switchMap(() => this.updates.activateUpdate()),
+        ).subscribe(() => location.reload());
       }
     })
 
