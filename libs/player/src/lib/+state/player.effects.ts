@@ -1,8 +1,9 @@
+import { PlayerFacade } from '@f2020/player';
 import { Inject, Injectable } from '@angular/core';
 import { GoogleMessaging } from '@f2020/firebase';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, mapTo } from 'rxjs/operators';
+import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
 import { PlayerService } from '../service/player.service';
 import { PlayerActions } from './player.actions';
 
@@ -45,13 +46,37 @@ export class PlayerEffects {
   logoutPlayer$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PlayerActions.logoutPlayer),
-      concatMap(action => this.service.signOut()
+      concatMap(() => this.service.signOut()
         .then(() => PlayerActions.logoutPlayerSuccess())
         .catch(error => PlayerActions.logoutPlayerFailure({ error })),
       ),
     ),
+  );  
+  
+  
+  joinWBC$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PlayerActions.joinWBC),
+      concatMap(() => this.service.joinWBC()
+        .then(() => PlayerActions.joinWBCSuccess())
+        .catch(error => PlayerActions.joinWBCFailure({ error })),
+      ),
+    ),
+  ); 
+
+  undoWBC$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PlayerActions.undoWBC),
+      concatMap(() => this.service.undoWBC()
+        .then(() => PlayerActions.undoWBCSuccess())
+        .catch(error => PlayerActions.undoWBCFailure({ error })),
+      ),
+    ),
   );
 
-  constructor(private actions$: Actions, private service: PlayerService, @Inject(GoogleMessaging) private messaging: firebase.messaging.Messaging) {
+  constructor(
+    private actions$: Actions, 
+    private service: PlayerService, 
+    @Inject(GoogleMessaging) private messaging: firebase.messaging.Messaging) {
   }
 }

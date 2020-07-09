@@ -40,8 +40,13 @@ const playerReducer = createReducer(
     }
     return state;
   }),
+  on(PlayerActions.joinWBC, PlayerActions.undoWBC, state => ({...state, loading: true})),
+  on(PlayerActions.joinWBCSuccess, PlayerActions.undoWBCSuccess, state => ({...state, loading: false})),
   on(PlayerActions.loadPlayerUnauthorized, state => ({ ...state, unauthorized: true, authorized: false, loading: false })),
-  on(PlayerActions.loadPlayerFailure, PlayerActions.updatePlayerFailure, 
+  on(PlayerActions.loadPlayerFailure, 
+    PlayerActions.updatePlayerFailure, 
+    PlayerActions.joinWBCFailure, 
+    PlayerActions.undoWBCFailure, 
     (state, { type, error }) => {
       console.error(type, error);
       return { ...state, error: error['message'] ?? error, updating: false, loaded: false };

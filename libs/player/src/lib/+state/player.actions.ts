@@ -54,4 +54,13 @@ export const PlayerActions = {
     props<{ error: any; }>(),
   ),
 
+  joinWBC: createAction('[Landing page] Join WBC'),
+  joinWBCSuccess: createAction('[Player API] Join WBC Success'),
+  joinWBCFailure: createAction('[Player API] Join WBC Failure', props<{ error: any; }>()),
+
+  undoWBC: createAction('[Landing page] undo WBC'),
+  undoWBCSuccess: createAction('[Player API] undo WBC Success'),
+  undoWBCFailure: createAction('[Player API] undo WBC Failure', props<{ error: any; }>()),
+
+
 }

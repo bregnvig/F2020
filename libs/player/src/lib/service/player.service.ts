@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Player } from '@f2020/data';
 import { merge, Observable, ReplaySubject } from 'rxjs';
@@ -6,6 +6,7 @@ import { filter, first, mapTo, switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { GoogleFunctions } from '@f2020/firebase';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class PlayerService {
   readonly player$: Observable<Player>;
   private currentUser$ = new ReplaySubject<firebase.UserInfo | null>(1);
 
-  constructor(private afs: AngularFirestore) {
+  constructor(private afs: AngularFirestore, @Inject(GoogleFunctions) private functions: firebase.functions.Functions) {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
@@ -69,6 +70,16 @@ export class PlayerService {
     )
   }
 
+  joinWBC(): Promise<true> {
+    return this.functions.httpsCallable('joinWBC')()
+      .then(() => true)
+  }
+  
+  undoWBC(): Promise<true> {
+    return this.functions.httpsCallable('undoWBC')()
+      .then(() => true)
+  }
+  
   private updateBaseInformation(player: Player): Observable<void> {
     const _player: Player = {
       uid: player.uid,
