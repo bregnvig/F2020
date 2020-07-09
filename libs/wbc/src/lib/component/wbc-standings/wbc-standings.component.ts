@@ -1,3 +1,4 @@
+import { shareLatest } from '@f2020/tools';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { SeasonFacade } from '@f2020/api';
 import { WBCPlayer } from '@f2020/data';
@@ -19,6 +20,7 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
 export class WbcStandingsComponent implements OnInit {
 
   standings$: Observable<WBCPlayer[]>;
+  participants$: Observable<string[]>;
 
   constructor(private facade: SeasonFacade) { }
 
@@ -27,6 +29,10 @@ export class WbcStandingsComponent implements OnInit {
       map(season => season?.wbc?.results || []),
       map(results => Array.from<WBCPlayer>(results.map(r => r.players).flat().reduce(sum, new Map<string, WBCPlayer>()).values())),
       map(players => players.sort((a, b) => b.points - a.points))
+    );
+    this.participants$ = this.facade.season$.pipe(
+      map(season => season?.wbc?.participants || []),
+      shareLatest()
     );
   }
 
