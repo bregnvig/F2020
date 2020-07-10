@@ -1,7 +1,7 @@
-import { Action, createReducer, on } from '@ngrx/store';
-import { PlayerActions } from './player.actions';
 import { Player } from '@f2020/data';
-import * as equal from 'fast-deep-equal/es6'
+import { Action, createReducer, on } from '@ngrx/store';
+import * as equal from 'fast-deep-equal/es6';
+import { PlayerActions } from './player.actions';
 
 
 export const PLAYER_FEATURE_KEY = 'player';
@@ -12,6 +12,7 @@ export interface State {
   authorized: boolean;
   loading: boolean;
   loaded: boolean;
+  updatingWBC: boolean;
   error?: any;
 }
 
@@ -25,6 +26,7 @@ export const initialState: State = {
   loading: false,
   unauthorized: false,
   authorized: false,
+  updatingWBC: false,
 };
 
 const playerReducer = createReducer(
@@ -40,8 +42,8 @@ const playerReducer = createReducer(
     }
     return state;
   }),
-  on(PlayerActions.joinWBC, PlayerActions.undoWBC, state => ({...state, loading: true})),
-  on(PlayerActions.joinWBCSuccess, PlayerActions.undoWBCSuccess, state => ({...state, loading: false})),
+  on(PlayerActions.joinWBC, PlayerActions.undoWBC, state => ({...state, updatingWBC: true})),
+  on(PlayerActions.joinWBCSuccess, PlayerActions.undoWBCSuccess, state => ({...state, updatingWBC: false})),
   on(PlayerActions.loadPlayerUnauthorized, state => ({ ...state, unauthorized: true, authorized: false, loading: false })),
   on(PlayerActions.loadPlayerFailure, 
     PlayerActions.updatePlayerFailure, 

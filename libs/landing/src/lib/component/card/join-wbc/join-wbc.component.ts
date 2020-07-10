@@ -24,7 +24,7 @@ export class JoinWbcComponent implements OnInit {
     private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.loading$ = this.playerFacade.loading$;
+    this.loading$ = this.playerFacade.updatingWBC$;
     this.latestWBCJoinDate$ = this.seasonFacade.season$.pipe(
       map(season => season.wbc?.latestWBCJoinDate)
     );

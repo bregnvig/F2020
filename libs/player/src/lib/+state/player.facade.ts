@@ -11,6 +11,7 @@ import * as PlayerSelectors from './player.selectors';
 export class PlayerFacade {
   loaded$ = this.store.pipe(select(PlayerSelectors.getPlayerLoaded));
   loading$ = this.store.pipe(select(PlayerSelectors.getPlayerLoading));
+  updatingWBC$ = this.store.pipe(select(PlayerSelectors.getUpdatingWBC));
   player$ = this.store.pipe(select(PlayerSelectors.getPlayer));
   error$ = this.store.pipe(select(PlayerSelectors.getPlayerError));
   unauthorized$ = this.store.pipe(select(PlayerSelectors.getPlayerUnauthorized));

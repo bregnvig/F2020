@@ -20,6 +20,11 @@ export const getPlayerLoading = createSelector(
   (state: State) => state.loading
 );
 
+export const getUpdatingWBC = createSelector(
+  getPlayerState,
+  (state: State) => state.updatingWBC
+);
+
 export const getPlayerError = createSelector(
   getPlayerState,
   (state: State) => state.error
