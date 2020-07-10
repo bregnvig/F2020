@@ -28,6 +28,11 @@ export const getAllRaces = createSelector(
   (state: State) => selectAll(state)
 );
 
+export const getCurrentRace = createSelector(
+  getRacesState,
+  (state: State) => selectAll(state).find(r => r.state === 'open'),
+);
+
 export const getRacesEntities = createSelector(
   getRacesState,
   (state: State) => selectEntities(state)

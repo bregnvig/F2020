@@ -11,6 +11,7 @@ export class RacesFacade {
   loaded$ = this.store.pipe(select(RacesSelectors.getRacesLoaded));
   updating$ = this.store.pipe(select(RacesSelectors.getUpdating));
   allRaces$ = this.store.pipe(select(RacesSelectors.getAllRaces));
+  currentRace$ = this.store.pipe(select(RacesSelectors.getCurrentRace));
   selectedRace$ = this.store.pipe(select(RacesSelectors.getSelected), filter(race => !!race));
   yourBid$ = this.store.pipe(select(RacesSelectors.getYourBid));
   bids$ = this.store.pipe(select(RacesSelectors.getBids));
