@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'sha-card-page',
   template: `
     <div class="max-width" fxLayout="row" fxLayoutAlign="center stretch">
-      <div fxFlex="90" fxLayout="column" fxLayoutGap="16px" style="margin-top: 16px">
+      <div fxFlex="90" fxLayout="column" style="margin-top: 16px">
         <ng-content></ng-content>
       </div>
     </div>
