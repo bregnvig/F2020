@@ -52,10 +52,9 @@ export class WeatherService {
       weather$
     ]).pipe(
       map(([race, days]) => {
-        const dayIndex = days.findIndex(day => Math.floor(day.date.diff(race.close, 'days').days) === 0);
-        const fallback = days.length - 4;
-        const index = dayIndex ?? fallback;
-        return days.slice(index, index + 3);
+        const daysInvolved = [race.close.startOf('day'), race.close.startOf('day').plus({ day: 1 }), race.close.startOf('day').plus({ day: 2 })];
+        const result = days.filter(day => daysInvolved.some(i => Math.floor(day.date.diff(i, 'days').days) === 0));
+        return result.length ? result : days.slice(days.length - 4);
       })
     );
   }
