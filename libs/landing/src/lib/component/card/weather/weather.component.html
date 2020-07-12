@@ -1,11 +1,11 @@
-<mat-card>
+<mat-card *ngIf=" days$ | async as days">
     <mat-card-header>
       <i class="far fa-sun-cloud fa-2x" mat-card-avatar></i>
       <mat-card-title>Vejret</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div fxLayout>
-        <div fxFlex *ngFor="let day of days$ | async">
+        <div fxFlex *ngFor="let day of days">
           <f2020-weather-day [day]="day"></f2020-weather-day>
         </div>
       </div>

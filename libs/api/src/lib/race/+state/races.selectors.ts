@@ -30,7 +30,7 @@ export const getAllRaces = createSelector(
 
 export const getCurrentRace = createSelector(
   getRacesState,
-  (state: State) => selectAll(state).find(r => r.state === 'open'),
+  (state: State) => selectAll(state).find(r => r.state === 'open' || r.state === 'closed'),
 );
 
 export const getRacesEntities = createSelector(
