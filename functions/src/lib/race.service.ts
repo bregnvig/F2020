@@ -21,6 +21,7 @@ export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | 
 };
 
 export const updateRace = async (seasonId: number, round: number, race: Partial<IRace>): Promise<admin.firestore.WriteResult> => {
+  console.log(`Updating race season/${seasonId}/races/${round}`, race);
   return admin.firestore()
     .doc(`${currentRaceURL(seasonId)}/${round}`)
     .update(race);
