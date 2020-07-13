@@ -30,15 +30,15 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.Docu
     raceName: race.name,
     round: race.round,
     countryCode: race.countryCode,
-    players: bids.map((b, index) => ({
+    players: bids.map((bid, index) => ({
       player: {
-        displayName: b.player?.displayName,
-        photoURL: b.player?.photoURL ?? null,
-        uid: b.player?.uid,
-        email: b.player?.email,
-        tokens: b.player?.tokens ?? [],
+        displayName: bid.player?.displayName,
+        photoURL: bid.player?.photoURL ?? null,
+        uid: bid.player?.uid,
+        email: bid.player?.email,
+        tokens: bid.player?.tokens ?? [],
       } as Player,
-      points: b.points && wbcPoints[index] || 0
+      points: bid.points && wbcPoints[index] || 0
     }))
   };
   bids.forEach((b, index) => {
