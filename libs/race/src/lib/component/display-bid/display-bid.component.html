@@ -68,6 +68,34 @@
         </mat-list>
       </div>
     </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true" #selectedTeam >
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{(race$ | async)?.selectedDriver | driverName }}</mat-panel-title>
+        <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
+          <f2020-driver-codes [driverIds]="[bid.selectedTeam.qualify, bid.selectedTeam.result]"></f2020-driver-codes>
+        </mat-panel-description>        
+      </mat-expansion-panel-header>
+      <div>
+        <mat-list>
+          <mat-list-item>
+            <h4 matLine>
+              Kvalifikation {{bid.selectedTeam.qualify | driver}}
+            </h4>
+            <p *ngIf="bid.selectedTeam.qualifyPoints !== undefined" matLine>
+              <small>{{bid.selectedTeam.qualifyPoints}} point</small>
+            </p>
+          </mat-list-item>
+          <mat-list-item>
+            <h4 matLine>
+              Resultat {{bid.selectedTeam.result | driver}}
+            </h4>
+            <p *ngIf="bid.selectedTeam.resultPoints !== undefined" matLine>
+              <small>{{bid.selectedTeam.resultPoints}} point</small>
+            </p>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #firstCrash>
       <mat-expansion-panel-header>
         <mat-panel-title>Første udgået</mat-panel-title>
