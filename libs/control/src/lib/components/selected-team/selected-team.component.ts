@@ -41,8 +41,8 @@ export class SelectedTeamComponent extends AbstractControlComponent implements O
   
   writeValue(value: [string, string]): void {
     this.fg.patchValue({
-      qualify: (value || [])[0],
-      result: (value || [])[1]
+      qualify: (value || [])[0] ?? null,
+      result: (value || [])[1] ?? null
     });
   }
 
