@@ -5,6 +5,7 @@ export interface IDriver {
   readonly driverId: string;
   readonly code: string;
   readonly nationality: string;
+  readonly countryCode: string;
   readonly permanentNumber: number
   readonly url: string;
 }
@@ -14,14 +15,16 @@ export class DriverModel implements IDriver {
   readonly driverId: string;
   readonly code: string;
   readonly nationality: string;
+  readonly countryCode: string;
   readonly permanentNumber: number;
   readonly url: string;
 
-  constructor({ name, driverId, code, nationality, permanentNumber, url }: IDriver) {
+  constructor({ name, driverId, code, nationality, permanentNumber, url, countryCode }: IDriver) {
     this.name = name;
     this.driverId = driverId;
     this.code = code;
     this.nationality = nationality;
+    this.countryCode = countryCode;
     this.permanentNumber = permanentNumber;
     this.url = url;
   }
