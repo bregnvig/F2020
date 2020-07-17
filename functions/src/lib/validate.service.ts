@@ -1,11 +1,11 @@
-import { SelectedTeam } from './model/bid.model';
+import { SelectedTeamValue } from './model/bid.model';
 import { Bid, IRace, ITeam, logAndCreateError } from ".";
 
 
 const noNullsInArrayFn = (array: (string | null)[]): boolean => array.every(Boolean);
 const uniqueDriversFn = (array: (string | null)[]): boolean => array.length === new Set(array).size;
 const validArraysFn = (array: (string | null)[]): boolean => noNullsInArrayFn(array) && uniqueDriversFn(array);
-const validTeamFn = (team: ITeam | undefined, selected?: SelectedTeam): boolean => {
+const validTeamFn = (team: ITeam | undefined, selected?: SelectedTeamValue): boolean => {
   if (!team) {
     return true;
   }
