@@ -49,7 +49,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>Hvem er bedst for {{team.name}}</mat-panel-title>
         <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
-          MISSING
+          <f2020-driver-codes [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]"></f2020-driver-codes>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
