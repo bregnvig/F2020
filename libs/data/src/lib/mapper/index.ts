@@ -8,6 +8,7 @@ import { driverStanding, driverStandings } from './driver-standing.mapper';
 import { driverResult, driverResults } from './driver-result.mapper';
 import { driverQualifying, driverQualifyings } from './driver-qualifying.mapper';
 import { polePostion } from './pole-position.mapper';
+import { team } from './team.mapper';
 
 export const mapper = {
   basisRace,
@@ -25,4 +26,5 @@ export const mapper = {
   season,
   nationality,
   polePostion,
+  team,
 };

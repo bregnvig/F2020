@@ -8,3 +8,4 @@ export * from './wbc.model';
 export * from './transaction.model';
 export * from './ergast';
 export * from './round-result.model';
+export * from './team.model';

@@ -18,6 +18,8 @@ export interface Bid {
   podium: [string, string, string, string?];
   podiumPoints?: [number, number, number];
   selectedDriver: SelectedDriverValue;
+  selectedTeam?: [string, string];
+  selectedTeamPoints: [number, number];
   polePositionTime: number;
   polePositionTimeDiff?: number;
   submitted?:  boolean;

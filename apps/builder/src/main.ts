@@ -1,3 +1,5 @@
+import { IRace } from './../../../functions/src/lib/model/race.model';
+import { firebaseApp } from './app/firebase';
 import { writeDocument, writeCollection } from './app/write-document';
 import { buildDrivers } from './app/drivers';
 import { buildTransactions, buildTransactionsNullNegative, buildTransactionsNullPositive } from './app/transactions';
@@ -7,10 +9,15 @@ import { environment } from './environments/environment';
 // import { readUser } from './app/mysql/account';
 import { Transaction } from './app/model/mysq.model';
 import { buildPreviousRaceReult } from './app/previous-year-race-result';
+import { getTeams, assignTeamsToSeason } from './app/teams';
+import { access } from 'fs';
 
+// getTeams(2020).then(teams => Array.from(teams.values()).map(t => firebaseApp.datebase.doc(`seasons/2020/teams/${t.constructorId}`).set(t)));
 
+// getTeams(2020).then(teams => console.log(teams)))
 // buildPreviousRaceReult(2019).then(_ => console.log(JSON.stringify(_, null, '\t')))
 
+// assignTeamsToSeason(2020).then(() => console.log('Done'));
 // buildNewSeason(environment.season)
 //   .then(_ => console.log('Completed', _))
 //   .catch(error => console.error('Completed with errors', error));

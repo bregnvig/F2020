@@ -45,6 +45,17 @@
         <f2020-selected-driver formControlName="selectedDriver" [race]="race"></f2020-selected-driver>
       </div>
     </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true" #selectedTeam *ngIf="team">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Hvem er bedst for {{team.name}}</mat-panel-title>
+        <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
+          MISSING
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div>
+        <f2020-selected-team formControlName="selectedTeam" [team]="team"></f2020-selected-team>
+      </div>
+    </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #firstCrash>
       <mat-expansion-panel-header>
         <mat-panel-title>Første udgået</mat-panel-title>

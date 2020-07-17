@@ -16,6 +16,7 @@ import { PolePositionTimeComponent } from './components/pole-position-time/pole-
 import { SelectDriverComponent } from './components/select-driver/select-driver.component';
 import { SelectDriversComponent } from './components/select-drivers/select-drivers.component';
 import { SelectedDriverComponent } from './components/selected-driver/selected-driver.component';
+import { SelectedTeamComponent } from './components/selected-team/selected-team.component';
 
 const exported = [
   SelectDriverComponent,
@@ -47,7 +48,7 @@ const pipes = [
     DriverModule,
     FlexModule,
   ],
-  declarations: [exported, components, pipes],
+  declarations: [exported, components, pipes, SelectedTeamComponent],
   exports: [exported, pipes],
 })
 export class ControlModule {

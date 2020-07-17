@@ -1,8 +1,7 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NG_VALUE_ACCESSOR, Validators, NG_VALIDATORS, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Bid, IRace } from '@f2020/data';
+import { AbstractControl, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
+import { Bid, IRace, ITeam } from '@f2020/data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
@@ -27,6 +26,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
 export class BidComponent extends AbstractControlComponent implements OnInit {
 
   @Input() race: IRace;
+  @Input() team: ITeam;
   @Input() isResult = false;
   fg: FormGroup;
 
@@ -45,6 +45,7 @@ export class BidComponent extends AbstractControlComponent implements OnInit {
       fastestDriver: [{value: null, disabled: this.isResult}, Validators.required],
       podium: [{value: null, disabled: this.isResult}, Validators.required],
       selectedDriver: [{value: null, disabled: this.isResult}],
+      selectedTeam: [{value: null, disabled: this.isResult || !this.race.selectedTeam}],
       firstCrash: [{value: null, disabled: this.isResult}, Validators.required],
       polePositionTime: [{value: null, disabled: this.isResult}, Validators.required],
     });
@@ -61,6 +62,7 @@ export class BidComponent extends AbstractControlComponent implements OnInit {
         fastestDriver: null,
         podium: null,
         selectedDriver: null,
+        selectedTeam: null,
         firstCrash: null,
         polePositionTime: null,
         ...value
