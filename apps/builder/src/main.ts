@@ -50,4 +50,5 @@ buildBalance(8)
 // readUser().then(transactions => console.log(transactions.slice(0, 10000)));
 // Bare skriv de først ti ud
 
-// writeCollection('seasons/2020/races/Azerbaijan/bids').then(console.log)
+// writeCollection('seasons/2020/teams').then(_ => JSON.stringify(_, null, '\t')).then(console.log)
+// 

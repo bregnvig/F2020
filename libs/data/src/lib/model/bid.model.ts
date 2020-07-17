@@ -8,6 +8,11 @@ export interface SelectedDriverValue {
   finishPoints?: number;
 }
 
+export interface SelectedTeam {
+  qualify: string;
+  result: string;
+}
+
 export interface Bid {
   qualify: [string, string, string, string, string, string, string?];
   qualifyPoints?: [number, number, number, number, number, number];
@@ -18,8 +23,8 @@ export interface Bid {
   podium: [string, string, string, string?];
   podiumPoints?: [number, number, number];
   selectedDriver: SelectedDriverValue;
-  selectedTeam?: [string, string];
-  selectedTeamPoints: [number, number];
+  selectedTeam?: SelectedTeam;
+  selectedTeamPoints?: [number, number];
   polePositionTime: number;
   polePositionTimeDiff?: number;
   submitted?:  boolean;

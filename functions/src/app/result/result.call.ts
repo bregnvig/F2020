@@ -1,6 +1,6 @@
 import { validateResult } from './../../lib/validate.service';
 import * as functions from 'firebase-functions';
-import { internalError, validateAccess, Bid, logAndCreateError, seasonsURL, racesURL, currentSeason, getCurrentRace, getBookie, calculateResult, transferInTransaction } from '../../lib';
+import { internalError, validateAccess, Bid, ITeam, logAndCreateError, seasonsURL, racesURL, currentSeason, getCurrentRace, getBookie, calculateResult, transferInTransaction } from '../../lib';
 import admin = require('firebase-admin');
 import { DateTime } from 'luxon';
 
@@ -20,9 +20,11 @@ const buildResult = async (result: Bid) => {
     throw logAndCreateError('not-found', 'Season or race', season?.name, race?.name);
   }
 
-  validateResult(result, race);
-
   const db = admin.firestore();
+  const team: ITeam | undefined = race.selectedTeam ? (await db.doc(`${seasonsURL}/${season.id}/teams/${race.selectedTeam}`).get()).data() as ITeam : undefined;
+
+  validateResult(result, race, team);
+
   const calculatedResults: Bid[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data()))
