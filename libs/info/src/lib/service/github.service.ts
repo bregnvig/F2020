@@ -11,11 +11,12 @@ export class GithubService {
 
   constructor(private http: HttpClient) {
     this.contributors$ = this.http.get<any>('https://api.github.com/repos/bregnvig/F2020/contributors').pipe(
-      map((response: any[]) => response.map(r => <GithubContributor> {
+      map((response: any[]) => response.map(r => <GithubContributor>{
         login: r.login,
         avatarURL: r.avatar_url,
         url: r.html_url,
-      }))
+        contributions: r.contributions
+      }).sort((a, b) => b.contributions - a.contributions))
     );
   }
 }
