@@ -70,7 +70,7 @@
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #selectedTeam >
       <mat-expansion-panel-header>
-        <mat-panel-title>{{(race$ | async)?.selectedDriver | driverName }}</mat-panel-title>
+        <mat-panel-title>Hvem er bedst for {{(race$ | async)?.selectedTeam.name }}</mat-panel-title>
         <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
           <f2020-driver-codes [driverIds]="[bid.selectedTeam.qualify, bid.selectedTeam.result]"></f2020-driver-codes>
         </mat-panel-description>        

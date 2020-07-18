@@ -2,6 +2,7 @@ import { Bid } from './bid.model';
 import { DateTime } from 'luxon';
 import { CoordinateModel } from './coordinate.model';
 import { IDriverRaceResult, IDriverQualifying } from './driver.model';
+import { ITeam } from './team.model';
 
 export type State = 'waiting' | 'open' | 'closed' | 'completed';
 
@@ -21,7 +22,7 @@ export interface IRace extends IRaceBasis {
   readonly close: DateTime;
   drivers?: string[];
   selectedDriver: string;
-  selectedTeam?: string;
+  selectedTeam?: ITeam;
   result?: Bid;
 }
 

@@ -1,6 +1,6 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
-import { Bid, IRace, ITeam } from '@f2020/data';
+import { Bid, IRace } from '@f2020/data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
@@ -26,7 +26,6 @@ import { AbstractControlComponent } from '../../abstract-control-component';
 export class BidComponent extends AbstractControlComponent implements OnInit {
 
   @Input() race: IRace;
-  @Input() team: ITeam;
   @Input() isResult = false;
   fg: FormGroup;
 
@@ -76,7 +75,7 @@ export class BidComponent extends AbstractControlComponent implements OnInit {
     this.markAllTouched();
   }
 
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(): ValidationErrors | null {
     return this.fg.valid ? null : { required: true };
   }
 

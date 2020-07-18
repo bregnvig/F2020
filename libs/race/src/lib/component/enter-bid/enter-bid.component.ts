@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
-import { IRace, ITeam } from '@f2020/data';
+import { RacesActions, RacesFacade } from '@f2020/api';
+import { IRace } from '@f2020/data';
 import { shareLatest } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DateTime } from 'luxon';
-import { Observable, of } from 'rxjs';
-import { debounceTime, filter, first, pairwise, switchMap, switchMapTo, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { debounceTime, filter, first, pairwise, switchMapTo, tap } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -19,12 +19,10 @@ export class EnterBidComponent implements OnInit {
 
   bidControl: FormControl = new FormControl();
   race$: Observable<IRace>;
-  team$: Observable<ITeam | null>;
   updating$: Observable<boolean>;
 
   constructor(
     private facade: RacesFacade,
-    private teamService: TeamService,
     private router: Router) {
   }
 
@@ -34,9 +32,6 @@ export class EnterBidComponent implements OnInit {
       filter(race => !!race),
       tap(_ => console.log(_)),
       shareLatest(),
-    );
-    this.team$ = this.race$.pipe(
-      switchMap(race => race.selectedTeam ? this.teamService.getTeam(race.selectedTeam) : of(null))
     );
 
     this.updating$ = this.facade.updating$;

@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { DateTime } from 'luxon';
-import { Bid, ITeam, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
+import { Bid, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
 import { racesURL, seasonsURL } from '../../lib/collection-names';
 import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
@@ -40,8 +40,7 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   }
 
   const db = admin.firestore();
-  const team: ITeam | undefined = race.selectedTeam ? (await db.doc(`${seasonsURL}/${season.id}/teams/${race.selectedTeam}`).get()).data() as ITeam : undefined;
-  validateBid(bid, race, team);
+  validateBid(bid, race);
   validateBalance(player);
 
   const doc = db.doc(`${seasonsURL}/${season.id}/${racesURL}/${race.round}/bids/${player.uid}`) as admin.firestore.DocumentReference<Bid>;

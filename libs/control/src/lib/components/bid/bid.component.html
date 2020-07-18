@@ -45,7 +45,7 @@
         <f2020-selected-driver formControlName="selectedDriver" [race]="race"></f2020-selected-driver>
       </div>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #selectedTeam *ngIf="team">
+    <mat-expansion-panel [expanded]="true" #selectedTeam *ngIf="race.selectedTeam as team">
       <mat-expansion-panel-header>
         <mat-panel-title>Hvem er bedst for {{team.name}}</mat-panel-title>
         <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">

@@ -18,10 +18,9 @@ export const getTeams = async (seasonId: number): Promise<Map<string, ITeam>> =>
 
 export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult[]> => {
 
-  const constructorIds: string[] = await firebaseApp.datebase.collection(`seasons/${seasonId}/teams`)
+  const teams: ITeam[] = await firebaseApp.datebase.collection(`seasons/${seasonId}/teams`)
     .get()
-    .then(s => s.docs.map(doc => doc.data()))
-    .then((teams: ITeam[]) => teams.map(team => team.constructorId));
+    .then(s => s.docs.map(doc => doc.data() as ITeam))
 
   return firebaseApp.datebase.collection(`seasons/${seasonId}/races`)
     .where('state', '==', 'waiting')
@@ -29,7 +28,7 @@ export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult
     .then(snapshot => {
       return Promise.all(snapshot.docs.map((s, index) => {
         return s.ref.update({
-          selectedTeam: constructorIds[index % constructorIds.length]
+          selectedTeam: teams[index % teams.length]
         });
       }));
     });

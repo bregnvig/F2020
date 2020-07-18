@@ -1,8 +1,8 @@
-import { validateResult } from './../../lib/validate.service';
 import * as functions from 'firebase-functions';
-import { internalError, validateAccess, Bid, ITeam, logAndCreateError, seasonsURL, racesURL, currentSeason, getCurrentRace, getBookie, calculateResult, transferInTransaction } from '../../lib';
-import admin = require('firebase-admin');
 import { DateTime } from 'luxon';
+import { Bid, calculateResult, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
+import { validateResult } from './../../lib/validate.service';
+import admin = require('firebase-admin');
 
 export const submitResult = functions.region('europe-west1').https.onCall(async (data: Bid, context) => {
   return validateAccess(context.auth?.uid, 'admin')
@@ -20,20 +20,18 @@ const buildResult = async (result: Bid) => {
     throw logAndCreateError('not-found', 'Season or race', season?.name, race?.name);
   }
 
+  validateResult(result, race);
+  
   const db = admin.firestore();
-  const team: ITeam | undefined = race.selectedTeam ? (await db.doc(`${seasonsURL}/${season.id}/teams/${race.selectedTeam}`).get()).data() as ITeam : undefined;
-
-  validateResult(result, race, team);
-
   const calculatedResults: Bid[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
-    .then(snapshot => snapshot.docs)
-    .then(snapshots => snapshots.map(s => s.data()))
-    .then(bids => bids.map(bid => calculateResult(bid as Bid, result)))
-    .then(bids => bids.sort((a, b) => b.points! - a.points!));
-
+  .then(snapshot => snapshot.docs)
+  .then(snapshots => snapshots.map(s => s.data()))
+  .then(bids => bids.map(bid => calculateResult(bid as Bid, result)))
+  .then(bids => bids.sort((a, b) => b.points! - a.points!));
+  
   const winners = calculatedResults.filter(r => r.points! === calculatedResults[0].points!);
   const winningPrice = Math.floor(calculatedResults.length * 20 / winners.length);
-
+  
   return db.runTransaction(transaction => {
     winners.forEach(winner => {
       transferInTransaction({

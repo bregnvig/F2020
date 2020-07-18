@@ -1,9 +1,9 @@
-import { SelectedTeam } from './../../lib/model/bid.model';
 import { assertFails, assertSucceeds } from '@firebase/testing';
 import { playersURL, seasonsURL } from '../../lib/collection-names';
 import { Player } from '../../lib/model/player.model';
 import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, unauthenticated } from '../../test-utils/firestore-test-utils';
+import { SelectedTeamValue } from './../../lib/model/bid.model';
 
 const clone = require('clone');
 
@@ -108,15 +108,15 @@ describe('Submit bid unittest', () => {
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
 
     // Add team to race
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: 'alfa' });
+    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: collections.teams[0] });
     bid = clone(collections.bids[0]);
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
     bid = clone(collections.bids[0]);
-    bid.selectedTeam = {} as SelectedTeam;
+    bid.selectedTeam = {} as SelectedTeamValue;
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid.selectedTeam = { qualify: '', result: '' } as SelectedTeam;
+    bid.selectedTeam = { qualify: '', result: '' } as SelectedTeamValue;
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid.selectedTeam = { qualify: 'raikkonen', result: 'hamilton' } as SelectedTeam;
+    bid.selectedTeam = { qualify: 'raikkonen', result: 'hamilton' } as SelectedTeamValue;
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
 
   });
@@ -137,10 +137,10 @@ describe('Submit bid unittest', () => {
   });
 
   it('should accept submitting of bid with teams, when bid is valid', async () => {
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: 'alfa' });
+    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: collections.teams[0] });
     const app = await authedApp({ uid: collections.players.player.uid });
     const bid = clone(collections.bids[1]);
-    bid.selectedTeam = ({ qualify: 'raikkonen', result: 'giovinazzi' }) as SelectedTeam;
+    bid.selectedTeam = ({ qualify: 'raikkonen', result: 'giovinazzi' }) as SelectedTeamValue;
     await assertSucceeds(app.functions.httpsCallable('submitBid')(bid))
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
