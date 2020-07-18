@@ -31,7 +31,7 @@ export class SelectedTeamComponent extends AbstractControlComponent implements O
    }
   
   ngOnInit(): void {
-    this.driverIds = this.team.drivers.map(d => d.driverId);
+    this.driverIds = this.team.drivers;
     this.fg = this.fb.group({
       qualify: [null, Validators.required],
       result: [null, Validators.required],

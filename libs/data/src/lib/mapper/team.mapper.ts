@@ -8,7 +8,7 @@ export const team = (source: ErgastConstructorStanding, drivers: ErgastDriver[])
     name: source.Constructor.name,
     url: source.Constructor.url,
     countryCode: getByNationality(source.Constructor.nationality),
-    drivers: driversMapper(drivers || []),
+    drivers: driversMapper(drivers || []).map(d => d.driverId),
     points: parseInt(source.points, 10)
   };
 };

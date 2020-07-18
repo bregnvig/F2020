@@ -9,7 +9,7 @@ const validTeamFn = (team: ITeam | undefined, selected?: SelectedTeamValue): boo
   if (!team) {
     return true;
   }
-  return team.drivers.some(d => d.driverId === selected?.qualify) && team.drivers.some(d => d.driverId === selected?.result);
+  return team.drivers.some(d => d === selected?.qualify) && team.drivers.some(d => d === selected?.result);
 };
 
 export const validateBid = (bid: Bid, race: IRace): void => {
