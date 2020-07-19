@@ -52,12 +52,18 @@ export class RacesService {
     });
   }
 
-  getResult(seasonId: string | number, round: number): Observable<IRaceResult> {
-    return this.ergastService.get<IRaceResult>(`${seasonId}/${round}/results.json`, ergastData => mapper.raceResult(ergastData.MRData.RaceTable.Races[0]));
+  getResult(seasonId: string | number, round: number): Observable<IRaceResult | null> {
+    return this.ergastService.get<IRaceResult>(`${seasonId}/${round}/results.json`, ergastData => {
+      const race = ergastData.MRData.RaceTable.Races[0];
+      return race ? mapper.raceResult(race) : null;
+    });
   }
 
   getQualify(seasonId: string | number, round: number): Observable<IQualifyResult> {
-    return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => mapper.qualifyResult(ergastData.MRData.RaceTable.Races[0]));
+    return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => {
+      const race = ergastData.MRData.RaceTable.Races[0];
+      return mapper.qualifyResult(race);
+    });
   }
 
   getLastYearResult(seasonId: number, countryCode: string): Observable<RoundResult> {

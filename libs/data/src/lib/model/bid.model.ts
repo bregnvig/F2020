@@ -10,9 +10,9 @@ export interface SelectedDriverValue {
 
 export interface SelectedTeamValue {
   qualify: string;
-  qualifyPoints: number;
+  qualifyPoints?: number;
   result: string;
-  resultPoints: number;
+  resultPoints?: number;
 }
 
 export interface Bid {

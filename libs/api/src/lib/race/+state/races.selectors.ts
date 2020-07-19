@@ -69,6 +69,11 @@ export const getResult = createSelector(
   state => state.result
 );
 
+export const getInterimResult = createSelector(
+  getRacesState,
+  state => state.interimResult
+);
+
 export const getUpdating = createSelector(
   getRacesState,
   state => state.updating

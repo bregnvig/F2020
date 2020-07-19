@@ -7,7 +7,7 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, concatMap, debounceTime, first, map, switchMap, takeUntil, filter, withLatestFrom } from 'rxjs/operators';
 import { SeasonFacade } from '../../season/+state/season.facade';
 import { RacesService } from '../service/races.service';
-import { buildResult } from './../service/result-builder';
+import { buildResult, buildInterimResult } from './../service/result-builder';
 import { RacesActions } from './races.actions';
 import { RacesFacade } from './races.facade';
 
@@ -90,13 +90,33 @@ export class RacesEffects {
         this.service.getResult(race.season, race.round),
         this.service.getQualify(race.season, race.round),
         of(race.selectedDriver),
+        of(race.selectedTeam)
       ])),
-      map(([race, qualify, selectedDriver]) => {
-        const result = buildResult(race, qualify, selectedDriver);
+      map(([raceResult, qualify, selectedDriver, selectedTeam]) => {
+        const result = buildResult(raceResult, qualify, selectedDriver, selectedTeam);
         return RacesActions.loadResultSuccess({ result });
       }),
       first(),
       catchError(error => of(RacesActions.loadResultFailure({ error }))),
+    ))
+  ));
+  
+  loadInterimResult$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.loadInterimResult),
+    concatMap(() => this.facade.selectedRace$.pipe(
+      debounceTime(200),
+      truthy(),
+      switchMap(race => combineLatest([
+        this.service.getQualify(race.season, race.round),
+        of(race.selectedDriver),
+        of(race.selectedTeam)
+      ])),
+      map(([qualify, selectedDriver, selectedTeam]) => {
+        const result = buildInterimResult(qualify, selectedDriver, selectedTeam);
+        return RacesActions.loadInterimResultSuccess({ result });
+      }),
+      first(),
+      catchError(error => of(RacesActions.loadInterimResultFailure({ error }))),
     ))
   ));
 

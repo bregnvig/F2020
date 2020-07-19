@@ -13,6 +13,7 @@ export interface State extends EntityState<IRace> {
   yourBid?: Partial<Bid>;
   bids?: Bid[];
   bid?: Partial<Bid>;
+  interimResult?: Partial<Bid>;
   result?: Bid;
   lastYear?: RoundResult,
   updating: boolean; // Is something updating
@@ -54,6 +55,7 @@ const racesReducer = createReducer(
     RacesActions.loadBidFailure,
     RacesActions.loadBidFailure,
     RacesActions.loadResultFailure,
+    RacesActions.loadInterimResultFailure,
     RacesActions.updateYourBidFailure,
     RacesActions.submitBidFailure,
     RacesActions.submitResultFailure,
@@ -77,6 +79,7 @@ const racesReducer = createReducer(
   on(RacesActions.loadBidSuccess, (state, { bid }) => ({ ...state, bid })),
   on(RacesActions.loadResult, (state) => ({ ...state, loaded: false })),
   on(RacesActions.loadResultSuccess, (state, { result }) => ({ ...state, result, loaded: true })),
+  on(RacesActions.loadInterimResultSuccess, (state, { result }) => ({ ...state, interimResult: result, loaded: true })),
   on(RacesActions.submitBid, (state) => ({ ...state, updating: true })),
   on(RacesActions.submitBidSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.submitResult, (state) => ({ ...state, updating: true })),

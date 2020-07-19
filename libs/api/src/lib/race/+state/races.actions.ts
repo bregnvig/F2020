@@ -91,6 +91,20 @@ export const RacesActions = {
     props<{ error: any }>(),
   ),
 
+  loadInterimResult: createAction(
+    '[Interim page] Load intermim result',
+  ),
+
+  loadInterimResultSuccess: createAction(
+    '[Interim API] Load intermim result Success',
+    props<{ result: Partial<Bid> }>(),
+  ),
+
+  loadInterimResultFailure: createAction(
+    '[Interim API] Load intermim result Failure',
+    props<{ error: any }>(),
+  ),
+
   submitBid: createAction(
     '[Bid page] submit bid',
     props<{bid: Bid}>(),
