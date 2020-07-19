@@ -89,4 +89,8 @@ export class RacesService {
     return this.functions.httpsCallable('submitResult')(result).then(() => true);
   }
 
+  async submitInterimResult(result: Partial<Bid>): Promise<true> {
+    return this.functions.httpsCallable('submitInterimResult')(result).then(() => true);
+  }
+
 }

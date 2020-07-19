@@ -32,6 +32,7 @@ import { RacesComponent } from './component/races/races.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
 import { RaceRoutingModule } from './race-routing.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 
 const MaterialModules = [
   MatCardModule,
@@ -68,6 +69,7 @@ const MaterialModules = [
     BidsComponent,
     EnterBidComponent,
     SubmitResultComponent,
+    SubmitInterimResultComponent,
     DisplayBidComponent,
     PartialBidWarningComponent,
     RaceOutletComponent,

@@ -100,7 +100,7 @@ export class RacesEffects {
       catchError(error => of(RacesActions.loadResultFailure({ error }))),
     ))
   ));
-  
+
   loadInterimResult$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.loadInterimResult),
     concatMap(() => this.facade.selectedRace$.pipe(
@@ -137,6 +137,16 @@ export class RacesEffects {
       switchMap(result => this.service.submitResult(result)
         .then(() => RacesActions.submitResultSuccess())
         .catch(error => RacesActions.submitResultFailure({ error }))
+      ))
+    )
+  ));
+
+  submitInterimResult$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.submitInterimResult),
+    concatMap(() => this.facade.interimResult$.pipe(
+      switchMap(result => this.service.submitInterimResult(result)
+        .then(() => RacesActions.submitInterimResultSuccess())
+        .catch(error => RacesActions.submitInterimResultFailure({ error }))
       ))
     )
   ));

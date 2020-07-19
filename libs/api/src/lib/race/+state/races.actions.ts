@@ -132,6 +132,19 @@ export const RacesActions = {
     props<{ error: any }>(),
   ),
 
+  submitInterimResult: createAction(
+    '[Interim page] submit interim result',
+  ),
+
+  submitInterimResultSuccess: createAction(
+    '[Interim API] Submit interim result Success',
+  ),
+
+  submitInterimResultFailure: createAction(
+    '[Interim API] Submit interim result Failure',
+    props<{ error: any }>(),
+  ),
+
   updateRaceDrivers: createAction(
     '[Edit race drivers page] Update race drivers',
     props<{drivers: string[]}>()
