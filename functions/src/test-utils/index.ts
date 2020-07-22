@@ -1,3 +1,4 @@
+import { interimResults } from './interim-results.collection';
 import { teams } from './teams.collection';
 import { players } from './players.collection';
 import { bids } from './bids.collection';
@@ -10,6 +11,7 @@ export const collections = {
   seasons,
   bids,
   results,
+  interimResults,
   players,
   transactions,
   teams

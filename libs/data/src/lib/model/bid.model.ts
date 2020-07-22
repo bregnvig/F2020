@@ -4,14 +4,14 @@ import { Player } from './player.model';
 export interface SelectedDriverValue {
   grid: number;
   gridPoints?: number;
-  finish: number;
+  finish?: number;
   finishPoints?: number;
 }
 
 export interface SelectedTeamValue {
   qualify: string;
   qualifyPoints?: number;
-  result: string;
+  result?: string;
   resultPoints?: number;
 }
 

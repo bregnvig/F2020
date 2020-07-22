@@ -51,3 +51,18 @@ export const validateResult = (result: Bid, race: IRace): void => {
   }
 
 };
+
+export const validateInterimResult = (result: Partial<Bid>, race: IRace): void => {
+
+  if (!result) {
+    throw logAndCreateError('failed-precondition', 'No interim result specified');
+  }
+
+  const validQualify: boolean = validArraysFn(result.qualify as string[]) && result.qualify?.length === 7  ;
+  const validSelected: boolean = !!(result.selectedDriver && result.selectedDriver.grid && result.selectedDriver.grid > 0 && result.selectedDriver.grid <= race.drivers!.length);
+  const validTeam = race.selectedTeam!.drivers.some(d => d === result.selectedTeam?.qualify);
+  if (![validQualify, validSelected, validTeam].every(Boolean)) {
+    throw logAndCreateError('failed-precondition', `Interim result not valid. Qualify: ${validQualify}, valid selected: ${validSelected}, valid team: ${validTeam}`);
+  }
+
+};

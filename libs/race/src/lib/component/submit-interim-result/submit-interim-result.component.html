@@ -5,7 +5,7 @@
   <ng-container *ngIf="race$ | async as race">
     <f2020-bid [formControl]="resultControl" [race]="race" [isResult]="true"></f2020-bid>
   </ng-container>  
-  <button *ngIf="resultDownloaded(); else refresh" mat-fab aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
+  <button *ngIf="resultDownloaded(); else refresh" mat-fab aria-label="Indsend delresultat" [disabled]="(updating$ | async)" (click)="submitResult()">
     <mat-icon>cloud_upload</mat-icon>
   </button>
   <ng-template #refresh>
