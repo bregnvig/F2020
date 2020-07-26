@@ -1,3 +1,4 @@
+import { RaceApiModule } from '@f2020/api';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ControlModule } from '@f2020/control';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +14,7 @@ import { WhatElseComponent } from './component/card/what-else/what-else.componen
 import { JoinWbcComponent } from './component/card/join-wbc/join-wbc.component';
 import { WeatherComponent } from './component/card/weather/weather.component';
 import { WeatherDayComponent } from './component/card/weather/weather-day/weather-day.component';
+import { RememberToPlayComponent } from './component/card/remember-to-play/remember-to-play.component';
 
 const MatModules = [
   MatCardModule,
@@ -27,6 +29,7 @@ const MatModules = [
     SharedModule,
     MatModules,
     ControlModule,
+    RaceApiModule,
     RouterModule.forChild([
       {
         path: '',
@@ -34,6 +37,6 @@ const MatModules = [
       }
     ]),
   ],
-  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent],
+  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent, RememberToPlayComponent],
 })
 export class LandingModule {}
