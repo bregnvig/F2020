@@ -1,8 +1,7 @@
-import { SeasonFacade, RacesFacade, RacesActions } from '@f2020/api';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 @Component({
@@ -15,7 +14,7 @@ export class RaceComponent implements OnInit {
 
   center$: Observable<google.maps.LatLng>;
   race$: Observable<IRace>;
-  bid$: Observable<Partial<Bid>>;
+  play$: Observable<boolean>;
   bids$: Observable<Bid[]>;
 
   options: google.maps.MapOptions = {
@@ -33,12 +32,16 @@ export class RaceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.facade.dispatch(RacesActions.loadYourBid());
     this.facade.dispatch(RacesActions.loadBids());
 
     this.race$ = this.facade.selectedRace$.pipe(filter(race => !!race));
-    this.bid$ = this.facade.yourBid$;
     this.bids$ = this.facade.bids$;
+    this.play$ = combineLatest([
+      this.race$,
+      this.bids$
+    ]).pipe(
+      map(([race, bids]) => race.state === 'open' && !(bids || []).length)
+    );
     this.center$ = this.race$.pipe(
       map(race => new google.maps.LatLng(race.location.lat, race.location.lng)),
     );

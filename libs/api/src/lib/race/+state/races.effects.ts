@@ -4,10 +4,10 @@ import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch } from '@nrwl/angular';
 import { combineLatest, of } from 'rxjs';
-import { catchError, concatMap, debounceTime, first, map, switchMap, takeUntil, filter, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, filter, first, map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { SeasonFacade } from '../../season/+state/season.facade';
 import { RacesService } from '../service/races.service';
-import { buildResult, buildInterimResult } from './../service/result-builder';
+import { buildInterimResult, buildResult } from './../service/result-builder';
 import { RacesActions } from './races.actions';
 import { RacesFacade } from './races.facade';
 
@@ -36,9 +36,10 @@ export class RacesEffects {
     ofType(RacesActions.loadYourBid),
     concatMap(() => combineLatest([
       this.seasonFacade.season$,
-      this.facade.selectedRace$,
+      this.facade.currentRace$,
       this.playerFacade.player$,
     ]).pipe(
+      filter(([season, race, player]) => !!race),
       switchMap(([season, race, player]) => this.service.getBid(season.id, race.round, player.uid)),
       map(bid => bid || {}),
       map(bid => RacesActions.loadYourBidSuccess({ bid })),
@@ -54,10 +55,10 @@ export class RacesEffects {
     concatMap(() => combineLatest([
       this.seasonFacade.season$,
       this.facade.selectedRace$,
-      this.facade.yourBid$.pipe(map(bid => bid && !!bid.submitted)),
+      this.playerFacade.player$,
     ]).pipe(
       debounceTime(200),
-      switchMap(([season, race, submitted]) => submitted ? this.service.getBids(season.id, race.round) : of([])),
+      switchMap(([season, race, player]) => this.service.getBids(season.id, race, player.uid)),
       map(bids => RacesActions.loadBidsSuccess({ bids })),
       catchError(error => {
         const permissionError = error.code === 'permission-denied';

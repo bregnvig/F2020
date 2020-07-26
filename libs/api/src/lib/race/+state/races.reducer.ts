@@ -7,11 +7,11 @@ import { RacesActions } from './races.actions';
 export const RACES_FEATURE_KEY = 'races';
 
 export interface State extends EntityState<IRace> {
-  currentRace?: IRace;
   previousRace?: IRace;
   selectedId?: string; // which Races record has been selected
   yourBid?: Partial<Bid>;
   bids?: Bid[];
+  currentBids?: Bid[];
   bid?: Partial<Bid>;
   interimResult?: Partial<Bid>;
   result?: Bid;
@@ -32,7 +32,6 @@ export const racesAdapter: EntityAdapter<IRace> = createEntityAdapter<IRace>({
 
 export const initialState: State = racesAdapter.getInitialState(<State>{
   // set initial required properties
-  currentRace: null,
   previousRace: null,
   selectedId: null,
   loaded: false,

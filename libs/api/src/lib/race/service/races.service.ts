@@ -25,9 +25,10 @@ export class RacesService {
     );
   }
 
-  getBids(seasonId: string, round: number): Observable<Bid[]> {
-    return this.afs.collection<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).valueChanges().pipe(
+  getBids(seasonId: string, race: IRace, uid: string): Observable<Bid[]> {
+    return this.afs.collection<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/bids`).valueChanges().pipe(
       map(firestoreUtils.convertDateTimes),
+      map((bids: Bid[]) => bids.some(b => b.player.uid === uid && b.submitted || race.state === 'closed') ? bids : [])
     );
   }
 

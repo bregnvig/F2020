@@ -36,8 +36,8 @@
       </mat-card>
     </ng-container>
   </sha-card-page>
-  <ng-container *ngIf="(bid$ | async) || {} as bid">
-    <button mat-fab aria-label="Deltag i løbet" routerLink="bid" *ngIf=" race.state === 'open' && !bid.submitted">
+  <ng-container *ngIf="(play$ | async)">
+    <button mat-fab aria-label="Deltag i løbet" routerLink="bid">
       <mat-icon>add</mat-icon>
     </button>
   </ng-container>
