@@ -14,7 +14,7 @@ export const GoogleMessaging = new InjectionToken<firebase.messaging.Messaging>(
 })
 export class FirebaseModule {
 
-  static forRoot(pubKey: string): ModuleWithProviders {
+  static forRoot(pubKey: string): ModuleWithProviders<FirebaseModule> {
     return {
       ngModule: FirebaseModule,
       providers: [

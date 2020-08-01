@@ -1,8 +1,9 @@
-import { OnDestroy } from '@angular/core';
+import { OnDestroy, Directive } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { Observable, pipe, Subject, Subscription, UnaryFunction } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+@Directive()
 export abstract class AbstractControlComponent implements OnDestroy, ControlValueAccessor {
 
 
