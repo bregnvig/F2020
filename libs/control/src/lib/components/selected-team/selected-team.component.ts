@@ -1,6 +1,6 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
-import { ITeam } from '@f2020/data';
+import { ITeam, SelectedTeamValue } from '@f2020/data';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
 @Component({
@@ -39,11 +39,8 @@ export class SelectedTeamComponent extends AbstractControlComponent implements O
     this.fg.valueChanges.subscribe(value => this.propagateChange(value));
   }
   
-  writeValue(value: [string, string]): void {
-    this.fg.patchValue({
-      qualify: (value || [])[0] ?? null,
-      result: (value || [])[1] ?? null
-    });
+  writeValue(value: SelectedTeamValue): void {
+    this.fg.patchValue(value || {});
   }
 
   markAllTouched(): void {

@@ -54,7 +54,7 @@ export class SubmitInterimResultComponent implements OnInit {
   }
 
   submitResult() {
-    this.facade.dispatch(RacesActions.submitResult());
+    this.facade.dispatch(RacesActions.submitInterimResult());
   }
 
   loadResult() {

@@ -6,6 +6,7 @@ import { RaceOutletComponent } from './component/race-outlet/race-outlet.compone
 import { RaceComponent } from './component/race/race.component';
 import { RacesComponent } from './component/races/races.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
+import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'bid/:uid',
         component: DisplayBidComponent,
+      },
+      {
+        path: 'qualify',
+        component: SubmitInterimResultComponent,
       },
       {
         path: 'result',

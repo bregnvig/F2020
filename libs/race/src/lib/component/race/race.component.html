@@ -22,6 +22,11 @@
             routerLink="drivers">
             DRIVERS
           </a>
+          <a *ngIf="race.state === 'closed'"
+            mat-button 
+            routerLink="qualify">
+            Kvalifikation
+          </a>
         </ng-container>
       </mat-card-actions>
     </mat-card>
