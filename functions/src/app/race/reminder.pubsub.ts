@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import { DateTime } from 'luxon';
-import { getCurrentRace, IRace, logAndCreateError, Player, playerWithoutBid, sendMail } from '../../lib';
+import { getCurrentRace, IRace, Player, playerWithoutBid, sendMail } from '../../lib';
 import { sendMessage } from './../../lib';
 
 const timespan = (days: number, date: DateTime): boolean => {
