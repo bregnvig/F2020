@@ -47,6 +47,7 @@ export const mailReminderCrontab = functions.pubsub.schedule('11 9 * * *')
       return Promise.resolve(true);
     })
     .catch(() => {
-      throw logAndCreateError('not-found', 'No race');
+      console.log('No open race');
+      return Promise.resolve(true);
     })
   );
