@@ -8,7 +8,7 @@ const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string 
   const lis = results.map(r => `${r.player?.displayName}: ${r.points} point`);
   return `<h3>Hej ${player.displayName}</h3>
      <div> 
-     <p> Mellem resultatet for ${race.name} er klart</p>
+     <p> Mellemresultatet for ${race.name} er klart</p>
      <p>
         Indtil videre ser det ca. sådan her ud
         <ul>
