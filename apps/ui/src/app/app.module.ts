@@ -21,7 +21,6 @@ import { SharedModule } from '@f2020/shared';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import 'firebase/app';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
