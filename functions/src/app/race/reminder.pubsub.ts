@@ -12,7 +12,7 @@ const mailBody = (player: Player, race: IRace, closeDay: any, closeTime: any) =>
   `<h3>Hej ${player.displayName}</h3>
      <div> 
      <p> ${race.name} - lukker snart og du har ikke spillet endnu!. Du kan heldigvis stadig nå det, men skynd dig for
-     Spillet lukke på ${closeDay} klokken ${closeTime}</p>
+     spillet lukke på ${closeDay} klokken ${closeTime}</p>
      <p> Du kan spille <a href="https://f2020.bregnvig.dk/">her</a>
      </div>     
                   
@@ -33,7 +33,7 @@ export const mailReminderCrontab = functions.pubsub.schedule('11 9 * * *')
         return Promise.all(players.map(player => {
           console.log(`Should mail to ${player.displayName}`);
           const results = [
-            sendMail(player.email, `Formel 1 vædemål ${race!.name}`, mailBody(player, race!, closeDay, closeTime)).then((msg) => {
+            sendMail(player.email, `Tid til at spille på det ${race!.name} `, mailBody(player, race!, closeDay, closeTime)).then((msg) => {
               console.log(`sendMail result :(${msg})`);
             })
           ];
