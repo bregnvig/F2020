@@ -51,7 +51,7 @@
         <mat-list>
           <mat-list-item>
             <h4 matLine>
-              Started som nummer {{bid.selectedDriver.grid}}
+              Startede som nummer {{bid.selectedDriver.grid}}
             </h4>
             <p *ngIf="bid.selectedDriver.gridPoints !== undefined" matLine>
               <small>{{bid.selectedDriver.gridPoints}} point</small>
@@ -79,7 +79,7 @@
         <mat-list>
           <mat-list-item>
             <h4 matLine>
-              Kvalifikation {{bid.selectedTeam.qualify | driver}}
+              {{bid.selectedTeam.qualify | driverName}} kvalificerer sig bedst
             </h4>
             <p *ngIf="bid.selectedTeam.qualifyPoints !== undefined" matLine>
               <small>{{bid.selectedTeam.qualifyPoints}} point</small>
@@ -87,7 +87,7 @@
           </mat-list-item>
           <mat-list-item>
             <h4 matLine>
-              Resultat {{bid.selectedTeam.result | driver}}
+              {{bid.selectedTeam.result | driverName}} slutter bedst
             </h4>
             <p *ngIf="bid.selectedTeam.resultPoints !== undefined" matLine>
               <small>{{bid.selectedTeam.resultPoints}} point</small>
