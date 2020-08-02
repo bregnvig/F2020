@@ -1,4 +1,8 @@
 <mat-action-list>
+  <button mat-list-item (click)="gotoResult()" *ngIf="result">
+    <mat-icon mat-list-icon fontSet="fas" fontIcon="fa-flag-checkered" style="height: auto !important;" style="transform: rotate(45deg);"></mat-icon>
+    <span matLine>Resultat</span>
+  </button>
   <button mat-list-item *ngFor="let bid of bids">
     <img matListAvatar [src]="bid.player.photoURL" [alt]="bid.player.displayName"  (click)="gotoBid(bid.player.uid)">
     <span  (click)="gotoBid(bid.player.uid)" matLine>{{bid.player.displayName}} </span>

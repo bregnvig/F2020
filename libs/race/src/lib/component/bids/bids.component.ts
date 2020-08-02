@@ -13,6 +13,8 @@ export class BidsComponent {
   private _bids: Bid[];
 
 
+  @Input() result: Partial<Bid>;
+
   @Input() set bids(value: Bid[]) {
     this._bids = [...value || []].sort((a, b) => b.points - a.points)
   }
@@ -26,5 +28,9 @@ export class BidsComponent {
 
   gotoBid(uid: string) {
     this.router.navigate(['bid', uid], {relativeTo: this.route})
+  }
+
+  gotoResult() {
+    
   }
 }
