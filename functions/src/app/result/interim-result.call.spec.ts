@@ -130,7 +130,7 @@ describe('Submit interim result unittest', () => {
   });
 
 
-  it('should accept submitting of result, when result is valid, Michael wins', async () => {
+  it('should accept submitting of result, when result is valid, Michael is in the lead', async () => {
     await writeBid({ ...clone(collections.bids[0]), selectedTeam: { qualify: 'raikkonen' }, submitted: true }, collections.players.admin.uid);
     await writeBid({ ...clone(collections.bids[1]), selectedTeam: { qualify: 'giovinazzi' }, submitted: true }, collections.players.player.uid);
 

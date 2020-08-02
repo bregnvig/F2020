@@ -5,7 +5,7 @@ import { validateInterimResult } from './../../lib/validate.service';
 import admin = require('firebase-admin');
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
-  const lis = results.map(r => `${r.player?.displayName}: ${r.points} point`);
+  const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
   return `<h3>Hej ${player.displayName}</h3>
      <div> 
      <p> Mellemresultatet for ${race.name} er klart</p>
@@ -54,6 +54,7 @@ const buildResult = async (result: Partial<Bid>) => {
     calculatedResults.forEach(cr => {
       transaction.set(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${cr.player!.uid}`), cr);
     });
+    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { result });
     return Promise.resolve(`Interim result submitted`);
   }).then(() => {
     const players = calculatedResults.map(cr => cr.player!);
