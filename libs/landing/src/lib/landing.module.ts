@@ -15,6 +15,7 @@ import { JoinWbcComponent } from './component/card/join-wbc/join-wbc.component';
 import { WeatherComponent } from './component/card/weather/weather.component';
 import { WeatherDayComponent } from './component/card/weather/weather-day/weather-day.component';
 import { RememberToPlayComponent } from './component/card/remember-to-play/remember-to-play.component';
+import { InterimResultComponent } from './component/card/interim-result/interim-result.component';
 
 const MatModules = [
   MatCardModule,
@@ -37,6 +38,6 @@ const MatModules = [
       }
     ]),
   ],
-  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent, RememberToPlayComponent],
+  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent, RememberToPlayComponent, InterimResultComponent],
 })
 export class LandingModule {}
