@@ -61,7 +61,7 @@
       </mat-list>
     </div>
   </mat-expansion-panel>
-  <mat-expansion-panel [expanded]="true" #selectedTeam >
+  <mat-expansion-panel [expanded]="true" #selectedTeam *ngIf="race?.selectedTeam">
     <mat-expansion-panel-header>
       <mat-panel-title>Hvem er bedst for {{race?.selectedTeam.name }}</mat-panel-title>
       <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
