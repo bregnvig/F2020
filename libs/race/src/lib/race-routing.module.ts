@@ -39,7 +39,7 @@ const routes: Routes = [
         component: SubmitInterimResultComponent,
       },
       {
-        path: 'result',
+        path: 'upload-result',
         component: SubmitResultComponent,
       },
       {
