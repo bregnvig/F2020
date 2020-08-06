@@ -33,6 +33,8 @@ import { SubmitResultComponent } from './component/submit-result/submit-result.c
 import { RaceRoutingModule } from './race-routing.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
+import { DisplayPlayerBidComponent } from './component/display-bid/display-player-bid/display-player-bid.component';
+import { DisplayResultComponent } from './component/display-bid/display-result/display-result.component';
 
 const MaterialModules = [
   MatCardModule,
@@ -76,6 +78,8 @@ const MaterialModules = [
     DisplayDriversComponent,
     RaceDriversComponent,
     AddDriverComponent,
+    DisplayPlayerBidComponent,
+    DisplayResultComponent,
   ],
 })
 export class RaceModule {

@@ -1,130 +1,120 @@
-<ng-container *ngIf="(bid$ | async) as bid; else loading">
-  <mat-toolbar color="primary">
-    <img class="avatar" [src]="bid.player.photoURL" alt="Profil billede">
-    <span fxFlex>{{bid.player.displayName}}</span>
-    <f2020-partial-bid-warning [bid]="bid"></f2020-partial-bid-warning>
-    <ng-container *ngIf="bid.points !== undefined">{{bid.points}} point</ng-container>
-  </mat-toolbar>      
-  <mat-accordion [multi]="true">
-    <mat-expansion-panel [expanded]="true" #qualifyPanel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Kvalifikation</mat-panel-title>
-        <mat-panel-description *ngIf="!qualifyPanel.expanded" fxLayoutAlign="end">
-          <f2020-driver-codes [driverIds]="bid.qualify"></f2020-driver-codes>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div>
-        <f2020-display-drivers [driverIds]="bid.qualify" [points]="bid.qualifyPoints"></f2020-display-drivers>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #fastestDriver>
-      <mat-expansion-panel-header >
-        <mat-panel-title>Hurtigste køre</mat-panel-title>
-        <mat-panel-description *ngIf="!fastestDriver.expanded" fxLayoutAlign="end">
-          <f2020-driver-codes [driverIds]="bid.fastestDriver"></f2020-driver-codes>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div>
-        <f2020-display-drivers [driverIds]="bid.fastestDriver" [points]="bid.fastestDriverPoints"></f2020-display-drivers>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #podium>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Podium</mat-panel-title>
-        <mat-panel-description *ngIf="!podium.expanded" fxLayoutAlign="end">
-          <f2020-driver-codes [driverIds]="bid.podium"></f2020-driver-codes>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div>
-        <f2020-display-drivers [driverIds]="bid.podium" [points]="bid.podiumPoints"></f2020-display-drivers>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #selectedDriver>
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{(race$ | async)?.selectedDriver | driverName }}</mat-panel-title>
-        <mat-panel-description *ngIf="!selectedDriver.expanded" fxLayoutAlign="end">
-          Start: {{bid.selectedDriver?.grid}}
-          Slut: {{bid.selectedDriver?.finish}}
-        </mat-panel-description>        
-      </mat-expansion-panel-header>
-      <div>
-        <mat-list>
-          <mat-list-item>
-            <h4 matLine>
-              Startede som nummer {{bid.selectedDriver.grid}}
-            </h4>
-            <p *ngIf="bid.selectedDriver.gridPoints !== undefined" matLine>
-              <small>{{bid.selectedDriver.gridPoints}} point</small>
-            </p>
-          </mat-list-item>
-          <mat-list-item>
-            <h4 matLine>
-              Sluttede som nummer {{bid.selectedDriver.finish}}
-            </h4>
-            <p *ngIf="bid.selectedDriver.finishPoints !== undefined" matLine>
-              <small>{{bid.selectedDriver.finishPoints}} point</small>
-            </p>
-          </mat-list-item>
-        </mat-list>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #selectedTeam >
-      <mat-expansion-panel-header>
-        <mat-panel-title>Hvem er bedst for {{(race$ | async)?.selectedTeam.name }}</mat-panel-title>
-        <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
-          <f2020-driver-codes [driverIds]="[bid.selectedTeam.qualify, bid.selectedTeam.result]"></f2020-driver-codes>
-        </mat-panel-description>        
-      </mat-expansion-panel-header>
-      <div>
-        <mat-list>
-          <mat-list-item>
-            <h4 matLine>
-              {{bid.selectedTeam.qualify | driverName}} kvalificerer sig bedst
-            </h4>
-            <p *ngIf="bid.selectedTeam.qualifyPoints !== undefined" matLine>
-              <small>{{bid.selectedTeam.qualifyPoints}} point</small>
-            </p>
-          </mat-list-item>
-          <mat-list-item>
-            <h4 matLine>
-              {{bid.selectedTeam.result | driverName}} slutter bedst
-            </h4>
-            <p *ngIf="bid.selectedTeam.resultPoints !== undefined" matLine>
-              <small>{{bid.selectedTeam.resultPoints}} point</small>
-            </p>
-          </mat-list-item>
-        </mat-list>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #firstCrash>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Første udgået</mat-panel-title>
-        <mat-panel-description *ngIf="!firstCrash.expanded" fxLayoutAlign="end">
-          <f2020-driver-codes [driverIds]="bid.firstCrash"></f2020-driver-codes>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div>
-        <f2020-display-drivers [driverIds]="bid.firstCrash" [points]="bid.firstCrashPoints"></f2020-display-drivers>
-      </div>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="true" #time>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Pole position tid</mat-panel-title>
-        <mat-panel-description *ngIf="!time.expanded" fxLayoutAlign="end">
-          {{bid.polePositionTime | polePositionTime}}
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div>
-        <mat-list>
-          <mat-list-item>
-            <h4 matLine>{{bid.polePositionTime | polePositionTime}}</h4>
-            <p *ngIf="bid.polePositionTimeDiff != undefined" matLine><small>{{bid.polePositionTimeDiff}}ms fra pole tiden</small></p>
-          </mat-list-item>
-        </mat-list>
-      </div>
-    </mat-expansion-panel>
-  </mat-accordion>
-</ng-container>  
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>
+<mat-accordion [multi]="true">
+  <mat-expansion-panel [expanded]="true" #qualifyPanel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Kvalifikation</mat-panel-title>
+      <mat-panel-description *ngIf="!qualifyPanel.expanded" fxLayoutAlign="end">
+        <f2020-driver-codes [driverIds]="bid.qualify"></f2020-driver-codes>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <f2020-display-drivers [driverIds]="bid.qualify" [points]="bid.qualifyPoints"></f2020-display-drivers>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true" #fastestDriver *ngIf="bid.fastestDriver">
+    <mat-expansion-panel-header >
+      <mat-panel-title>Hurtigste køre</mat-panel-title>
+      <mat-panel-description *ngIf="!fastestDriver.expanded" fxLayoutAlign="end">
+        <f2020-driver-codes [driverIds]="bid.fastestDriver"></f2020-driver-codes>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <f2020-display-drivers [driverIds]="bid.fastestDriver" [points]="bid.fastestDriverPoints"></f2020-display-drivers>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true" #podium *ngIf="bid.podium">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Podium</mat-panel-title>
+      <mat-panel-description *ngIf="!podium.expanded" fxLayoutAlign="end">
+        <f2020-driver-codes [driverIds]="bid.podium"></f2020-driver-codes>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <f2020-display-drivers [driverIds]="bid.podium" [points]="bid.podiumPoints"></f2020-display-drivers>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true" #selectedDriver>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{race?.selectedDriver | driverName }}</mat-panel-title>
+      <mat-panel-description *ngIf="!selectedDriver.expanded" fxLayoutAlign="end">
+        Start: {{bid.selectedDriver?.grid}}
+        <span *ngIf="bid.selectedDriver.finish">Slut: {{bid.selectedDriver?.finish}}</span>
+      </mat-panel-description>        
+    </mat-expansion-panel-header>
+    <div>
+      <mat-list>
+        <mat-list-item>
+          <h4 matLine>
+            Startede som nummer {{bid.selectedDriver.grid}}
+          </h4>
+          <p *ngIf="bid.selectedDriver.gridPoints !== undefined" matLine>
+            <small>{{bid.selectedDriver.gridPoints}} point</small>
+          </p>
+        </mat-list-item>
+        <mat-list-item *ngIf="bid.selectedDriver.finish">
+          <h4 matLine>
+            Sluttede som nummer {{bid.selectedDriver.finish}}
+          </h4>
+          <p *ngIf="bid.selectedDriver.finishPoints !== undefined" matLine>
+            <small>{{bid.selectedDriver.finishPoints}} point</small>
+          </p>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true" #selectedTeam >
+    <mat-expansion-panel-header>
+      <mat-panel-title>Hvem er bedst for {{race?.selectedTeam.name }}</mat-panel-title>
+      <mat-panel-description *ngIf="!selectedTeam.expanded" fxLayoutAlign="end">
+        <f2020-driver-codes [driverIds]="[bid.selectedTeam.qualify, bid.selectedTeam.result]"></f2020-driver-codes>
+      </mat-panel-description>        
+    </mat-expansion-panel-header>
+    <div>
+      <mat-list>
+        <mat-list-item>
+          <h4 matLine>
+            {{bid.selectedTeam.qualify | driverName}} kvalificerer sig bedst
+          </h4>
+          <p *ngIf="bid.selectedTeam.qualifyPoints !== undefined" matLine>
+            <small>{{bid.selectedTeam.qualifyPoints}} point</small>
+          </p>
+        </mat-list-item>
+        <mat-list-item *ngIf="bid.selectedTeam.result">
+          <h4 matLine>
+            {{bid.selectedTeam.result | driverName}} slutter bedst
+          </h4>
+          <p *ngIf="bid.selectedTeam.resultPoints !== undefined" matLine>
+            <small>{{bid.selectedTeam.resultPoints}} point</small>
+          </p>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true" #firstCrash *ngIf="bid.firstCrash">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Første udgået</mat-panel-title>
+      <mat-panel-description *ngIf="!firstCrash.expanded" fxLayoutAlign="end">
+        <f2020-driver-codes [driverIds]="bid.firstCrash"></f2020-driver-codes>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <f2020-display-drivers [driverIds]="bid.firstCrash" [points]="bid.firstCrashPoints"></f2020-display-drivers>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="true" #time>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Pole position tid</mat-panel-title>
+      <mat-panel-description *ngIf="!time.expanded" fxLayoutAlign="end">
+        {{bid.polePositionTime | polePositionTime}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <mat-list>
+        <mat-list-item>
+          <h4 matLine>{{bid.polePositionTime | polePositionTime}}</h4>
+          <p *ngIf="bid.polePositionTimeDiff != undefined" matLine><small>{{bid.polePositionTimeDiff}}ms fra pole tiden</small></p>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+

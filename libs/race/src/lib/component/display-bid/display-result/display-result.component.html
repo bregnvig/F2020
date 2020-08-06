@@ -1,0 +1,10 @@
+<ng-container *ngIf="(race$ | async) as race; else loading">
+  <mat-toolbar color="primary">
+    <mat-icon mat-list-icon fontSet="fas" fontIcon="fa-flag-checkered" style="height: auto !important;" style="transform: rotate(45deg);"></mat-icon>
+    <span class="ml-2" matLine>Resultat {{race.name}}</span>
+  </mat-toolbar>
+  <f2020-display-bid [bid]="race.result" [race]="race"></f2020-display-bid>
+</ng-container>
+<ng-template #loading>
+  <sha-loading></sha-loading>
+</ng-template>
