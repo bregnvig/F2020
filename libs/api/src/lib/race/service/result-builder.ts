@@ -45,6 +45,7 @@ export const buildInterimResult = (qualify: IQualifyResult, selectedDriver: stri
   return <Partial<Bid>>{
     qualify: qualifyResult,
     selectedDriver: selectedDriverResult,
-    selectedTeam: selectedTeamResult
+    selectedTeam: selectedTeamResult,
+    polePositionTime: qualify.results[0].q3
   };
 };

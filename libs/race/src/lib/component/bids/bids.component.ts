@@ -31,6 +31,6 @@ export class BidsComponent {
   }
 
   gotoResult() {
-    
+    this.router.navigate(['result'], { relativeTo: this.route })
   }
 }
