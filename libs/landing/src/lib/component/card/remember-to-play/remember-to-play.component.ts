@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { RacesFacade, RacesActions } from '@f2020/api';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
@@ -19,7 +20,7 @@ export class RememberToPlayComponent implements OnInit {
   ngOnInit(): void {
     this.facade.dispatch(RacesActions.loadYourBid());
     this.race$ = this.facade.currentRace$.pipe(
-      filter(race => race?.state === 'open'),
+      filter(race => race?.close > DateTime.local()),
       debounce(() => this.facade.yourBid$.pipe(filter(bid => !(bid?.submitted))))
     );
   }
