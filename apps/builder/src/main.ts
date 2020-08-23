@@ -4,7 +4,7 @@ import { writeDocument, writeCollection } from './app/write-document';
 import { buildDrivers } from './app/drivers';
 import { buildTransactions, buildTransactionsNullNegative, buildTransactionsNullPositive } from './app/transactions';
 import { buildBalance } from './app/balance';
-import { buildPreviousSeason, buildNewSeason } from './app/season';
+import { buildPreviousSeason, buildNewSeason, appendRaces } from './app/season';
 import { environment } from './environments/environment';
 // import { readUser } from './app/mysql/account';
 import { Transaction } from './app/model/mysq.model';
@@ -52,3 +52,5 @@ buildBalance(8)
 
 // writeCollection('seasons/2020/teams').then(_ => JSON.stringify(_, null, '\t')).then(console.log)
 // 
+
+// appendRaces('2020')
