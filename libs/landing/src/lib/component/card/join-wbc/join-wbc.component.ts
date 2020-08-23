@@ -33,10 +33,11 @@ export class JoinWbcComponent implements OnInit {
       map(player => player.uid)
     );
     this.canJoin$ =  combineLatest([
+      this.latestWBCJoinDate$,
       this.seasonFacade.season$,
       uid$
     ]).pipe(
-      map(([{wbc}, uid]) => (wbc.participants || []).includes(uid) === false)
+      map(([lastestJoinDate, {wbc}, uid]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local())
     );
     this.loading$.pipe(
       pairwise(),
