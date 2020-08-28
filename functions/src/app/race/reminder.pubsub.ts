@@ -8,6 +8,16 @@ const timespan = (days: number, date: DateTime): boolean => {
   return Math.floor(reminderDate.diff(DateTime.local(), 'day').days) === 0;
 };
 
+const days = new Map<string, string>([
+  ['1', 'mandag'],
+  ['2', 'tirsdag'],
+  ['3', 'onsdag'],
+  ['4', 'torsdag'],
+  ['5', 'fredag'],
+  ['6', 'lørdag'],
+  ['7', 'søndag'],
+])
+
 const mailBody = (player: Player, race: IRace, closeDay: any, closeTime: any) =>
   `<h3>Hej ${player.displayName}</h3>
      <div> 
@@ -28,8 +38,8 @@ export const mailReminderCrontab = functions.pubsub.schedule('11 9 * * *')
     .then(async race => {
       if (timespan(3, race!.close) || timespan(1, race!.close)) {
         const players = await playerWithoutBid();
-        const closeDay = race!.close.setLocale('da').toFormat('cccc');
-        const closeTime = race!.close.setLocale('da').toFormat('T');
+        const closeDay = days.get(race!.close.setLocale('da').toFormat('E'))!;
+        const closeTime = race!.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
         return Promise.all(players.map(player => {
           console.log(`Should mail to ${player.displayName}`);
           const results = [
