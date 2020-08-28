@@ -26,7 +26,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/messaging';
-import { DateTime } from 'luxon';
+import { Settings } from 'luxon';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -81,7 +81,7 @@ const materialModule = [
 })
 export class AppModule {
   constructor() {
-    DateTime.local().setLocale('da');
+    Settings.defaultLocale = 'da';
     registerLocaleData(localeDa);
   }
 }
