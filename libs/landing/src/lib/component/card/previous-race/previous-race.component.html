@@ -1,0 +1,25 @@
+<mat-card *ngIf="wbcResult$ | async as wbcResult">
+  <mat-card-header>
+    <i class="far fa-lg fa-trophy-alt" mat-card-avatar></i>
+    <mat-card-title>{{title$ | async}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p fxLayout fxLayoutAlign="start center">
+      <img [src]="wbcResult.players[0].player.photoURL" class="avatar" [alt]="wbcResult.players[0].player.displayName">
+      <span>Tillykke til {{wbcResult.players[0].player.displayName}}</span>
+    </p>
+    <p fxLayout fxLayoutAlign="start center" *ngIf="wbcResult.players[1] as second">
+      <img [src]="second.player.photoURL" class="avatar" [alt]="second.player.displayName">
+      <span>{{second.player.displayName}} kom på anden pladsen.</span>
+    </p>
+    <p fxLayout fxLayoutAlign="start center" *ngIf="wbcResult.players[2] as third">
+      <img [src]="third.player.photoURL" class="avatar" [alt]="third.player.displayName">
+      <span>{{third.player.displayName}} fik sidste plads på podiet.</span>
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-button [routerLink]="['race', wbcResult.round]">
+      SE MERE
+    </a>
+  </mat-card-actions>
+</mat-card>

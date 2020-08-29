@@ -16,6 +16,7 @@ import { WeatherComponent } from './component/card/weather/weather.component';
 import { WeatherDayComponent } from './component/card/weather/weather-day/weather-day.component';
 import { RememberToPlayComponent } from './component/card/remember-to-play/remember-to-play.component';
 import { InterimResultComponent } from './component/card/interim-result/interim-result.component';
+import { PreviousRaceComponent } from './component/card/previous-race/previous-race.component';
 
 const MatModules = [
   MatCardModule,
@@ -38,6 +39,6 @@ const MatModules = [
       }
     ]),
   ],
-  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent, RememberToPlayComponent, InterimResultComponent],
+  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent, RememberToPlayComponent, InterimResultComponent, PreviousRaceComponent],
 })
 export class LandingModule {}
