@@ -1,0 +1,13 @@
+::ng-deep .ngx-charts { 
+    text{
+        fill: #fff!important; 
+    }
+}
+div.fit {
+  width: 100%;
+  height: calc(100vh - 48px);
+}
+
+h3.selected {
+  font-weight: bolder;
+}

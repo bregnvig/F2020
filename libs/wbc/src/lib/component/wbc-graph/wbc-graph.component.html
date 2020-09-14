@@ -1,0 +1,25 @@
+<div class="fit">
+  <ngx-charts-line-chart
+    [legend]="false"
+    [activeEntries]="activeEntries"
+    [showXAxisLabel]="false"
+    [showYAxisLabel]="false"
+    [xAxis]="true"
+    [yAxis]="false"
+    [xAxisLabel]="false"
+    [yAxisLabel]="true"
+    [tooltipDisabled]="true"
+    [autoScale]="false"
+    [results]="data"
+    >
+  </ngx-charts-line-chart>
+</div>
+<div fxLayout="column">
+  <mat-selection-list>
+    <mat-list-option *ngFor="let entry of playerEntris" (click)="toggle(entry.player)">
+      <img matListAvatar [src]="entry.player.photoURL">
+      <h3 matLine class="selected">{{entry.player.displayName}} </h3>
+      <p matLine>{{entry.points}} point</p>
+    </mat-list-option>
+  </mat-selection-list>
+</div>
