@@ -5,7 +5,9 @@
     <f2020-partial-bid-warning [bid]="bid"></f2020-partial-bid-warning>
     <ng-container *ngIf="bid.points !== undefined">{{bid.points}} point</ng-container>
   </mat-toolbar>
-  <f2020-display-bid [bid]="bid" [race]="race$ | async"></f2020-display-bid>
+  <div class="max-width">
+    <f2020-display-bid [bid]="bid" [race]="race$ | async"></f2020-display-bid>
+  </div>
 </ng-container>
 <ng-template #loading>
   <sha-loading></sha-loading>

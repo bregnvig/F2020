@@ -1,22 +1,24 @@
 <mat-toolbar color="primary">
   <span>Result - {{(race$ | async)?.name}}</span>
 </mat-toolbar>
-<ng-container *ngIf="(loaded$ | async); else loading">
-  <ng-container *ngIf="race$ | async as race">
-    <f2020-bid [formControl]="resultControl" [race]="race" [isResult]="true"></f2020-bid>
-  </ng-container>  
-  <button *ngIf="resultDownloaded(); else refresh" mat-fab aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
-    <mat-icon>cloud_upload</mat-icon>
-  </button>
-  <ng-template #refresh>
-    <button mat-fab aria-label="Hent resultat igen" (click)="loadResult()">
-      <mat-icon>refresh</mat-icon>
+<div class="max-width">
+  <ng-container *ngIf="(loaded$ | async); else loading">
+    <ng-container *ngIf="race$ | async as race">
+      <f2020-bid [formControl]="resultControl" [race]="race" [isResult]="true"></f2020-bid>
+    </ng-container>  
+    <button *ngIf="resultDownloaded(); else refresh" mat-fab aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
+      <mat-icon>cloud_upload</mat-icon>
     </button>
-  </ng-template>
-</ng-container>
-<ng-container *ngIf="updating$ | async">
-  <ng-container *ngTemplateOutlet="loading"></ng-container> 
-</ng-container>
+    <ng-template #refresh>
+      <button mat-fab aria-label="Hent resultat igen" (click)="loadResult()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </ng-template>
+  </ng-container>
+  <ng-container *ngIf="updating$ | async">
+    <ng-container *ngTemplateOutlet="loading"></ng-container> 
+  </ng-container>
+</div>
 <ng-template #loading>
   <sha-loading></sha-loading>
 </ng-template>
