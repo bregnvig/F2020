@@ -11,7 +11,7 @@ export interface WBCResult {
   raceName: string;
   round: number;
   countryCode: string;
-  players: WBCPlayer[]
+  players: WBCPlayer[];
 }
 
 export interface WBCPlayer {
