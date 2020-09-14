@@ -20,7 +20,7 @@ export class AbstractSuperComponent implements OnDestroy {
       this.subscriptions.forEach(subscription => subscription.unsubscribe());
     };
     if (Array.isArray(this)) {
-      this.filter(component => component instanceof AbstractSubscribeUnsubscribeComponent)
+      this.filter(component => component instanceof AbstractSuperComponent)
         .forEach(component => destroy.bind(component)());
     } else {
       destroy.bind(this)();
