@@ -17,7 +17,6 @@ import { access } from 'fs';
 // getTeams(2020).then(teams => console.log(teams)))
 // buildPreviousRaceReult(2019).then(_ => console.log(JSON.stringify(_, null, '\t')))
 
-// assignTeamsToSeason(2020).then(() => console.log('Done'));
 // buildNewSeason(environment.season)
 //   .then(_ => console.log('Completed', _))
 //   .catch(error => console.error('Completed with errors', error));
@@ -53,4 +52,5 @@ buildBalance(8)
 // writeCollection('seasons/2020/teams').then(_ => JSON.stringify(_, null, '\t')).then(console.log)
 // 
 
-// appendRaces('2020')
+// appendRaces('2020').then(() => assignTeamsToSeason(2020))
+//   .then(() => console.log('Done'));

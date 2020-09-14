@@ -20,7 +20,9 @@ export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult
 
   const teams: ITeam[] = await firebaseApp.datebase.collection(`seasons/${seasonId}/teams`)
     .get()
-    .then(s => s.docs.map(doc => doc.data() as ITeam))
+    .then(s => s.docs.map(doc => doc.data() as ITeam));
+
+  const startingIndex = await firebaseApp.datebase.collection('seasons/${seasonId}/races').get().then(snap => snap.docs.filter(d => (d.data() as IRace).selectedTeam).length);
 
   return firebaseApp.datebase.collection(`seasons/${seasonId}/races`)
     .where('state', '==', 'waiting')
@@ -28,7 +30,7 @@ export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult
     .then(snapshot => {
       return Promise.all(snapshot.docs.map((s, index) => {
         return s.ref.update({
-          selectedTeam: teams[index % teams.length]
+          selectedTeam: teams[(startingIndex + index) % teams.length]
         });
       }));
     });
