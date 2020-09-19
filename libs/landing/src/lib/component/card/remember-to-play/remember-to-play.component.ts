@@ -21,7 +21,7 @@ export class RememberToPlayComponent implements OnInit {
     this.facade.dispatch(RacesActions.loadYourBid());
     this.race$ = this.facade.currentRace$.pipe(
       filter(race => race?.close > DateTime.local()),
-      debounce(() => this.facade.yourBid$.pipe(filter(bid => !(bid?.submitted))))
+      debounce(() => this.facade.yourBid$.pipe(filter(bid => bid && !bid.submitted)))
     );
   }
 
