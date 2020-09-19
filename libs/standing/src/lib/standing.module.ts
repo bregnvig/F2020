@@ -24,6 +24,9 @@ import { DriverQualifyingComponent } from './component/standing-driver/driver-qu
 import { QualifyingTimesComponent } from './component/standing-driver/driver-qualifying/qualifying-times/qualifying-times.component';
 import { DriverModule } from '@f2020/driver';
 import { SharedModule } from '@f2020/shared';
+import { StandingLastYearComponent } from './component/standing-last-year/standing-last-year.component';
+import { LastYearQualifyComponent } from './component/standing-last-year/last-year-qualify.component';
+import { LastYearResultComponent } from './component/standing-last-year/last-year-result.component';
 
 const materialModules = [
   MatSnackBarModule,
@@ -31,7 +34,7 @@ const materialModules = [
   MatListModule,
   MatTabsModule,
   MatCardModule,
-]
+];
 
 @NgModule({
   declarations: [
@@ -42,6 +45,9 @@ const materialModules = [
     DriverResultComponent,
     DriverQualifyingComponent,
     QualifyingTimesComponent,
+    StandingLastYearComponent,
+    LastYearQualifyComponent,
+    LastYearResultComponent,
   ],
   imports: [
     CommonModule,
