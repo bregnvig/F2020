@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-race',
@@ -40,6 +40,7 @@ export class RaceComponent implements OnInit {
       this.race$,
       this.bids$
     ]).pipe(
+      debounceTime(100),
       map(([race, bids]) => race.state === 'open' && !(bids || []).length)
     );
     this.center$ = this.race$.pipe(
@@ -48,6 +49,6 @@ export class RaceComponent implements OnInit {
   }
 
   flagURL(race: IRace) {
-    return `https://www.countryflags.io/${race.countryCode.toLocaleLowerCase()}/flat/64.png`
+    return `https://www.countryflags.io/${race.countryCode.toLocaleLowerCase()}/flat/64.png`;
   }
 }

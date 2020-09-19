@@ -2,14 +2,16 @@
     <span fxFlex>{{(race$ | async)?.name}}</span>
     <span *ngIf="drivers">{{drivers.length}} kørere</span>
 </mat-toolbar>
-<mat-list cdkDropList cdkDropListLockAxis="y" fxFlex *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
-    <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
-        <p matLine>{{driverId | driverName}}</p>
-        <button mat-icon-button (click)="removeDriver(i)">
-            <i class="far fa-trash fa-lg"></i>
-        </button>
-    </mat-list-item>
-</mat-list>
+<div class="max-width">
+  <mat-list cdkDropList cdkDropListLockAxis="y" fxFlex *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
+      <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
+          <p matLine>{{driverId | driverName}}</p>
+          <button mat-icon-button (click)="removeDriver(i)">
+              <i class="far fa-trash fa-lg"></i>
+          </button>
+      </mat-list-item>
+  </mat-list>
+</div>
 <button mat-fab aria-label="Tilføj kører" (click)="addDriver()">
     <mat-icon>add</mat-icon>
 </button>

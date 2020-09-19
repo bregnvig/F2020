@@ -1,11 +1,9 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
 import { Bid, IRace } from '@f2020/data';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-bid',
   templateUrl: './bid.component.html',
@@ -14,12 +12,12 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => BidComponent),
-      multi: true, 
+      multi: true,
     },
     {
       provide: NG_VALIDATORS,
       useExisting: forwardRef(() => BidComponent),
-      multi: true, 
+      multi: true,
     },
   ]
 })
@@ -35,22 +33,22 @@ export class BidComponent extends AbstractControlComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder) {
-      super();
+    super();
   }
 
   ngOnInit(): void {
     this.fg = this.fb.group({
-      qualify: [{value: null, disabled: this.isResult}, Validators.required],
-      fastestDriver: [{value: null, disabled: this.isResult}, Validators.required],
-      podium: [{value: null, disabled: this.isResult}, Validators.required],
-      selectedDriver: [{value: null, disabled: this.isResult}],
-      selectedTeam: [{value: null, disabled: this.isResult || !this.race.selectedTeam}],
-      firstCrash: [{value: null, disabled: this.isResult}, Validators.required],
-      polePositionTime: [{value: null, disabled: this.isResult}, Validators.required],
+      qualify: [{ value: null, disabled: this.isResult }, Validators.required],
+      fastestDriver: [{ value: null, disabled: this.isResult }, Validators.required],
+      podium: [{ value: null, disabled: this.isResult }, Validators.required],
+      selectedDriver: [{ value: null, disabled: this.isResult }],
+      selectedTeam: [{ value: null, disabled: this.isResult || !this.race.selectedTeam }],
+      firstCrash: [{ value: null, disabled: this.isResult }, Validators.required],
+      polePositionTime: [{ value: null, disabled: this.isResult }, Validators.required],
     });
     this.fg.valueChanges.pipe(
       debounceTime(300),
-      untilDestroyed(this),
+      this.takeUntilDestroyed(),
     ).subscribe(value => this.propagateChange(value));
   }
 
@@ -65,9 +63,9 @@ export class BidComponent extends AbstractControlComponent implements OnInit {
         firstCrash: null,
         polePositionTime: null,
         ...value
-      }, {emitEvent: false});
+      }, { emitEvent: false });
     } else {
-      this.fg.reset({}, {emitEvent: false});
+      this.fg.reset({}, { emitEvent: false });
     }
   }
 

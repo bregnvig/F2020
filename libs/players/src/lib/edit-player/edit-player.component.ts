@@ -4,17 +4,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params } from '@angular/router';
 import { PlayersActions, PlayersApiService, PlayersFacade } from '@f2020/api';
 import { Player, Role } from '@f2020/data';
+import { AbstractSuperComponent } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { first, pluck, switchMap, map } from 'rxjs/operators';
 
-@UntilDestroy()
 @Component({
   templateUrl: './edit-player.component.html',
   styleUrls: ['./edit-player.component.scss']
 })
-export class EditPlayerComponent implements OnInit {
+export class EditPlayerComponent extends AbstractSuperComponent implements OnInit {
 
   player$: Observable<Player>;
   fg: FormGroup;
@@ -25,7 +24,9 @@ export class EditPlayerComponent implements OnInit {
     private route: ActivatedRoute,
     private playerService: PlayersApiService,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder) {
+    super();
+  }
 
   ngOnInit(): void {
     this.fg = this.fb.group({
@@ -40,7 +41,7 @@ export class EditPlayerComponent implements OnInit {
     this.player$ = this.facade.selectedPlayer$;
     this.route.params.pipe(
       pluck<Params, string>('id'),
-      untilDestroyed(this),
+      this.takeUntilDestroyed(),
     ).subscribe(uid => this.facade.dispatch(PlayersActions.selectPlayer({ uid })));
     this.player$.pipe(
       truthy(),
@@ -55,7 +56,7 @@ export class EditPlayerComponent implements OnInit {
     });
     this.fg.get('migration').valueChanges.pipe(
       map(player => player.balance),
-    ).subscribe(balance => this.fg.get('balance').patchValue(balance))
+    ).subscribe(balance => this.fg.get('balance').patchValue(balance));
   }
 
   updateRoles() {

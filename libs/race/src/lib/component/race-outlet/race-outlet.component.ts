@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RacesFacade, RacesActions } from '@f2020/api';
+import { AbstractSuperComponent } from '@f2020/shared';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-race-outlet',
   template: '<router-outlet></router-outlet>'
 })
-export class RaceOutletComponent implements OnInit {
+export class RaceOutletComponent extends AbstractSuperComponent implements OnInit {
 
   constructor(
-    private facade: RacesFacade, 
+    private facade: RacesFacade,
     private route: ActivatedRoute) {
+    super();
   }
 
   ngOnInit(): void {
     this.route.params.pipe(
-      untilDestroyed(this),
-    ).subscribe(({round}) => this.facade.dispatch(RacesActions.selectRace({ round })));
+      this.takeUntilDestroyed(),
+    ).subscribe(({ round }) => this.facade.dispatch(RacesActions.selectRace({ round })));
   }
 
 }

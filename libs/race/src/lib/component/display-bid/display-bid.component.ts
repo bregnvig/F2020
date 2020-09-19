@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Bid, IRace } from '@f2020/data';
-import { UntilDestroy } from '@ngneat/until-destroy';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-display-bid',
   templateUrl: './display-bid.component.html',

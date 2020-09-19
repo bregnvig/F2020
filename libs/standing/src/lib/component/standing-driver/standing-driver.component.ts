@@ -2,19 +2,18 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { SeasonFacade } from '@f2020/api';
 import { IDriverResult, IQualifyResult } from '@f2020/data';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { AbstractSuperComponent } from '@f2020/shared';
 import { combineLatest, Observable } from 'rxjs';
 import { map, pluck, share, switchMap } from 'rxjs/operators';
 import { StandingService } from '../../service/standing.service';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-standing-driver',
   templateUrl: './standing-driver.component.html',
   styleUrls: ['./standing-driver.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StandingDriverComponent implements OnInit {
+export class StandingDriverComponent extends AbstractSuperComponent implements OnInit {
 
   currentSeasonResult$: Observable<IDriverResult>;
   currentSeasonQualifying$: Observable<IQualifyResult[]>;
@@ -29,13 +28,14 @@ export class StandingDriverComponent implements OnInit {
     private route: ActivatedRoute,
     private service: StandingService,
     private seasonFacade: SeasonFacade) {
+    super();
   }
 
   ngOnInit(): void {
     this.driverId$ = this.route.params.pipe(pluck<Params, string>('driverId'));
     this.seasonFacade.season$.pipe(
       map(season => parseInt(season.id, 10)),
-      untilDestroyed(this),
+      this.takeUntilDestroyed(),
     ).subscribe(year => {
       this.currentYear = year;
       this.previousYear = year - 1;
@@ -54,7 +54,7 @@ export class StandingDriverComponent implements OnInit {
       this.currentSeasonQualifying$ = this.driverId$.pipe(
         switchMap(driverId => this.service.getDriverQualify(this.currentYear, driverId)),
       );
-    } else if(index === 2 && !this.previousSeasonQualifying$) {
+    } else if (index === 2 && !this.previousSeasonQualifying$) {
       this.previousSeasonQualifying$ = this.driverId$.pipe(
         switchMap(driverId => this.service.getDriverQualify(this.previousYear, driverId)),
       );
