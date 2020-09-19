@@ -1,9 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-admin.initializeApp(functions.config().firebase)
+admin.initializeApp(functions.config().firebase);
 
 export * from './app/bid/bid.call';
+export * from './app/bid/bid-started.trigger';
 export * from './app/result/result.call';
 export * from './app/result/interim-result.call';
 export * from './app/result/result-notification.trigger';
