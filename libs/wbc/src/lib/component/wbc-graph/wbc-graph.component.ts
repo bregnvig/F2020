@@ -14,7 +14,6 @@ import { WBCGraphEntry } from './../../model/wbc-graph.model';
 })
 export class WbcGraphComponent extends AbstractSuperComponent implements OnInit {
 
-  animations: boolean = true;
   data: any[];
   activeEntries: any[] = [];
   playerEntris: WBCGraphEntry[];
@@ -28,7 +27,6 @@ export class WbcGraphComponent extends AbstractSuperComponent implements OnInit 
       map(season => new WBCGraph(season.wbc)),
       shareLatest(),
     );
-
     graph$.pipe(
       map(data => data.entries.map(e => ({
         name: e.player.displayName,
@@ -45,5 +43,9 @@ export class WbcGraphComponent extends AbstractSuperComponent implements OnInit 
     } else {
       this.activeEntries = [...this.activeEntries, this.data.find(d => d.name === player.displayName)];
     }
+  }
+
+  ngxBug() {
+    this.activeEntries = [...this.activeEntries];
   }
 }
