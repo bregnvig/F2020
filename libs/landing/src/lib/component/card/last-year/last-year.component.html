@@ -1,6 +1,6 @@
 <mat-card *ngIf="lastYear$ | async as lastYear">
   <mat-card-header>
-    <i class="fas fa-undo-alt fa-2x" mat-card-avatar></i>
+    <i class="far fa-calendar-alt fa-2x" mat-card-avatar></i>
     <mat-card-title>Sidste år</mat-card-title>
   </mat-card-header>
   <mat-card-content>
@@ -12,7 +12,7 @@
     </p>
   </mat-card-content>
   <mat-card-actions>
-      <a mat-button [routerLink]="['standings', 'lastYer', lastYear.qualify.countryCode]" disabled>
+      <a mat-button [routerLink]="['standings', 'last-year']" >
         SE MERE
       </a>
   </mat-card-actions>
