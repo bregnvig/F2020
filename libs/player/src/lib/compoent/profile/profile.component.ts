@@ -23,11 +23,12 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.playersFacade.dispatch(PlayersActions.loadPlayers());
 
-    this.player$ = this.facade.player$.pipe(truthy());
+    this.player$ = this.facade.player$.pipe(truthy(), first());
     this.players$ = combineLatest([this.player$, this.playersFacade.allPlayers$.pipe(truthy())]).pipe(
-      first(),
       map(([player, players]) => players.filter(p => p.uid !== player.uid).map(p => [p, !player.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)])),
     );
+    this.player$.subscribe(_ => console.log(_));
+    this.playersFacade.allPlayers$.subscribe(_ => console.log(_));
     this.receiveReminders$ = this.player$.pipe(
       truthy(),
       map(player => player.receiveReminders ?? true)

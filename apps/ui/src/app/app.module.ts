@@ -13,7 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { PlayerApiModule, RaceApiModule, SeasonApiModule } from '@f2020/api';
+import { PlayerActions, PlayerApiModule, PlayerFacade, RaceApiModule, SeasonApiModule } from '@f2020/api';
 import { DriverModule } from '@f2020/driver';
 import { FirebaseModule } from '@f2020/firebase';
 import { SharedModule } from '@f2020/shared';
@@ -79,9 +79,10 @@ const materialModule = [
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor() {
+  constructor(private facade: PlayerFacade) {
     Settings.defaultLocale = 'da';
     registerLocaleData(localeDa);
+    this.facade.dispatch(PlayerActions.loadPlayer());
   }
 }
 

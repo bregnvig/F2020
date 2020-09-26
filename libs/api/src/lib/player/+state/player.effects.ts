@@ -1,9 +1,8 @@
-import { PlayerFacade } from '@f2020/api';
 import { Inject, Injectable } from '@angular/core';
 import { GoogleMessaging } from '@f2020/firebase';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, map, mapTo } from 'rxjs/operators';
 import { PlayerApiService } from '../service/player-api.service';
 import { PlayerActions } from './player.actions';
 

@@ -31,7 +31,4 @@ const MaterialModulde = [
   ]
 })
 export class PlayerApiModule {
-  constructor(private facade: PlayerFacade) {
-    this.facade.dispatch(PlayerActions.loadPlayer());
-  }
 }

@@ -7,36 +7,39 @@ export const RacesActions = {
 
   loadRacesSuccess: createAction(
     '[Races] Load Races Success',
-    props<{ races: IRace[] }>(),
+    props<{ races: IRace[]; }>(),
   ),
 
   loadRacesFailure: createAction(
     '[Races] Load Races Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   selectRace: createAction(
     '[Races] Select race',
-    props<{ round: string }>(),
+    props<{ round: string; }>(),
   ),
 
   loadYourBid: createAction(
     '[Enter bid page] Load your bid',
   ),
+  loadYourBidFromLanding: createAction(
+    '[Enter landing page] Load your bid',
+  ),
 
   loadYourBidSuccess: createAction(
     '[Bid API] Load your bid Success',
-    props<{ bid: Partial<Bid> }>(),
+    props<{ bid: Partial<Bid>; }>(),
   ),
 
   loadYourBidFailure: createAction(
     '[Bid API] Load your bid Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   updateYourBid: createAction(
     '[Enter bid page] Update the your bid',
-    props<{ bid: Bid }>()
+    props<{ bid: Bid; }>()
   ),
 
   updateYourBidSuccess: createAction(
@@ -45,7 +48,7 @@ export const RacesActions = {
 
   updateYourBidFailure: createAction(
     '[Bid API] Update your bid Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   loadBids: createAction(
@@ -54,27 +57,27 @@ export const RacesActions = {
 
   loadBidsSuccess: createAction(
     '[Bid API] Load bids Success',
-    props<{ bids: Bid[] }>(),
+    props<{ bids: Bid[]; }>(),
   ),
 
   loadBidsFailure: createAction(
     '[Bid API] Load bids Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   loadBid: createAction(
     '[Bid page] Load bid',
-    props<{ uid: string }>()
+    props<{ uid: string; }>()
   ),
 
   loadBidSuccess: createAction(
     '[Bid API] Load bid Success',
-    props<{ bid: Bid }>(),
+    props<{ bid: Bid; }>(),
   ),
 
   loadBidFailure: createAction(
     '[Bid API] Load bid Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   loadResult: createAction(
@@ -83,12 +86,12 @@ export const RacesActions = {
 
   loadResultSuccess: createAction(
     '[Result API] Load result Success',
-    props<{ result: Bid }>(),
+    props<{ result: Bid; }>(),
   ),
 
   loadResultFailure: createAction(
     '[Result API] Load result Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   loadInterimResult: createAction(
@@ -97,17 +100,17 @@ export const RacesActions = {
 
   loadInterimResultSuccess: createAction(
     '[Interim API] Load intermim result Success',
-    props<{ result: Partial<Bid> }>(),
+    props<{ result: Partial<Bid>; }>(),
   ),
 
   loadInterimResultFailure: createAction(
     '[Interim API] Load intermim result Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   submitBid: createAction(
     '[Bid page] submit bid',
-    props<{bid: Bid}>(),
+    props<{ bid: Bid; }>(),
   ),
 
   submitBidSuccess: createAction(
@@ -116,7 +119,7 @@ export const RacesActions = {
 
   submitBidFailure: createAction(
     '[Bid API] Submit bid Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   submitResult: createAction(
@@ -129,7 +132,7 @@ export const RacesActions = {
 
   submitResultFailure: createAction(
     '[Result API] Submit result Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   submitInterimResult: createAction(
@@ -142,12 +145,12 @@ export const RacesActions = {
 
   submitInterimResultFailure: createAction(
     '[Interim API] Submit interim result Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   updateRaceDrivers: createAction(
     '[Edit race drivers page] Update race drivers',
-    props<{drivers: string[]}>()
+    props<{ drivers: string[]; }>()
   ),
 
   updateRaceDriversSuccess: createAction(
@@ -156,7 +159,7 @@ export const RacesActions = {
 
   updateRaceDriversFailure: createAction(
     '[Edit race drivers API] Update race drivers Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   loadLastYear: createAction(

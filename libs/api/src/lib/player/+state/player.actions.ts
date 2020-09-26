@@ -20,7 +20,7 @@ export const PlayerActions = {
   ),
 
   updatePlayer: createAction(
-    '[Player] Update player from sidebar',
+    '[Player] Update player from profile',
     props<{ partialPlayer: Partial<Player>; }>()
   ),
 

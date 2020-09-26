@@ -33,7 +33,7 @@ export class RacesEffects {
   );
 
   loadYourBid$ = createEffect(() => this.actions$.pipe(
-    ofType(RacesActions.loadYourBid),
+    ofType(RacesActions.loadYourBid, RacesActions.loadYourBidFromLanding),
     concatMap(() => combineLatest([
       this.seasonFacade.season$,
       this.facade.currentRace$,
