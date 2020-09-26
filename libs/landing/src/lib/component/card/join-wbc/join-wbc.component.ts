@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SeasonFacade } from '@f2020/api';
-import { PlayerActions, PlayerFacade } from '@f2020/player';
+import { PlayerActions, PlayerFacade } from '@f2020/api';
 import { truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { combineLatest, Observable } from 'rxjs';
@@ -17,9 +17,9 @@ export class JoinWbcComponent implements OnInit {
   latestWBCJoinDate$: Observable<DateTime>;
   canJoin$: Observable<boolean>;
   loading$: Observable<boolean>;
-  
+
   constructor(
-    private playerFacade: PlayerFacade, 
+    private playerFacade: PlayerFacade,
     private seasonFacade: SeasonFacade,
     private snackBar: MatSnackBar) { }
 
@@ -32,12 +32,12 @@ export class JoinWbcComponent implements OnInit {
       truthy(),
       map(player => player.uid)
     );
-    this.canJoin$ =  combineLatest([
+    this.canJoin$ = combineLatest([
       this.latestWBCJoinDate$,
       this.seasonFacade.season$,
       uid$
     ]).pipe(
-      map(([lastestJoinDate, {wbc}, uid]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local())
+      map(([lastestJoinDate, { wbc }, uid]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local())
     );
     this.loading$.pipe(
       pairwise(),
@@ -45,7 +45,7 @@ export class JoinWbcComponent implements OnInit {
       debounceTime(300),
       withLatestFrom(this.canJoin$),
       filter(([_, canJoin]) => canJoin === false),
-      switchMap(() => this.snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', {duration: 5000}).onAction())
+      switchMap(() => this.snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', { duration: 5000 }).onAction())
     ).subscribe(() => this.playerFacade.dispatch(PlayerActions.undoWBC()));
   }
 

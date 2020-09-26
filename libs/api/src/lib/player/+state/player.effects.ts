@@ -1,10 +1,10 @@
-import { PlayerFacade } from '@f2020/player';
+import { PlayerFacade } from '@f2020/api';
 import { Inject, Injectable } from '@angular/core';
 import { GoogleMessaging } from '@f2020/firebase';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
-import { PlayerService } from '../service/player.service';
+import { PlayerApiService } from '../service/player-api.service';
 import { PlayerActions } from './player.actions';
 
 
@@ -51,9 +51,9 @@ export class PlayerEffects {
         .catch(error => PlayerActions.logoutPlayerFailure({ error })),
       ),
     ),
-  );  
-  
-  
+  );
+
+
   joinWBC$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PlayerActions.joinWBC),
@@ -62,7 +62,7 @@ export class PlayerEffects {
         .catch(error => PlayerActions.joinWBCFailure({ error })),
       ),
     ),
-  ); 
+  );
 
   undoWBC$ = createEffect(() =>
     this.actions$.pipe(
@@ -75,8 +75,8 @@ export class PlayerEffects {
   );
 
   constructor(
-    private actions$: Actions, 
-    private service: PlayerService, 
+    private actions$: Actions,
+    private service: PlayerApiService,
     @Inject(GoogleMessaging) private messaging: firebase.messaging.Messaging) {
   }
 }

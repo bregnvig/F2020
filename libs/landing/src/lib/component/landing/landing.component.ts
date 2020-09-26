@@ -1,4 +1,4 @@
-import { PlayerFacade } from '@f2020/player';
+import { PlayerFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';

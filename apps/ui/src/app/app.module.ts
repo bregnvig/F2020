@@ -13,10 +13,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { RaceApiModule, SeasonApiModule } from '@f2020/api';
+import { PlayerApiModule, RaceApiModule, SeasonApiModule } from '@f2020/api';
 import { DriverModule } from '@f2020/driver';
 import { FirebaseModule } from '@f2020/firebase';
-import { PlayerModule } from '@f2020/player';
 import { SharedModule } from '@f2020/shared';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -52,7 +51,7 @@ const materialModule = [
     materialModule,
     FlexLayoutModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    PlayerModule,
+    PlayerApiModule,
     DriverModule,
     SeasonApiModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),

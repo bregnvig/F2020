@@ -11,7 +11,7 @@ import { GoogleFunctions } from '@f2020/firebase';
 @Injectable({
   providedIn: 'root',
 })
-export class PlayerService {
+export class PlayerApiService {
 
   static readonly playersURL = 'players';
 
@@ -22,7 +22,7 @@ export class PlayerService {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
-        switchMap(user => this.afs.doc<Player>(`${PlayerService.playersURL}/${user.uid}`).valueChanges()),
+        switchMap(user => this.afs.doc<Player>(`${PlayerApiService.playersURL}/${user.uid}`).valueChanges()),
       ),
       this.currentUser$.pipe(
         filter(user => !user || !(user?.uid))
@@ -61,25 +61,25 @@ export class PlayerService {
       payload = {
         ...partialPlayer,
         tokens: firebase.firestore.FieldValue.arrayUnion(...partialPlayer.tokens)
-      }
+      };
     }
     return this.player$.pipe(
-      switchMap(player => this.afs.doc(`${PlayerService.playersURL}/${player.uid}`).update(payload)),
+      switchMap(player => this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`).update(payload)),
       mapTo(partialPlayer),
       first()
-    )
+    );
   }
 
   joinWBC(): Promise<true> {
     return this.functions.httpsCallable('joinWBC')()
-      .then(() => true)
+      .then(() => true);
   }
-  
+
   undoWBC(): Promise<true> {
     return this.functions.httpsCallable('undoWBC')()
-      .then(() => true)
+      .then(() => true);
   }
-  
+
   private updateBaseInformation(player: Player): Observable<void> {
     const _player: Player = {
       uid: player.uid,
@@ -87,7 +87,7 @@ export class PlayerService {
       email: player.email,
       photoURL: player.photoURL,
     };
-    const doc = this.afs.doc(`${PlayerService.playersURL}/${player.uid}`);
+    const doc = this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`);
     return doc.get().pipe(
       switchMap(snapshot => snapshot.exists ? doc.update(_player) : doc.set(_player)),
       first(),

@@ -8,5 +8,6 @@ export interface Player {
   roles?: Role[];
   tokens?: string[];
   receiveReminders?: boolean;
+  receiveBettingStarted?: string[];
   balance?: number;
 }

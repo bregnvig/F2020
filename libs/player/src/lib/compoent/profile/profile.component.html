@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+  Profil
+</mat-toolbar>
+<div class="max-width">
+  <mat-toolbar color="secondary">Påmindelser</mat-toolbar>
+  <mat-list>
+    <mat-list-item>
+      <div mat-line>
+        <mat-slide-toggle color="secondary" [checked]="receiveReminders$ | async" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
+      </div>
+    </mat-list-item>
+  </mat-list>
+  <mat-toolbar color="secondary" class="mt-3">
+    Giv besked når
+  </mat-toolbar>
+  <mat-selection-list (selectionChange)="selectionChanged($event)">
+    <mat-list-option *ngFor="let player of players$ | async" [selected]="player[1]" [value]="player[0].uid">{{player[0].displayName}}</mat-list-option>
+  </mat-selection-list>
+</div>

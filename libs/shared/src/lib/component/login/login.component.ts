@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { PlayerService } from '@f2020/player'
+import { PlayerApiService } from '@f2020/api';
 
 @Component({
   selector: 'sha-login',
@@ -9,7 +9,7 @@ import { PlayerService } from '@f2020/player'
 })
 export class LoginComponent {
 
-  constructor(private service: PlayerService, private router: Router) {
+  constructor(private service: PlayerApiService, private router: Router) {
   }
 
   loginWithGoogle() {

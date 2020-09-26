@@ -7,7 +7,7 @@ export const PlayerActions = {
 
   loadPlayerSuccess: createAction(
     '[Player] Load Player Success',
-    props<{ player: Player }>(),
+    props<{ player: Player; }>(),
   ),
 
   loadPlayerUnauthorized: createAction(
@@ -16,22 +16,22 @@ export const PlayerActions = {
 
   loadPlayerFailure: createAction(
     '[Player] Load Player Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   updatePlayer: createAction(
     '[Player] Update player from sidebar',
-    props<{partialPlayer: {receiveReminders?: boolean, tokens?: string[]}}>()
+    props<{ partialPlayer: Partial<Player>; }>()
   ),
 
   updatePlayerSuccess: createAction(
     '[Player] Update Player Success',
-    props<{ partialPlayer: Partial<Player> }>(),
+    props<{ partialPlayer: Partial<Player>; }>(),
   ),
 
   updatePlayerFailure: createAction(
     '[Player] Update Player failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   logoutPlayer: createAction('[Sidebar Menu] Logout player from application'),
@@ -42,7 +42,7 @@ export const PlayerActions = {
 
   logoutPlayerFailure: createAction(
     '[Player] Logout player Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 
   loadMessagingToken: createAction(
@@ -63,4 +63,4 @@ export const PlayerActions = {
   undoWBCFailure: createAction('[Player API] undo WBC Failure', props<{ error: any; }>()),
 
 
-}
+};

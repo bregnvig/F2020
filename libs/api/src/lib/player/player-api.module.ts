@@ -1,5 +1,3 @@
-import { MatSelectModule } from '@angular/material/select';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,8 +6,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FirebaseModule } from '@f2020/firebase';
-import { ProfileComponent } from './compoent/profile/profile.component';
-import { PlayersApiModule, PlayerApiModule } from '@f2020/api';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { PlayerActions } from './+state/player.actions';
+import { PlayerEffects } from './+state/player.effects';
+import { PlayerFacade } from './+state/player.facade';
+import * as fromPlayer from './+state/player.reducer';
 
 const MaterialModulde = [
   MatListModule,
@@ -24,19 +26,12 @@ const MaterialModulde = [
     CommonModule,
     FirebaseModule,
     MaterialModulde,
-    PlayerApiModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        component: ProfileComponent
-      }
-    ]),
-    PlayerApiModule,
-    PlayersApiModule,
-  ],
-  declarations: [
-    ProfileComponent
+    StoreModule.forFeature(fromPlayer.PLAYER_FEATURE_KEY, fromPlayer.reducer),
+    EffectsModule.forFeature([PlayerEffects]),
   ]
 })
-export class PlayerModule {
+export class PlayerApiModule {
+  constructor(private facade: PlayerFacade) {
+    this.facade.dispatch(PlayerActions.loadPlayer());
+  }
 }

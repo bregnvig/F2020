@@ -1,7 +1,7 @@
 import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 import { Component, OnInit } from '@angular/core';
 import { Player } from '@f2020/data';
-import { PlayerFacade } from '@f2020/player';
+import { PlayerFacade } from '@f2020/api';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';

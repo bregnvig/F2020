@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { StoreModule } from "@ngrx/store";
+import { FirebaseModule } from '@f2020/firebase';
 import { EffectsModule } from "@ngrx/effects";
-import * as fromPlayers from "./+state/players.reducer";
+import { StoreModule } from "@ngrx/store";
 import { PlayersEffects } from "./+state/players.effects";
 import { PlayersFacade } from "./+state/players.facade";
-import { FirebaseModule } from '@f2020/firebase';
+import * as fromPlayers from "./+state/players.reducer";
 
 @NgModule({
   imports: [
@@ -19,4 +19,4 @@ import { FirebaseModule } from '@f2020/firebase';
   ],
   providers: [PlayersFacade, PlayersEffects]
 })
-export class PlayersApiModule {}
+export class PlayersApiModule { }

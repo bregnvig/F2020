@@ -2,14 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { RacesActions, RacesFacade, SeasonActions, SeasonFacade, VersionService } from '@f2020/api';
+import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, SeasonActions, SeasonFacade, VersionService } from '@f2020/api';
+import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
 import { GoogleMessaging } from '@f2020/firebase';
-import { PlayerFacade, PlayerActions } from '@f2020/player';
 import { truthy } from '@f2020/tools';
-import { filter, first, switchMap, startWith, pairwise, map, switchMapTo } from 'rxjs/operators';
-import * as equal from 'fast-deep-equal/es6'
-import { Player } from '@f2020/data';
+import * as equal from 'fast-deep-equal/es6';
+import { filter, first, map, pairwise, startWith, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-root',
@@ -37,7 +36,7 @@ export class AppComponent implements OnInit {
     this.playerFacade.authorized$.pipe(
       filter(authorized => authorized),
       switchMap(() => this.playerFacade.player$),
-      startWith(<Player> null),
+      startWith(<Player>null),
       pairwise(),
       filter(([previous, current]) => !equal(previous, current)),
       map(([_, current]) => current)
@@ -70,7 +69,7 @@ export class AppComponent implements OnInit {
     ).subscribe(() => location.reload());
     this.versionService.setVersion({
       ui: 2,
-      api:2
+      api: 2
     });
     this.versionService.versionOK$.subscribe(ok => {
       if (!ok) {
@@ -79,7 +78,7 @@ export class AppComponent implements OnInit {
           switchMap(() => this.updates.activateUpdate()),
         ).subscribe(() => location.reload());
       }
-    })
+    });
 
     this.messaging.onMessage(message => this.snackBar.open(message.notification.body, null, { duration: 2000 }));
   }

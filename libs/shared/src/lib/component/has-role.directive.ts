@@ -1,7 +1,7 @@
 import { filter } from 'rxjs/operators';
 import { NgIfContext } from '@angular/common';
 import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { PlayerFacade } from '@f2020/player';
+import { PlayerFacade } from '@f2020/api';
 import { combineLatest, Subject } from 'rxjs';
 
 @Directive({
@@ -19,13 +19,13 @@ export class HasRoleDirective {
     readonly service: PlayerFacade,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef) {
-      combineLatest([
-        service.player$.pipe(filter(p => !!p)),
-        this.role$
-      ]).subscribe(([player, roles]) => {
-        this.condition = (player.roles || []).some(r => roles.some(role => role === r));
-        this.updateView();
-      });
+    combineLatest([
+      service.player$.pipe(filter(p => !!p)),
+      this.role$
+    ]).subscribe(([player, roles]) => {
+      this.condition = (player.roles || []).some(r => roles.some(role => role === r));
+      this.updateView();
+    });
   }
 
   @Input()
@@ -34,7 +34,7 @@ export class HasRoleDirective {
     this.elseViewRef = null;  // clear previous view if any.
     this.updateView();
   }
-  
+
   @Input() set shaHasRole(roles: string | string[]) {
     this.role$.next(Array.isArray(roles) ? roles : [roles]);
   }

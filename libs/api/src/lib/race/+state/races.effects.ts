@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PlayerActions, PlayerFacade } from '@f2020/player';
+import { PlayerActions, PlayerFacade } from '../../player';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { fetch } from '@nrwl/angular';

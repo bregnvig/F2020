@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { PlayerModule } from '@f2020/player';
+import { PlayerApiModule } from '@f2020/api';
 import { CardPageComponent } from './component/card-page/card-page.component';
 import { HasRoleDirective } from './component/has-role.directive';
 import { LoadingComponent } from './component/loading/loading.component';
@@ -25,7 +25,7 @@ const materialModules = [
   MatButtonModule,
   MatToolbarModule,
   MatSlideToggleModule
-]
+];
 
 const exportComponents = [
   LoginComponent,
@@ -39,7 +39,7 @@ const pipes = [
   RelativeToNowPipe,
   FlagURLPipe,
   PolePositionTimePipe
-]
+];
 
 @NgModule({
   declarations: [
@@ -60,7 +60,7 @@ const pipes = [
     CommonModule,
     FlexLayoutModule,
     RouterModule,
-    PlayerModule,
+    PlayerApiModule,
     materialModules
   ],
 })
