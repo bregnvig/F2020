@@ -17,7 +17,7 @@
 </div>
 <div fxLayout="column">
   <mat-selection-list>
-    <mat-list-option *ngFor="let entry of playerEntris" (click)="toggle(entry.player)">
+    <mat-list-option *ngFor="let entry of playerEntris" (click)="toggle(entry.player)" [selected]="isSelected(entry)">
       <img matListAvatar [src]="entry.player.photoURL">
       <h3 matLine class="selected">{{entry.player.displayName}} </h3>
       <p matLine>{{entry.points}} point</p>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { SeasonFacade } from '@f2020/api';
+import { SeasonFacade, PlayerFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { AbstractSuperComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WBCGraph } from '../../model/wbc-graph.model';
 import { WBCGraphEntry } from './../../model/wbc-graph.model';
@@ -18,7 +19,7 @@ export class WbcGraphComponent extends AbstractSuperComponent implements OnInit 
   activeEntries: any[] = [];
   playerEntris: WBCGraphEntry[];
 
-  constructor(private facade: SeasonFacade) {
+  constructor(private facade: SeasonFacade, private playerFacade: PlayerFacade) {
     super();
   }
 
@@ -27,13 +28,19 @@ export class WbcGraphComponent extends AbstractSuperComponent implements OnInit 
       map(season => new WBCGraph(season.wbc)),
       shareLatest(),
     );
-    graph$.pipe(
-      map(data => data.entries.map(e => ({
-        name: e.player.displayName,
-        series: e.entries
-      }))),
+    combineLatest([
+      graph$.pipe(
+        map(data => data.entries.map(e => ({
+          name: e.player.displayName,
+          series: e.entries
+        })))),
+      this.playerFacade.player$
+    ]).pipe(
       this.takeUntilDestroyed(),
-    ).subscribe(entries => this.data = entries);
+    ).subscribe(([entries, player]) => {
+      this.data = entries;
+      this.activeEntries = entries.filter(e => e.name === player.displayName);
+    });
     graph$.pipe(this.takeUntilDestroyed()).subscribe(players => this.playerEntris = [...players.entries].sort((a, b) => b.points - a.points));
   }
 
@@ -41,8 +48,12 @@ export class WbcGraphComponent extends AbstractSuperComponent implements OnInit 
     if (this.activeEntries.some(e => e.name === player.displayName)) {
       this.activeEntries = this.activeEntries.filter(e => e.name !== player.displayName);
     } else {
-      this.activeEntries = [...this.activeEntries, this.data.find(d => d.name === player.displayName)];
+      this.activeEntries = [...this.activeEntries, this.data.find(data => data.name === player.displayName)];
     }
+  }
+
+  isSelected(entry: WBCGraphEntry): boolean {
+    return (this.activeEntries || []).some(e => e.name === entry.player.displayName);
   }
 
   ngxBug() {
