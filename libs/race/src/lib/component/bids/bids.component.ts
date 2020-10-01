@@ -2,11 +2,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Bid } from '@f2020/data';
 
+const polePostionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
+
 @Component({
   selector: 'f2020-bids',
   templateUrl: './bids.component.html',
   styleUrls: ['./bids.component.scss'],
-  changeDetection:  ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BidsComponent {
 
@@ -16,7 +18,7 @@ export class BidsComponent {
   @Input() result: Partial<Bid>;
 
   @Input() set bids(value: Bid[]) {
-    this._bids = [...value || []].sort((a, b) => b.points - a.points)
+    this._bids = [...value || []].sort((a, b) => (b.points - a.points) || (polePostionDiffComparator(a, b)));
   }
 
   get bids(): Bid[] {
@@ -27,10 +29,10 @@ export class BidsComponent {
   }
 
   gotoBid(uid: string) {
-    this.router.navigate(['bid', uid], {relativeTo: this.route})
+    this.router.navigate(['bid', uid], { relativeTo: this.route });
   }
 
   gotoResult() {
-    this.router.navigate(['result'], { relativeTo: this.route })
+    this.router.navigate(['result'], { relativeTo: this.route });
   }
 }
