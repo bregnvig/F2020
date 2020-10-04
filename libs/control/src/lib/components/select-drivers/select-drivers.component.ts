@@ -1,24 +1,24 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
-import { IRace } from '@f2020/data';
+import { IRace, ITeam } from '@f2020/data';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { DriverNamePipe } from '@f2020/driver';
 
 type LabelFn = (index: number) => string;
 
 const uniqueDrivers = (driverArray: FormArray): null | string[] => {
-  const value: string[] = (driverArray.value || []); 
+  const value: string[] = (driverArray.value || []);
   const driverIds: string[] = value.filter((driverId: string) => !!driverId);
-  const count: { [key: string]: number} = driverIds.reduce((acc, driverId) => {
+  const count: { [key: string]: number; } = driverIds.reduce((acc, driverId) => {
     if (!acc[driverId]) {
       acc[driverId] = 0;
     }
     acc[driverId] += 1;
-    return acc; 
+    return acc;
   }, {});
   const errors: string[] = value.map((driverId: string) => driverId && count[driverId] > 1 ? driverId : null);
   return errors.some(error => !!error) ? errors : null;
-}
+};
 
 @Component({
   selector: 'f2020-select-drivers',
@@ -40,12 +40,13 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
 export class SelectDriversComponent extends AbstractControlComponent implements OnInit {
 
   @Input() race: IRace;
+  @Input() teams: ITeam[];
   @Input() noOfDrivers: number;
-  
+
   fg: FormGroup;
   drivers: FormArray;
 
-  @Input() labelFn: LabelFn = (index: number) => `Vælg ${index}. køre`;
+  @Input() labelFn: LabelFn = (index: number) => `Vælg ${index}. kører`;
 
   constructor(private fb: FormBuilder, private driverName: DriverNamePipe) {
     super();
@@ -63,9 +64,9 @@ export class SelectDriversComponent extends AbstractControlComponent implements 
 
   writeValue(value: string[] | string): void {
     if (value) {
-      this.drivers.patchValue(Array.isArray(value) ? value : [value], {emitEvent: false});
+      this.drivers.patchValue(Array.isArray(value) ? value : [value], { emitEvent: false });
     } else {
-      this.fg.reset({}, {emitEvent: false});
+      this.fg.reset({}, { emitEvent: false });
     }
   }
 

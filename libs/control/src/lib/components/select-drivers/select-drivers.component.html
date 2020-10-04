@@ -2,6 +2,7 @@
   <ng-container formArrayName="drivers" *ngFor="let _ of drivers.controls; index as i">
     <f2020-select-driver
         [driverIds]="race?.drivers"
+        [teams]="teams"
         [label]="labelFn(i + 1)"
         [error]="errorMessage(i)"
         [formControlName]="i">

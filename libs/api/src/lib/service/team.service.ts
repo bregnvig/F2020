@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { ITeam } from '@f2020/data';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
-import { debounce, first, map, switchMap } from 'rxjs/operators';
+import { first, map, shareReplay, switchMap } from 'rxjs/operators';
 import { SeasonFacade } from '../season/+state';
 
 @Injectable({
@@ -18,7 +18,8 @@ export class TeamService {
       truthy(),
       first(),
       switchMap(season => afs.collection<ITeam>(`seasons/${season.id}/teams`).get()),
-      map(snapshot => snapshot.docs.map(doc => doc.data() as ITeam))
+      map(snapshot => snapshot.docs.map(doc => doc.data() as ITeam)),
+      shareReplay(1),
     );
   }
 

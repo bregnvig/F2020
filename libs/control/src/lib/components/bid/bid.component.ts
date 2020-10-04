@@ -1,6 +1,6 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
-import { Bid, IRace } from '@f2020/data';
+import { Bid, IRace, ITeam } from '@f2020/data';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
@@ -24,6 +24,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
 export class BidComponent extends AbstractControlComponent implements OnInit {
 
   @Input() race: IRace;
+  @Input() teams: ITeam[];
   @Input() isResult = false;
   fg: FormGroup;
 

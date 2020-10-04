@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RacesActions, RacesFacade } from '@f2020/api';
-import { IRace } from '@f2020/data';
+import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
+import { IRace, ITeam } from '@f2020/data';
 import { AbstractSuperComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { debounceTime, filter, first, pairwise, switchMapTo, tap } from 'rxjs/operators';
 
 @Component({
@@ -18,10 +18,12 @@ export class EnterBidComponent extends AbstractSuperComponent implements OnInit 
 
   bidControl: FormControl = new FormControl();
   race$: Observable<IRace>;
+  teams$: Observable<ITeam[]>;
   updating$: Observable<boolean>;
 
   constructor(
     private facade: RacesFacade,
+    private teamsService: TeamService,
     private router: Router) {
     super();
   }
@@ -34,6 +36,7 @@ export class EnterBidComponent extends AbstractSuperComponent implements OnInit 
       shareLatest(),
     );
 
+    this.teams$ = this.teamsService.teams$;
     this.updating$ = this.facade.updating$;
     this.subscriptions.push(
       this.facade.yourBid$.pipe(

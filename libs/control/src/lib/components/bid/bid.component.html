@@ -8,7 +8,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
-        <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (isResult ? 1 : 0)" [race]="race"></f2020-select-drivers>
+        <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (isResult ? 1 : 0)" [race]="race" [teams]="teams"></f2020-select-drivers>
       </div>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #fastestDriver>
@@ -19,7 +19,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
-        <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (isResult ? 1 : 0)" [race]="race" [labelFn]="fastestLapLabelFn"></f2020-select-drivers>
+        <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (isResult ? 1 : 0)" [race]="race" [teams]="teams" [labelFn]="fastestLapLabelFn"></f2020-select-drivers>
       </div>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #podium>
@@ -30,7 +30,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
-        <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult ? 1 : 0)" [race]="race" [labelFn]="podiumLabelFn"></f2020-select-drivers>
+        <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult ? 1 : 0)" [race]="race" [teams]="teams" [labelFn]="podiumLabelFn"></f2020-select-drivers>
       </div>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #selectedDriver>
@@ -64,7 +64,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
-        <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult ? 2 : 0)" [race]="race" [labelFn]="firstCrashLabelFn"></f2020-select-drivers>
+        <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult ? 2 : 0)" [race]="race" [teams]="teams" [labelFn]="firstCrashLabelFn"></f2020-select-drivers>
       </div>
     </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #time>
