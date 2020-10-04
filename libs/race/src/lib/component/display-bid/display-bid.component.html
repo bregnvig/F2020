@@ -12,7 +12,7 @@
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="true" #fastestDriver *ngIf="bid.fastestDriver">
     <mat-expansion-panel-header >
-      <mat-panel-title>Hurtigste køre</mat-panel-title>
+      <mat-panel-title>Hurtigste kører</mat-panel-title>
       <mat-panel-description *ngIf="!fastestDriver.expanded" fxLayoutAlign="end">
         <f2020-driver-codes [driverIds]="bid.fastestDriver"></f2020-driver-codes>
       </mat-panel-description>
