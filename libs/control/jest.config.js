@@ -1,6 +1,5 @@
 module.exports = {
-  name: "control",
-  preset: "../../jest.config.js",
+  preset: "../../jest.preset.js",
   coverageDirectory: "../../coverage/libs/control",
   snapshotSerializers: [
     "jest-preset-angular/build/AngularNoNgAttributesSnapshotSerializer.js",
@@ -18,4 +17,5 @@ module.exports = {
       ],
     },
   },
+  displayName: "control",
 };

@@ -1,6 +1,5 @@
 module.exports = {
-  name: "api",
-  preset: "../../jest.config.js",
+  preset: "../../jest.preset.js",
   coverageDirectory: "../../coverage/libs/api",
   snapshotSerializers: [
     "jest-preset-angular/build/AngularNoNgAttributesSnapshotSerializer.js",
@@ -18,4 +17,5 @@ module.exports = {
       ],
     },
   },
+  displayName: "api",
 };

@@ -1,6 +1,5 @@
 module.exports = {
-  name: "landing",
-  preset: "../../jest.config.js",
+  preset: "../../jest.preset.js",
   coverageDirectory: "../../coverage/libs/landing",
   snapshotSerializers: [
     "jest-preset-angular/build/AngularNoNgAttributesSnapshotSerializer.js",
@@ -18,4 +17,5 @@ module.exports = {
       ],
     },
   },
+  displayName: "landing",
 };

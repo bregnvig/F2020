@@ -1,6 +1,5 @@
 module.exports = {
-  name: "season",
-  preset: "../../jest.config.js",
+  preset: "../../jest.preset.js",
   coverageDirectory: "../../coverage/libs/season",
   snapshotSerializers: [
     "jest-preset-angular/build/AngularNoNgAttributesSnapshotSerializer.js",
@@ -18,4 +17,5 @@ module.exports = {
       ],
     },
   },
+  displayName: "season",
 };

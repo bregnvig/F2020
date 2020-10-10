@@ -1,6 +1,5 @@
 module.exports = {
-  name: "wbc",
-  preset: "../../jest.config.js",
+  preset: "../../jest.preset.js",
   coverageDirectory: "../../coverage/libs/wbc",
   snapshotSerializers: [
     "jest-preset-angular/build/AngularNoNgAttributesSnapshotSerializer.js",
@@ -18,4 +17,5 @@ module.exports = {
       ],
     },
   },
+  displayName: "wbc",
 };
