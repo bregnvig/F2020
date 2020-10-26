@@ -1,4 +1,4 @@
-import { Bid, finished, IDriverQualifying, IDriverRaceResult, IQualifyResult, IRaceResult, SelectedDriverValue, ITeam, SelectedTeamValue } from '@f2020/data';
+import { Bid, finished, IDriverQualifying, IDriverRaceResult, IQualifyResult, IRaceResult, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
 
 const getDriverId = (result: IDriverRaceResult | IDriverQualifying) => result.driver.driverId;
 
@@ -14,8 +14,8 @@ export const buildResult = (race: IRaceResult, qualify: IQualifyResult, selected
   const podiumResult = race.results.slice(0, 4).map(getDriverId);
   const driver = race.results.find(r => r.driver.driverId === selectedDriver);
   const selectedDriverResult: SelectedDriverValue = {
-    grid: driver.grid,
-    finish: race.results.indexOf(driver) + 1
+    grid: driver?.grid || -100,
+    finish: race.results.indexOf(driver) ? race.results.indexOf(driver) + 1 : -100
   };
   const selectedTeamResult: SelectedTeamValue = {
     qualify: selectedTeam ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
