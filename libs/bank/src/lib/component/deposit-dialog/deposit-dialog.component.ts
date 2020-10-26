@@ -16,10 +16,10 @@ export class DepositDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<DepositDialogComponent>,
     private service: AccountService,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { player: Player }) { }
+    @Inject(MAT_DIALOG_DATA) public data: { player: Player; }) { }
 
   onDeposit() {
-    const { amount, message } = this.fg.value
+    const { amount, message } = this.fg.value;
     this.dialogRef.close(this.service.deposit(this.data.player.uid, amount, message || 'Via MobilePay').then(() => amount));
   }
 
@@ -31,7 +31,7 @@ export class DepositDialogComponent implements OnInit {
     this.fg = this.fb.group({
       amount: [null, [Validators.required, Validators.min(0)]],
       message: []
-    })
+    });
   }
 
 }
