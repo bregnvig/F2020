@@ -104,7 +104,7 @@ describe('Submit bid unittest', () => {
     bid.polePositionTime = 1000 * 60 * 2;
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
     bid = clone(collections.bids[0]);
-    bid.polePositionTime = 1000 * 60;
+    bid.polePositionTime = 1000 * 50;
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
 
     // Add team to race

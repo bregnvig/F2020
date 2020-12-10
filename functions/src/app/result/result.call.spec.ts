@@ -1,10 +1,10 @@
-import { IRace } from './../../lib/model/race.model';
 import { assertFails, assertSucceeds } from '@firebase/testing';
 import { playersURL, seasonsURL } from '../../lib/collection-names';
 import { Player } from '../../lib/model';
 import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
 import { Bid, SelectedTeamValue } from './../../lib/model/bid.model';
+import { IRace } from './../../lib/model/race.model';
 
 const clone = require('clone');
 
@@ -102,7 +102,7 @@ describe('Submit result unittest', () => {
     result.polePositionTime = 1000 * 60 * 2;
     await assertFails(app.functions.httpsCallable('submitResult')(result)).then(failedPrecondition);
     result = clone(collections.results[0]);
-    result.polePositionTime = 1000 * 60;
+    result.polePositionTime = 1000 * 50;
     await assertFails(app.functions.httpsCallable('submitResult')(result)).then(failedPrecondition);
 
     // Add team to race
