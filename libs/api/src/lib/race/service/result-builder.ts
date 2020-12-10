@@ -14,8 +14,8 @@ export const buildResult = (race: IRaceResult, qualify: IQualifyResult, selected
   const podiumResult = race.results.slice(0, 4).map(getDriverId);
   const driver = race.results.find(r => r.driver.driverId === selectedDriver);
   const selectedDriverResult: SelectedDriverValue = {
-    grid: driver?.grid || -100,
-    finish: race.results.indexOf(driver) ? race.results.indexOf(driver) + 1 : -100
+    grid: driver?.grid || 1,
+    finish: race.results.indexOf(driver) !== -1 ? race.results.indexOf(driver) + 1 : 1
   };
   const selectedTeamResult: SelectedTeamValue = {
     qualify: selectedTeam ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
