@@ -22,16 +22,16 @@ import { AbstractControlComponent } from '../../abstract-control-component';
   ],
 })
 export class PolePositionTimeComponent extends AbstractControlComponent implements OnInit {
-  
+
   fg: FormGroup;
 
   constructor(private fb: FormBuilder) {
     super();
   }
-  
+
   ngOnInit(): void {
     this.fg = this.fb.group({
-      minutes: [null, [Validators.required, Validators.min(1), Validators.max(2)]],
+      minutes: [null, [Validators.required, Validators.min(0), Validators.max(2)]],
       seconds: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
       milliseconds: [null, [Validators.required, Validators.min(0), Validators.max(999)]],
     });
@@ -41,7 +41,7 @@ export class PolePositionTimeComponent extends AbstractControlComponent implemen
       map(value => mapper.polePostion.join(value))
     ).subscribe(millis => this.propagateChange(millis));
   }
-  
+
   markAllTouched(): void {
     this.fg.markAllAsTouched();
   }
@@ -52,9 +52,9 @@ export class PolePositionTimeComponent extends AbstractControlComponent implemen
 
   writeValue(value: number): void {
     if (value !== null) {
-      this.fg.patchValue(mapper.polePostion.split(value), {emitEvent: false});
+      this.fg.patchValue(mapper.polePostion.split(value), { emitEvent: false });
     } else {
-      this.fg.reset({}, {emitEvent: false})
+      this.fg.reset({}, { emitEvent: false });
     }
   }
 
