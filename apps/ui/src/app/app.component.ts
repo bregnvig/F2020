@@ -8,6 +8,7 @@ import { DriversActions, DriversFacade } from '@f2020/driver';
 import { GoogleMessaging } from '@f2020/firebase';
 import { truthy } from '@f2020/tools';
 import * as equal from 'fast-deep-equal/es6';
+import firebase from 'firebase/app';
 import { filter, first, map, pairwise, startWith, switchMap } from 'rxjs/operators';
 
 @Component({

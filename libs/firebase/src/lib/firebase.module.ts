@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { InjectionToken, ModuleWithProviders, NgModule } from "@angular/core";
-import * as firebase from 'firebase/app';
 import 'firebase/app';
-import 'firebase/messaging';
+import firebase from 'firebase/app';
 import 'firebase/functions';
+import 'firebase/messaging';
 import { noop } from 'rxjs';
 
 export const GoogleFunctions = new InjectionToken<firebase.functions.Functions>('GOOGLE_FUNCTIONS');

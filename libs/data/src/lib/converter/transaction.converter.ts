@@ -1,7 +1,7 @@
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import { firestoreUtils } from '../firestore-utils';
 import { Transaction } from '../model';
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
 
 
 export const converter = {

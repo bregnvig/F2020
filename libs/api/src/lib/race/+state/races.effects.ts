@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { PlayerActions, PlayerFacade } from '../../player';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { fetch } from '@nrwl/angular';
 import { combineLatest, of } from 'rxjs';
 import { catchError, concatMap, debounceTime, filter, first, map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { PlayerActions, PlayerFacade } from '../../player';
 import { SeasonFacade } from '../../season/+state/season.facade';
 import { RacesService } from '../service/races.service';
 import { buildInterimResult, buildResult } from './../service/result-builder';
@@ -16,20 +15,13 @@ export class RacesEffects {
   loadRaces$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RacesActions.loadRaces),
-      fetch({
-        run: action => {
-          return this.seasonFacade.season$.pipe(
-            takeUntil(this.actions$.pipe(ofType(RacesActions.loadRaces, PlayerActions.logoutPlayer))),
-            switchMap(season => this.service.getRaces(season.id)),
-            map(races => RacesActions.loadRacesSuccess({ races })),
-          );
-        },
-        onError: (action, error) => {
-          console.error('Error', error);
-          return RacesActions.loadRacesFailure({ error });
-        },
-      }),
-    ),
+      concatMap(() => this.seasonFacade.season$.pipe(
+        takeUntil(this.actions$.pipe(ofType(RacesActions.loadRaces, PlayerActions.logoutPlayer))),
+        switchMap(season => this.service.getRaces(season.id)),
+        map(races => RacesActions.loadRacesSuccess({ races })),
+        catchError(error => of(RacesActions.loadRacesFailure({ error })))
+      ))
+    )
   );
 
   loadYourBid$ = createEffect(() => this.actions$.pipe(

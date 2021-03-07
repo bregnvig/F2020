@@ -1,12 +1,12 @@
-import { DateTime } from 'luxon';
 import { Inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { converter, Transaction } from '@f2020/data';
-import { Observable } from 'rxjs';
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
-
 import { GoogleFunctions } from '@f2020/firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import { DateTime } from 'luxon';
+import { Observable } from 'rxjs';
+
 
 @Injectable()
 export class AccountService {
