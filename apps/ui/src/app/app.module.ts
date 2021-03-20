@@ -18,6 +18,7 @@ import { DriverModule } from '@f2020/driver';
 import { FirebaseModule } from '@f2020/firebase';
 import { SharedModule } from '@f2020/shared';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import firebase from 'firebase/app';
@@ -67,6 +68,7 @@ const materialModule = [
     AppRoutingModule,
     SharedModule,
     RaceApiModule,
+    StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     FirebaseModule.forRoot(environment.messaging.pubKey),
   ],

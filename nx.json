@@ -2,87 +2,39 @@
   "npmScope": "f2020",
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     "tslint.json": "*",
     "nx.json": "*",
     "tsconfig.base.json": "*",
     ".eslintrc.json": "*"
   },
   "projects": {
-    "ui": {
-      "tags": []
-    },
-    "ui-e2e": {
-      "tags": [],
-      "implicitDependencies": ["ui"]
-    },
-    "builder": {
-      "tags": []
-    },
-    "data": {
-      "tags": []
-    },
-    "ergast": {
-      "tags": []
-    },
-    "control": {
-      "tags": []
-    },
-    "driver": {
-      "tags": []
-    },
-    "players": {
-      "tags": []
-    },
-    "bank": {
-      "tags": []
-    },
-    "shared": {
-      "tags": []
-    },
-    "player": {
-      "tags": []
-    },
-    "season": {
-      "tags": []
-    },
-    "api": {
-      "tags": []
-    },
-    "race": {
-      "tags": []
-    },
-    "standing": {
-      "tags": []
-    },
-    "info": {
-      "tags": []
-    },
-    "tools": {
-      "tags": []
-    },
-    "wbc": {
-      "tags": []
-    },
-    "firebase": {
-      "tags": []
-    },
-    "landing": {
-      "tags": []
-    }
+    "ui": { "tags": [] },
+    "ui-e2e": { "tags": [], "implicitDependencies": ["ui"] },
+    "builder": { "tags": [] },
+    "data": { "tags": [] },
+    "ergast": { "tags": [] },
+    "control": { "tags": [] },
+    "driver": { "tags": [] },
+    "players": { "tags": [] },
+    "bank": { "tags": [] },
+    "shared": { "tags": [] },
+    "player": { "tags": [] },
+    "api": { "tags": [] },
+    "race": { "tags": [] },
+    "standing": { "tags": [] },
+    "info": { "tags": [] },
+    "tools": { "tags": [] },
+    "wbc": { "tags": [] },
+    "firebase": { "tags": [] },
+    "landing": { "tags": [] },
+    "season": { "tags": [] }
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
     }
   },
-  "affected": {
-    "defaultBase": "master"
-  }
+  "affected": { "defaultBase": "master" }
 }

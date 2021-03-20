@@ -11,7 +11,7 @@
     "target": "es2015",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom"],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -24,7 +24,6 @@
       "@f2020/bank": ["libs/bank/src/index.ts"],
       "@f2020/shared": ["libs/shared/src/index.ts"],
       "@f2020/player": ["libs/player/src/index.ts"],
-      "@f2020/season": ["libs/season/src/index.ts"],
       "@f2020/api": ["libs/api/src/index.ts"],
       "@f2020/race": ["libs/race/src/index.ts"],
       "@f2020/standing": ["libs/standing/src/index.ts"],
@@ -32,7 +31,8 @@
       "@f2020/tools": ["libs/tools/src/index.ts"],
       "@f2020/wbc": ["libs/wbc/src/index.ts"],
       "@f2020/firebase": ["libs/firebase/src/index.ts"],
-      "@f2020/landing": ["libs/landing/src/index.ts"]
+      "@f2020/landing": ["libs/landing/src/index.ts"],
+      "@f2020/season": ["libs/seson/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
