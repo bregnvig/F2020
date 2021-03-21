@@ -4,12 +4,13 @@ import { LoginComponent } from '@f2020/shared';
 
 const routes: Routes = [
   {
-    path: 'login',
-    component: LoginComponent,
+    path: '',
+    pathMatch: 'full',
+    redirectTo: '2021'
   },
   {
-    path: '',
-    loadChildren: () => import('@f2020/landing').then(m => m.LandingModule),
+    path: 'login',
+    component: LoginComponent,
   },
   {
     path: 'players',
@@ -31,6 +32,10 @@ const routes: Routes = [
     path: ':season',
     canActivate: [SeasonLoaderService],
     children: [
+      {
+        path: '',
+        loadChildren: () => import('@f2020/landing').then(m => m.LandingModule),
+      },
       {
         path: 'race',
         loadChildren: () => import('@f2020/race').then(m => m.RaceModule),
