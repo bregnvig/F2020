@@ -43,7 +43,7 @@ export const firestoreUtils = {
     }
     return input;
   },
-  convertTimestamps(input: any): any {
+  convertTimestamps<T>(input: any): T {
     if (!input || typeof input !== 'object') {
       return input;
     }
