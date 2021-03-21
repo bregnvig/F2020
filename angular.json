@@ -701,31 +701,6 @@
           "style": "scss"
         }
       }
-    },
-    "season": {
-      "projectType": "library",
-      "root": "libs/season",
-      "sourceRoot": "libs/season/src",
-      "prefix": "season",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/season/src/**/*.ts",
-              "libs/season/src/**/*.html"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/season"],
-          "options": {
-            "jestConfig": "libs/season/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
     }
   },
   "cli": {

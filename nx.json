@@ -27,8 +27,7 @@
     "tools": { "tags": [] },
     "wbc": { "tags": [] },
     "firebase": { "tags": [] },
-    "landing": { "tags": [] },
-    "season": { "tags": [] }
+    "landing": { "tags": [] }
   },
   "tasksRunnerOptions": {
     "default": {
