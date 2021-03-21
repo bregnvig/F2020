@@ -1,5 +1,5 @@
-import { createAction, props } from '@ngrx/store';
 import { Player } from '@f2020/data';
+import { createAction, props } from '@ngrx/store';
 
 export const PlayerActions = {
 
@@ -47,6 +47,9 @@ export const PlayerActions = {
 
   loadMessagingToken: createAction(
     '[Player] Load messaging token'
+  ),
+  loadMessagingTokenOK: createAction(
+    '[Player] Load messaging token OK'
   ),
 
   loadMessingTokenFailure: createAction(

@@ -2,14 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, SeasonActions, SeasonFacade, VersionService } from '@f2020/api';
+import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
 import { GoogleMessaging } from '@f2020/firebase';
-import { truthy } from '@f2020/tools';
-import * as equal from 'fast-deep-equal/es6';
+import { filterEquals, truthy } from '@f2020/tools';
 import firebase from 'firebase/app';
-import { filter, first, map, pairwise, startWith, switchMap } from 'rxjs/operators';
+import { filter, first, startWith, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-root',
@@ -19,7 +18,6 @@ export class AppComponent implements OnInit {
 
   constructor(
     @Inject(GoogleMessaging) private messaging: firebase.messaging.Messaging,
-    private seasonFacade: SeasonFacade,
     private playerFacade: PlayerFacade,
     private driverFacade: DriversFacade,
     private racesFacade: RacesFacade,
@@ -37,13 +35,10 @@ export class AppComponent implements OnInit {
     this.playerFacade.authorized$.pipe(
       filter(authorized => authorized),
       switchMap(() => this.playerFacade.player$),
-      startWith(<Player>null),
-      pairwise(),
-      filter(([previous, current]) => !equal(previous, current)),
-      map(([_, current]) => current)
+      startWith(null as Player),
+      filterEquals(),
     ).subscribe(player => {
       if (player.roles && player.roles.includes('player')) {
-        this.seasonFacade.dispatch(SeasonActions.loadSeason());
         this.racesFacade.dispatch(RacesActions.loadRaces());
         this.driverFacade.dispatch(DriversActions.loadDrivers());
         if (this.router.url === '/info/roles') {

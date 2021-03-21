@@ -22,7 +22,7 @@ export class RacesService {
 
   getRaces(seasonId: string): Observable<IRace[]> {
     return this.afs.collection<IRace>(`${SeasonService.seasonsURL}/${seasonId}/races`).valueChanges().pipe(
-      map(firestoreUtils.convertTimestamps),
+      map(races => firestoreUtils.convertTimestamps(races)),
     );
   }
 

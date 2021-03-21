@@ -16,10 +16,10 @@ export class RacesEffects {
     this.actions$.pipe(
       ofType(RacesActions.loadRaces),
       concatMap(() => this.seasonFacade.season$.pipe(
-        takeUntil(this.actions$.pipe(ofType(RacesActions.loadRaces, PlayerActions.logoutPlayer))),
         switchMap(season => this.service.getRaces(season.id)),
         map(races => RacesActions.loadRacesSuccess({ races })),
-        catchError(error => of(RacesActions.loadRacesFailure({ error })))
+        catchError(error => of(RacesActions.loadRacesFailure({ error }))),
+        takeUntil(this.actions$.pipe(ofType(RacesActions.loadRaces, PlayerActions.logoutPlayer))),
       ))
     )
   );

@@ -6,7 +6,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { merge, Observable, ReplaySubject } from 'rxjs';
-import { filter, first, mapTo, switchMap } from 'rxjs/operators';
+import { filter, first, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -64,8 +64,8 @@ export class PlayerApiService {
       };
     }
     return this.player$.pipe(
-      switchMap(player => this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`).update(payload)),
-      mapTo(partialPlayer),
+      switchMap(player => this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`).update(payload).then(() => player)),
+      switchMap(player => this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`).valueChanges()),
       first()
     );
   }

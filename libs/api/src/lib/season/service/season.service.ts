@@ -11,22 +11,22 @@ export class SeasonService {
 
   static readonly seasonsURL = 'seasons';
 
-  readonly current$: Observable<ISeason> = this.afs.collection<any>(SeasonService.seasonsURL, ref => ref.where('current', '==', true)).valueChanges().pipe(
-    map(firestoreUtils.convertTimestamps),
-    map(seasons => {
-      if (seasons.length === 0) {
-        throw new Error('No current season available');
-      } else if (seasons.length > 1) {
-        throw new Error(`Should only return one season.  Returned ${seasons.length}`);
-      }
-      return seasons[0];
-    }),
-  );
-
-  readonly previous$: Observable<ISeason[]> = this.afs.collection<any>(SeasonService.seasonsURL, ref => ref.where('current', '==', false)).valueChanges().pipe(
-    map(firestoreUtils.convertTimestamps),
+  readonly previous$: Observable<ISeason[]> = this.afs.collection<ISeason>(SeasonService.seasonsURL, ref => ref.where('current', '==', false)).valueChanges().pipe(
+    map(seasons => firestoreUtils.convertTimestamps(seasons)),
   );
 
   constructor(private afs: AngularFirestore) {
+  }
+
+  loadSeason(id: string): Observable<ISeason> {
+    return this.afs.doc<ISeason>(`${SeasonService.seasonsURL}/${id}`).valueChanges().pipe(
+      map(season => firestoreUtils.convertTimestamps<ISeason>(season)),
+      map(season => {
+        if (!season) {
+          throw new Error(`No season found with id ${id}`);
+        }
+        return season;
+      }),
+    );
   }
 }

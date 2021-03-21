@@ -3,7 +3,7 @@ import { GoogleMessaging } from '@f2020/firebase';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import firebase from 'firebase/app';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, mapTo } from 'rxjs/operators';
+import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
 import { PlayerApiService } from '../service/player-api.service';
 import { PlayerActions } from './player.actions';
 
@@ -29,10 +29,12 @@ export class PlayerEffects {
   );
   loadtoken$ = createEffect(() => this.actions$.pipe(
     ofType(PlayerActions.loadMessagingToken),
-    concatMap(() => this.messaging.getToken()
-      .then(token => PlayerActions.updatePlayer({ partialPlayer: { tokens: [token] } }))
+    withLatestFrom(this.service.player$),
+    concatMap(([, player]) => this.messaging.getToken()
+      .then(token => player.tokens.some(t => t === token) ? PlayerActions.loadMessagingTokenOK() : PlayerActions.updatePlayer({ partialPlayer: { tokens: [token] } }))
       .catch(error => PlayerActions.loadMessingTokenFailure({ error })
-      ))
+      )
+    ),
   ));
   updatePlayer$ = createEffect(() =>
     this.actions$.pipe(

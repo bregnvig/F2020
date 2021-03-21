@@ -1,4 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
+import { SeasonLoaderService } from '@f2020/api';
 import { LoginComponent } from '@f2020/shared';
 
 const routes: Routes = [
@@ -28,6 +29,7 @@ const routes: Routes = [
   },
   {
     path: ':season',
+    canActivate: [SeasonLoaderService],
     children: [
       {
         path: 'race',
