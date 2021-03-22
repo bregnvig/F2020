@@ -1,10 +1,18 @@
 
-// getTeams(2020).then(teams => Array.from(teams.values()).map(t => firebaseApp.datebase.doc(`seasons/2020/teams/${t.constructorId}`).set(t)));
 
-// getTeams(2020).then(teams => console.log(teams)))
-// buildPreviousRaceReult(2019).then(_ => console.log(JSON.stringify(_, null, '\t')))
+
+
+
+// getTeams(2021).then(teams => console.log(teams))
+// getTeams(2021).then(teams => Array.from(teams.values()).map(t => firebaseApp.datebase.doc(`seasons/2021/teams/${t.constructorId}`).set(t)));
+// buildPreviousRaceReult(2020).then(_ => console.log(JSON.stringify(_, null, '\t')))
+
+
+// import { buildNewSeason } from "./app/season";
+// import { environment } from "./environments/environment";
 
 // buildNewSeason(environment.season)
+//   .then(() => assignTeamsToSeason(parseInt(environment.season)))
 //   .then(_ => console.log('Completed', _))
 //   .catch(error => console.error('Completed with errors', error));
 

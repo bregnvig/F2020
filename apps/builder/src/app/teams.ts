@@ -1,6 +1,6 @@
+import { ErgastConstructorStanding, ErgastDriver, IRace, ITeam, mapper } from '@f2020/data';
+import { getConstructorDrivers, getContructorStandings } from '@f2020/ergast';
 import { WriteResult } from '@google-cloud/firestore';
-import { ITeam, ErgastConstructorStanding, ErgastDriver, mapper, IRace } from '@f2020/data';
-import { getContructorStandings, getConstructorDrivers } from '@f2020/ergast';
 import { firebaseApp } from './firebase';
 
 export const getTeams = async (seasonId: number): Promise<Map<string, ITeam>> => {
@@ -21,6 +21,8 @@ export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult
   const teams: ITeam[] = await firebaseApp.datebase.collection(`seasons/${seasonId}/teams`)
     .get()
     .then(s => s.docs.map(doc => doc.data() as ITeam));
+
+  console.log(teams);
 
   const startingIndex = await firebaseApp.datebase.collection('seasons/${seasonId}/races').get().then(snap => snap.docs.filter(d => (d.data() as IRace).selectedTeam).length);
 

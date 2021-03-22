@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { SeasonFacade } from '@f2020/api';
+import { PlayerFacade, SeasonFacade } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
-import { PlayerFacade } from '@f2020/api';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 

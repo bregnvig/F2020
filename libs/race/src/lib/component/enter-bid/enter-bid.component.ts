@@ -54,7 +54,7 @@ export class EnterBidComponent extends AbstractSuperComponent implements OnInit 
         pairwise(),
         filter(([previous, current]) => previous && current === false),
         switchMapTo(this.race$),
-      ).subscribe(race => this.router.navigate(['race', race.round])),
+      ).subscribe(race => this.router.navigate([race.season, 'race', race.round])),
       this.facade.error$.pipe(
         filter(error => !!error),
       ).subscribe(error => this.bidControl.enable({ emitEvent: false }))
