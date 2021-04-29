@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, map, debounceTime } from 'rxjs/operators';
+import { debounceTime, filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-race',
@@ -46,9 +46,5 @@ export class RaceComponent implements OnInit {
     this.center$ = this.race$.pipe(
       map(race => new google.maps.LatLng(race.location.lat, race.location.lng)),
     );
-  }
-
-  flagURL(race: IRace) {
-    return `https://www.countryflags.io/${race.countryCode.toLocaleLowerCase()}/flat/64.png`;
   }
 }
