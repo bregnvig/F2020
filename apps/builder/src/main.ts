@@ -7,6 +7,8 @@
 // getTeams(2021).then(teams => Array.from(teams.values()).map(t => firebaseApp.datebase.doc(`seasons/2021/teams/${t.constructorId}`).set(t)));
 // buildPreviousRaceReult(2020).then(_ => console.log(JSON.stringify(_, null, '\t')))
 
+import { appendRaces } from "./app/season";
+
 
 // import { buildNewSeason } from "./app/season";
 // import { environment } from "./environments/environment";
@@ -30,3 +32,5 @@
 
 // appendRaces('2020').then(() => assignTeamsToSeason(2020))
 //   .then(() => console.log('Done'));
+// copyRace(8, 7).then(() => console.log('Copied race'));
+appendRaces('2021').then(_ => console.log('Added races', _));

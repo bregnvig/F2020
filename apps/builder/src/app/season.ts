@@ -1,8 +1,8 @@
-import { getFullSeasonDrivers, getSeason, getSeasonDrivers } from '@f2020/ergast';
 import { IDriver, IRace, ISeason, mapper } from '@f2020/data';
-import { firebaseApp } from './firebase';
+import { getFullSeasonDrivers, getSeason, getSeasonDrivers } from '@f2020/ergast';
 import { WriteResult } from '@google-cloud/firestore';
 import { converter } from './converter';
+import { firebaseApp } from './firebase';
 
 const random = (max: number): number => Math.floor(Math.random() * Math.floor(max));
 
@@ -31,7 +31,7 @@ export const buildNewSeason = async (seasonId: string) => {
   return writeSeason(season, races);
 };
 
-export const appendRaces = async (seasonId: string) => {
+export const appendRaces = async (seasonId: string): Promise<any> => {
   const ergastRaces: IRace[] = await buildRaces(seasonId);
   const firestoreRaces = await firebaseApp.datebase.collection(`${seasonsURL}/${seasonId}/races`).withConverter(converter.race)
     .get()
