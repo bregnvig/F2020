@@ -34,7 +34,6 @@ export const validateResult = (result: Bid, race: IRace): void => {
   const lengths = {
     podium: 4,
     qualify: 7,
-    fastestDriver: 2,
   } as { [key: string]: number; };
 
   if (!result) {

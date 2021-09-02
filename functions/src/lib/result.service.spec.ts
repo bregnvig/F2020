@@ -1,6 +1,6 @@
-import { SelectedDriverValue } from './model/bid.model';
-import { offsetPoints, propertyPoints, calculateResult } from './result.service';
 import { collections } from '../test-utils';
+import { SelectedDriverValue } from './model/bid.model';
+import { calculateResult, offsetPoints, propertyPoints } from './result.service';
 describe('Result service test', () => {
 
   it('should award points to qualify', () => {
@@ -79,38 +79,55 @@ describe('Result service test', () => {
     expect(propertyPoints(bid, result)).toStrictEqual({ gridPoints: 0, finishPoints: 1 });
     bid = { grid: 4, finish: 13 };
     expect(propertyPoints(bid, result)).toStrictEqual({ gridPoints: 0, finishPoints: 0 });
-  })
+  });
 
   it('should calculate the result of Flemmings bid', () => {
     const bid = collections.bids[0];
     const result = collections.results[0];
-    const calculatedResult = calculateResult(bid, result)
+    const calculatedResult = calculateResult(bid, result);
 
     expect(calculatedResult.points).toBe(12 + 2 + 6 + 3 + 3 + 3);
 
-    expect(calculatedResult.qualifyPoints).toStrictEqual([2, 2, 2, 2, 2, 2])
-    expect(calculatedResult.fastestDriverPoints).toStrictEqual([2])
-    expect(calculatedResult.podiumPoints).toStrictEqual([2, 2, 2])
-    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(3)
-    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(3)
-    expect(calculatedResult.firstCrashPoints).toStrictEqual([3])
-    expect(calculatedResult.polePositionTimeDiff).toStrictEqual(100)
-  })
+    expect(calculatedResult.qualifyPoints).toStrictEqual([2, 2, 2, 2, 2, 2]);
+    expect(calculatedResult.fastestDriverPoints).toStrictEqual([2]);
+    expect(calculatedResult.podiumPoints).toStrictEqual([2, 2, 2]);
+    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(3);
+    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(3);
+    expect(calculatedResult.firstCrashPoints).toStrictEqual([3]);
+    expect(calculatedResult.polePositionTimeDiff).toStrictEqual(100);
+  });
 
   it('should calculate the result of Michaels bid', () => {
     const bid = collections.bids[1];
     const result = collections.results[0];
-    const calculatedResult = calculateResult(bid, result)
+    const calculatedResult = calculateResult(bid, result);
 
     expect(calculatedResult.points).toBe(3 + 0 + 1 + 2 + 0 + 1);
 
-    expect(calculatedResult.qualifyPoints).toStrictEqual([1, 0, 0, 0, 1, 1])
-    expect(calculatedResult.fastestDriverPoints).toStrictEqual([0])
-    expect(calculatedResult.podiumPoints).toStrictEqual([0, 0, 1])
-    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(2)
-    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(0)
-    expect(calculatedResult.firstCrashPoints).toStrictEqual([1])
+    expect(calculatedResult.qualifyPoints).toStrictEqual([1, 0, 0, 0, 1, 1]);
+    expect(calculatedResult.fastestDriverPoints).toStrictEqual([0]);
+    expect(calculatedResult.podiumPoints).toStrictEqual([0, 0, 1]);
+    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(2);
+    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(0);
+    expect(calculatedResult.firstCrashPoints).toStrictEqual([1]);
     expect(calculatedResult.polePositionTimeDiff).toStrictEqual(1112);
-  })
+  });
+
+  it('should calculate the result even if fastest driver is missing', () => {
+    const bid = collections.bids[1];
+    const result = { ...collections.results[0] };
+    result.fastestDriver = [];
+    const calculatedResult = calculateResult(bid, result);
+
+    expect(calculatedResult.points).toBe(3 + 0 + 1 + 2 + 0 + 1);
+
+    expect(calculatedResult.qualifyPoints).toStrictEqual([1, 0, 0, 0, 1, 1]);
+    expect(calculatedResult.fastestDriverPoints).toStrictEqual([0]);
+    expect(calculatedResult.podiumPoints).toStrictEqual([0, 0, 1]);
+    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(2);
+    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(0);
+    expect(calculatedResult.firstCrashPoints).toStrictEqual([1]);
+    expect(calculatedResult.polePositionTimeDiff).toStrictEqual(1112);
+  });
 
 });
