@@ -1,18 +1,19 @@
-import { GithubService } from './service/github.service';
+import { CommonModule } from "@angular/common";
 import { HttpClientModule } from '@angular/common/http';
-import { MatIconModule } from '@angular/material/icon';
+import { NgModule } from "@angular/core";
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
-import { SharedModule } from '@f2020/shared';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from "@angular/router";
-import { RulesComponent } from './component/rules/rules.component';
+import { SharedModule } from '@f2020/shared';
 import { AboutComponent } from './component/about/about.component';
 import { MissingRoleComponent } from './component/missing-role/missing-role.component';
+import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component';
+import { RulesComponent } from './component/rules/rules.component';
+import { GithubService } from './service/github.service';
 
 @NgModule({
   imports: [
@@ -35,6 +36,10 @@ import { MissingRoleComponent } from './component/missing-role/missing-role.comp
         component: AboutComponent
       },
       {
+        path: 'privacy-policy',
+        component: PrivacyPolicyComponent,
+      },
+      {
         path: 'roles',
         component: MissingRoleComponent
       }
@@ -42,12 +47,12 @@ import { MissingRoleComponent } from './component/missing-role/missing-role.comp
     ])
   ],
   declarations: [
-    RulesComponent, 
-    AboutComponent, 
-    MissingRoleComponent
+    RulesComponent,
+    AboutComponent,
+    MissingRoleComponent, PrivacyPolicyComponent
   ],
   providers: [
     GithubService
   ]
 })
-export class InfoModule {}
+export class InfoModule { }
