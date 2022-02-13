@@ -8,6 +8,7 @@
 // buildPreviousRaceReult(2020).then(_ => console.log(JSON.stringify(_, null, '\t')))
 
 import { appendRaces } from "./app/season";
+import { assignTeamsToSeason } from "./app/teams";
 
 
 // import { buildNewSeason } from "./app/season";
@@ -33,4 +34,5 @@ import { appendRaces } from "./app/season";
 // appendRaces('2020').then(() => assignTeamsToSeason(2020))
 //   .then(() => console.log('Done'));
 // copyRace(8, 7).then(() => console.log('Copied race'));
-appendRaces('2021').then(_ => console.log('Added races', _));
+// appendRaces('2021').then(_ => console.log('Added races', _));
+assignTeamsToSeason(2021);
