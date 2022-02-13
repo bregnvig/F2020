@@ -2,38 +2,58 @@
   "npmScope": "f2020",
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tslint.json": "*",
     "nx.json": "*",
     "tsconfig.base.json": "*",
     ".eslintrc.json": "*"
   },
-  "projects": {
-    "ui": { "tags": [] },
-    "ui-e2e": { "tags": [], "implicitDependencies": ["ui"] },
-    "builder": { "tags": [] },
-    "data": { "tags": [] },
-    "ergast": { "tags": [] },
-    "control": { "tags": [] },
-    "driver": { "tags": [] },
-    "players": { "tags": [] },
-    "bank": { "tags": [] },
-    "shared": { "tags": [] },
-    "player": { "tags": [] },
-    "api": { "tags": [] },
-    "race": { "tags": [] },
-    "standing": { "tags": [] },
-    "info": { "tags": [] },
-    "tools": { "tags": [] },
-    "wbc": { "tags": [] },
-    "firebase": { "tags": [] },
-    "landing": { "tags": [] }
-  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ],
+        "parallel": 1
+      }
     }
   },
-  "affected": { "defaultBase": "master" }
+  "affected": {
+    "defaultBase": "master"
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular",
+    "analytics": "d2770b86-b568-4877-b057-3142f539aa1c"
+  },
+  "defaultProject": "ui",
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    }
+  }
 }

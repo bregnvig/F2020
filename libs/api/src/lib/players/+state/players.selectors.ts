@@ -8,7 +8,6 @@ import {
 
 // Lookup the 'Players' feature state managed by NgRx
 export const getPlayersState = createFeatureSelector<
-  PlayersPartialState,
   State
 >(PLAYERS_FEATURE_KEY);
 

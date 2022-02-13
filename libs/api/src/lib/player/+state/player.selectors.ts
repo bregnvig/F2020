@@ -6,7 +6,7 @@ import {
 } from './player.reducer';
 
 // Lookup the 'User' feature state managed by NgRx
-export const getPlayerState = createFeatureSelector<PlayerPartialState, State>(
+export const getPlayerState = createFeatureSelector< State>(
   PLAYER_FEATURE_KEY
 );
 

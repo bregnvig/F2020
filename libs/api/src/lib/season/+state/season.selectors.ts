@@ -6,7 +6,7 @@ import {
 } from './season.reducer';
 
 // Lookup the 'Season' feature state managed by NgRx
-export const getSeasonState = createFeatureSelector<SeasonPartialState, State>(
+export const getSeasonState = createFeatureSelector< State>(
   SEASON_FEATURE_KEY
 );
 

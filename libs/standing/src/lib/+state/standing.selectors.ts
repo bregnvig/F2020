@@ -3,7 +3,6 @@ import { STANDING_FEATURE_KEY, StandingPartialState, State } from './standing.re
 
 // Lookup the 'Standing' feature state managed by NgRx
 export const getStandingState = createFeatureSelector<
-  StandingPartialState,
   State
 >(STANDING_FEATURE_KEY);
 

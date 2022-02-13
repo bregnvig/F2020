@@ -2,7 +2,7 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { DRIVERS_FEATURE_KEY, DriversPartialState, State } from './drivers.reducer';
 
 // Lookup the 'Driver' feature state managed by NgRx
-export const getDriversState = createFeatureSelector<DriversPartialState, State>(
+export const getDriversState = createFeatureSelector< State>(
   DRIVERS_FEATURE_KEY,
 );
 

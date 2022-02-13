@@ -7,7 +7,7 @@ import {
 } from './races.reducer';
 
 // Lookup the 'Races' feature state managed by NgRx
-export const getRacesState = createFeatureSelector<RacesPartialState, State>(
+export const getRacesState = createFeatureSelector< State>(
   RACES_FEATURE_KEY
 );
 
