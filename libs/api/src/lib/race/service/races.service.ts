@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Bid, firestoreUtils, IQualifyResult, IRace, IRaceResult, mapper, Player, RoundResult } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';

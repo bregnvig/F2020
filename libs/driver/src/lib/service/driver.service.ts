@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { IDriver } from '@f2020/data';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { share, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, share } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

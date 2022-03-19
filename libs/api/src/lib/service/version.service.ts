@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { interval, Observable } from 'rxjs';
 import { first, map, switchMapTo } from 'rxjs/operators';
 

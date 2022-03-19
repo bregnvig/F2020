@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Player } from '@f2020/data';
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from "rxjs";

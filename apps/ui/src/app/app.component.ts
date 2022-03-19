@@ -7,7 +7,7 @@ import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
 import { GoogleMessaging } from '@f2020/firebase';
 import { filterEquals, truthy } from '@f2020/tools';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
 
 @Component({

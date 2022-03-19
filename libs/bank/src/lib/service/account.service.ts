@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { converter, Transaction } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import 'firebase/firestore';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';

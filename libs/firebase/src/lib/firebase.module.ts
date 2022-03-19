@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { InjectionToken, ModuleWithProviders, NgModule } from "@angular/core";
 import 'firebase/app';
-import firebase from 'firebase/app';
-import 'firebase/functions';
-import 'firebase/messaging';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/functions';
+import 'firebase/compat/messaging';
 import { noop } from 'rxjs';
 
 export const GoogleFunctions = new InjectionToken<firebase.functions.Functions>('GOOGLE_FUNCTIONS');
@@ -27,7 +27,7 @@ export class FirebaseModule {
           useFactory: () => {
             try {
               const _messaging = firebase.messaging();
-              _messaging.usePublicVapidKey(pubKey);
+              // _messaging.usePublicVapidKey(pubKey);
               return _messaging;
             } catch {
               return {

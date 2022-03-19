@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { GoogleMessaging } from '@f2020/firebase';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { of } from 'rxjs';
 import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
 import { PlayerApiService } from '../service/player-api.service';

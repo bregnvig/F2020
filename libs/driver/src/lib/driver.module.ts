@@ -1,13 +1,13 @@
-import { DriverPipe } from './pipe/driver.pipe';
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import * as fromDrivers from './+state/drivers.reducer';
-import { DriversEffects } from './+state/drivers.effects';
 import { HttpClientModule } from '@angular/common/http';
-import { AngularFireModule } from '@angular/fire';
+import { NgModule } from '@angular/core';
+import { AngularFireModule } from '@angular/fire/compat';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { DriversEffects } from './+state/drivers.effects';
+import * as fromDrivers from './+state/drivers.reducer';
 import { DriverNamePipe } from './pipe/driver-name.pipe';
+import { DriverPipe } from './pipe/driver.pipe';
 
 const pipes = [
   DriverPipe,

@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Player } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/app';
 import 'firebase/auth';
+import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from 'firebase/auth';
 import 'firebase/firestore';
-import { merge, Observable, ReplaySubject } from 'rxjs';
-import { filter, first, switchMap } from 'rxjs/operators';
+import { arrayUnion } from 'firebase/firestore';
+import { Functions, httpsCallable } from 'firebase/functions';
+import { firstValueFrom, lastValueFrom, merge, Observable, ReplaySubject } from 'rxjs';
+import { filter, first, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -16,27 +18,29 @@ export class PlayerApiService {
   static readonly playersURL = 'players';
 
   readonly player$: Observable<Player>;
-  private currentUser$ = new ReplaySubject<firebase.UserInfo | null>(1);
+  private currentUser$ = new ReplaySubject<UserInfo | null>(1);
+  private auth = getAuth();
 
-  constructor(private afs: AngularFirestore, @Inject(GoogleFunctions) private functions: firebase.functions.Functions) {
+  constructor(private afs: AngularFirestore, @Inject(GoogleFunctions) private functions: Functions) {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
         switchMap(user => this.afs.doc<Player>(`${PlayerApiService.playersURL}/${user.uid}`).valueChanges()),
+        tap(_ => console.log('PLAYER FROM DOC', _)),
       ),
       this.currentUser$.pipe(
         filter(user => !user || !(user?.uid))
       )
     );
-    firebase.auth().getRedirectResult().then(result => {
+    getRedirectResult(this.auth).then(result => {
       if (result && result.user) {
-        this.updateBaseInformation(result.user).toPromise().then(() => console.log('Base information updated'));
+        lastValueFrom(this.updateBaseInformation(result.user)).then(() => console.log('Base information updated'));
       }
     });
-    firebase.auth().onAuthStateChanged(user => {
+    onAuthStateChanged(this.auth, user => {
       this.currentUser$.next({ ...user });
       if (user) {
-        this.updateBaseInformation(user).toPromise().then(() => console.log('Base information updated'));
+        firstValueFrom(this.updateBaseInformation(user)).then(() => console.log('Base information updated'));
       }
       console.log(user);
     });
@@ -44,15 +48,15 @@ export class PlayerApiService {
 
 
   signInWithGoogle(): Promise<void> {
-    return firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider()).then(_ => console.log('Signed in using google'));
+    return signInWithRedirect(this.auth, new GoogleAuthProvider()).then(_ => console.log('Signed in using google'));
   }
 
   signInWithFacebook(): Promise<void> {
-    return firebase.auth().signInWithRedirect(new firebase.auth.FacebookAuthProvider()).then(_ => console.log('Signed in using facebook'));
+    return signInWithRedirect(this.auth, new FacebookAuthProvider()).then(_ => console.log('Signed in using facebook'));
   }
 
   signOut(): Promise<void> {
-    return firebase.auth().signOut();
+    return signOut(this.auth);
   }
 
   updatePlayer(partialPlayer: Partial<Player>): Observable<Partial<Player>> {
@@ -60,7 +64,7 @@ export class PlayerApiService {
     if (partialPlayer.tokens) {
       payload = {
         ...partialPlayer,
-        tokens: firebase.firestore.FieldValue.arrayUnion(...partialPlayer.tokens)
+        tokens: arrayUnion(...partialPlayer.tokens)
       };
     }
     return this.player$.pipe(
@@ -71,12 +75,12 @@ export class PlayerApiService {
   }
 
   joinWBC(): Promise<true> {
-    return this.functions.httpsCallable('joinWBC')()
+    return httpsCallable(this.functions, 'joinWBC')()
       .then(() => true);
   }
 
   undoWBC(): Promise<true> {
-    return this.functions.httpsCallable('undoWBC')()
+    return httpsCallable(this.functions, 'undoWBC')()
       .then(() => true);
   }
 
