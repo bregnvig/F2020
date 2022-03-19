@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Bid, firestoreUtils, IQualifyResult, IRace, IRaceResult, mapper, Player, RoundResult } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/compat/app';
+import { Functions, httpsCallable } from 'firebase/functions';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';
@@ -16,7 +16,7 @@ export class RacesService {
   constructor(
     private afs: AngularFirestore,
     private ergastService: ErgastService,
-    @Inject(GoogleFunctions) private functions: firebase.functions.Functions) {
+    @Inject(GoogleFunctions) private functions: Functions) {
 
   }
 
@@ -75,7 +75,7 @@ export class RacesService {
   }
 
   async submitBid(bid: Bid, player: Player): Promise<true> {
-    return this.functions.httpsCallable('submitBid')({
+    return httpsCallable(this.functions, 'submitBid')({
       ...bid, player: {
         uid: player.uid,
         displayName: player.displayName,
@@ -88,11 +88,11 @@ export class RacesService {
   }
 
   async submitResult(result: Bid): Promise<true> {
-    return this.functions.httpsCallable('submitResult')(result).then(() => true);
+    return httpsCallable(this.functions, 'submitResult')(result).then(() => true);
   }
 
   async submitInterimResult(result: Partial<Bid>): Promise<true> {
-    return this.functions.httpsCallable('submitInterimResult')(result).then(() => true);
+    return httpsCallable(this.functions, 'submitInterimResult')(result).then(() => true);
   }
 
 }

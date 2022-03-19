@@ -4,9 +4,10 @@ import 'firebase/app';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/functions';
 import 'firebase/compat/messaging';
+import { Functions } from 'firebase/functions';
 import { noop } from 'rxjs';
 
-export const GoogleFunctions = new InjectionToken<firebase.functions.Functions>('GOOGLE_FUNCTIONS');
+export const GoogleFunctions = new InjectionToken<Functions>('GOOGLE_FUNCTIONS');
 export const GoogleMessaging = new InjectionToken<firebase.messaging.Messaging>('GOOGLE_MESSAGING');
 
 @NgModule({

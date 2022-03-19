@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/compat/app';
+import { Functions, httpsCallable } from 'firebase/functions';
 import { interval, Observable } from 'rxjs';
 import { first, map, switchMapTo } from 'rxjs/operators';
 
@@ -16,9 +16,9 @@ export class VersionService {
 
   versionOK$: Observable<boolean>;
 
-  constructor(@Inject(GoogleFunctions) functions: firebase.functions.Functions) {
+  constructor(@Inject(GoogleFunctions) functions: Functions) {
     this.versionOK$ = interval(5000).pipe(
-      switchMapTo(functions.httpsCallable('version')()),
+      switchMapTo(httpsCallable(functions, 'version')()),
       first(),
       map(result => result.data),
       map((expected: IVersion) => ({

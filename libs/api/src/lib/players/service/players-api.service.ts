@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@angular/core";
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Player } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/compat/app';
+import { Functions, httpsCallable } from 'firebase/functions';
 import { PlayerApiService } from '../../player';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { PlayerApiService } from '../../player';
 export class PlayersApiService {
   constructor(
     private afs: AngularFirestore,
-    @Inject(GoogleFunctions) private functions: firebase.functions.Functions) {
+    @Inject(GoogleFunctions) private functions: Functions) {
   }
 
   updatePlayer(uid: string, player: Partial<Player>): Promise<void> {
@@ -19,9 +19,9 @@ export class PlayersApiService {
   }
 
   updateBalance(uid: string, balance: number): Promise<boolean> {
-    return this.functions.httpsCallable('manualBalance')({ uid, balance }).then(() => true);
+    return httpsCallable(this.functions, 'manualBalance')({ uid, balance }).then(() => true);
   }
   migrateAccount(uid: string, playerName: string): Promise<boolean> {
-    return this.functions.httpsCallable('migrateAccount')({ uid, playerName }).then(() => true);
+    return httpsCallable(this.functions, 'migrateAccount')({ uid, playerName }).then(() => true);
   }
 }
