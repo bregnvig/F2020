@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { collection, collectionData, Firestore, limit, orderBy, query, where } from '@angular/fire/firestore';
 import { converter, Transaction } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
-import firebase from 'firebase/compat/app';
-import 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { Functions, httpsCallable } from 'firebase/functions';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
@@ -14,8 +13,11 @@ export class AccountService {
 
   static readonly transactionsURL = 'transactions';
 
-  constructor(private afs: AngularFirestore,
-    @Inject(GoogleFunctions) private functions: Functions) { }
+  constructor(
+    private afs: Firestore,
+    @Inject(GoogleFunctions) private functions: Functions) {
+
+  }
 
   async deposit(uid: string, amount: number, message: string): Promise<true> {
     return httpsCallable(this.functions, 'deposit')({ amount, message, uid }).then(() => true);
@@ -30,12 +32,14 @@ export class AccountService {
   }
 
   getTransactions(uid: string, start: DateTime, numberOfTransactions: number): Observable<Transaction[]> {
-    return this.afs.collection<Transaction>(AccountService.transactionsURL, ref => ref
-      .where('involved', 'array-contains', uid)
-      .where('date', '<', firebase.firestore.Timestamp.fromDate(start.toJSDate()))
-      .orderBy('date', 'desc')
-      .limit(numberOfTransactions)
-      .withConverter(converter.transaction)
-    ).valueChanges();
+
+    const transactionQuery = query(
+      collection(this.afs, AccountService.transactionsURL).withConverter(converter.transaction),
+      where('involved', 'array-contains', uid),
+      where('date', '<', Timestamp.fromDate(start.toJSDate())),
+      orderBy('date', 'desc'),
+      limit(numberOfTransactions),
+    );
+    return collectionData(transactionQuery);
   }
 }

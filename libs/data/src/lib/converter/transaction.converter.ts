@@ -1,15 +1,14 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/firestore';
+import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore';
 import { firestoreUtils } from '../firestore-utils';
 import { Transaction } from '../model';
 
 
-export const converter = {
-  toFirestore(transaction: Transaction): firebase.firestore.DocumentData {
+export const converter: FirestoreDataConverter<Transaction> = {
+  toFirestore(transaction: Transaction): DocumentData {
     return firestoreUtils.convertDateTimes(transaction);
   },
   fromFirestore(
-    snapshot: firebase.firestore.QueryDocumentSnapshot,
+    snapshot: QueryDocumentSnapshot,
   ): Transaction {
     const data = snapshot.data()!;
     return firestoreUtils.convertTimestamps(data);

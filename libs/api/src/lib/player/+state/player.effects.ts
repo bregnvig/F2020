@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { GoogleMessaging } from '@f2020/firebase';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import firebase from 'firebase/compat/app';
+import { getToken, Messaging } from 'firebase/messaging';
 import { of } from 'rxjs';
 import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
 import { PlayerApiService } from '../service/player-api.service';
 import { PlayerActions } from './player.actions';
-
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +29,7 @@ export class PlayerEffects {
   loadtoken$ = createEffect(() => this.actions$.pipe(
     ofType(PlayerActions.loadMessagingToken),
     withLatestFrom(this.service.player$),
-    concatMap(([, player]) => this.messaging.getToken()
+    concatMap(([, player]) => getToken(this.messaging)
       .then(token => player.tokens.some(t => t === token) ? PlayerActions.loadMessagingTokenOK() : PlayerActions.updatePlayer({ partialPlayer: { tokens: [token] } }))
       .catch(error => PlayerActions.loadMessingTokenFailure({ error })
       )
@@ -79,6 +78,6 @@ export class PlayerEffects {
   constructor(
     private actions$: Actions,
     private service: PlayerApiService,
-    @Inject(GoogleMessaging) private messaging: firebase.messaging.Messaging) {
+    @Inject(GoogleMessaging) private messaging: Messaging) {
   }
 }

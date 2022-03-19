@@ -1,8 +1,8 @@
 import { registerLocaleData } from '@angular/common';
 import localeDa from '@angular/common/locales/da';
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,8 +54,8 @@ const materialModule = [
     PlayerApiModule,
     DriverModule,
     SeasonApiModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideFirestore(() => getFirestore()),
     StoreModule.forRoot(reducers, {
       metaReducers,
       runtimeChecks: {

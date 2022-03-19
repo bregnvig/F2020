@@ -1,18 +1,19 @@
 import * as firebaseTesting from '@firebase/testing';
-import * as firebase from 'firebase';
+import { connectFunctionsEmulator, Functions, getFunctions } from 'firebase/functions';
 
 export interface AuthedAppData {
   firestore: firebaseTesting.firestore.Firestore;
-  functions: firebase.functions.Functions;
+  functions: Functions;
 }
 
 export async function authedApp(auth?: object): Promise<AuthedAppData> {
   // await firebaseTesting.clearFirestoreData({ projectId: 'f1-serverless'})
   const app = firebaseTesting.initializeTestApp({ projectId: 'f1-serverless', auth });
 
+
   const firestore: firebaseTesting.firestore.Firestore = app.firestore();
-  const functions: firebase.functions.Functions = app.functions('europe-west1');
-  functions.useFunctionsEmulator('http://localhost:5001');
+  const functions: Functions = getFunctions(app, 'europe-west1');
+  connectFunctionsEmulator(functions, 'http://localhost', 5001);
   return Promise.resolve({ firestore, functions });
 }
 

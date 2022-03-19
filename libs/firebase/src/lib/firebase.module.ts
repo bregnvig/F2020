@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { InjectionToken, ModuleWithProviders, NgModule } from "@angular/core";
-import 'firebase/app';
 import firebase from 'firebase/compat/app';
-import 'firebase/compat/functions';
-import 'firebase/compat/messaging';
 import { Functions } from 'firebase/functions';
+import { Messaging } from 'firebase/messaging';
 import { noop } from 'rxjs';
 
 export const GoogleFunctions = new InjectionToken<Functions>('GOOGLE_FUNCTIONS');
-export const GoogleMessaging = new InjectionToken<firebase.messaging.Messaging>('GOOGLE_MESSAGING');
+export const GoogleMessaging = new InjectionToken<Messaging>('GOOGLE_MESSAGING');
 
 @NgModule({
   imports: [CommonModule],
