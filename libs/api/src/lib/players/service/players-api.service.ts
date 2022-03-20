@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { doc, Firestore, updateDoc } from '@angular/fire/firestore';
 import { Player } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
 import { Functions, httpsCallable } from 'firebase/functions';
@@ -10,12 +10,12 @@ import { PlayerApiService } from '../../player';
 })
 export class PlayersApiService {
   constructor(
-    private afs: AngularFirestore,
+    private afs: Firestore,
     @Inject(GoogleFunctions) private functions: Functions) {
   }
 
   updatePlayer(uid: string, player: Partial<Player>): Promise<void> {
-    return this.afs.doc(`${PlayerApiService.playersURL}/${uid}`).update(player);
+    return updateDoc(doc(this.afs, `${PlayerApiService.playersURL}/${uid}`), player);
   }
 
   updateBalance(uid: string, balance: number): Promise<boolean> {

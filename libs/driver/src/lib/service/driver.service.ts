@@ -1,6 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { collection, collectionData, Firestore } from '@angular/fire/firestore';
 import { IDriver } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map, share } from 'rxjs/operators';
@@ -12,9 +11,9 @@ export class DriverService {
 
   readonly drivers$: Observable<IDriver[]>;
 
-  constructor(private http: HttpClient, private afs: AngularFirestore) {
-    this.drivers$ = this.afs.collection<IDriver>('drivers').valueChanges().pipe(
-      map(drivers => drivers.sort((a, b) => a.name.localeCompare(b.name))),
+  constructor(afs: Firestore) {
+    this.drivers$ = collectionData(collection(afs, 'drivers')).pipe(
+      map<IDriver[], IDriver[]>(drivers => drivers.sort((a, b) => a.name.localeCompare(b.name))),
       share()
     );
   }

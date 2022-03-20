@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { collection, Firestore, getDocs } from "@angular/fire/firestore";
 import { ITeam } from '@f2020/data';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
@@ -13,11 +13,11 @@ export class TeamService {
 
   teams$: Observable<ITeam[]>;
 
-  constructor(facade: SeasonFacade, afs: AngularFirestore) {
+  constructor(facade: SeasonFacade, afs: Firestore) {
     this.teams$ = facade.season$.pipe(
       truthy(),
       first(),
-      switchMap(season => afs.collection<ITeam>(`seasons/${season.id}/teams`).get()),
+      switchMap(season => getDocs(collection(afs, `seasons/${season.id}/teams`))),
       map(snapshot => snapshot.docs.map(doc => doc.data() as ITeam)),
       shareReplay(1),
     );

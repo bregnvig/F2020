@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Bid, firestoreUtils, IQualifyResult, IRace, IRaceResult, mapper, Player, RoundResult } from '@f2020/data';
+import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { Bid, converter, IQualifyResult, IRace, IRaceResult, mapper, Player, RoundResult } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
+import { collection } from 'firebase/firestore';
 import { Functions, httpsCallable } from 'firebase/functions';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';
 import { SeasonService } from './../../season/service/season.service';
+
+const bidConverter = converter.timestamp<Bid>();
 
 @Injectable({
   providedIn: 'root',
@@ -14,37 +17,32 @@ import { SeasonService } from './../../season/service/season.service';
 export class RacesService {
 
   constructor(
-    private afs: AngularFirestore,
+    private afs: Firestore,
     private ergastService: ErgastService,
     @Inject(GoogleFunctions) private functions: Functions) {
 
   }
 
   getRaces(seasonId: string): Observable<IRace[]> {
-    return this.afs.collection<IRace>(`${SeasonService.seasonsURL}/${seasonId}/races`).valueChanges().pipe(
-      map(races => firestoreUtils.convertTimestamps(races)),
-    );
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races`).withConverter(converter.timestamp<IRace>()));
   }
 
   getBids(seasonId: string, race: IRace, uid: string): Observable<Bid[]> {
-    return this.afs.collection<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/bids`).valueChanges().pipe(
-      map(firestoreUtils.convertDateTimes),
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/bids`).withConverter(bidConverter)).pipe(
       map((bids: Bid[]) => bids.some(b => b.player.uid === uid && b.submitted || race.state !== 'open') ? bids : [])
     );
   }
 
   getBid(seasonId: string, round: number, uid: string): Observable<Bid> {
-    return this.afs.doc<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).valueChanges().pipe(
-      map(firestoreUtils.convertDateTimes),
-    );
+    return docData(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter));
   }
 
   updateRace(seasonId: string, round: number, race: Partial<IRace>): Promise<void> {
-    return this.afs.doc<IRace>(`${SeasonService.seasonsURL}/${seasonId}/races/${round}`).update(race);
+    return updateDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}`), race);
   }
 
   updateBid(seasonId: string, round: number, player: Player, bid: Bid): Promise<void> {
-    return this.afs.doc<Bid>(`${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`).set({
+    return setDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`), {
       ...bid, player: {
         uid: player.uid,
         displayName: player.displayName,
@@ -68,9 +66,9 @@ export class RacesService {
     });
   }
 
-  getLastYearResult(seasonId: number, countryCode: string): Observable<RoundResult> {
-    return this.afs.doc<RoundResult>(`${SeasonService.seasonsURL}/${seasonId}/lastYear/${countryCode}`).get().pipe(
-      map(snapshot => snapshot.data() as RoundResult)
+  getLastYearResult(seasonId: number, countryCode: string): Promise<RoundResult> {
+    return getDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${countryCode}`)).then(
+      snapshot => snapshot.data() as RoundResult
     );
   }
 

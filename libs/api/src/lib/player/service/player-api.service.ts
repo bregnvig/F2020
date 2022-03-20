@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Player } from '@f2020/data';
+import { doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { converter, Player } from '@f2020/data';
 import { GoogleFunctions } from '@f2020/firebase';
 import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from 'firebase/auth';
 import { arrayUnion } from 'firebase/firestore';
 import { Functions, httpsCallable } from 'firebase/functions';
-import { firstValueFrom, lastValueFrom, merge, Observable, ReplaySubject } from 'rxjs';
-import { filter, first, switchMap, tap } from 'rxjs/operators';
+import { merge, Observable, ReplaySubject } from 'rxjs';
+import { filter, first, switchMap } from 'rxjs/operators';
+
+const playerConverter = converter.timestamp<Player>();
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +21,11 @@ export class PlayerApiService {
   private currentUser$ = new ReplaySubject<UserInfo | null>(1);
   private auth = getAuth();
 
-  constructor(private afs: AngularFirestore, @Inject(GoogleFunctions) private functions: Functions) {
+  constructor(private afs: Firestore, @Inject(GoogleFunctions) private functions: Functions) {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
-        switchMap(user => this.afs.doc<Player>(`${PlayerApiService.playersURL}/${user.uid}`).valueChanges()),
-        tap(_ => console.log('PLAYER FROM DOC', _)),
+        switchMap(user => docData(doc(this.afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
       ),
       this.currentUser$.pipe(
         filter(user => !user || !(user?.uid))
@@ -32,13 +33,13 @@ export class PlayerApiService {
     );
     getRedirectResult(this.auth).then(result => {
       if (result && result.user) {
-        lastValueFrom(this.updateBaseInformation(result.user)).then(() => console.log('Base information updated'));
+        this.updateBaseInformation(result.user).then(() => console.log('Base information updated'));
       }
     });
     onAuthStateChanged(this.auth, user => {
       this.currentUser$.next({ ...user });
       if (user) {
-        firstValueFrom(this.updateBaseInformation(user)).then(() => console.log('Base information updated'));
+        this.updateBaseInformation(user).then(() => console.log('Base information updated'));
       }
       console.log(user);
     });
@@ -66,8 +67,8 @@ export class PlayerApiService {
       };
     }
     return this.player$.pipe(
-      switchMap(player => this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`).update(payload).then(() => player)),
-      switchMap(player => this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`).valueChanges()),
+      switchMap(player => updateDoc(doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`), payload).then(() => player)),
+      switchMap(player => docData(doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`))),
       first()
     );
   }
@@ -82,17 +83,16 @@ export class PlayerApiService {
       .then(() => true);
   }
 
-  private updateBaseInformation(player: Player): Observable<void> {
+  private updateBaseInformation(player: Player): Promise<void> {
     const _player: Player = {
       uid: player.uid,
       displayName: player.displayName,
       email: player.email,
       photoURL: player.photoURL,
     };
-    const doc = this.afs.doc(`${PlayerApiService.playersURL}/${player.uid}`);
-    return doc.get().pipe(
-      switchMap(snapshot => snapshot.exists ? doc.update(_player) : doc.set(_player)),
-      first(),
+    const docRef = doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
+    return getDoc(docRef).then(
+      snapshot => snapshot.exists ? updateDoc(docRef, _player) : setDoc(docRef, _player)
     );
   }
 }

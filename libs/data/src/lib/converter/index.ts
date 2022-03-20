@@ -1,5 +1,7 @@
-import {converter as transaction} from './transaction.converter';
+import { converterFn as timestamp } from './timestamp-converter';
+import { converter as transaction } from './transaction.converter';
 
 export const converter = {
-  transaction
-}
+  transaction,
+  timestamp
+};
