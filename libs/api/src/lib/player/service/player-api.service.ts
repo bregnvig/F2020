@@ -1,10 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { converter, Player } from '@f2020/data';
-import { GoogleFunctions } from '@f2020/firebase';
 import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from 'firebase/auth';
 import { arrayUnion } from 'firebase/firestore';
-import { Functions, httpsCallable } from 'firebase/functions';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { filter, first, switchMap } from 'rxjs/operators';
 
@@ -21,7 +20,7 @@ export class PlayerApiService {
   private currentUser$ = new ReplaySubject<UserInfo | null>(1);
   private auth = getAuth();
 
-  constructor(private afs: Firestore, @Inject(GoogleFunctions) private functions: Functions) {
+  constructor(private afs: Firestore, private functions: Functions) {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),

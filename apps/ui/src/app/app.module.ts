@@ -3,6 +3,8 @@ import localeDa from '@angular/common/locales/da';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
@@ -56,6 +58,8 @@ const materialModule = [
     SeasonApiModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore()),
+    provideFunctions(() => getFunctions(undefined, 'europe-west1')),
+    provideMessaging(() => getMessaging()),
     StoreModule.forRoot(reducers, {
       metaReducers,
       runtimeChecks: {

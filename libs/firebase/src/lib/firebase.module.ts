@@ -1,11 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { InjectionToken, ModuleWithProviders, NgModule } from "@angular/core";
-import firebase from 'firebase/compat/app';
-import { Functions } from 'firebase/functions';
 import { Messaging } from 'firebase/messaging';
 import { noop } from 'rxjs';
 
-export const GoogleFunctions = new InjectionToken<Functions>('GOOGLE_FUNCTIONS');
 export const GoogleMessaging = new InjectionToken<Messaging>('GOOGLE_MESSAGING');
 
 @NgModule({
@@ -18,16 +15,12 @@ export class FirebaseModule {
       ngModule: FirebaseModule,
       providers: [
         {
-          provide: GoogleFunctions,
-          useFactory: () => firebase.app().functions('europe-west1')
-        },
-        {
           provide: GoogleMessaging,
           useFactory: () => {
             try {
-              const _messaging = firebase.messaging();
+              // const _messaging = firebase.messaging();
               // _messaging.usePublicVapidKey(pubKey);
-              return _messaging;
+              return undefined; //_messaging;
             } catch {
               return {
                 onMessage: noop

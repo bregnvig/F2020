@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { collection, collectionData, Firestore, limit, orderBy, query, where } from '@angular/fire/firestore';
 import { converter, Transaction } from '@f2020/data';
-import { GoogleFunctions } from '@f2020/firebase';
 import { Timestamp } from 'firebase/firestore';
-import { Functions, httpsCallable } from 'firebase/functions';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 
@@ -15,7 +14,7 @@ export class AccountService {
 
   constructor(
     private afs: Firestore,
-    @Inject(GoogleFunctions) private functions: Functions) {
+    private functions: Functions) {
 
   }
 

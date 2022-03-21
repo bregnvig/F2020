@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Bid, converter, IQualifyResult, IRace, IRaceResult, mapper, Player, RoundResult } from '@f2020/data';
-import { GoogleFunctions } from '@f2020/firebase';
 import { collection } from 'firebase/firestore';
-import { Functions, httpsCallable } from 'firebase/functions';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';
@@ -19,7 +18,7 @@ export class RacesService {
   constructor(
     private afs: Firestore,
     private ergastService: ErgastService,
-    @Inject(GoogleFunctions) private functions: Functions) {
+    private functions: Functions) {
 
   }
 
