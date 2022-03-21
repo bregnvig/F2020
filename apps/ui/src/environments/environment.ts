@@ -12,10 +12,8 @@ export const environment = {
     storageBucket: "f1-serverless.appspot.com",
     messagingSenderId: "657968084413",
     appId: "1:657968084413:web:9a4fa397037ae453df4ed4",
-    measurementId: "G-Q2XDV9KH10"
-  },
-  messaging: {
-    pubKey: 'BEKUF0EpZE-5I7XkoF_d35UIWTgTk7kYALgG4zWSPjoNinzKhQxxBCPanSFdzp3rnWjymIe5muXXYUE8ZfA_wLo'
+    measurementId: "G-Q2XDV9KH10",
+    vapidKey: 'BOFITR58fWVZiIaO3a_3FKmy6hB-huDUlT7MHEU1j1GamNMzBEIhom6sSEYtji8lFoLBfDbKWT_cLpH4A2HNSEQ'
   },
   initialBid: {
     qualify: ['hamilton', 'bottas', 'leclerc', 'vettel', 'max_verstappen', 'albon'],
@@ -37,6 +35,6 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-import 'zone.js/dist/zone-error';  // Included with Angular CLI.
 import { Bid } from '@f2020/data';
+import 'zone.js/dist/zone-error'; // Included with Angular CLI.
 

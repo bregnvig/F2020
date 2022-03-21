@@ -25,7 +25,6 @@ import { TransactionsComponent } from './component/transactions/transactions.com
 import { TransferDialogComponent } from './component/transfer-dialog/transfer-dialog.component';
 import { WithdrawDialogComponent } from './component/withdraw-dialog/withdraw-dialog.component';
 import { AccountService } from './service';
-import { FirebaseModule } from '@f2020/firebase';
 
 @NgModule({
   declarations: [
@@ -69,13 +68,12 @@ import { FirebaseModule } from '@f2020/firebase';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,  
+    MatSelectModule,
     FlexLayoutModule,
     ScrollingModule,
     SharedModule,
     PlayersApiModule,
     ReactiveFormsModule,
-    FirebaseModule,
   ],
   providers: [
     AccountService

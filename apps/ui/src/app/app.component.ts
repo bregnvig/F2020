@@ -1,13 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
-import { GoogleMessaging } from '@f2020/firebase';
 import { filterEquals, truthy } from '@f2020/tools';
-import firebase from 'firebase/compat/app';
+import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -17,7 +16,6 @@ import { filter, first, startWith, switchMap } from 'rxjs/operators';
 export class AppComponent implements OnInit {
 
   constructor(
-    @Inject(GoogleMessaging) private messaging: firebase.messaging.Messaging,
     private playerFacade: PlayerFacade,
     private driverFacade: DriversFacade,
     private racesFacade: RacesFacade,
@@ -58,7 +56,7 @@ export class AppComponent implements OnInit {
         this.router.navigate(['info', 'roles']);
       }
     });
-    this.updates.available.pipe(
+    this.updates.versionUpdates.pipe(
       switchMap(() => this.snackBar.open('🤩 Ny version klar', 'OPDATER', { duration: 10000 }).onAction()),
       switchMap(() => this.updates.activateUpdate()),
       first(),
@@ -75,7 +73,7 @@ export class AppComponent implements OnInit {
         ).subscribe(() => location.reload());
       }
     });
-
-    this.messaging.onMessage(message => this.snackBar.open(message.notification.body, null, { duration: 2000 }));
+    const messaing = getMessaging();
+    onMessage(messaing, message => this.snackBar.open(message.notification.body, null, { duration: 2000 }));
   }
 }
