@@ -14,7 +14,7 @@ import { Bid } from '@f2020/data';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PartialBidWarningComponent {
-  
-  @Input() bid: Bid;
+
+  @Input() bid: Partial<Bid>;
 
 }
