@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,6 +57,8 @@ const pipes = [
   ],
   providers: [
     PolePositionTimePipe,
+    DatePipe,
+    DateTimePipe,
   ],
   imports: [
     CommonModule,
