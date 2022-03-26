@@ -4,12 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
-import { DriversActions, DriversFacade } from '@f2020/driver';
+import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
 import { AbstractSuperComponent } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { filter, first, map, pairwise, switchMap } from 'rxjs/operators';
-import { AddDriverComponent } from './add-driver/add-driver.component';
 
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
 
