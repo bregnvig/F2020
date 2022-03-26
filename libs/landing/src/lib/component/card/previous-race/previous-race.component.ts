@@ -21,6 +21,7 @@ export class PreviousRaceComponent implements OnInit {
     this.wbcResult$ = this.facade.season$.pipe(
       filter(season => !!(season && season.wbc.results?.length)),
       map(season => season.wbc.results[season.wbc.results.length - 1]),
+      filter(result => !!result.players?.length),
     );
     this.title$ = combineLatest([
       this.wbcResult$,

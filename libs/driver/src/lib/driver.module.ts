@@ -6,6 +6,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { DriversEffects } from './+state/drivers.effects';
@@ -19,6 +20,7 @@ const MaterialModules = [
   MatButtonModule,
   MatDialogModule,
   MatFormFieldModule,
+  MatInputModule,
 ];
 
 const pipes = [
