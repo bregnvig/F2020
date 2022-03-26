@@ -51,3 +51,5 @@ apps/builder/src/environments/*
 apps/builder/src/app/mysql/mysql.config.ts
 # Symbolic links
 functions/src/lib/model
+
+.angular

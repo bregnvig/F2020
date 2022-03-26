@@ -30,6 +30,7 @@
       "@f2020/season": ["libs/seson/src/index.ts"],
       "@f2020/shared": ["libs/shared/src/index.ts"],
       "@f2020/standing": ["libs/standing/src/index.ts"],
+      "@f2020/teams": ["libs/teams/src/index.ts"],
       "@f2020/tools": ["libs/tools/src/index.ts"],
       "@f2020/wbc": ["libs/wbc/src/index.ts"]
     }
