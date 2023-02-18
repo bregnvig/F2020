@@ -20,7 +20,7 @@ service cloud.firestore {
 
     match /seasons/{Seasons}/teams/{Contructor} {
       allow read: if getUserData().roles.hasAny(['player']);
-      allow update, write, delete, create:  if false;
+      allow update, write, delete, create:  if  getUserData().roles.hasAny(['admin']);
     }
 
     match /seasons/{Seasons}/lastYear/{Country} {

@@ -1,5 +1,4 @@
-import { PolePositionTimePipe } from './pipe/pole-position-time.pipe';
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,15 +8,17 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { PlayerApiModule } from '@f2020/api';
+import { LoginComponent } from './component';
 import { CardPageComponent } from './component/card-page/card-page.component';
 import { HasRoleDirective } from './component/has-role.directive';
 import { LoadingComponent } from './component/loading/loading.component';
 import { PageComponent } from './component/page/page.component';
 import { SidebarComponent } from './component/sidebar/sidebar.component';
 import { SidenavButtonComponent } from './component/sidebar/sidenav-button/sidenav-button.component';
+import { DateTimePipe } from './pipe/date-time.pipe';
 import { FlagURLPipe } from './pipe/flag-url.pipe';
+import { PolePositionTimePipe } from './pipe/pole-position-time.pipe';
 import { RelativeToNowPipe } from './pipe/relative-to-now.pipe';
-import { LoginComponent } from './component';
 
 const materialModules = [
   MatListModule,
@@ -38,7 +39,8 @@ const exportComponents = [
 const pipes = [
   RelativeToNowPipe,
   FlagURLPipe,
-  PolePositionTimePipe
+  PolePositionTimePipe,
+  DateTimePipe,
 ];
 
 @NgModule({
@@ -55,6 +57,8 @@ const pipes = [
   ],
   providers: [
     PolePositionTimePipe,
+    DatePipe,
+    DateTimePipe,
   ],
   imports: [
     CommonModule,

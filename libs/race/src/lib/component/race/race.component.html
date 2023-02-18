@@ -4,7 +4,7 @@
       <mat-card-header>
         <img mat-card-avatar [src]="race | flagURL">
         <mat-card-title>{{race.name}}</mat-card-title>
-        <mat-card-subtitle>{{race.raceStart | date: 'medium'}}</mat-card-subtitle>
+        <mat-card-subtitle>{{race.raceStart | dateTime: 'medium'}}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content style="height: 33vh">
         <google-map

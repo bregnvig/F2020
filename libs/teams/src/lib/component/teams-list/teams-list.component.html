@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+  <span fxFlex>Hold</span>
+</mat-toolbar>
+<div class="max-width">
+  <mat-list fxFlex *ngIf="teams$ | async as teams; else loading">
+    <ng-container *ngFor="let team of teams; index as i; last as last">
+      <h2 matSubheader>{{team.name}}</h2>
+      <mat-list-item *ngFor="let driverId of team.drivers">
+        <p matLine>{{driverId | driverName}}</p>
+        <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
+          <i class="far fa-trash fa-lg"></i>
+        </button>
+      </mat-list-item>
+      <mat-list-item *shaHasRole="'admin'" >
+        <p mat-line></p>
+        <button mat-icon-button (click)="addDriver(team)"><i class="far fa-plus fa-lg"></i></button>
+      </mat-list-item>
+      <mat-divider *ngIf="!last"></mat-divider>
+    </ng-container>
+  </mat-list>
+</div>
+<ng-template #loading>
+  <sha-loading></sha-loading>
+</ng-template>

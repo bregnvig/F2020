@@ -25,6 +25,10 @@ const routes: Routes = [
     loadChildren: () => import('@f2020/player').then(m => m.PlayerModule),
   },
   {
+    path: 'teams',
+    loadChildren: () => import('@f2020/teams').then(m => m.TeamsModule),
+  },
+  {
     path: 'info',
     loadChildren: () => import('@f2020/info').then(m => m.InfoModule),
   },
