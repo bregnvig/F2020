@@ -1,10 +1,10 @@
 <div fxLayout="column" class="fixVertical">
   <mat-toolbar fxLayout>
-    <span>F2022</span>
+    <a class="text-decorator-none" routerLink="/2023">F2023</a>
     <!-- This fills the remaining space of the current row -->
     <span fxFlex></span>
-    <button mat-icon-button>
-      <mat-icon aria-hidden="false" aria-label="Åbn menu" (click)="sidenav.toggle()">menu</mat-icon>
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon aria-hidden="false" aria-label="Åbn menu">menu</mat-icon>
     </button>
   </mat-toolbar>
   <mat-sidenav-container fxFlex fxLayout="column">

@@ -53,9 +53,10 @@ button[mat-fab] {
 
 mat-card {
 
-  mat-card-actions > button, mat-card-actions > a  {
+  mat-card-actions > button > span, mat-card-actions > a {
     text-transform: uppercase;
   }
+
   margin-bottom: 16px;
 }
 
@@ -67,5 +68,9 @@ mat-card {
 
 a {
   color: white;
-  font-weight: bold; 
+  font-weight: bold;
+}
+
+.text-decorator-none {
+  text-decoration: none;
 }

@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-  <img class="avatar" [src]="(player$ | async)?.photoURL ?? 'assets/loading/red.svg'" alt="Profil billede">{{(player$ | async)?.displayName}} Velkommen
+  <img class="avatar" [src]="(player$ | async)?.photoURL ?? 'assets/loading/red.svg'" alt="Profil billede">{{(player$ | async)?.displayName  ?? 'Velkommen' }}
 </mat-toolbar>
 <mat-action-list style="padding: 1rem 1.5rem 0 1.5rem">
   <ng-container *ngIf="seasonId$ | async as seasonId">
