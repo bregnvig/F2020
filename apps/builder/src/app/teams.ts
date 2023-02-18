@@ -1,6 +1,7 @@
 import { ErgastConstructorStanding, ErgastDriver, IRace, ITeam, mapper } from '@f2020/data';
 import { getConstructorDrivers, getContructorStandings } from '@f2020/ergast';
 import { WriteResult } from '@google-cloud/firestore';
+import { firestoreUtils } from './converter/firestore-utils';
 import { firebaseApp } from './firebase';
 
 export const getTeams = async (seasonId: number): Promise<Map<string, ITeam>> => {
@@ -15,6 +16,20 @@ export const getTeams = async (seasonId: number): Promise<Map<string, ITeam>> =>
   }, new Map<string, ITeam>());
 
 };
+
+export const writeTeams = (seasonId: number, teams: Map<string, ITeam>): Promise<number> => {
+  const db = firebaseApp.datebase;
+  const teamsCollection = db.collection(`seasons/${seasonId}/teams`);
+
+  return db.runTransaction(transaction => {
+    [...teams.entries()]
+      .forEach(([teamId, team]) =>
+        transaction.set(teamsCollection.doc(teamId), firestoreUtils.convertTimestamps(team)),
+      );
+    return Promise.resolve(teams.size);
+  });
+};
+
 
 export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult[]> => {
 
