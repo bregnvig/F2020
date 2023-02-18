@@ -1,9 +1,12 @@
+import { environment } from "./environments/environment";
 
 
 
 
-
-// getTeams(2022).then(teams => console.log(teams));
+const seasonId = parseInt(environment.season);
+// getTeams(seasonId - 1)
+//   .then(teams => writeTeams(seasonId, teams))
+//   .then(count => console.log(`Wrote ${count} teams`));
 
 
 // import { environment } from "./environments/environment";
@@ -29,4 +32,4 @@
 //   .then(() => console.log('Done'));
 // copyRace(8, 7).then(() => console.log('Copied race'));
 // appendRaces('2021').then(_ => console.log('Added races', _));
-// assignTeamsToSeason(2021);
+//  assignTeamsToSeason(2023);
