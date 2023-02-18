@@ -24,10 +24,6 @@ export class SelectDriverComponent extends AbstractControlComponent implements O
   selectControl = new FormControl();
   allTeamAndDrivers: [string, string[]][];
 
-  constructor() {
-    super();
-  }
-
   ngOnInit(): void {
     if (this.teams) {
       this.allTeamAndDrivers = Array.from(this.driverIds.reduce((acc, driverId) => {
@@ -53,10 +49,12 @@ export class SelectDriverComponent extends AbstractControlComponent implements O
   }
 
   writeValue(value: string): void {
-    if (value) {
-      this.selectControl.patchValue(value, { emitEvent: false });
-    } else {
-      this.selectControl.reset({}, { emitEvent: false });
-    }
+    setTimeout(() => {
+      if (value) {
+        this.selectControl.patchValue(value, { emitEvent: false });
+      } else {
+        this.selectControl.reset({}, { emitEvent: false });
+      }
+    });
   }
 }
