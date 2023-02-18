@@ -12,7 +12,7 @@ const seasonId = parseInt(environment.season);
 // import { environment } from "./environments/environment";
 
 // buildNewSeason(environment.season)
-//   .then(() => assignTeamsToSeason(parseInt(environment.season)))
+//   .then(() => assignTeamsToSeason(seasonId))
 //   .then(_ => console.log('Completed', _))
 //   .catch(error => console.error('Completed with errors', error));
 
@@ -33,3 +33,5 @@ const seasonId = parseInt(environment.season);
 // copyRace(8, 7).then(() => console.log('Copied race'));
 // appendRaces('2021').then(_ => console.log('Added races', _));
 //  assignTeamsToSeason(2023);
+
+// buildPreviousRaceReult(seasonId - 1).then(() => console.log(`Build previous season`));
