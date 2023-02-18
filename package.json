@@ -61,7 +61,7 @@
     "core-js": "^2.5.4",
     "firebase": "^9.17.1",
     "firebase-admin": "^11.5.0",
-    "luxon": "^2.3.0",
+    "luxon": "^2.5.2",
     "mysql": "^2.18.1",
     "rxjs": "7.5.4",
     "tslib": "^2.0.0",
