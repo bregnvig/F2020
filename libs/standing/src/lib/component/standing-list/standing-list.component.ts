@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { IDriverStanding } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
@@ -23,7 +23,7 @@ export class StandingListComponent implements OnInit {
       map(standings => [...standings].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name))),
       tap(standings => {
         if (!standings.length) {
-          this.snackBar.open('Der findes ingen resultater endnu', null, {duration: 3000})
+          this.snackBar.open('Der findes ingen resultater endnu', null, { duration: 3000 });
         }
       })
     );

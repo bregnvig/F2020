@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DriversFacade } from '@f2020/driver';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
@@ -22,7 +22,7 @@ export class AddDriverComponent implements OnInit {
   ngOnInit() {
     const drivers$ = this.facade.allDriver$.pipe(
       map(drivers => drivers.filter(driver => !this.currentDrivers.some(currentDriver => currentDriver === driver.driverId))),
-    )
+    );
     this.filteredDrivers$ = combineLatest([
       drivers$,
       this.driverControl.valueChanges.pipe(

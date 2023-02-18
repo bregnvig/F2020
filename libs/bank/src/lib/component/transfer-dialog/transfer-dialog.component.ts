@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { Player } from '@f2020/data';
 import { PlayersFacade } from '@f2020/api';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AccountService } from '../../service';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './transfer-dialog.component.html',
@@ -21,10 +21,10 @@ export class TransferDialogComponent implements OnInit {
     private service: AccountService,
     private facade: PlayersFacade,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { player: Player }) { }
+    @Inject(MAT_DIALOG_DATA) public data: { player: Player; }) { }
 
   onWithdraw() {
-    const { amount, message, to } = this.fg.value
+    const { amount, message, to } = this.fg.value;
     this.dialogRef.close(this.service.transfer(this.data.player.uid, to.uid, amount, message).then(() => ({ to, amount })));
   }
 
@@ -33,9 +33,9 @@ export class TransferDialogComponent implements OnInit {
       map(players => (players || []).filter(p => p.uid !== this.data.player.uid))
     );
     this.fg = this.fb.group({
-      to: [null, Validators.required], 
+      to: [null, Validators.required],
       amount: [null, [Validators.required, Validators.min(0), Validators.max(Math.max(0, this.data.player.balance))]],
       message: [null, Validators.required]
-    })
+    });
   }
 }

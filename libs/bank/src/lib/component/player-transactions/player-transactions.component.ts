@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Player } from '@f2020/data';
 import { PlayersActions, PlayersFacade } from '@f2020/api';
@@ -10,6 +8,8 @@ import { first, pluck, switchMap } from 'rxjs/operators';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
 import { TransferDialogComponent } from './../transfer-dialog/transfer-dialog.component';
 import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'f2020-player-transactions',
@@ -70,6 +70,6 @@ export class PlayerTransactionsComponent implements OnInit {
     }).afterClosed().pipe(
       switchMap(result => result),
       first()
-    ).subscribe(({amount, to}: {amount: number, to: Player}) => this.snackBar.open(`${player.displayName} har overført ${amount} til ${to.displayName}`, null, { duration: 3000 }));
+    ).subscribe(({ amount, to }: { amount: number, to: Player; }) => this.snackBar.open(`${player.displayName} har overført ${amount} til ${to.displayName}`, null, { duration: 3000 }));
   }
 }

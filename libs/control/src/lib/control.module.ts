@@ -3,12 +3,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { DriverModule } from '@f2020/driver';
 import { BidComponent } from './components/bid/bid.component';
 import { DriverCodesComponent } from './components/driver-codes/driver-codes.component';
@@ -17,6 +13,10 @@ import { SelectDriverComponent } from './components/select-driver/select-driver.
 import { SelectDriversComponent } from './components/select-drivers/select-drivers.component';
 import { SelectedDriverComponent } from './components/selected-driver/selected-driver.component';
 import { SelectedTeamComponent } from './components/selected-team/selected-team.component';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 const exported = [
   SelectDriverComponent,
@@ -28,7 +28,7 @@ const exported = [
 ];
 
 const components = [
-  
+
 ];
 
 const pipes = [

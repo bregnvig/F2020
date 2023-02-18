@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacySelectionListChange as MatSelectionListChange } from '@angular/material/legacy-list';
+import { MatSelectionListChange } from '@angular/material/list';
 import { PlayerActions, PlayerFacade, PlayersActions, PlayersFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { truthy } from '@f2020/tools';
