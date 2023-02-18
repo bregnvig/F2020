@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { PlayerActions, PlayerFacade, SeasonFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { Observable } from 'rxjs';
@@ -16,7 +17,7 @@ export class SidebarComponent implements OnInit {
   player$: Observable<Player>;
   seasonId$: Observable<string>;
 
-  constructor(private playerFacade: PlayerFacade, private seasonFacade: SeasonFacade) { }
+  constructor(private playerFacade: PlayerFacade, private seasonFacade: SeasonFacade, private router: Router) { }
 
   ngOnInit(): void {
     this.player$ = this.playerFacade.player$;
@@ -25,5 +26,9 @@ export class SidebarComponent implements OnInit {
 
   signOut() {
     this.playerFacade.dispatch(PlayerActions.logoutPlayer());
+  }
+
+  signIn() {
+    this.router.navigate(['login']);
   }
 }

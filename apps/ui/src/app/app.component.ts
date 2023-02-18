@@ -5,7 +5,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
-import { filterEquals, truthy } from '@f2020/tools';
+import { filterEquals } from '@f2020/tools';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
 
@@ -27,9 +27,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.playerFacade.unauthorized$.pipe(
-      truthy(),
-    ).subscribe(() => this.router.navigate(['login']));
     this.playerFacade.authorized$.pipe(
       filter(authorized => authorized),
       switchMap(() => this.playerFacade.player$),

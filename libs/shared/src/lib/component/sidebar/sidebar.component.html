@@ -1,4 +1,6 @@
-<mat-toolbar color="primary"><img class="avatar" [src]="(player$ | async)?.photoURL" alt="Profil billede">{{(player$ | async)?.displayName}}</mat-toolbar>
+<mat-toolbar color="primary">
+  <img class="avatar" [src]="(player$ | async)?.photoURL ?? 'assets/loading/red.svg'" alt="Profil billede">{{(player$ | async)?.displayName}} Velkommen
+</mat-toolbar>
 <mat-action-list style="padding: 1rem 1.5rem 0 1.5rem">
   <ng-container *ngIf="seasonId$ | async as seasonId">
     <sha-sidenav-button *shaHasRole="'player'" iconSet="fas" icon="fa-home" [routerLink]="seasonId" (click)="closing.emit()">Forside</sha-sidenav-button>
@@ -17,5 +19,8 @@
   <sha-sidenav-button *shaHasRole="'player'" iconSet="far" icon="fa-user" routerLink="player" (click)="closing.emit()">Profil</sha-sidenav-button>
   <sha-sidenav-button iconSet="far" icon="fa-info" [routerLink]="['info', 'privacy-policy']" (click)="closing.emit()">Persondatapolitik</sha-sidenav-button>
 
-  <button mat-list-item (click)="signOut()"><mat-icon fontSet="fa" fontIcon="fa-sign-out-alt" style="height: auto !important;"></mat-icon> Log ud</button>
+  <button mat-list-item *ngIf="player$ | async; else login" (click)="signOut()"><mat-icon fontSet="fa" fontIcon="fa-sign-out-alt" style="height: auto !important;"></mat-icon> Log ud</button>
+  <ng-template #login>
+    <button mat-list-item (click)="signIn(); closing.emit()"><mat-icon fontSet="fa" fontIcon="fa-sign-in-alt" style="height: auto !important;"></mat-icon> Log ind</button>
+  </ng-template>
 </mat-action-list>
