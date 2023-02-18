@@ -6,7 +6,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '2022'
+    redirectTo: '2023'
   },
   {
     path: 'login',
