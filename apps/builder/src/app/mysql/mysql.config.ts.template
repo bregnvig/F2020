@@ -1,8 +1,0 @@
-// Copy this file to mysql.config.ts and add the proper values
-import * as mysql from 'mysql'
-export const connect = mysql.createConnection({
-   host: "",
-   user: "",
-   password: "",
-   database: "f2007",
-  });
