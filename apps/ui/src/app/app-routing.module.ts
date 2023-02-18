@@ -2,15 +2,16 @@ import { inject } from '@angular/core';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { PlayerFacade, SeasonLoaderService } from '@f2020/api';
 import { LoginComponent } from '@f2020/shared';
-import { first, map } from 'rxjs';
+import { isNullish } from '@f2020/tools';
+import { filter, map } from 'rxjs';
 
 const mustBeAuthorized = () => {
   const facade = inject(PlayerFacade);
   const router = inject(Router);
 
   return facade.unauthorized$.pipe(
-    first(),
-    map(unauthorized => unauthorized ? router.navigate(['login']) : true)
+    filter(unauthorized => !isNullish(unauthorized)),
+    map(unauthorized => unauthorized ? router.navigate(['login']).then(() => false) : true)
   );
 
 };

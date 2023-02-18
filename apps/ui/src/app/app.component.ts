@@ -5,7 +5,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
-import { filterEquals } from '@f2020/tools';
+import { filterEquals, truthy } from '@f2020/tools';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
 
@@ -62,7 +62,11 @@ export class AppComponent implements OnInit {
       ui: 2,
       api: 2
     });
-    this.versionService.versionOK$.subscribe(ok => {
+    this.playerFacade.authorized$.pipe(
+      truthy(),
+      switchMap(() => this.versionService.versionOK$),
+      first(),
+    ).subscribe(ok => {
       if (!ok) {
         this.snackBar.open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', "OK").onAction().pipe(
           switchMap(() => this.updates.checkForUpdate()),

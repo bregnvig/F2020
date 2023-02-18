@@ -1,7 +1,7 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { interval, Observable } from 'rxjs';
-import { first, map, switchMapTo } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 
 export interface IVersion {
   ui?: number;
@@ -17,7 +17,7 @@ export class VersionService {
 
   constructor(functions: Functions) {
     this.versionOK$ = interval(5000).pipe(
-      switchMapTo(httpsCallable(functions, 'version')()),
+      switchMap(() => httpsCallable(functions, 'version')()),
       first(),
       map(result => result.data),
       map((expected: IVersion) => ({

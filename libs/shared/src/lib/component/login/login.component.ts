@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { PlayerApiService } from '@f2020/api';
+import { PlayerApiService, PlayerFacade } from '@f2020/api';
+import { notNullish, truthy } from '@f2020/tools';
+import { DateTime } from 'luxon';
+import { first, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'sha-login',
@@ -9,15 +12,29 @@ import { PlayerApiService } from '@f2020/api';
 })
 export class LoginComponent {
 
-  constructor(private service: PlayerApiService, private router: Router) {
+  isAuthorizationKnown$: Observable<true>;
+  isUnauthorized$: Observable<boolean>;
+
+  constructor(private service: PlayerApiService, facade: PlayerFacade, private router: Router) {
+    facade.authorized$.pipe(
+      truthy(),
+      first(),
+    ).subscribe(() => this.router.navigate([DateTime.now().year]));
+    this.isUnauthorized$ = facade.unauthorized$;
+    this.isAuthorizationKnown$ = facade.authorized$.pipe(
+      notNullish(),
+      map(() => true)
+    );
   }
 
   loginWithGoogle() {
-    this.router.navigate(['/']).then(() => this.service.signInWithGoogle());
+    this.router.navigate(['/'])
+      .then(() => this.service.signInWithGoogle());
   }
 
   loginWithFacebook() {
-    this.router.navigate(['/']).then(() => this.service.signInWithFacebook());
+    this.router.navigate(['/'])
+      .then(() => this.service.signInWithFacebook());
   }
 
 }
