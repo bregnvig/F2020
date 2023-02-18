@@ -12,7 +12,6 @@ export class SeasonEffects {
     this.actions$.pipe(
       ofType(SeasonActions.loadSeason),
       concatMap(({ seasonId }) => {
-        console.log(seasonId);
         return this.service.loadSeason(seasonId).pipe(
           map(season => SeasonActions.loadSeasonSuccess({ season })),
           catchError(error => of(SeasonActions.loadSeasonFailure({ error: error['message'] ?? error }))),

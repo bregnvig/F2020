@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { converter, Player } from '@f2020/data';
@@ -38,9 +38,9 @@ export class PlayerApiService {
     onAuthStateChanged(this.auth, user => {
       this.currentUser$.next({ ...user });
       if (user) {
-        this.updateBaseInformation(user).then(() => console.log('Base information updated'));
+        this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
       }
-      console.log(user);
+      isDevMode() && console.log(user);
     });
   }
 

@@ -85,7 +85,7 @@ export class AppModule {
     const messaging = getMessaging();
     getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
       currentToken => !environment.production && console.log(currentToken),
-      error => console.error('An error occurred while retrieving token', error)
+      error => console.error('An error occurred while retrieving token', error.message)
     );
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
