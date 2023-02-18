@@ -3,9 +3,9 @@
 </mat-toolbar>
 <mat-action-list *ngIf="races$ | async as races; else loading">
   <mat-list-item *ngFor="let race of races" [routerLink]="race.round.toString(10)">
-    <img matListAvatar [src]="race | flagURL">
-    <h3 matLine>{{race.name}}</h3>
-    <p matLine [ngSwitch]="race.state">
+    <img matListItemAvatar [src]="race | flagURL">
+    <h3 matListItemTitle>{{race.name}}</h3>
+    <p matListItemLine [ngSwitch]="race.state">
       <span *ngSwitchCase="'closed'">Afventer resultat</span>
       <span *ngSwitchCase="'completed'">Afgjort</span>
       <span *ngSwitchDefault>

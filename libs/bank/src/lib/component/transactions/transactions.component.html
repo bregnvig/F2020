@@ -5,9 +5,9 @@
     itemSize="48"
     class="fact-scroll-viewport">
       <mat-list-item *cdkVirtualFor="let transaction of dataSource">
-        <h4 mat-line>{{transaction.message}}</h4>
-        <div mat-line><small>{{transaction.date | dateTime: 'short'}}</small></div>
-        {{amount(transaction) | currency: 'DKK'}}
+        <h4 matListItemTitle>{{transaction.message}}</h4>
+        <div matListItemLine><small>{{transaction.date | dateTime: 'short'}}</small></div>
+        <div matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
       </mat-list-item>
     </cdk-virtual-scroll-viewport>  
   </mat-list>

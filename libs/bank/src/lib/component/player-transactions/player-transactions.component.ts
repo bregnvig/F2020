@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Player } from '@f2020/data';
 import { PlayersActions, PlayersFacade } from '@f2020/api';
+import { Player } from '@f2020/data';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { first, pluck, switchMap } from 'rxjs/operators';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
 import { TransferDialogComponent } from './../transfer-dialog/transfer-dialog.component';
 import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'f2020-player-transactions',
@@ -19,9 +19,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   </mat-toolbar>
   <f2020-transactions fxFlex [player]="player$ | async"></f2020-transactions>
   <mat-toolbar fxLayoutAlign="space-between" *ngIf="player$ | async as player">
-    <button mat-button fxFlex (click)="openDeposit(player)">Indsæt</button>
-    <button mat-button fxFlex (click)="openWithdraw(player)">Hæv</button>
-    <button mat-button fxFlex (click)="openTransfer(player)">Overfør</button>
+    <button class="my-auto" mat-button fxFlex (click)="openDeposit(player)">Indsæt</button>
+    <button class="my-auto" mat-button fxFlex (click)="openWithdraw(player)">Hæv</button>
+    <button class="my-auto" mat-button fxFlex (click)="openTransfer(player)">Overfør</button>
   </mat-toolbar>
   `
 })

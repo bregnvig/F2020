@@ -43,18 +43,18 @@
     <div>
       <mat-list>
         <mat-list-item>
-          <h4 matLine>
+          <h4 matListItemLine>
             Startede som nummer {{bid.selectedDriver.grid}}
           </h4>
-          <p *ngIf="bid.selectedDriver.gridPoints !== undefined" matLine>
+          <p *ngIf="bid.selectedDriver.gridPoints !== undefined" matListItemLine>
             <small>{{bid.selectedDriver.gridPoints}} point</small>
           </p>
         </mat-list-item>
         <mat-list-item *ngIf="bid.selectedDriver.finish">
-          <h4 matLine>
+          <h4 matListItemLine>
             Sluttede som nummer {{bid.selectedDriver.finish}}
           </h4>
-          <p *ngIf="bid.selectedDriver.finishPoints !== undefined" matLine>
+          <p *ngIf="bid.selectedDriver.finishPoints !== undefined" matListItemLine>
             <small>{{bid.selectedDriver.finishPoints}} point</small>
           </p>
         </mat-list-item>
@@ -71,18 +71,18 @@
     <div>
       <mat-list>
         <mat-list-item>
-          <h4 matLine>
+          <h4 matListItemLine>
             {{bid.selectedTeam.qualify | driverName}} kvalificerer sig bedst
           </h4>
-          <p *ngIf="bid.selectedTeam.qualifyPoints !== undefined" matLine>
+          <p *ngIf="bid.selectedTeam.qualifyPoints !== undefined" matListItemLine>
             <small>{{bid.selectedTeam.qualifyPoints}} point</small>
           </p>
         </mat-list-item>
         <mat-list-item *ngIf="bid.selectedTeam.result">
-          <h4 matLine>
+          <h4 matListItemLine>
             {{bid.selectedTeam.result | driverName}} slutter bedst
           </h4>
-          <p *ngIf="bid.selectedTeam.resultPoints !== undefined" matLine>
+          <p *ngIf="bid.selectedTeam.resultPoints !== undefined" matListItemLine>
             <small>{{bid.selectedTeam.resultPoints}} point</small>
           </p>
         </mat-list-item>
@@ -110,8 +110,8 @@
     <div>
       <mat-list>
         <mat-list-item>
-          <h4 matLine>{{bid.polePositionTime | polePositionTime}}</h4>
-          <p *ngIf="bid.polePositionTimeDiff != undefined" matLine><small>{{bid.polePositionTimeDiff}}ms fra pole tiden</small></p>
+          <h4 matListItemLine>{{bid.polePositionTime | polePositionTime}}</h4>
+          <p *ngIf="bid.polePositionTimeDiff != undefined" matListItemLine><small>{{bid.polePositionTimeDiff}}ms fra pole tiden</small></p>
         </mat-list-item>
       </mat-list>
     </div>

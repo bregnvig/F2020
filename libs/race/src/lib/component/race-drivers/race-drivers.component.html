@@ -5,7 +5,7 @@
 <div class="max-width">
   <mat-list cdkDropList cdkDropListLockAxis="y" fxFlex *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
       <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
-          <p matLine>{{driverId | driverName}}</p>
+          <p matListItemLine>{{driverId | driverName}}</p>
           <button mat-icon-button (click)="removeDriver(i)">
               <i class="far fa-trash fa-lg"></i>
           </button>

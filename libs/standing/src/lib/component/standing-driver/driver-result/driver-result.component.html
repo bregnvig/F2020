@@ -1,6 +1,7 @@
 <mat-list>
   <mat-list-item *ngFor="let race of driverResult?.races">
-    <h5 matLine fxLayout><span fxFlex>{{race.name}}</span>{{race.results[0].position}}</h5>
-    <p matLine>{{race.results[0].status}}</p>
+    <h5 matListItemTitle>{{race.name}}</h5>
+    <p matListItemLine>{{race.results[0].status}}</p>
+    <span class="focus-meta" matListItemMeta>{{race.results[0].position}}</span>
   </mat-list-item>
 </mat-list>

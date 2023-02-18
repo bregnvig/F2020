@@ -6,14 +6,17 @@
     <ng-container *ngFor="let team of teams; index as i; last as last">
       <h2 matSubheader>{{team.name}}</h2>
       <mat-list-item *ngFor="let driverId of team.drivers">
-        <p matLine>{{driverId | driverName}}</p>
-        <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
-          <i class="far fa-trash fa-lg"></i>
-        </button>
+        <p matListItemTitle>{{driverId | driverName}}</p>
+        <p matListItemMeta>
+          <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
+            <i class="far fa-trash"></i>
+          </button>
+        </p>
       </mat-list-item>
       <mat-list-item *shaHasRole="'admin'" >
-        <p mat-line></p>
-        <button mat-icon-button (click)="addDriver(team)"><i class="far fa-plus fa-lg"></i></button>
+        <p matListItemMeta>
+          <button mat-icon-button (click)="addDriver(team)"><i class="far fa-plus"></i></button>
+        </p>
       </mat-list-item>
       <mat-divider *ngIf="!last"></mat-divider>
     </ng-container>

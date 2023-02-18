@@ -3,9 +3,9 @@
 </mat-toolbar>
 <sha-card-page>
   <ng-container *ngIf="currentSeasonResult$ | async as result; else loading">
-    <f2020-number-card fxFlex.gt-xs="33" title="Start gennemsnit" [number]="result.averageGridPosition | number: '1.2-2'" iconClasses="far fa-flag-checkered"></f2020-number-card>
-    <f2020-number-card fxFlex.gt-xs="33" title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" iconClasses="far fa-trophy-alt"></f2020-number-card>
-    <f2020-number-card fxFlex.gt-xs="33" title="Udgået" [number]="result.retired" iconClasses="far fa-car-crash"></f2020-number-card>
+    <f2020-number-card title="Start gennemsnit" [number]="result.averageGridPosition | number: '1.2-2'" iconClasses="far fa-flag-checkered"></f2020-number-card>
+    <f2020-number-card title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" iconClasses="far fa-trophy-alt"></f2020-number-card>
+    <f2020-number-card title="Udgået" [number]="result.retired" iconClasses="far fa-car-crash"></f2020-number-card>
   </ng-container>
 </sha-card-page>
 <mat-tab-group fxFlexOffset="16px" *ngIf="currentSeasonResult$ | async as result" selectedIndex="1" (selectedIndexChange)="load($event)">

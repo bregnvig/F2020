@@ -7,9 +7,9 @@
 <div class="max-width">
   <mat-action-list *ngIf="result$ | async as result; else loading">
     <mat-list-item *ngFor="let player of result.players" [routerLink]="['../..', 'player', player.player.uid]">
-      <img matListAvatar [src]="player.player.photoURL" [alt]="player.player.displayName">
-      <h3 matLine>{{player.player.displayName}}</h3>
-      <p matLine>{{player.points}} points</p>
+      <img matListItemAvatar [src]="player.player.photoURL" [alt]="player.player.displayName">
+      <h3 matListItemLine>{{player.player.displayName}}</h3>
+      <p matListItemLine>{{player.points}} points</p>
     </mat-list-item>
   </mat-action-list>
 </div>

@@ -15,7 +15,7 @@
   </mat-toolbar>
   <mat-selection-list (selectionChange)="selectionChanged($event)">
     <mat-list-option *ngFor="let player of players$ | async" [selected]="player[1]" [value]="player[0].uid">
-      <img [src]="player[0].photoURL" matListAvatar alt="Profile billede ">
+      <img [src]="player[0].photoURL" matListItemAvatar alt="Profile billede ">
       <h3>{{player[0].displayName}} starter med at spille</h3>
     </mat-list-option>
   </mat-selection-list>
