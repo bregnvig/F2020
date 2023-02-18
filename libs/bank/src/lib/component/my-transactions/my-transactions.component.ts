@@ -4,7 +4,7 @@ import { Player } from '@f2020/data';
 import { PlayerFacade } from '@f2020/api';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AbstractSuperComponent } from '@f2020/shared';
 
 @Component({

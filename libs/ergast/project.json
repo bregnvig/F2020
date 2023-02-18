@@ -1,0 +1,17 @@
+{
+  "name": "ergast",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ergast/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/ergast/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/ergast"]
+    }
+  },
+  "tags": []
+}

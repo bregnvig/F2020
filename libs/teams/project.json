@@ -1,0 +1,24 @@
+{
+  "name": "teams",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/teams/src",
+  "prefix": "teams",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/teams"],
+      "options": {
+        "jestConfig": "libs/teams/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/teams/src/**/*.ts", "libs/teams/src/**/*.html"]
+      }
+    }
+  },
+  "tags": []
+}

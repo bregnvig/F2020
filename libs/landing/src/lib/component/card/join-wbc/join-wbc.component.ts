@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { SeasonFacade } from '@f2020/api';
 import { PlayerActions, PlayerFacade } from '@f2020/api';
 import { truthy } from '@f2020/tools';

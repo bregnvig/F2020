@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { ActivatedRoute, Params } from '@angular/router';
 import { PlayersActions, PlayersApiService, PlayersFacade } from '@f2020/api';
 import { Player, Role } from '@f2020/data';
