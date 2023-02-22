@@ -24,10 +24,6 @@ export class SidebarComponent implements OnInit {
     this.seasonId$ = this.seasonFacade.season$.pipe(map(season => season.id));
   }
 
-  signOut() {
-    this.playerFacade.dispatch(PlayerActions.logoutPlayer());
-  }
-
   signIn() {
     this.router.navigate(['login']);
   }

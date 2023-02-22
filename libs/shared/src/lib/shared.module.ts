@@ -8,7 +8,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { PlayerApiModule } from '@f2020/api';
-import { LoginComponent } from './component';
+import { LoginComponent, LogoutComponent } from './component';
 import { CardPageComponent } from './component/card-page/card-page.component';
 import { HasRoleDirective } from './component/has-role.directive';
 import { LoadingComponent } from './component/loading/loading.component';
@@ -30,6 +30,7 @@ const materialModules = [
 
 const exportComponents = [
   LoginComponent,
+  LogoutComponent,
   LoadingComponent,
   PageComponent,
   CardPageComponent,

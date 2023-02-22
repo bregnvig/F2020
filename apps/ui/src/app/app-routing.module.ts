@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { PlayerFacade, SeasonLoaderService } from '@f2020/api';
-import { LoginComponent } from '@f2020/shared';
+import { LoginComponent, LogoutComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { filter, map } from 'rxjs';
 
@@ -25,6 +25,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent,
   },
   {
     path: 'players',
