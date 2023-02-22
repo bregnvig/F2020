@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <title>F2023</title>
-  <base href="/"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="manifest" href="manifest.webmanifest">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSSTrWLforVmyo3-HyrCfLwfyZ409NVIM"></script>
   <meta name="theme-color" content="#1976d2">
+  <style>
+    body { background-color: rgb(48,48,48) }
+    img.loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
 </head>
+
 <body>
-<div class="mat-typography mat-app-background basic-container">
-  <f2020-root></f2020-root>
-</div>
-<noscript>Please enable JavaScript to continue using this application.</noscript>
+  <div class="mat-typography mat-app-background basic-container">
+    <f2020-root>
+      <img class="loading" src="assets/icons/icon-512x512.png" style="width: 90vw; max-width: 512px;" alt="loading">
+    </f2020-root>
+  </div>
+  <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
 </html>
