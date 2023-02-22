@@ -1,8 +1,8 @@
 {
-  "name": "F2022",
-  "short_name": "F2022",
-  "theme_color": "#000000",
-  "background_color": "#000000",
+  "name": "F2023",
+  "short_name": "F2023",
+  "theme_color": "#303030",
+  "background_color": "#303030",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
