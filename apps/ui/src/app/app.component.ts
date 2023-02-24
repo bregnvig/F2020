@@ -54,6 +54,8 @@ export class AppComponent implements OnInit {
       }
     });
     this.updates.versionUpdates.pipe(
+      filter(event => event.type === 'VERSION_READY'),
+      first(),
       switchMap(() => this.snackBar.open('🤩 Ny version klar', 'OPDATER', { duration: 10000 }).onAction()),
       switchMap(() => this.updates.activateUpdate()),
       first(),
