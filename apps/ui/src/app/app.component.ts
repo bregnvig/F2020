@@ -64,6 +64,7 @@ export class AppComponent implements OnInit {
     });
     this.playerFacade.authorized$.pipe(
       truthy(),
+      first(),
       switchMap(() => this.versionService.versionOK$),
       first(),
     ).subscribe(ok => {
