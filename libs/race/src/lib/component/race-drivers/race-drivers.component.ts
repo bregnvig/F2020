@@ -21,6 +21,7 @@ const message = (driverName: string, operation: Operation) => {
 };
 
 @Component({
+  selector: 'race-drivers',
   templateUrl: './race-drivers.component.html',
   styleUrls: ['./race-drivers.component.scss']
 })
