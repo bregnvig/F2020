@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { PlayerFacade, SeasonFacade } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
+import { icon } from '@f2020/shared';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
@@ -14,6 +15,7 @@ export class PreviousRaceComponent implements OnInit {
 
   wbcResult$: Observable<WBCResult>;
   title$: Observable<string>;
+  icon = icon.farTrophy;
 
   constructor(private facade: SeasonFacade, private playerFacade: PlayerFacade) { }
 

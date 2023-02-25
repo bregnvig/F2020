@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { icon } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-what-else',
@@ -7,5 +8,5 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WhatElseComponent {
-
+  icon = icon.falRocketLaunch;
 }

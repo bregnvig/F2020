@@ -8,7 +8,7 @@ import { RouterModule } from "@angular/router";
 import { RaceApiModule } from '@f2020/api';
 import { ControlModule } from '@f2020/control';
 import { SharedModule } from '@f2020/shared';
-import { InterimResultComponent } from './component/card/interim-result/interim-result.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { JoinWbcComponent } from './component/card/join-wbc/join-wbc.component';
 import { LastYearComponent } from './component/card/last-year/last-year.component';
 import { PreviousRaceComponent } from './component/card/previous-race/previous-race.component';
@@ -17,7 +17,6 @@ import { WeatherDayComponent } from './component/card/weather/weather-day/weathe
 import { WeatherComponent } from './component/card/weather/weather.component';
 import { WhatElseComponent } from './component/card/what-else/what-else.component';
 import { LandingComponent } from './component/landing/landing.component';
-
 const MatModules = [
   MatCardModule,
   MatButtonModule,
@@ -30,6 +29,7 @@ const MatModules = [
     FlexLayoutModule,
     SharedModule,
     MatModules,
+    FontAwesomeModule,
     ControlModule,
     RaceApiModule,
     RouterModule.forChild([
@@ -39,6 +39,15 @@ const MatModules = [
       }
     ]),
   ],
-  declarations: [LandingComponent, LastYearComponent, WhatElseComponent, JoinWbcComponent, WeatherComponent, WeatherDayComponent, RememberToPlayComponent, InterimResultComponent, PreviousRaceComponent],
+  declarations: [
+    LandingComponent,
+    LastYearComponent,
+    WhatElseComponent,
+    JoinWbcComponent,
+    WeatherComponent,
+    WeatherDayComponent,
+    RememberToPlayComponent,
+    PreviousRaceComponent
+  ],
 })
 export class LandingModule { }

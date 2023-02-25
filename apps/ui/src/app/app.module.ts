@@ -1,6 +1,6 @@
 import { registerLocaleData } from '@angular/common';
 import localeDa from '@angular/common/locales/da';
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
@@ -17,7 +17,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { PlayerActions, PlayerApiModule, PlayerFacade, RaceApiModule, SeasonApiModule } from '@f2020/api';
 import { DriverModule } from '@f2020/driver';
-import { SharedModule } from '@f2020/shared';
+import { initializeFontAwesomeFactory, SharedModule } from '@f2020/shared';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -73,7 +74,13 @@ const materialModule = [
     {
       provide: LOCALE_ID,
       useValue: 'da',
-    }
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeFontAwesomeFactory,
+      deps: [FaIconLibrary],
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })

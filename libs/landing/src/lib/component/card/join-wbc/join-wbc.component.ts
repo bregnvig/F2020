@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerActions, PlayerFacade, SeasonFacade } from '@f2020/api';
+import { icon } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { combineLatest, Observable } from 'rxjs';
@@ -16,6 +17,7 @@ export class JoinWbcComponent implements OnInit {
   latestWBCJoinDate$: Observable<DateTime>;
   canJoin$: Observable<boolean>;
   loading$: Observable<boolean>;
+  icon = icon.fasTrophy;
 
   constructor(
     private playerFacade: PlayerFacade,

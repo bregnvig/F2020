@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { WeatherService, WeatherDay } from '@f2020/api';
+import { icon } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-weather',
@@ -10,6 +11,7 @@ import { WeatherService, WeatherDay } from '@f2020/api';
 })
 export class WeatherComponent implements OnInit {
 
+  icon = icon.farWeather;
   days$: Observable<WeatherDay[]>;
 
   constructor(private service: WeatherService) { }

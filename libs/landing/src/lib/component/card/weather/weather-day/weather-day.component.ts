@@ -1,10 +1,15 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { WeatherDay } from '@f2020/api';
 
 @Component({
   selector: 'f2020-weather-day',
-  templateUrl: './weather-day.component.html',
-  styleUrls: ['./weather-day.component.scss'],
+  template: `
+  <div fxLayout="column" fxLayoutAlign="space-between center">
+    <div>{{day.date | dateTime: 'EEEE' | titlecase}}</div>
+    <div><img [src]="day.icon"></div>
+    <div>{{day.description}}</div>
+  </div>
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeatherDayComponent {
