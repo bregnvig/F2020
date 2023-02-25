@@ -14,6 +14,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { PlayersApiModule } from '@f2020/api';
 import { SharedModule } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlayersListComponent } from './component/players-list/players-list.component';
 import { PlayersComponent } from './component/players/players.component';
 import { EditPlayerComponent } from './edit-player/edit-player.component';
@@ -48,6 +49,7 @@ const MatModules = [
       }
     ]),
     CommonModule,
+    FontAwesomeModule,
     SharedModule,
     PlayersApiModule,
     FlexLayoutModule,

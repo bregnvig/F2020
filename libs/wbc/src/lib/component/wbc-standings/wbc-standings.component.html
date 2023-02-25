@@ -7,7 +7,7 @@
       <img matListItemAvatar [src]="standing.player.photoURL">
       <h3 matListItemTitle>{{standing.player.displayName}}</h3>
       <p matListItemLine>{{standing.points}} points</p>
-      <i *ngIf="(participants$ | async)?.includes(standing.player.uid)" matListItemMeta class="fas fa-star"></i>
+      <fa-icon *ngIf="(participants$ | async)?.includes(standing.player.uid)" matListItemMeta class="text-white" [icon]="icon"></fa-icon>
     </mat-list-item>
   </mat-action-list>
 </div>

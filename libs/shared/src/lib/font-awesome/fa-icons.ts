@@ -15,12 +15,16 @@ type Icon =
   | 'farSignInAlt'
   | 'farTrash'
   | 'farPlus'
+  | 'farCarCrash'
+  | 'farUniversity'
+  | 'farGavel'
   | 'fasHome'
   | 'fasFlagCheckered'
   | 'fasCoins'
   | 'fasSteeringWheel'
   | 'fasPeopleGroup'
   | 'fasUserAstronaut'
+  | 'fasStar'
   | 'falTireFlat'
   | 'fabGoogle'
   | 'fabFacebookF'
@@ -40,6 +44,9 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farSignOutAlt: ['far', 'sign-out-alt'],
   farSignInAlt: ['far', 'sign-in-alt'],
   farTrash: ['far', 'trash'],
+  farCarCrash: ['far', 'car-crash'],
+  farUniversity: ['far', 'university'],
+  farGavel: ['far', 'gavel'],
   farPlus: ['far', 'plus'],
   fasHome: ['fas', 'home'],
   fasFlagCheckered: ['fas', 'flag-checkered'],
@@ -47,6 +54,7 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fasSteeringWheel: ['fas', 'steering-wheel'],
   fasPeopleGroup: ['fas', 'people-group'],
   fasUserAstronaut: ['fas', 'user-astronaut'],
+  fasStar: ['fas', 'star'],
   falTireFlat: ['fal', 'tire-flat'],
   fabGoogle: ['fab', 'google'],
   fabFacebookF: ['fab', 'facebook-f'],

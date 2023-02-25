@@ -4,13 +4,14 @@ import { SeasonFacade } from '@f2020/api';
 import { WBCPlayer } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { icon } from '@f2020/shared';
 
 const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBCPlayer> => {
   const uid = wbcPlayer.player.uid;
-  const updated = acc.get(uid) || {...wbcPlayer, points: 0};
-  updated.points += wbcPlayer.points; 
+  const updated = acc.get(uid) || { ...wbcPlayer, points: 0 };
+  updated.points += wbcPlayer.points;
   return acc.set(uid, updated);
-}
+};
 
 @Component({
   templateUrl: './wbc-standings.component.html',
@@ -21,6 +22,7 @@ export class WbcStandingsComponent implements OnInit {
 
   standings$: Observable<WBCPlayer[]>;
   participants$: Observable<string[]>;
+  icon = icon.fasStar;
 
   constructor(private facade: SeasonFacade) { }
 

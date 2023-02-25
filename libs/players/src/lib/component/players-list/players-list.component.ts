@@ -4,6 +4,7 @@ import { PlayersFacade } from '@f2020/api';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Player } from '@f2020/data';
 import { map } from 'rxjs/operators';
+import { icon } from '@f2020/shared';
 
 @Component({
   templateUrl: './players-list.component.html',
@@ -12,7 +13,8 @@ import { map } from 'rxjs/operators';
 })
 export class PlayersListComponent implements OnInit {
 
-  players$: Observable<Player[]>
+  players$: Observable<Player[]>;
+  icon = icon;
 
   constructor(private facade: PlayersFacade) { }
 
@@ -24,7 +26,7 @@ export class PlayersListComponent implements OnInit {
   }
 
   isAnonymous(player: Player): boolean {
-    return player.roles.length === 1 && player.roles[0] === 'anonymous'
+    return player.roles.length === 1 && player.roles[0] === 'anonymous';
   }
 
   isPlayer(player: Player): boolean {

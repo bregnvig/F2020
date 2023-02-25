@@ -7,6 +7,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from "@angular/router";
 import { SeasonApiModule } from '@f2020/api';
 import { SharedModule } from '@f2020/shared';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { WbcGraphComponent } from './component/wbc-graph/wbc-graph.component';
 import { WbcPlayerComponent } from './component/wbc-player/wbc-player.component';
@@ -23,6 +24,7 @@ const MaterialModulde = [
 @NgModule({
   imports: [
     CommonModule,
+    FontAwesomeModule,
     SeasonApiModule,
     MaterialModulde,
     SharedModule,
