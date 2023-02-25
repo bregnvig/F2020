@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
 import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
+import { icon } from '@f2020/shared';
 import { first, map, mapTo, switchMap } from 'rxjs';
 
 @Component({
@@ -15,6 +16,7 @@ import { first, map, mapTo, switchMap } from 'rxjs';
 export class TeamsListComponent implements OnInit {
 
   teams$ = this.service.teams$;
+  icon = icon;
 
   constructor(
     private dialog: MatDialog,

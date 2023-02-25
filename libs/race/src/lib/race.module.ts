@@ -34,6 +34,7 @@ import { RacesComponent } from './component/races/races.component';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
 import { RaceRoutingModule } from './race-routing.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const MaterialModules = [
   MatCardModule,
@@ -55,6 +56,7 @@ const MaterialModules = [
     CommonModule,
     FlexLayoutModule,
     ReactiveFormsModule,
+    FontAwesomeModule,
     RaceRoutingModule,
     SharedModule,
     GoogleMapsModule,

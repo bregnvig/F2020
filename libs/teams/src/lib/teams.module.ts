@@ -7,6 +7,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { RouterModule } from "@angular/router";
 import { DriverModule } from "@f2020/driver";
 import { SharedModule } from "@f2020/shared";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { TeamsListComponent } from './component/teams-list/teams-list.component';
 
 const MaterialModules = [
@@ -26,6 +27,7 @@ const MaterialModules = [
       }
     ]),
     MaterialModules,
+    FontAwesomeModule,
     DriverModule,
     SharedModule,
   ],

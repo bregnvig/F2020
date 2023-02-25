@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { icon } from '@f2020/shared';
 
 @Component({
   selector: 'info-privacy-policy',
@@ -6,5 +7,5 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PrivacyPolicyComponent {
-
+  icon = icon.farInfo;
 }

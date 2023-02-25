@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
+import { icon } from '@f2020/shared';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,7 +13,8 @@ import { Observable } from 'rxjs';
 export class DisplayResultComponent implements OnInit {
 
   race$: Observable<IRace>;
-  
+  icon = icon.fasFlagCheckered;
+
   constructor(private facade: RacesFacade) { }
 
   ngOnInit(): void {

@@ -1,6 +1,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Bid } from '@f2020/data';
+import { icon } from '@f2020/shared';
 
 const polePostionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
 
@@ -13,6 +14,7 @@ const polePostionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => 
 export class BidsComponent {
 
   private _bids: Bid[];
+  icon = icon.fasFlagCheckered;
 
 
   @Input() result: Partial<Bid>;

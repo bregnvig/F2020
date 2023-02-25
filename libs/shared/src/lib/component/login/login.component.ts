@@ -4,6 +4,7 @@ import { PlayerApiService, PlayerFacade } from '@f2020/api';
 import { notNullish, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { first, map, Observable } from 'rxjs';
+import { icon } from '../../font-awesome';
 
 @Component({
   selector: 'sha-login',
@@ -11,6 +12,8 @@ import { first, map, Observable } from 'rxjs';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
+
+  icon = icon;
 
   isAuthorizationKnown$: Observable<true>;
   isUnauthorized$: Observable<boolean>;

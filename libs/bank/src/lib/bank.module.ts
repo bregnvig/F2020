@@ -15,6 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from "@angular/router";
 import { PlayersApiModule } from '@f2020/api';
 import { SharedModule } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AccountsListComponent } from './component/accounts-list/accounts-list.component';
 import { AccountsComponent } from './component/accounts/accounts.component';
 import { DepositDialogComponent } from './component/deposit-dialog/deposit-dialog.component';
@@ -70,6 +71,7 @@ import { AccountService } from './service';
     MatInputModule,
     MatSelectModule,
     FlexLayoutModule,
+    FontAwesomeModule,
     ScrollingModule,
     SharedModule,
     PlayersApiModule,

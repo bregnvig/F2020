@@ -9,13 +9,15 @@
         <p matListItemTitle>{{driverId | driverName}}</p>
         <p matListItemMeta>
           <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
-            <i class="far fa-trash"></i>
+            <fa-icon [icon]="icon.farTrash"></fa-icon>
           </button>
         </p>
       </mat-list-item>
       <mat-list-item *shaHasRole="'admin'" >
         <p matListItemMeta>
-          <button mat-icon-button (click)="addDriver(team)"><i class="far fa-plus"></i></button>
+          <button mat-icon-button (click)="addDriver(team)">
+            <fa-icon [icon]="icon.farPlus"></fa-icon>
+          </button>
         </p>
       </mat-list-item>
       <mat-divider *ngIf="!last"></mat-divider>

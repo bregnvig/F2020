@@ -1,11 +1,11 @@
-import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 import { Component, OnInit } from '@angular/core';
-import { Player } from '@f2020/data';
+import { MatDialog } from '@angular/material/dialog';
 import { PlayerFacade } from '@f2020/api';
+import { Player } from '@f2020/data';
+import { AbstractSuperComponent, icon } from '@f2020/shared';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AbstractSuperComponent } from '@f2020/shared';
-import { MatDialog } from '@angular/material/dialog';
+import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 
 @Component({
   selector: 'f2020-my-transactions',
@@ -13,7 +13,9 @@ import { MatDialog } from '@angular/material/dialog';
   <mat-toolbar color="primary">
     <span fxFlex>Saldo</span>
     <ng-container *ngIf="player$ | async as player">
-      <button mat-icon-button (click)="showInfo()"><mat-icon fontSet="far" fontIcon="fa-piggy-bank"></mat-icon></button>
+      <button mat-icon-button (click)="showInfo()">
+        <fa-icon [icon]="icon"></fa-icon>
+      </button>
       <span>{{player.balance | currency: 'DKK'}}</span>
     </ng-container>
   </mat-toolbar>
@@ -24,6 +26,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class MyTransactionsComponent extends AbstractSuperComponent implements OnInit {
 
   player$: Observable<Player>;
+  icon = icon.farPiggyBank;
 
   constructor(private facade: PlayerFacade, private dialog: MatDialog) {
     super();

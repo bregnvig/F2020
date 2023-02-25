@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from "@angular/router";
 import { SharedModule } from '@f2020/shared';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AboutComponent } from './component/about/about.component';
 import { MissingRoleComponent } from './component/missing-role/missing-role.component';
 import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component';
@@ -25,6 +26,7 @@ import { GithubService } from './service/github.service';
     MatCardModule,
     MatGridListModule,
     HttpClientModule,
+    FontAwesomeModule,
     SharedModule,
     RouterModule.forChild([
       {

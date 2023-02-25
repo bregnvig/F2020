@@ -18,7 +18,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { PlayerActions, PlayerApiModule, PlayerFacade, RaceApiModule, SeasonApiModule } from '@f2020/api';
 import { DriverModule } from '@f2020/driver';
 import { initializeFontAwesomeFactory, SharedModule } from '@f2020/shared';
-import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -50,6 +50,7 @@ const materialModule = [
     materialModule,
     FlexLayoutModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    FontAwesomeModule,
     PlayerApiModule,
     DriverModule,
     SeasonApiModule,

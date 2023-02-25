@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
 import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
-import { AbstractSuperComponent } from '@f2020/shared';
+import { AbstractSuperComponent, icon } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { filter, first, map, pairwise, switchMap } from 'rxjs/operators';
@@ -29,6 +29,7 @@ export class RaceDriversComponent extends AbstractSuperComponent implements OnIn
 
   drivers: string[];
   race$: Observable<IRace>;
+  icon = icon.farTrash;
   private driverId: string;
   private operation: Operation;
   private previousDrivers: string[];
