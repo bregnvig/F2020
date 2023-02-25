@@ -8,6 +8,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { PlayerApiModule } from '@f2020/api';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { LoginComponent, LogoutComponent } from './component';
 import { CardPageComponent } from './component/card-page/card-page.component';
 import { HasRoleDirective } from './component/has-role.directive';
@@ -65,6 +66,7 @@ const pipes = [
     CommonModule,
     FlexLayoutModule,
     RouterModule,
+    FontAwesomeModule,
     PlayerApiModule,
     materialModules
   ],

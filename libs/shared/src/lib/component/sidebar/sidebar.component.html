@@ -3,23 +3,25 @@
 </mat-toolbar>
 <mat-action-list style="padding: 1rem 1.5rem 0 1.5rem">
   <ng-container *ngIf="seasonId$ | async as seasonId">
-    <sha-sidenav-button *shaHasRole="'player'" iconSet="fas" icon="fa-home" [routerLink]="seasonId" (click)="closing.emit()">Forside</sha-sidenav-button>
-    <sha-sidenav-button *shaHasRole="'player'" iconSet="fas" icon="fa-flag-checkered" [routerLink]="[seasonId, 'race']" (click)="closing.emit()">Løb</sha-sidenav-button>
-    <sha-sidenav-button *shaHasRole="'player'" iconSet="far" icon="fa-trophy-alt" [routerLink]="[seasonId, 'wbc']" (click)="closing.emit()">WBC</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'"  [icon]="icon.fasHome" [routerLink]="seasonId" (click)="closing.emit()">Forside</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'"  [icon]="icon.fasFlagCheckered" [routerLink]="[seasonId, 'race']" (click)="closing.emit()">Løb</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'"  [icon]="icon.farTrophy" [routerLink]="[seasonId, 'wbc']" (click)="closing.emit()">WBC</sha-sidenav-button>
   </ng-container>
-  <sha-sidenav-button *shaHasRole="'player'" iconSet="fas" icon="fa-coins" [routerLink]="['accounts', 'me']" (click)="closing.emit()">Konto - {{(player$ | async)?.balance}} kr.</sha-sidenav-button>
-  <sha-sidenav-button *shaHasRole="'bank-admin'" iconSet="far" icon="fa-piggy-bank" routerLink="accounts" (click)="closing.emit()">Bank</sha-sidenav-button>
+  <sha-sidenav-button *shaHasRole="'player'"  [icon]="icon.fasCoins" [routerLink]="['accounts', 'me']" (click)="closing.emit()">Konto - {{(player$ | async)?.balance}} kr.</sha-sidenav-button>
+  <sha-sidenav-button *shaHasRole="'bank-admin'"  [icon]="icon.farPiggyBank" routerLink="accounts" (click)="closing.emit()">Bank</sha-sidenav-button>
   <ng-container *ngIf="seasonId$ | async as seasonId">
-    <sha-sidenav-button *shaHasRole="'player'" iconSet="fas" icon="fa-steering-wheel" [routerLink]="[seasonId, 'standings']" (click)="closing.emit()">Kører</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'"  [icon]="icon.fasSteeringWheel" [routerLink]="[seasonId, 'standings']" (click)="closing.emit()">Kører</sha-sidenav-button>
   </ng-container>
-  <sha-sidenav-button iconSet="fas" icon="fa-people-group" [routerLink]="['teams']" (click)="closing.emit()">Hold</sha-sidenav-button>
-  <sha-sidenav-button *shaHasRole="'admin'" iconSet="fas" icon="fa-user-astronaut" [routerLink]="['players']" (click)="closing.emit()">Spillere</sha-sidenav-button>
-  <sha-sidenav-button iconSet="far" icon="fa-user-friends" [routerLink]="['info', 'about']" (click)="closing.emit()">Om spillet</sha-sidenav-button>
-  <sha-sidenav-button iconSet="far" icon="fa-book-alt" [routerLink]="['info', 'rules']" (click)="closing.emit()">Regler</sha-sidenav-button>
-  <sha-sidenav-button *shaHasRole="'player'" iconSet="far" icon="fa-user" routerLink="player" (click)="closing.emit()">Profil</sha-sidenav-button>
-  <sha-sidenav-button iconSet="far" icon="fa-info" [routerLink]="['info', 'privacy-policy']" (click)="closing.emit()">Persondatapolitik</sha-sidenav-button>
-  <sha-sidenav-button *ngIf="player$ | async; else login" iconSet="far" icon="fa-sign-out-alt" [routerLink]="['logout']" (click)="closing.emit()">Log ud</sha-sidenav-button>
+  <sha-sidenav-button  [icon]="icon.fasPeopleGroup" [routerLink]="['teams']" (click)="closing.emit()">Hold</sha-sidenav-button>
+  <sha-sidenav-button *shaHasRole="'admin'"  [icon]="icon.fasUserAstronaut" [routerLink]="['players']" (click)="closing.emit()">Spillere</sha-sidenav-button>
+  <sha-sidenav-button  [icon]="icon.farUserFriends" [routerLink]="['info', 'about']" (click)="closing.emit()">Om spillet</sha-sidenav-button>
+  <sha-sidenav-button  [icon]="icon.farBookAlt" [routerLink]="['info', 'rules']" (click)="closing.emit()">Regler</sha-sidenav-button>
+  <sha-sidenav-button *shaHasRole="'player'"  [icon]="icon.farUser" routerLink="player" (click)="closing.emit()">Profil</sha-sidenav-button>
+  <sha-sidenav-button  [icon]="icon.farInfo" [routerLink]="['info', 'privacy-policy']" (click)="closing.emit()">Persondatapolitik</sha-sidenav-button>
+  <sha-sidenav-button *ngIf="player$ | async; else login"  [icon]="icon.farSignOutAlt" [routerLink]="['logout']" (click)="closing.emit()">Log ud</sha-sidenav-button>
   <ng-template #login>
-    <button mat-list-item (click)="signIn(); closing.emit()"><mat-icon fontSet="fa" fontIcon="fa-sign-in-alt" style="height: auto !important;"></mat-icon> Log ind</button>
+    <button mat-list-item (click)="signIn(); closing.emit()">
+      <fa-icon [icon]="icon.farSignInAlt" [fixedWidth]="true"></fa-icon>
+      Log ind</button>
   </ng-template>
 </mat-action-list>

@@ -4,6 +4,7 @@ import { PlayerActions, PlayerFacade, SeasonFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { icon } from '../../font-awesome';
 
 @Component({
   selector: 'sha-sidebar',
@@ -16,6 +17,7 @@ export class SidebarComponent implements OnInit {
   @Output() closing = new EventEmitter<void>();
   player$: Observable<Player>;
   seasonId$: Observable<string>;
+  icon = icon;
 
   constructor(private playerFacade: PlayerFacade, private seasonFacade: SeasonFacade, private router: Router) { }
 

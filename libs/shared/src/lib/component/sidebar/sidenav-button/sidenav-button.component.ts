@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'sha-sidenav-button',
   template: `
     <button mat-list-item>
-          <span fxLayout fxLayoutAlign="start center" fxLayoutGap="8px">
-             <mat-icon [fontSet]="iconSet" [fontIcon]="icon" style="height: auto !important;"></mat-icon>  
+          <span fxLayout fxLayoutAlign="start center">
+            <fa-icon class="me-3" [icon]="icon" [fixedWidth]="true"></fa-icon>
              <ng-content></ng-content>
           </span>
     </button>`,
@@ -14,8 +15,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class SidenavButtonComponent {
 
-  @Input() iconSet = 'fa';
-  @Input() icon: string;
+  @Input() icon: [IconPrefix, IconName];
   @Input() title: string;
 
 }
