@@ -4,9 +4,9 @@
       <mat-card-title>Vejret</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div fxLayout>
+      <div fxLayout fxLayout.xs="column" fxLayout.md="row" >
         <div fxFlex *ngFor="let day of days">
-          <f2020-weather-day [day]="day"></f2020-weather-day>
+          <f2020-weather-day fxFlex [day]="day"></f2020-weather-day>
         </div>
       </div>
     </mat-card-content>

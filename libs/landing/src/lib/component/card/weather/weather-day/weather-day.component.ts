@@ -4,10 +4,10 @@ import { WeatherDay } from '@f2020/api';
 @Component({
   selector: 'f2020-weather-day',
   template: `
-  <div fxLayout="column" fxLayoutAlign="space-between center">
-    <div>{{day.date | dateTime: 'EEEE' | titlecase}}</div>
+  <div fxLayout fxLayout.xs="row" fxLayout.sm="column"  fxLayoutAlign="space-between center">
+    <div fxFlex>{{day.date | dateTime: 'EEEE' | titlecase}}</div>
     <div><img [src]="day.icon"></div>
-    <div>{{day.temp | number: '0.0-0'}}℃, {{day.description}}</div>
+    <div>{{day.temp | number: '0.0-0'}}°, {{day.description}}</div>
   </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
