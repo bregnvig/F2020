@@ -9,4 +9,5 @@ import { icon } from '@f2020/shared';
 })
 export class WhatElseComponent {
   icon = icon.falRocketLaunch;
+  apple = icon.fabApple;
 }
