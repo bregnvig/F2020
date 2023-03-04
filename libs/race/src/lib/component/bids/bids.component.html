@@ -1,6 +1,5 @@
 <mat-action-list>
-
-  <button mat-list-item (click)="gotoResult()">
+  <button *ngIf="result" mat-list-item (click)="gotoResult()">
     <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x"></fa-icon>
     <span matListItemTitle>Resultat</span>
   </button>
