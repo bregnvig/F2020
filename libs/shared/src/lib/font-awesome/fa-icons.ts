@@ -28,6 +28,7 @@ type Icon =
   | 'falTireFlat'
   | 'fabGoogle'
   | 'fabFacebookF'
+  | 'fabApple'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -58,4 +59,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   falTireFlat: ['fal', 'tire-flat'],
   fabGoogle: ['fab', 'google'],
   fabFacebookF: ['fab', 'facebook-f'],
+  fabApple: ['fab', 'apple'],
 };
