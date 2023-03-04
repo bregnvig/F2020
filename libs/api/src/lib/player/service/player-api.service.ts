@@ -46,11 +46,17 @@ export class PlayerApiService {
 
 
   signInWithGoogle(): Promise<void> {
-    return signInWithRedirect(this.auth, new GoogleAuthProvider()).then(_ => console.log('Signed in using google'));
+    return signInWithRedirect(this.auth, new GoogleAuthProvider()).then(
+      _ => console.log('Signed in using google'),
+      error => console.error('Unable to sign in', error)
+    );
   }
 
   signInWithFacebook(): Promise<void> {
-    return signInWithRedirect(this.auth, new FacebookAuthProvider()).then(_ => console.log('Signed in using facebook'));
+    return signInWithRedirect(this.auth, new FacebookAuthProvider()).then(
+      _ => console.log('Signed in using facebook'),
+      error => console.error('Unable to sign in', error)
+    );
   }
 
   signOut(): Promise<void> {
