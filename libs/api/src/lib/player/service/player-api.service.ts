@@ -97,7 +97,7 @@ export class PlayerApiService {
     };
     const docRef = doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
     return getDoc(docRef).then(
-      snapshot => snapshot.exists ? updateDoc(docRef, _player) : setDoc(docRef, _player)
+      snapshot => snapshot.exists() ? updateDoc(docRef, _player) : setDoc(docRef, _player)
     );
   }
 }
