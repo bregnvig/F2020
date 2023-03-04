@@ -46,10 +46,6 @@ const routes: Routes = [
     loadChildren: () => import('@f2020/player').then(m => m.PlayerModule),
   },
   {
-    path: 'teams',
-    loadChildren: () => import('@f2020/teams').then(m => m.TeamsModule),
-  },
-  {
     path: 'info',
     loadChildren: () => import('@f2020/info').then(m => m.InfoModule),
   },
@@ -57,6 +53,11 @@ const routes: Routes = [
     path: ':season',
     canActivate: [mustBeAuthorized, SeasonLoaderService],
     children: [
+      {
+        path: 'teams',
+        canActivate: [mustBeAuthorized],
+        loadChildren: () => import('@f2020/teams').then(m => m.TeamsModule),
+      },
       {
         path: '',
         loadChildren: () => import('@f2020/landing').then(m => m.LandingModule),
