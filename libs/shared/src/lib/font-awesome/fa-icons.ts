@@ -18,6 +18,7 @@ type Icon =
   | 'farCarCrash'
   | 'farUniversity'
   | 'farGavel'
+  | 'farUserPlus'
   | 'fasHome'
   | 'fasFlagCheckered'
   | 'fasCoins'
@@ -49,6 +50,7 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farUniversity: ['far', 'university'],
   farGavel: ['far', 'gavel'],
   farPlus: ['far', 'plus'],
+  farUserPlus: ['far', 'user-plus'],
   fasHome: ['fas', 'home'],
   fasFlagCheckered: ['fas', 'flag-checkered'],
   fasCoins: ['fas', 'coins'],
