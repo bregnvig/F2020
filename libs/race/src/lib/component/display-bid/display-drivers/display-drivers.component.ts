@@ -5,8 +5,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   template: `
     <mat-list>
       <mat-list-item *ngFor="let id of driverIds; index as i">
-        <h4 matListItemLine>{{id | driverName}}</h4>
-        <p matListItemLine *ngIf="points"><small>{{points[i]}} point</small></p>
+        <h4 matListItemTitle>{{id | driverName}}</h4>
+        <small matListItemLine *ngIf="points">{{points[i]}} point</small>
       </mat-list-item>
     </mat-list>
   `,
