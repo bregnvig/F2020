@@ -1,13 +1,13 @@
 <div>
-  <mat-toolbar class="flex flex-row justify-between">
+  <mat-toolbar class="flex flex-row justify-between sticky top-0 z-10">
     <a class="text-decorator-none" routerLink="/2023">F2023</a>
     <!-- This fills the remaining space of the current row -->
     <button mat-icon-button (click)="sidenav.toggle()">
       <mat-icon aria-hidden="false" aria-label="Åbn menu">menu</mat-icon>
     </button>
   </mat-toolbar>
-  <mat-sidenav-container class="container mx-auto">
-    <mat-sidenav #sidenav mode="over" position="end">
+  <mat-sidenav-container class="max-w-3xl mx-auto">
+    <mat-sidenav #sidenav mode="over" position="end" [fixedInViewport]="true">
       <sha-sidebar (closing)="sidenav.close()"></sha-sidebar>
     </mat-sidenav>
     <mat-sidenav-content>

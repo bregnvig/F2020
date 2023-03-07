@@ -4,7 +4,7 @@
     <mat-card-title>{{title$ | async}}</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <p fxLayout fxLayoutAlign="start center">
+    <p class="flex flex-row items-center">
       <img [src]="wbcResult.players[0].player.photoURL" class="avatar" [alt]="wbcResult.players[0].player.displayName">
       <span>Tillykke til {{wbcResult.players[0].player.displayName}}</span>
     </p>

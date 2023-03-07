@@ -4,15 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
-// @import './scss/toolbar';
+@import "./scss/toolbar";
 
-html, body {
-  height: 100%;
-  box-sizing: border-box;
+mat-card-actions > button > span, mat-card-actions > a {
+  text-transform: uppercase;
 }
-
-// router-outlet + * {
-//   flex: 1 1 auto;
-//   display: flex;
-//   flex-direction: column !important;
-// }
