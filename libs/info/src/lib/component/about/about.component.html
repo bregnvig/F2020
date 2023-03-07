@@ -4,38 +4,38 @@
 <mat-grid-list cols="2">
   <mat-grid-tile *ngFor="let contributor of service.contributors$ | async">
     <a [href]="contributor.url">
-      <img class="circle" [title]="contributor.login" height="80%" [src]="contributor.avatarURL">
+      <img class="circle w-4/5" [title]="contributor.login" [src]="contributor.avatarURL">
     </a>
   </mat-grid-tile>
-  <mat-grid-tile><a href="https://github.com/bregnvig/F2020"><img height="80%" [src]="github"></a></mat-grid-tile>
+  <mat-grid-tile><a href="https://github.com/bregnvig/F2020"><img class="w-4/5" [src]="github"></a></mat-grid-tile>
   <mat-grid-tile>
     <a href="https://angular.io">
-      <img height="80%" [src]="angular">
+      <img class="w-4/5" [src]="angular">
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://ngrx.io/">
-      <img height="80%" [src]="ngrx">
+      <img class="w-4/5" [src]="ngrx">
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/">
-      <img height="80%" [src]="firebase">
+      <img class="w-4/5" [src]="firebase">
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/products/firestore">
-      <img height="80%" [src]="firestore">
+      <img class="w-4/5" [src]="firestore">
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/products/functions">
-      <img height="80%" [src]="functions">
+      <img class="w-4/5" [src]="functions">
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/docs/cloud-messaging">
-      <img height="80%" [src]="cloudMessaging">
+      <img class="w-4/5" [src]="cloudMessaging">
     </a>
   </mat-grid-tile>
 </mat-grid-list>
