@@ -1,6 +1,5 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from "@angular/material/list";
@@ -64,7 +63,6 @@ const pipes = [
   ],
   imports: [
     CommonModule,
-    FlexLayoutModule,
     RouterModule,
     FontAwesomeModule,
     PlayerApiModule,

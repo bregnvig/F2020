@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'sha-card-page',
   template: `
-    <div class="max-width" fxLayout="row" fxLayoutAlign="center stretch">
-      <div fxFlex="90" fxLayout="column" style="margin-top: 16px">
+    <div>
+      <div class="mt-4 grid gap-x-4 gap-y-4 grid-cols-1">
         <ng-content></ng-content>
       </div>
     </div>

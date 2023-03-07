@@ -1,7 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from "@angular/core";
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -19,7 +18,6 @@ import { GithubService } from './service/github.service';
 @NgModule({
   imports: [
     CommonModule,
-    FlexLayoutModule,
     MatDividerModule,
     MatToolbarModule,
     MatIconModule,

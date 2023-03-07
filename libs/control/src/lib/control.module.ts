@@ -1,7 +1,6 @@
 import { SharedModule } from '@f2020/shared';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -46,7 +45,6 @@ const pipes = [
     MatFormFieldModule,
     SharedModule,
     DriverModule,
-    FlexModule,
   ],
   declarations: [exported, components, pipes, SelectedTeamComponent],
   exports: [exported, pipes],

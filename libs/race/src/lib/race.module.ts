@@ -1,7 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -54,7 +53,6 @@ const MaterialModules = [
 @NgModule({
   imports: [
     CommonModule,
-    FlexLayoutModule,
     ReactiveFormsModule,
     FontAwesomeModule,
     RaceRoutingModule,
