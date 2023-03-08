@@ -6,7 +6,8 @@ import { IRaceResult } from '@f2020/data';
   template: `
     <mat-list>
       <mat-list-item *ngFor="let result of raceResult.results">
-        <h5 matListItemLine fxLayout><span fxFlex>{{result.driver.name}}</span>{{result.points}}</h5>
+        <h5 matListItemTitle>{{result.driver.name}}</h5>
+        <p matListItemMeta class="!text-base !text-white">{{result.points}}</p>
         <p matListItemLine>{{result.status}}</p>
       </mat-list-item>
     </mat-list>

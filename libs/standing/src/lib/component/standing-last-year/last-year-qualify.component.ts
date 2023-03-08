@@ -6,7 +6,8 @@ import { IQualifyResult } from '@f2020/data';
   template: `
     <mat-list>
       <mat-list-item *ngFor="let result of qualifyResult.results">
-        <h5 matListItemLine fxLayout><span fxFlex>{{result.driver.name}}</span>{{result.position}}</h5>
+        <h5 matListItemTitle class="flex flex-row justify-between">{{result.driver.name}}</h5>
+        <p matListItemMeta class="!text-base !text-white">{{result.position}}</p>
         <p matListItemLine><f2020-qualifying-times [qualifying]="result"></f2020-qualifying-times></p>
       </mat-list-item>
     </mat-list>

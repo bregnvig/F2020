@@ -1,6 +1,7 @@
 <ng-container *ngIf="round$ | async as round; else loading">
   <mat-toolbar color="primary">
-    <img class="avatar" [src]="round.result.countryCode | flagURL" alt="Løbs flag">Sidste år - {{round.result.name}}
+    <img class="avatar" [src]="round.result.countryCode | flagURL" alt="Løbs flag">
+    <span class="text-ellipsis overflow-hidden">Sidste år - {{round.result.name}}</span>
   </mat-toolbar>
   <div class="max-width">
     <mat-tab-group>
