@@ -8,7 +8,7 @@
     <f2020-number-card title="Udgået" [number]="result.retired" [icon]="icon.farCarCrash"></f2020-number-card>
   </ng-container>
 </sha-card-page>
-<mat-tab-group fxFlexOffset="16px" *ngIf="currentSeasonResult$ | async as result" selectedIndex="1" (selectedIndexChange)="load($event)">
+<mat-tab-group *ngIf="currentSeasonResult$ | async as result" selectedIndex="1" (selectedIndexChange)="load($event)">
   <mat-tab [label]="'Kvalifikation ' + currentYear">
     <f2020-driver-qualifying [qualifyResults]="currentSeasonQualifying$ | async"></f2020-driver-qualifying>
   </mat-tab>

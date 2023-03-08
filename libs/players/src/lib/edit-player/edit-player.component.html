@@ -1,13 +1,13 @@
 <ng-container *ngIf="player$ | async as player; else loading">
   <mat-toolbar color="primary">
     <img class="avatar" [src]="player.photoURL" alt="Profil billede">
-    <span fxFlex>{{player.displayName}}</span>
+    <span>{{player.displayName}}</span>
   </mat-toolbar>
   <sha-card-page [formGroup]="fg">
     <mat-card>
       <h2>Roller</h2>
       <mat-card-content formGroupName="roles">
-        <section fxLayout="column" fxLayoutGap="16px">
+        <section>
           <mat-checkbox formControlName="player">Spiller</mat-checkbox>
           <mat-checkbox formControlName="admin">Admin</mat-checkbox>
           <mat-checkbox formControlName="bankAdmin">Bank admin</mat-checkbox>
@@ -34,7 +34,7 @@
     <mat-card>
       <h2>Migrer konto</h2>
       <mat-card-content>
-        <section fxLayout="column" fxLayoutGap="16px">
+        <section>
             <mat-form-field>
               <mat-label>Spiller fra gammelt system</mat-label>
               <mat-select 

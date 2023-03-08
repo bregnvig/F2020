@@ -1,9 +1,9 @@
 <mat-toolbar color="primary">
-  <span fxFlex>Hold</span>
+  <span>Hold</span>
 </mat-toolbar>
 <sha-card-page>
 
-  <mat-list fxFlex *ngIf="teams$ | async as teams; else loading">
+  <mat-list *ngIf="teams$ | async as teams; else loading">
     <ng-container *ngFor="let team of teams; index as i; last as last">
       <h2 matSubheader>{{team.name}}</h2>
       <mat-list-item *ngFor="let driverId of team.drivers">

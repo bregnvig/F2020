@@ -1,14 +1,14 @@
 <mat-toolbar color="primary">
   <ng-container *ngIf="player$ | async as player">
     <img class="avatar" [src]="player.photoURL" alt="Profil billede">
-    <span fxFlex>{{player.displayName}}</span>
+    <span>{{player.displayName}}</span>
   </ng-container>
 </mat-toolbar>
 <div class="max-width">
   <mat-action-list>
     <mat-list-item *ngFor="let race of races$ | async" [routerLink]="['../..', 'race', race.round]">
       <img matListItemAvatar [src]="race.countryCode | flagURL">
-      <h3 matListItemLine>{{race.raceName}}</h3>
+      <h3 matListItemTitle>{{race.raceName}}</h3>
       <p matListItemLine>{{race.points}} points</p>
     </mat-list-item>
   </mat-action-list>

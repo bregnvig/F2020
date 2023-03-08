@@ -17,8 +17,8 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
   <mat-toolbar color="primary" *ngIf="player$ | async as player">
     <span class="flex-auto">{{player?.displayName}}</span><span>{{player?.balance | currency: 'DKK'}}</span>
   </mat-toolbar>
-  <f2020-transactions fxFlex [player]="player$ | async"></f2020-transactions>
-  <mat-toolbar class="fixed bottom-0 flex flex-row " *ngIf="player$ | async as player">
+  <f2020-transactions [player]="player$ | async"></f2020-transactions>
+  <mat-toolbar class="fixed bottom-0 flex flex-row" *ngIf="player$ | async as player">
     <button class="my-auto flex-auto" mat-button (click)="openDeposit(player)">Indsæt</button>
     <button class="my-auto flex-auto" mat-button (click)="openWithdraw(player)">Hæv</button>
     <button class="my-auto flex-auto" mat-button (click)="openTransfer(player)">Overfør</button>

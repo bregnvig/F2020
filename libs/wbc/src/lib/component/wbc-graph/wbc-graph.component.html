@@ -15,7 +15,7 @@
     >
   </ngx-charts-line-chart>
 </div>
-<div fxLayout="column">
+<div>
   <mat-selection-list>
     <mat-list-option *ngFor="let entry of playerEntris" (click)="toggle(entry.player)" [selected]="isSelected(entry)">
       <img matListItemAvatar [src]="entry.player.photoURL">

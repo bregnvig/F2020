@@ -1,7 +1,7 @@
 import { GithubService } from './../../service/github.service';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { angularLogo, firebaseLogo, firestoreLogo, functionsLogo, githubLogo, ngrxLogo, cloudMessagingLogo } from './assets';
+import { angularLogo, firebaseLogo, firestoreLogo, functionsLogo, githubLogo, ngrxLogo, cloudMessagingLogo, tailwindCSS } from './assets';
 
 @Component({
   selector: 'info-about',
@@ -18,6 +18,7 @@ export class AboutComponent {
   github = this.sanitizer.bypassSecurityTrustResourceUrl(githubLogo);
   ngrx = this.sanitizer.bypassSecurityTrustResourceUrl(ngrxLogo);
   cloudMessaging = this.sanitizer.bypassSecurityTrustResourceUrl(cloudMessagingLogo);
+  tailwindCSS = this.sanitizer.bypassSecurityTrustResourceUrl(tailwindCSS);
 
   constructor(private sanitizer: DomSanitizer, public service: GithubService) { }
 }

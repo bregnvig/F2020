@@ -1,9 +1,9 @@
 <mat-toolbar color="primary">
-    <span fxFlex>{{(race$ | async)?.name}}</span>
+    <span class="flex-auto">{{(race$ | async)?.name}}</span>
     <span *ngIf="drivers">{{drivers.length}} kørere</span>
 </mat-toolbar>
-<div class="max-width">
-  <mat-list cdkDropList cdkDropListLockAxis="y" fxFlex *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
+<div class="max-w-3xl mx-auto">
+  <mat-list cdkDropList cdkDropListLockAxis="y" *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
       <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
           <p matListItemLine>{{driverId | driverName}}</p>
           <div matListItemMeta>

@@ -8,11 +8,11 @@
       <img [src]="wbcResult.players[0].player.photoURL" class="avatar" [alt]="wbcResult.players[0].player.displayName">
       <span>Tillykke til {{wbcResult.players[0].player.displayName}}</span>
     </p>
-    <p fxLayout fxLayoutAlign="start center" *ngIf="wbcResult.players[1] as second">
+    <p *ngIf="wbcResult.players[1] as second">
       <img [src]="second.player.photoURL" class="avatar" [alt]="second.player.displayName">
       <span>{{second.player.displayName}} kom på anden pladsen.</span>
     </p>
-    <p fxLayout fxLayoutAlign="start center" *ngIf="wbcResult.players[2] as third">
+    <p *ngIf="wbcResult.players[2] as third">
       <img [src]="third.player.photoURL" class="avatar" [alt]="third.player.displayName">
       <span>{{third.player.displayName}} fik sidste plads på podiet.</span>
     </p>
