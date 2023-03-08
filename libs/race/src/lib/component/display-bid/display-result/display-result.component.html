@@ -1,9 +1,11 @@
 <ng-container *ngIf="(race$ | async) as race; else loading">
   <mat-toolbar color="primary">
     <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x"></fa-icon>
-    <span class="ms-2" matListItemTitle>Resultat {{race.name}}</span>
+    <span class="ml-2" matListItemTitle>Resultat {{race.name}}</span>
   </mat-toolbar>
-  <f2020-display-bid [bid]="race.result" [race]="race"></f2020-display-bid>
+  <div class="py-3">
+    <f2020-display-bid [bid]="race.result" [race]="race"></f2020-display-bid>
+  </div>
 </ng-container>
 <ng-template #loading>
   <sha-loading></sha-loading>

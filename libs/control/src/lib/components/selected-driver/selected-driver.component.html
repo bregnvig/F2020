@@ -1,12 +1,12 @@
-<div fxLayout="column" fxLayout.gt-xs="row" [formGroup]="fg" fxLayoutGap.gt-xs="8px">
-  <mat-form-field>
+<div class="flex flex-col md:flex-row md:gap-x-3" [formGroup]="fg">
+  <mat-form-field class="flex-auto">
     <mat-label>Startposition</mat-label>
     <mat-select formControlName="grid">
       <mat-option [value]="null">Vælg</mat-option>
       <mat-option *ngFor="let no of possiblePositions" [value]="no" >{{no}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field>
+  <mat-form-field class="flex-auto">
     <mat-label>Slutposition</mat-label>
     <mat-select formControlName="finish">
       <mat-option [value]="null">Vælg</mat-option>

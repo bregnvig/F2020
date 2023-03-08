@@ -1,7 +1,7 @@
 <ng-container *ngIf="(bid$ | async) as bid; else loading">
   <mat-toolbar color="primary">
     <img class="avatar" [src]="bid.player.photoURL" alt="Profil billede">
-    <span fxFlex>{{bid.player.displayName}}</span>
+    <span class="flex-auto">{{bid.player.displayName}}</span>
     <f2020-partial-bid-warning [bid]="bid"></f2020-partial-bid-warning>
     <ng-container *ngIf="bid.points !== undefined">{{bid.points}} point</ng-container>
   </mat-toolbar>

@@ -9,3 +9,9 @@
 mat-card-actions > button > span, mat-card-actions > a {
   text-transform: uppercase;
 }
+
+button[mat-fab] {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+}
