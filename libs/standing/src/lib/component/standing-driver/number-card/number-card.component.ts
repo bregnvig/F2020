@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'f2020-number-card',
@@ -8,6 +9,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class NumberCardComponent {
   @Input() title: string;
-  @Input() iconClasses: string; 
+  @Input() icon: [IconPrefix, IconName];
   @Input() number: string | number;
 }

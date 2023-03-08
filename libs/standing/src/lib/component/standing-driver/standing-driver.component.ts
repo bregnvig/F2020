@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { SeasonFacade } from '@f2020/api';
 import { IDriverResult, IQualifyResult } from '@f2020/data';
-import { AbstractSuperComponent } from '@f2020/shared';
+import { AbstractSuperComponent, icon } from '@f2020/shared';
 import { combineLatest, Observable } from 'rxjs';
 import { map, pluck, share, switchMap } from 'rxjs/operators';
 import { StandingService } from '../../service/standing.service';
@@ -23,6 +23,7 @@ export class StandingDriverComponent extends AbstractSuperComponent implements O
   currentYear: number;
   previousYear: number;
 
+  icon = icon;
 
   constructor(
     private route: ActivatedRoute,

@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { SeasonApiModule } from '@f2020/api';
 import { DriverModule } from '@f2020/driver';
 import { SharedModule } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StandingActions } from './+state/standing.actions';
@@ -55,6 +56,7 @@ const materialModules = [
       fromStanding.reducer,
     ),
     EffectsModule.forFeature([StandingEffects]),
+    FontAwesomeModule,
     StandingRoutingModule,
     SeasonApiModule,
     SharedModule,

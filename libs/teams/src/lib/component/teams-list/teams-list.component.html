@@ -1,7 +1,8 @@
 <mat-toolbar color="primary">
   <span fxFlex>Hold</span>
 </mat-toolbar>
-<div class="max-width">
+<sha-card-page>
+
   <mat-list fxFlex *ngIf="teams$ | async as teams; else loading">
     <ng-container *ngFor="let team of teams; index as i; last as last">
       <h2 matSubheader>{{team.name}}</h2>
@@ -13,7 +14,7 @@
           </button>
         </p>
       </mat-list-item>
-      <mat-list-item *shaHasRole="'admin'" >
+      <mat-list-item *shaHasRole="'admin'">
         <p matListItemMeta>
           <button mat-icon-button (click)="addDriver(team)">
             <fa-icon [icon]="icon.farPlus"></fa-icon>
@@ -23,7 +24,7 @@
       <mat-divider *ngIf="!last"></mat-divider>
     </ng-container>
   </mat-list>
-</div>
+</sha-card-page>
 <ng-template #loading>
   <sha-loading></sha-loading>
 </ng-template>
