@@ -1,15 +1,12 @@
-<div fxLayout="column" fxFlex>
+<div *ngIf="transactions$ | async as transactions else loading" fxLayout="column" infiniteScroll (scrolled)="loadMore(transactions.at(-1))">
   <mat-list fxFlex fxFill fxLayout="column">
-    <cdk-virtual-scroll-viewport
-    fxFlex fxFill
-    itemSize="48"
-    class="fact-scroll-viewport">
-      <mat-list-item *cdkVirtualFor="let transaction of dataSource">
-        <h4 matListItemTitle>{{transaction.message}}</h4>
-        <div matListItemLine><small>{{transaction.date | dateTime: 'short'}}</small></div>
-        <div matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
-      </mat-list-item>
-    </cdk-virtual-scroll-viewport>  
+    <mat-list-item *ngFor="let transaction of transactions">
+      <h4 matListItemTitle>{{transaction.message}}</h4>
+      <div matListItemLine><small>{{transaction.date | dateTime: 'short'}}</small></div>
+      <div matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
+    </mat-list-item>
   </mat-list>
 </div>
-<sha-loading *ngIf="!player"></sha-loading>
+<ng-template #loading>
+  <sha-loading></sha-loading>
+</ng-template>

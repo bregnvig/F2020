@@ -10,16 +10,18 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
 @Component({
   selector: 'f2020-my-transactions',
   template: `
-  <mat-toolbar color="primary">
-    <span fxFlex>Saldo</span>
-    <ng-container *ngIf="player$ | async as player">
-      <button mat-icon-button (click)="showInfo()">
-        <fa-icon [icon]="icon"></fa-icon>
-      </button>
-      <span>{{player.balance | currency: 'DKK'}}</span>
-    </ng-container>
-  </mat-toolbar>
-  <f2020-transactions fxFlex [player]="player$ | async"></f2020-transactions>
+  <div class="flex flex-col h-full">
+    <mat-toolbar color="primary">
+      <span class="flex-auto">Saldo</span>
+      <ng-container *ngIf="player$ | async as player">
+        <button mat-icon-button (click)="showInfo()">
+          <fa-icon [icon]="icon"></fa-icon>
+        </button>
+        <span>{{player.balance | currency: 'DKK'}}</span>
+      </ng-container>
+    </mat-toolbar>
+    <f2020-transactions class="flex-auto" [player]="player$ | async"></f2020-transactions>
+  </div>
   `,
   styleUrls: ['./my-transactions.component.scss']
 })
