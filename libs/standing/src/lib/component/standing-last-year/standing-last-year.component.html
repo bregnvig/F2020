@@ -3,7 +3,7 @@
     <img class="avatar" [src]="round.result.countryCode | flagURL" alt="Løbs flag">
     <span class="text-ellipsis overflow-hidden">Sidste år - {{round.result.name}}</span>
   </mat-toolbar>
-  <div class="max-width">
+  <div class="max-w-3xl mx-auto">
     <mat-tab-group>
       <mat-tab label="Kvalifikation">
         <f2020-last-year-qualify [qualifyResult]="round.qualify"></f2020-last-year-qualify>

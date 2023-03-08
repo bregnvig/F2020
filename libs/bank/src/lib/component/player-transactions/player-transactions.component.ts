@@ -15,13 +15,13 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
   selector: 'f2020-player-transactions',
   template: `
   <mat-toolbar color="primary" *ngIf="player$ | async as player">
-    <span fxFlex>{{player?.displayName}}</span><span>{{player?.balance | currency: 'DKK'}}</span>
+    <span class="flex-auto">{{player?.displayName}}</span><span>{{player?.balance | currency: 'DKK'}}</span>
   </mat-toolbar>
   <f2020-transactions fxFlex [player]="player$ | async"></f2020-transactions>
-  <mat-toolbar fxLayoutAlign="space-between" *ngIf="player$ | async as player">
-    <button class="my-auto" mat-button fxFlex (click)="openDeposit(player)">Indsæt</button>
-    <button class="my-auto" mat-button fxFlex (click)="openWithdraw(player)">Hæv</button>
-    <button class="my-auto" mat-button fxFlex (click)="openTransfer(player)">Overfør</button>
+  <mat-toolbar class="fixed bottom-0 flex flex-row " *ngIf="player$ | async as player">
+    <button class="my-auto flex-auto" mat-button (click)="openDeposit(player)">Indsæt</button>
+    <button class="my-auto flex-auto" mat-button (click)="openWithdraw(player)">Hæv</button>
+    <button class="my-auto flex-auto" mat-button (click)="openTransfer(player)">Overfør</button>
   </mat-toolbar>
   `
 })

@@ -1,11 +1,13 @@
 <mat-toolbar color="primary">
   <span>Stilling</span>
 </mat-toolbar>
-<mat-action-list *ngIf="standings$ | async as standings; else loading">
-  <button mat-list-item *ngFor="let standing of standings" [routerLink]="[standing.driver.driverId | lowercase]">
-    <f2020-standing-list-item [standing]="standing" fxFlexFill></f2020-standing-list-item>
-  </button>
-</mat-action-list>
+<div class="max-w-3xl mx-auto">
+  <mat-action-list *ngIf="standings$ | async as standings; else loading">
+    <button mat-list-item *ngFor="let standing of standings" [routerLink]="[standing.driver.driverId | lowercase]">
+      <f2020-standing-list-item [standing]="standing" fxFlexFill></f2020-standing-list-item>
+    </button>
+  </mat-action-list>
+</div>
 <ng-template #loading>
   <sha-loading></sha-loading>
 </ng-template>

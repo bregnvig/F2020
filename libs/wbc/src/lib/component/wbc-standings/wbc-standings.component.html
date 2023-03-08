@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
   <span>WBC</span>
 </mat-toolbar>
-<div class="max-width">
+<div class="max-w-3xl mx-auto">
   <mat-action-list>
     <mat-list-item *ngFor="let standing of standings$ | async" [routerLink]="['player', standing.player.uid]">
       <img matListItemAvatar [src]="standing.player.photoURL">

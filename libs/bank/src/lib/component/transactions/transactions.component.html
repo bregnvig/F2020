@@ -1,9 +1,9 @@
-<div *ngIf="transactions$ | async as transactions else loading" fxLayout="column" infiniteScroll (scrolled)="loadMore(transactions.at(-1))">
-  <mat-list fxFlex fxFill fxLayout="column">
+<div *ngIf="transactions$ | async as transactions else loading" class="max-w-3xl mx-auto" infiniteScroll (scrolled)="loadMore(transactions.at(-1))">
+  <mat-list >
     <mat-list-item *ngFor="let transaction of transactions">
       <h4 matListItemTitle>{{transaction.message}}</h4>
       <div matListItemLine><small>{{transaction.date | dateTime: 'short'}}</small></div>
-      <div matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
+      <div class="!text-white !text-base" matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
     </mat-list-item>
   </mat-list>
 </div>
