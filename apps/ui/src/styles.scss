@@ -6,6 +6,12 @@
 
 @import "./scss/toolbar";
 
+@layer base {
+  a {
+    @apply underline;
+  }
+}
+
 mat-card-actions > button > span, mat-card-actions > a {
   text-transform: uppercase;
 }
