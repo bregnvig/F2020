@@ -30,6 +30,7 @@ type Icon =
   | 'fabGoogle'
   | 'fabFacebookF'
   | 'fabApple'
+  | 'fabCss3'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -62,4 +63,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fabGoogle: ['fab', 'google'],
   fabFacebookF: ['fab', 'facebook-f'],
   fabApple: ['fab', 'apple'],
+  fabCss3: ['fab', 'css3'],
 };
