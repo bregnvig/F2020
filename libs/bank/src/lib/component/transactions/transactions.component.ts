@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Player, Transaction } from '@f2020/data';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, scan, switchMap } from 'rxjs';
 import { AccountService } from '../../service';
 
 @Component({
@@ -12,6 +12,7 @@ import { AccountService } from '../../service';
 export class TransactionsComponent {
 
   transactions$: Observable<Transaction[]>;
+  trackByFn = (index: number) => index;
   private _player: Player;
   private lastDate$ = new BehaviorSubject<DateTime>(DateTime.local());
 
@@ -22,7 +23,8 @@ export class TransactionsComponent {
     if (value && this._player?.uid !== value?.uid) {
       this._player = value;
       this.transactions$ = this.lastDate$.pipe(
-        switchMap(lastDate => this.service.getTransactions(value.uid, lastDate, 20))
+        switchMap(lastDate => this.service.getTransactions(value.uid, lastDate, 20)),
+        scan((acc, transactions) => [...acc, ...transactions], []),
       );
     }
   }
