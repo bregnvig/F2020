@@ -177,7 +177,7 @@ export class RacesEffects {
     concatMap(([_, lastYear]) => lastYear
       ? of(RacesActions.loadLastYearSuccess({ result: lastYear }))
       : this.facade.allRaces$.pipe(
-        map(races => races.find(r => r.state === 'open')),
+        map(races => races.find(r => r.state === 'open' || r.state === 'closed')),
         filter(race => !!race),
         switchMap(race => this.service.getLastYearResult(race.season, race.countryCode)),
         map(result => RacesActions.loadLastYearSuccess({ result })),
