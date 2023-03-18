@@ -8,6 +8,6 @@ import { icon } from '@f2020/shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WhatElseComponent {
-  icon = icon.fabCss3;
+  icon = icon.falRocketLaunch;
   newPlayer = icon.farUserPlus;
 }
