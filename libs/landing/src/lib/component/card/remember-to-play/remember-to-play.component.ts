@@ -1,9 +1,9 @@
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
+import { RacesActions, RacesFacade } from '@f2020/api';
+import { IRace } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
-import { RacesFacade, RacesActions } from '@f2020/api';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { IRace } from '@f2020/data';
-import { filter, debounce } from 'rxjs/operators';
+import { debounce, filter, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-remember-to-play',
@@ -13,6 +13,7 @@ import { filter, debounce } from 'rxjs/operators';
 })
 export class RememberToPlayComponent implements OnInit {
 
+  @HostBinding('hidden') isHidden = true;
   race$: Observable<IRace>;
 
   constructor(private facade: RacesFacade) { }
@@ -21,7 +22,8 @@ export class RememberToPlayComponent implements OnInit {
     this.facade.dispatch(RacesActions.loadYourBid());
     this.race$ = this.facade.currentRace$.pipe(
       filter(race => race?.close > DateTime.local()),
-      debounce(() => this.facade.yourBid$.pipe(filter(bid => bid && !bid.submitted)))
+      debounce(() => this.facade.yourBid$.pipe(filter(bid => bid && !bid.submitted))),
+      tap(() => this.isHidden = false),
     );
   }
 

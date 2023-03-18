@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerActions, PlayerFacade, SeasonFacade } from '@f2020/api';
 import { icon } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { combineLatest, Observable } from 'rxjs';
-import { debounceTime, filter, map, pairwise, switchMap, withLatestFrom } from 'rxjs/operators';
+import { debounceTime, filter, map, pairwise, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-join-wbc',
@@ -14,6 +14,7 @@ import { debounceTime, filter, map, pairwise, switchMap, withLatestFrom } from '
 })
 export class JoinWbcComponent implements OnInit {
 
+  @HostBinding('hidden') isHidden = true;
   latestWBCJoinDate$: Observable<DateTime>;
   canJoin$: Observable<boolean>;
   loading$: Observable<boolean>;
@@ -38,7 +39,8 @@ export class JoinWbcComponent implements OnInit {
       this.seasonFacade.season$,
       uid$
     ]).pipe(
-      map(([lastestJoinDate, { wbc }, uid]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local())
+      map(([lastestJoinDate, { wbc }, uid]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local()),
+      tap(canJoin => this.isHidden = !canJoin),
     );
     this.loading$.pipe(
       pairwise(),
