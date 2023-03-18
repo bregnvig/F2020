@@ -10,6 +10,7 @@
     "build-with-stats": "nx build --stats-json",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
+    "deploy:hosting:all": "npm run deploy:hosting:production && npm run deploy:hosting:develop",
     "deploy:hosting:develop": "firebase use default && nx build --configuration test && firebase deploy --only hosting",
     "deploy:hosting:production": "firebase use production && nx build --prod && firebase deploy --only hosting",
     "deploy:rules:develop": "firebase use default && firebase deploy --only firestore:rules",
