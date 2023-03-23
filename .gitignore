@@ -53,3 +53,6 @@ apps/builder/src/app/mysql/mysql.config.ts
 functions/src/lib/model
 
 .angular
+ui-debug.log
+ui-debug.log
+saved-data

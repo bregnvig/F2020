@@ -19,6 +19,7 @@ type Icon =
   | 'farUniversity'
   | 'farGavel'
   | 'farUserPlus'
+  | 'farFaceSadCry'
   | 'fasHome'
   | 'fasFlagCheckered'
   | 'fasCoins'
@@ -64,4 +65,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fabFacebookF: ['fab', 'facebook-f'],
   fabApple: ['fab', 'apple'],
   fabCss3: ['fab', 'css3'],
+  farFaceSadCry: ['far', 'face-sad-cry'],
 };
