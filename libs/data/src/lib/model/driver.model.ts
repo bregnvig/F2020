@@ -5,8 +5,8 @@ export interface IDriver {
   readonly driverId: string;
   readonly code: string;
   readonly nationality: string;
-  readonly countryCode: string;
-  readonly permanentNumber: number
+  readonly countryCode?: string;
+  readonly permanentNumber: number;
   readonly url: string;
 }
 
@@ -15,7 +15,7 @@ export class DriverModel implements IDriver {
   readonly driverId: string;
   readonly code: string;
   readonly nationality: string;
-  readonly countryCode: string;
+  readonly countryCode?: string;
   readonly permanentNumber: number;
   readonly url: string;
 
@@ -50,11 +50,11 @@ export interface IDriverResult {
   races: IRaceResult[];
 }
 
-export const finished = (status: string): boolean =>  /(\+[0-9] Lap)|(Finished)/.test(status);
+export const finished = (status: string): boolean => /(\+[0-9] Lap)|(Finished)/.test(status);
 
 export interface IDriverRaceResult {
   driver: IDriver;
-  points: number
+  points: number;
   position: number;
   grid: number;
   status: string;

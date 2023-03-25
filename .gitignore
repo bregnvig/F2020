@@ -56,3 +56,11 @@ functions/src/lib/model
 ui-debug.log
 ui-debug.log
 saved-data
+
+
+# Nx-Firebase
+.runtimeconfig.json
+**/.emulators/*
+**/.firebase/*
+*.log
+

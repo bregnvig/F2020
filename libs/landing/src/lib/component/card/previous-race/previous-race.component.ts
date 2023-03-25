@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
 import { PlayerFacade, SeasonFacade } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-previous-race',
@@ -13,6 +13,7 @@ import { filter, map } from 'rxjs/operators';
 })
 export class PreviousRaceComponent implements OnInit {
 
+  @HostBinding('hidden') isHidden = true;
   wbcResult$: Observable<WBCResult>;
   title$: Observable<string>;
   icon = icon.farTrophy;
@@ -24,6 +25,7 @@ export class PreviousRaceComponent implements OnInit {
       filter(season => !!(season && season.wbc.results?.length)),
       map(season => season.wbc.results[season.wbc.results.length - 1]),
       filter(result => !!result.players?.length),
+      tap(() => this.isHidden = true),
     );
     this.title$ = combineLatest([
       this.wbcResult$,

@@ -24,6 +24,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { initializeApp } from "firebase/app";
 import 'firebase/auth';
 import 'firebase/firestore';
+import { connectFirestoreEmulator } from 'firebase/firestore';
 import { getToken, onMessage } from 'firebase/messaging';
 import { Settings } from 'luxon';
 import { environment } from '../environments/environment';
@@ -53,7 +54,14 @@ const materialModule = [
     DriverModule,
     SeasonApiModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideFirestore(() => getFirestore()),
+    provideFirestore(() => {
+      const db = getFirestore();
+      if (environment.useEmulator) {
+        connectFirestoreEmulator(db, 'localhost', 8080);
+        console.warn('Using emulator');
+      }
+      return db;
+    }),
     provideFunctions(() => getFunctions(undefined, 'europe-west1')),
     provideMessaging(() => getMessaging()),
     StoreModule.forRoot(reducers, {

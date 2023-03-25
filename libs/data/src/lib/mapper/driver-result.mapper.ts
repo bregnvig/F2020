@@ -1,9 +1,9 @@
-import { ErgastDriverResult, IDriverRaceResult, ErgastDriverResults } from '../model';
+import { ErgastDriverResult, ErgastDriverResults, IDriverRaceResult } from '../model';
 import { driver } from './driver.mapper';
 
 // "1:25.580"
 const toMillis = (time: string) => {
-  const groups = /(\d):(\d{2}).(\d{3})/.exec(time);
+  const groups = /(\d):(\d{2}).(\d{3})/.exec(time)!;
   const minutes = parseInt(groups[1], 10) * 60 * 1000;
   const seconds = parseInt(groups[2], 10) * 1000;
   const millis = parseInt(groups[3], 10);

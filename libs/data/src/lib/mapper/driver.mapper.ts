@@ -6,7 +6,7 @@ export const driver = (d: ErgastDriver): IDriver => {
     driverId: d.driverId,
     code: d.code,
     nationality: d.nationality,
-    countryCode: getByNationality(d.nationality) ?? null,
+    countryCode: getByNationality(d.nationality),
     name: `${d.givenName} ${d.familyName}`,
     permanentNumber: parseInt(d.permanentNumber, 10),
     url: d.url
