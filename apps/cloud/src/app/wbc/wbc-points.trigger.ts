@@ -1,4 +1,4 @@
-import { Bid, IRace, Player, WBCResult } from '@f2020/data';
+import { Bid, IRace, ISeason, Player, WBCResult } from '@f2020/data';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { racesURL, seasonsURL } from '../../lib';
@@ -26,7 +26,7 @@ export const wbcPointsTrigger = functions.region('europe-west1').firestore.docum
   });
 
 const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.DocumentReference) => {
-  const entry: WBCResult = {
+  const result: WBCResult = {
     raceName: race.name,
     round: race.round,
     countryCode: race.countryCode,
@@ -41,12 +41,17 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.Docu
       points: bid.points && wbcPoints[index] || 0
     }))
   };
-  bids.forEach((b, index) => {
-    console.log(b.player?.displayName, 'Points', b.points, 'WBC', wbcPoints[index]);
-  });
-  return ref.set({
-    wbc: {
-      results: admin.firestore.FieldValue.arrayUnion(entry)
-    }
-  }, { merge: true });
+  bids.forEach((b, index) => console.log(b.player?.displayName, 'Points', b.points, 'WBC', wbcPoints[index]));
+
+  ref.get()
+    .then(doc => doc.data())
+    .then((season: ISeason) => {
+      (season.wbc?.results ?? []).splice(race.round - 1, 0, result);
+      return season.wbc?.results ?? [];
+    })
+    .then(results => ref.set({
+      wbc: {
+        results
+      }
+    }, { merge: true }));
 };

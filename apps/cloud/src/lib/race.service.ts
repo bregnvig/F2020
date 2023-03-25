@@ -1,6 +1,6 @@
 import { IRace } from '@f2020/data';
 import * as admin from 'firebase-admin';
-import { currentSeason, converter } from './';
+import { converter, currentSeason } from './';
 import { racesURL, seasonsURL } from './collection-names';
 const currentRaceURL = (seasonId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}`;
 
@@ -18,6 +18,15 @@ export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | 
       }
       return undefined;
     }));
+};
+
+export const getRaceByRound = async (round: string): Promise<IRace | undefined> => {
+  return currentSeason().then(season => admin.firestore()
+    .doc(`${currentRaceURL(season.id)}/${round}`)
+    .withConverter<IRace>(converter.timestamp)
+    .get()
+    .then(snapshot => snapshot.data())
+  );
 };
 
 export const updateRace = async (seasonId: number, round: number, race: Partial<IRace>): Promise<admin.firestore.WriteResult> => {
