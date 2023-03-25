@@ -10,6 +10,7 @@
     "build-with-stats": "nx build --stats-json",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
+    "emulate": "npx kill-port --port 9099,5001,8080,9000,5000,8085,9199,9299,4000,4400,4500 && firebase emulators:start --config=firebase.json --export-on-exit=./saved-data --import=./saved-data",
     "deploy:hosting:all": "npm run deploy:hosting:production && npm run deploy:hosting:develop",
     "deploy:hosting:develop": "firebase use default && nx build --configuration test && firebase deploy --only hosting",
     "deploy:hosting:production": "firebase use production && nx build --prod && firebase deploy --only hosting",
