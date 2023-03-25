@@ -41,7 +41,7 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.Docu
       points: bid.points && wbcPoints[index] || 0
     }))
   };
-  bids.forEach((b, index) => console.log(b.player?.displayName, 'Points', b.points, 'WBC', wbcPoints[index]));
+  bids.forEach((b, index) => console.log(b.player?.displayName, 'Points ', b.points, 'WBC', wbcPoints[index]));
 
   ref.get()
     .then(doc => doc.data())
