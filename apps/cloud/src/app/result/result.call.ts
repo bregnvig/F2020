@@ -1,13 +1,13 @@
+import { Bid } from '@f2020/data';
 import * as functions from 'firebase-functions';
 import { DateTime } from 'luxon';
 import { calculateResult, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
 import { validateResult } from './../../lib/validate.service';
 import admin = require('firebase-admin');
-import { Bid } from '@f2020/data';
 
 export const submitResult = functions.region('europe-west1').https.onCall(async (data: Bid, context) => {
   return validateAccess(context.auth?.uid, 'admin')
-    .then(player => buildResult(data))
+    .then(() => buildResult(data))
     .then(() => true)
     .catch(internalError);
 });

@@ -53,5 +53,6 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.Docu
       wbc: {
         results
       }
-    }, { merge: true }));
+    }, { merge: true }))
+    .then(() => console.log(`WBC points distributed for ${race.name}`));
 };

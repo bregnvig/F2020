@@ -2,14 +2,34 @@
 
 <p align="center"><img src="https://github.com/bregnvig/F2020/blob/develop/apps/ui/src/assets/icons/icon-192x192.png?raw=true" width="450"></p>
 
-This project is supposed to be a new frontend and backend for the Formula betting site. 
+This is the Formula 1 betting site. 
+The application is developed using
 
-This will be implemented using Angular, Angular Material, Angular Flex layout and NgRx.
+## Frontend
 
-The backend will be implemented using Firebase.
+* Angular
+* Angular Material
+* tailwindcss
+* NgRx
 
+## Backend
+
+* Firebase
+* Firestore
+* Functions
+* Cloud Messaging
+
+The project is supported by the Nx mono repo.
 
 ## Up and running
 
-**TODO**
+To populate Firestore use the `npx nx serve builder` app.
+To run UI run `npx nx serve ui`
 
+# Project Cloud
+
+## Use v16 for both running and exporting data
+
+1. Start by running npx nx serve cloud
+2. Run emulators use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data` Delete `export` and/or `import` if not wanted
+3. If ports are already taken, run `npm run kill-ports` 

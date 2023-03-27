@@ -3,7 +3,7 @@ import localeDa from '@angular/common/locales/da';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { connectFunctionsEmulator, getFunctions, provideFunctions } from '@angular/fire/functions';
 import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
@@ -58,11 +58,18 @@ const materialModule = [
       const db = getFirestore();
       if (environment.useEmulator) {
         connectFirestoreEmulator(db, 'localhost', 8080);
-        console.warn('Using emulator');
+        console.warn('Using firestore emulator');
       }
       return db;
     }),
-    provideFunctions(() => getFunctions(undefined, 'europe-west1')),
+    provideFunctions(() => {
+      const functions = getFunctions(undefined, 'europe-west1');
+      if (environment.useEmulator) {
+        connectFunctionsEmulator(functions, 'localhost', 5001);
+        console.warn('Using functions emulator');
+      }
+      return functions;
+    }),
     provideMessaging(() => getMessaging()),
     StoreModule.forRoot(reducers, {
       metaReducers,

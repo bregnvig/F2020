@@ -1,5 +1,5 @@
-import { firestoreUtils } from '@f2020/data';
 import { firestore } from 'firebase-admin';
+import { firestoreUtils } from './firestore-utils';
 
 export const converter = {
   toFirestore<T>(data: T): firestore.DocumentData {
@@ -8,6 +8,6 @@ export const converter = {
   fromFirestore<T>(
     data: firestore.QueryDocumentSnapshot,
   ): T {
-    return firestoreUtils.convertTimestamps(data);
+    return firestoreUtils.convertTimestamps(data.data());
   }
 };

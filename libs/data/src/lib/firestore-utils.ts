@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 
 export const regexISODate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 
-export const firestoreUtils = {
+export const firestoreWebUtils = {
   convertJSONDate(value: any): any {
     const reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
     if (typeof value === 'string') {
@@ -23,15 +23,15 @@ export const firestoreUtils = {
   convertJSONDates(input: any): any {
     // Ignore things that aren't objects.
     if (!input || typeof input !== 'object') {
-      return firestoreUtils.convertJSONDate(input);
+      return firestoreWebUtils.convertJSONDate(input);
     }
     Object.keys(input).map(key => {
       const value = input[key];
       // Check for string properties which look like dates.
       if (typeof value === 'string') {
-        input[key] = firestoreUtils.convertJSONDate(value);
+        input[key] = firestoreWebUtils.convertJSONDate(value);
       } else if (typeof value === 'object') {
-        firestoreUtils.convertJSONDates(value);
+        firestoreWebUtils.convertJSONDates(value);
       }
     });
     return input;
@@ -49,9 +49,9 @@ export const firestoreUtils = {
     Object.keys(input).map(key => {
       const value = input[key];
       if (value instanceof Timestamp) {
-        input[key] = firestoreUtils.convertTimestamp(value);
+        input[key] = firestoreWebUtils.convertTimestamp(value);
       } else if (typeof value === 'object') {
-        firestoreUtils.convertTimestamps(value);
+        firestoreWebUtils.convertTimestamps(value);
       }
     });
     return input;
@@ -69,9 +69,9 @@ export const firestoreUtils = {
     Object.keys(input).map(key => {
       const value = input[key];
       if (value instanceof DateTime) {
-        input[key] = firestoreUtils.convertDateTime(value);
+        input[key] = firestoreWebUtils.convertDateTime(value);
       } else if (typeof value === 'object' && value) {
-        firestoreUtils.convertDateTimes(value);
+        firestoreWebUtils.convertDateTimes(value);
       }
     });
     return input;

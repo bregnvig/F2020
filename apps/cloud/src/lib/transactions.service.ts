@@ -1,6 +1,7 @@
-import { firestoreUtils, Transaction } from '@f2020/data';
+import { Transaction } from '@f2020/data';
 import * as admin from 'firebase-admin';
 import { DateTime } from 'luxon';
+import { firestoreUtils } from './firestore-utils';
 
 // export transaction = (transaction)
 

@@ -1,15 +1,15 @@
 import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore';
-import { firestoreUtils } from '../firestore-utils';
+import { firestoreWebUtils } from '../firestore-utils';
 
 
 export const converterFn = <T>(): FirestoreDataConverter<T> => ({
   toFirestore(transaction: T): DocumentData {
-    return firestoreUtils.convertDateTimes(transaction);
+    return firestoreWebUtils.convertDateTimes(transaction);
   },
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
   ): T {
     const data = snapshot.data()!;
-    return firestoreUtils.convertTimestamps(data);
+    return firestoreWebUtils.convertTimestamps(data);
   }
 });
