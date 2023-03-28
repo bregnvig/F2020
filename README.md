@@ -31,5 +31,5 @@ To run UI run `npx nx serve ui`
 ## Use v16 for both running and exporting data
 
 1. Start by running npx nx serve cloud
-2. Run emulators use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data` Delete `export` and/or `import` if not wanted
+2. Run emulators use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions` Delete `export`, `import` and/or `--inspect-functions` if not wanted
 3. If ports are already taken, run `npm run kill-ports` 
