@@ -1,7 +1,7 @@
-import * as admin from 'firebase-admin';
+import { messaging } from "firebase-admin";
 
 export const sendMessage = (tokens: string[], title: string, body: string, data?: { [key: string]: string; }): Promise<void> => {
-  return admin.messaging().sendMulticast({
+  return messaging().sendMulticast({
     data,
     tokens,
     notification: {
@@ -19,5 +19,5 @@ export const sendMessage = (tokens: string[], title: string, body: string, data?
     console.log('Successfully sent message:', response);
   }).catch((error) => {
     console.log('Error sending message:', error);
-  })
-} 
+  });
+};

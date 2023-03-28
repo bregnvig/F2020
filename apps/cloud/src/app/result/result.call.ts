@@ -1,10 +1,11 @@
 import { Bid } from '@f2020/data';
+import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { calculateResult, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
 import { validateResult } from './../../lib/validate.service';
 ;
 import admin = require('firebase-admin');
-import { region } from 'firebase-functions/v1';
+import { firestore } from 'firebase-admin';
 
 export const submitResult = region('europe-west1').https.onCall(async (data: Bid, context) => {
   return validateAccess(context.auth?.uid, 'admin')
@@ -24,7 +25,7 @@ const buildResult = async (result: Bid) => {
 
   validateResult(result, race);
 
-  const db = admin.firestore();
+  const db = firestore();
   const calculatedResults: Bid[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data()))

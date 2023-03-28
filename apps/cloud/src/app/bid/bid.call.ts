@@ -1,5 +1,6 @@
 import { Bid } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
+import { DocumentReference } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
@@ -41,11 +42,11 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
     throw logAndCreateError('permission-denied', `${player.uid} tried to submit bid for ${bid.player?.displayName}, ${bid.player?.uid}`);
   }
 
-  const db = admin.firestore();
+  const db = firestore();
   validateBid(bid, race);
   validateBalance(player);
 
-  const doc = db.doc(`${seasonsURL}/${season.id}/${racesURL}/${race.round}/bids/${player.uid}`) as admin.firestore.DocumentReference<Bid>;
+  const doc = db.doc(`${seasonsURL}/${season.id}/${racesURL}/${race.round}/bids/${player.uid}`) as DocumentReference<Bid>;
   return db.runTransaction(transaction => {
     transaction.set(doc, { ...bid, submitted: true }, { merge: true });
     transferInTransaction({

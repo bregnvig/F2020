@@ -1,10 +1,11 @@
 import { Bid, IRace, Player } from '@f2020/data';
+import { region } from 'firebase-functions/v1';
 import { currentSeason, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, sendMail, sendMessage, validateAccess } from '../../lib';
 import { calculateInterimResult } from './../../lib/result.service';
 import { validateInterimResult } from './../../lib/validate.service';
 ;
 import admin = require('firebase-admin');
-import { region } from 'firebase-functions/v1';
+import { firestore } from 'firebase-admin';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -45,7 +46,7 @@ const buildResult = async (result: Partial<Bid>) => {
 
   validateInterimResult(result, race);
 
-  const db = admin.firestore();
+  const db = firestore();
   const calculatedResults: Partial<Bid>[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data()))

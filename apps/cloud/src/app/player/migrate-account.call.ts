@@ -1,5 +1,5 @@
 import { Transaction } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { internalError, validateAccess } from "../../lib";
 ;
@@ -18,7 +18,7 @@ export const migrateAccount = region('europe-west1').https.onCall(async (data: M
 });
 
 const migrate = async ({ uid, playerName }: MigrationData) => {
-  const db = admin.firestore();
+  const db = firestore();
 
   const transactions = await db.collection('transactions').where('involved', 'array-contains', playerName).get();
 

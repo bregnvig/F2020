@@ -1,9 +1,10 @@
 import { Bid } from '@f2020/data';
+import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
 ;
 import admin = require('firebase-admin');
-import { region } from 'firebase-functions/v1';
+import { firestore } from 'firebase-admin';
 
 const resetPoints = (bid: Bid): Bid => {
   const properties: (keyof Bid)[] = [
@@ -33,7 +34,7 @@ const buildRollback = async (round: string) => {
     throw logAndCreateError('not-found', 'Season or race', season?.name, race?.name);
   }
 
-  const db = admin.firestore();
+  const db = firestore();
   const bids: Bid[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data() as Bid))

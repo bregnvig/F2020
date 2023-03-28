@@ -1,11 +1,12 @@
 import { IRace } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
+import { WriteResult } from 'firebase-admin/firestore';
 import { converter, currentSeason } from './';
 import { racesURL, seasonsURL } from './collection-names';
 const currentRaceURL = (seasonId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}`;
 
 export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | undefined> => {
-  return currentSeason().then(season => admin.firestore()
+  return currentSeason().then(season => firestore()
     .collection(currentRaceURL(season.id!))
     .where('state', '==', state)
     .withConverter<IRace>(converter.timestamp)
@@ -21,7 +22,7 @@ export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | 
 };
 
 export const getRaceByRound = async (round: string): Promise<IRace | undefined> => {
-  return currentSeason().then(season => admin.firestore()
+  return currentSeason().then(season => firestore()
     .doc(`${currentRaceURL(season.id)}/${round}`)
     .withConverter<IRace>(converter.timestamp)
     .get()
@@ -29,9 +30,9 @@ export const getRaceByRound = async (round: string): Promise<IRace | undefined> 
   );
 };
 
-export const updateRace = async (seasonId: number, round: number, race: Partial<IRace>): Promise<admin.firestore.WriteResult> => {
+export const updateRace = async (seasonId: number, round: number, race: Partial<IRace>): Promise<WriteResult> => {
   console.log(`Updating race season/${seasonId}/races/${round}`, race);
-  return admin.firestore()
+  return firestore()
     .doc(`${currentRaceURL(seasonId)}/${round}`)
     .update(race);
 };

@@ -1,11 +1,11 @@
-import { seasonsURL } from './collection-names';
-import { converter } from './';
-import * as admin from 'firebase-admin';
-import { logAndCreateError } from './firestore-utils';
 import { ISeason } from '@f2020/data';
+import { firestore } from 'firebase-admin';
+import { converter } from './';
+import { seasonsURL } from './collection-names';
+import { logAndCreateError } from './firestore-utils';
 
 export const currentSeason = (): Promise<ISeason> => {
-  return admin.firestore().collection(seasonsURL)
+  return firestore().collection(seasonsURL)
     .where('current', '==', true)
     .withConverter<ISeason>(converter.timestamp)
     .get()

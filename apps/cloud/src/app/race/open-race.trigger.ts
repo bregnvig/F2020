@@ -1,11 +1,11 @@
 import { IRace } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL, updateRace } from '../../lib';
 ;
 
-const db = admin.firestore();
+const db = firestore();
 
 /**
  * This trigger opens the next race, when the previous completes.

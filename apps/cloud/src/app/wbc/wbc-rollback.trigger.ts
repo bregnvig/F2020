@@ -1,11 +1,12 @@
 import { IRace, ISeason } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
+import { DocumentReference } from 'firebase-admin/firestore';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { seasonsURL } from '../../lib';
 ;
 
-const db = admin.firestore();
+const db = firestore();
 
 /**
  * The structure for the WBC is:
@@ -21,7 +22,7 @@ export const rollbackWBCTrigger = region('europe-west1').firestore.document('sea
     return Promise.resolve(true);
   });
 
-const rollbackWBCRace = async (race: IRace, ref: admin.firestore.DocumentReference) => {
+const rollbackWBCRace = async (race: IRace, ref: DocumentReference) => {
 
   ref.get()
     .then(doc => doc.data())

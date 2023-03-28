@@ -1,5 +1,6 @@
 import { ISeason } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getBookie, internalError, logAndCreateError, PlayerImpl, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
@@ -29,13 +30,13 @@ const join = async (player: PlayerImpl) => {
     throw logAndCreateError('failed-precondition', `${player.displayName} has insufficient funds. Balance: ${(player.balance || 0).toFixed(2)}`);
   }
 
-  const db = admin.firestore();
+  const db = firestore();
   const bookie = await getBookie();
   const doc = db.doc(`${seasonsURL}/${season.id}`);
   return db.runTransaction(transaction => {
     transaction.set(doc, {
       wbc: {
-        participants: admin.firestore.FieldValue.arrayUnion(player.uid)
+        participants: FieldValue.arrayUnion(player.uid)
       }
     }, { merge: true });
     transferInTransaction({

@@ -1,8 +1,8 @@
+import { Bid, Player } from "@f2020/data";
+import { firestore } from "firebase-admin";
+import { racesURL, seasonsURL } from '.';
 import { playersURL } from './collection-names';
-import * as admin from 'firebase-admin';
 import { getCurrentRace } from './race.service';
-import { Player, Bid } from "@f2020/data";
-import { seasonsURL, racesURL } from '.';
 
 
 export const playerWithoutBid = async (): Promise<Player[]> => {
@@ -10,7 +10,7 @@ export const playerWithoutBid = async (): Promise<Player[]> => {
 
   const currentRace = await getCurrentRace('open');
 
-  const db = admin.firestore();
+  const db = firestore();
   const played: Set<string> = await db.collection(`${seasonsURL}/${currentRace!.season}/${racesURL}/${currentRace?.round}/bids`)
     .get()
     .then(snapshot => snapshot.docs.map(d => d.data() as Bid))

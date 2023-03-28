@@ -1,11 +1,11 @@
 import { IRace } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL } from './../../lib/collection-names';
 ;
 
-const db = admin.firestore();
+const db = firestore();
 
 /**
  * This trigger copies the drivers from the previous race to the new race.

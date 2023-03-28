@@ -1,11 +1,12 @@
 import { Bid, IRace, ISeason, Player, WBCResult } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
+import { DocumentReference } from 'firebase-admin/firestore';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL } from '../../lib';
 ;
 
-const db = admin.firestore();
+const db = firestore();
 const wbcPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 /**
  * The structure for the WBC is:
@@ -27,7 +28,7 @@ export const wbcPointsTrigger = region('europe-west1').firestore.document('seaso
     return Promise.resolve(true);
   });
 
-const createWBCRace = async (race: IRace, bids: Bid[], ref: admin.firestore.DocumentReference) => {
+const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) => {
   const result: WBCResult = {
     raceName: race.name,
     round: race.round,

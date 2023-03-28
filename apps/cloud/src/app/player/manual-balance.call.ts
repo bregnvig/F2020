@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { internalError, validateAccess } from "../../lib";
 import { playersURL } from './../../lib/collection-names';
@@ -18,6 +18,6 @@ export const manualBalance = region('europe-west1').https.onCall(async (data: Ba
 });
 
 const updateBalance = async ({ uid, balance }: BalanceData) => {
-  const db = admin.firestore();
+  const db = firestore();
   return db.doc(`${playersURL}/${uid}`).update({ balance });
 };

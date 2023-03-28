@@ -1,5 +1,5 @@
 import { Bid, Player } from '@f2020/data';
-import * as admin from 'firebase-admin';
+import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMessage } from '../../lib';
@@ -9,7 +9,7 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
   .onCreate(async (snapshot: DocumentSnapshot, context) => {
     const bid: Partial<Bid> = snapshot.data() as Partial<Bid>;
 
-    const db = admin.firestore();
+    const db = firestore();
     const hasTokens = (p: Player) => p.tokens && p.tokens.length;
     const notYourself = (p: Player) => p.uid !== bid.player?.uid;
     const wishToReceive = (p: Player) => !p.receiveBettingStarted || p.receiveBettingStarted.some(uid => uid === p.uid);
