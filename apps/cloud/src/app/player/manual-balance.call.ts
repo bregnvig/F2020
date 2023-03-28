@@ -1,14 +1,15 @@
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
 import { internalError, validateAccess } from "../../lib";
 import { playersURL } from './../../lib/collection-names';
+;
 
 interface BalanceData {
   uid: string;
   balance: number;
 }
 
-export const manualBalance = functions.region('europe-west1').https.onCall(async (data: BalanceData, context) => {
+export const manualBalance = region('europe-west1').https.onCall(async (data: BalanceData, context) => {
 
   return validateAccess(context.auth?.uid, 'bank-admin')
     .then(() => updateBalance(data))
@@ -19,4 +20,4 @@ export const manualBalance = functions.region('europe-west1').https.onCall(async
 const updateBalance = async ({ uid, balance }: BalanceData) => {
   const db = admin.firestore();
   return db.doc(`${playersURL}/${uid}`).update({ balance });
-}
+};

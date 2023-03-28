@@ -1,7 +1,9 @@
 import { Bid, IRace, ISeason, Player, WBCResult } from '@f2020/data';
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { Change, EventContext, region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL } from '../../lib';
+;
 
 const db = admin.firestore();
 const wbcPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
@@ -9,8 +11,8 @@ const wbcPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
  * The structure for the WBC is:
  * seasons/{seasonId} wbc[] - {round}: {race, players[]}
  */
-export const wbcPointsTrigger = functions.region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
-  .onUpdate(async (change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
+export const wbcPointsTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
+  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
     const before: IRace = change.before.data() as IRace;
     const after: IRace = change.after.data() as IRace;
     if (before.state === 'closed' && after.state === 'completed') {

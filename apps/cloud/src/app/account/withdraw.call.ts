@@ -1,13 +1,14 @@
-import { transfer } from '../../lib/transactions.service';
-import { logAndCreateError, PlayerImpl, validateAccess, getUser, internalError } from "../../lib";
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
+import { getUser, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
+import { transfer } from '../../lib/transactions.service';
+;
 
 const validateBalance = (player: PlayerImpl, amount: number): void => {
   if ((player.balance || 0) - amount < 0) {
-    throw logAndCreateError('failed-precondition', `${player.displayName} has insufficient funds to withdraw ${amount}. Balance: ${(player.balance || 0).toFixed(2)}`)
+    throw logAndCreateError('failed-precondition', `${player.displayName} has insufficient funds to withdraw ${amount}. Balance: ${(player.balance || 0).toFixed(2)}`);
   }
-}
+};
 
 interface WithdrawData {
   amount: number;
@@ -15,7 +16,7 @@ interface WithdrawData {
   uid: string;
 }
 
-export const withdraw = functions.region('europe-west1').https.onCall(async (data: WithdrawData, context) => {
+export const withdraw = region('europe-west1').https.onCall(async (data: WithdrawData, context) => {
   return validateAccess(context.auth?.uid, 'bank-admin')
     .then(() => buildWithdraw(data))
     .then(() => true)
@@ -29,14 +30,14 @@ const buildWithdraw = async ({ uid, amount, message }: WithdrawData) => {
   }
   const player = await getUser(uid);
   if (!player) {
-    throw logAndCreateError('not-found', `No player with uid: ${uid} not found`)
+    throw logAndCreateError('not-found', `No player with uid: ${uid} not found`);
   }
   if (!amount) {
     throw logAndCreateError('failed-precondition', `No amount specified for player: ${player.displayName} `);
-  }  
+  }
   if (amount < 0) {
     throw logAndCreateError('failed-precondition', `Negative amount specified for player: ${player.displayName} `);
-  }  
+  }
   validateBalance(player, amount);
 
   return transfer({
@@ -45,5 +46,5 @@ const buildWithdraw = async ({ uid, amount, message }: WithdrawData) => {
     message: message,
     from: uid,
     involved: [uid],
-  })
-}
+  });
+};

@@ -3,6 +3,7 @@ import * as functions from "firebase-functions";
 
 // The Firebase Admin SDK to access Firebase Features from within Cloud Functions.
 import * as admin from "firebase-admin";
+import { region } from "firebase-functions";
 admin.initializeApp();
 
 // // Start writing functions
@@ -12,7 +13,7 @@ admin.initializeApp();
 //   functions.logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
-exports.addMessage = functions.region("eur3").https.onRequest(async (req, res) => {
+exports.addMessage = region("eur3").https.onRequest(async (req, res) => {
   // Grab the text parameter.
   const original = req.query.text;
   // Push the new message into the Realtime Database using the Firebase Admin SDK.

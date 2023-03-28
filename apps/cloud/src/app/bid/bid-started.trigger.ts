@@ -1,10 +1,12 @@
 import { Bid, Player } from '@f2020/data';
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMessage } from '../../lib';
+;
 
-export const newBidTrigger = functions.region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
-  .onCreate(async (snapshot: functions.firestore.DocumentSnapshot, context) => {
+export const newBidTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
+  .onCreate(async (snapshot: DocumentSnapshot, context) => {
     const bid: Partial<Bid> = snapshot.data() as Partial<Bid>;
 
     const db = admin.firestore();

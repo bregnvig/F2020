@@ -1,10 +1,12 @@
 import { Player } from '@f2020/data';
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMessage } from '../../lib';
+;
 
-export const newPlayerTrigger = functions.region('europe-west1').firestore.document('players/{playerId}')
-  .onCreate(async (snapshot: functions.firestore.DocumentSnapshot) => {
+export const newPlayerTrigger = region('europe-west1').firestore.document('players/{playerId}')
+  .onCreate(async (snapshot: DocumentSnapshot) => {
 
     const db = admin.firestore();
     const newPlayer: Player = snapshot.data() as Player;

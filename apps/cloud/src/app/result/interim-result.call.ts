@@ -1,9 +1,10 @@
 import { Bid, IRace, Player } from '@f2020/data';
-import * as functions from 'firebase-functions';
 import { currentSeason, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, sendMail, sendMessage, validateAccess } from '../../lib';
 import { calculateInterimResult } from './../../lib/result.service';
 import { validateInterimResult } from './../../lib/validate.service';
+;
 import admin = require('firebase-admin');
+import { region } from 'firebase-functions/v1';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -27,7 +28,7 @@ const messageBody = (player: Player, results: Partial<Bid>[]): string => {
   return `Og du ligger på en foreløbig ${index + 1}. plads!`;
 };
 
-export const submitInterimResult = functions.region('europe-west1').https.onCall(async (data: Partial<Bid>, context) => {
+export const submitInterimResult = region('europe-west1').https.onCall(async (data: Partial<Bid>, context) => {
   return validateAccess(context.auth?.uid, 'admin')
     .then(player => buildResult(data))
     .then(() => true)

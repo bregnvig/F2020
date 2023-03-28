@@ -1,22 +1,23 @@
-import { transfer as transferTransaction} from '../../lib/transactions.service';
-import { logAndCreateError, PlayerImpl, validateAccess, getUser, internalError } from "../../lib";
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
+import { getUser, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
+import { transfer as transferTransaction } from '../../lib/transactions.service';
+;
 
 const validateBalance = (player: PlayerImpl, amount: number): void => {
   if ((player.balance || 0) - amount < 0) {
-    throw logAndCreateError('failed-precondition', `${player.displayName} has insufficient funds to withdraw ${amount}. Balance: ${(player.balance || 0).toFixed(2)}`)
+    throw logAndCreateError('failed-precondition', `${player.displayName} has insufficient funds to withdraw ${amount}. Balance: ${(player.balance || 0).toFixed(2)}`);
   }
-}
+};
 
 interface TransferData {
   amount: number;
   message: string;
   fromUid: string;
-  toUid: string
+  toUid: string;
 }
 
-export const transfer = functions.region('europe-west1').https.onCall(async (data: TransferData, context) => {
+export const transfer = region('europe-west1').https.onCall(async (data: TransferData, context) => {
   return validateAccess(context.auth?.uid, 'bank-admin')
     .then(() => buildWithdraw(data))
     .then(() => true)
@@ -38,18 +39,18 @@ const buildWithdraw = async ({ fromUid, toUid, amount, message }: TransferData) 
 
   const from = await getUser(fromUid);
   if (!from) {
-    throw logAndCreateError('not-found', `The from player with uid: ${fromUid} not found`)
+    throw logAndCreateError('not-found', `The from player with uid: ${fromUid} not found`);
   }
   const to = await getUser(toUid);
   if (!to) {
-    throw logAndCreateError('not-found', `The to player with uid: ${toUid} not found`)
+    throw logAndCreateError('not-found', `The to player with uid: ${toUid} not found`);
   }
   if (!amount) {
     throw logAndCreateError('failed-precondition', `No amount specified for player: ${from.displayName} `);
-  }  
+  }
   if (amount < 0) {
     throw logAndCreateError('failed-precondition', `Negative amount specified for player: ${from.displayName} `);
-  }  
+  }
   validateBalance(from, amount);
 
   return transferTransaction({
@@ -60,4 +61,4 @@ const buildWithdraw = async ({ fromUid, toUid, amount, message }: TransferData) 
     to: toUid,
     involved: [fromUid, toUid],
   });
-}
+};

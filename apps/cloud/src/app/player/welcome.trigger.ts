@@ -1,6 +1,8 @@
 import { Player } from '@f2020/data';
-import * as functions from 'firebase-functions';
+import { Change, EventContext, region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail } from '../../lib';
+;
 
 
 const mailbody = (player: Player) =>
@@ -13,8 +15,8 @@ const mailbody = (player: Player) =>
     Wroouumm,<br/>
     F1emming`;
 
-export const WelcomeMailTrigger = functions.region('europe-west1').firestore.document('players/{userId}')
-  .onUpdate(async (change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
+export const WelcomeMailTrigger = region('europe-west1').firestore.document('players/{userId}')
+  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
     const before: Player = change.before.data() as Player;
     const after: Player = change.after.data() as Player;
     if (before.roles?.includes('anonymous') && after.roles?.includes('player')) {

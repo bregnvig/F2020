@@ -1,6 +1,8 @@
 import { WBC, WBCResult } from '@f2020/data';
-import * as functions from 'firebase-functions';
+import { Change, EventContext, region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail, sendMessage } from '../../lib';
+;
 
 const mailbody = (playerName: any, wbcPoints: number, raceName: any) =>
   `<h3>Hej ${playerName}</h3>
@@ -13,8 +15,8 @@ const mailbody = (playerName: any, wbcPoints: number, raceName: any) =>
 
 const messageBody = (raceName: string, wbcPoints: number) => `${raceName} er nu afgjort - du har fået ${wbcPoints} WBC points`;
 
-export const resultNotificationTrigger = functions.region('europe-west1').firestore.document('seasons/{seasonId}')
-  .onUpdate(async (change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
+export const resultNotificationTrigger = region('europe-west1').firestore.document('seasons/{seasonId}')
+  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
     const before: WBC = change.before.data()?.wbc || [];
     const after: WBC = change.after.data()?.wbc || [];
     if ((after.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {

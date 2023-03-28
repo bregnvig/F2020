@@ -1,15 +1,17 @@
 import { IRace } from '@f2020/data';
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { Change, EventContext, region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL } from './../../lib/collection-names';
+;
 
 const db = admin.firestore();
 
 /**
  * This trigger copies the drivers from the previous race to the new race.
  */
-export const raceDrivers = functions.region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
-  .onUpdate(async (change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
+export const raceDrivers = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
+  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
     const before: IRace = change.before.data() as IRace;
     const after: IRace = change.after.data() as IRace;
     if (before.state === 'waiting' && after.state === 'open' && before.round !== 1) {

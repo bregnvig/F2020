@@ -1,11 +1,12 @@
 import { Bid } from '@f2020/data';
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
 import { racesURL, seasonsURL } from '../../lib/collection-names';
 import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
+;
 
 
 const validateBalance = (player: PlayerImpl): void => {
@@ -14,7 +15,7 @@ const validateBalance = (player: PlayerImpl): void => {
   }
 };
 
-export const submitBid = functions.region('europe-west1').https.onCall(async (data: Bid, context) => {
+export const submitBid = region('europe-west1').https.onCall(async (data: Bid, context) => {
   return validateAccess(context.auth?.uid, 'player')
     .then(player => buildBid(player, data))
     .then(() => true)

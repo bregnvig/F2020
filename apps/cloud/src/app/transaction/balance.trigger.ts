@@ -1,15 +1,17 @@
-import { logAndCreateError } from './../../lib/firestore-utils';
-import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
-import { playersURL } from '../../lib';
 import { Player, Transaction } from '@f2020/data';
+import * as admin from 'firebase-admin';
+import { region } from 'firebase-functions/v1';
+import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
+import { playersURL } from '../../lib';
+import { logAndCreateError } from './../../lib/firestore-utils';
+;
 
 const db = admin.firestore();
 
 const playerURL = (uid: string) => `${playersURL}/${uid}`;
 
-export const balanceTrigger = functions.region('europe-west1').firestore.document('transactions/{transactionId}')
-  .onCreate(async (snapshot: functions.firestore.DocumentSnapshot) => {
+export const balanceTrigger = region('europe-west1').firestore.document('transactions/{transactionId}')
+  .onCreate(async (snapshot: DocumentSnapshot) => {
     const transaction: Transaction | undefined = snapshot.data() as Transaction;
     const from = transaction.from ? db.doc(playerURL(transaction.from)) as admin.firestore.DocumentReference<Player> : null;
     const to = transaction.to ? db.doc(playerURL(transaction.to)) as admin.firestore.DocumentReference<Player> : null;

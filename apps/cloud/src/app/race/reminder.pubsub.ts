@@ -1,8 +1,9 @@
 import { IRace, Player } from '@f2020/data';
-import * as functions from 'firebase-functions';
+import { pubsub } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendMessage } from './../../lib';
+;
 
 const timespan = (days: number, date: DateTime): boolean => {
   const reminderDate = date.minus({ days });
@@ -33,7 +34,7 @@ const messageBody = (race: IRace, closeDay: string, closeTime: string): string =
   `${race.name} lukker ${closeDay} kl.${closeTime}, og du har endnu ikke spillet!`;
 
 // This will be run every day at 9:11 Europe/Copenhagen!
-export const mailReminderCrontab = functions.pubsub.schedule('11 9 * * *')
+export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
   .timeZone('Europe/Copenhagen')
   .onRun(async () => getCurrentRace('open')
     .then(async race => {

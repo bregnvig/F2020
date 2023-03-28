@@ -1,11 +1,12 @@
-import { DateTime } from 'luxon';
-import { currentSeason } from './../../lib/season.service';
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-import { validateAccess, internalError, PlayerImpl, logAndCreateError, seasonsURL, transferInTransaction, getBookie } from '../../lib';
 import { ISeason } from '@f2020/data';
+import * as admin from 'firebase-admin';
+import { region } from 'firebase-functions/v1';
+import { DateTime } from 'luxon';
+import { getBookie, internalError, logAndCreateError, PlayerImpl, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
+import { currentSeason } from './../../lib/season.service';
+;
 
-export const joinWBC = functions.region('europe-west1').https.onCall(async (data: any, context) => {
+export const joinWBC = region('europe-west1').https.onCall(async (data: any, context) => {
   return validateAccess(context.auth?.uid, 'player')
     .then(player => join(player))
     .then(() => true)

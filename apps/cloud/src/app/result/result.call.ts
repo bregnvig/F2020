@@ -1,11 +1,12 @@
 import { Bid } from '@f2020/data';
-import * as functions from 'firebase-functions';
 import { DateTime } from 'luxon';
 import { calculateResult, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
 import { validateResult } from './../../lib/validate.service';
+;
 import admin = require('firebase-admin');
+import { region } from 'firebase-functions/v1';
 
-export const submitResult = functions.region('europe-west1').https.onCall(async (data: Bid, context) => {
+export const submitResult = region('europe-west1').https.onCall(async (data: Bid, context) => {
   return validateAccess(context.auth?.uid, 'admin')
     .then(() => buildResult(data))
     .then(() => true)

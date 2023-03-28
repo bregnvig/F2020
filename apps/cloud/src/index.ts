@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { config } from 'firebase-functions/v1';
+;
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp(config().firebase);
 
 export * from './app/account';
 export * from './app/bid';

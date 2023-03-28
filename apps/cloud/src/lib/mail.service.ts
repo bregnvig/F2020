@@ -1,15 +1,16 @@
+import { config } from 'firebase-functions/v1';
 import * as nodemailer from 'nodemailer';
-import * as functions from 'firebase-functions';
+;
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     type: "OAuth2",
-    user: functions.config().oauth.user,
-    clientId: functions.config().oauth.client,
-    clientSecret: functions.config().oauth.secret,
-    refreshToken: functions.config().oauth.refresh,
-    // accessToken: functions.config().ci.token
+    user: config().oauth.user,
+    clientId: config().oauth.client,
+    clientSecret: config().oauth.secret,
+    refreshToken: config().oauth.refresh,
+    // accessToken: config().ci.token
   }
 });
 
@@ -20,7 +21,7 @@ export const sendMail = async (emailAddress: string, subject: string, body: stri
     subject: subject,
     html: body
   };
-  if (functions.config().test) {
+  if (config().test) {
     return Promise.resolve('In test environment');
   }
 
@@ -41,4 +42,4 @@ export const sendMail = async (emailAddress: string, subject: string, body: stri
         });
     }
   );
-}
+};

@@ -1,7 +1,8 @@
-import { transfer } from '../../lib/transactions.service';
-import { logAndCreateError, validateAccess, internalError } from "../../lib";
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
+import { internalError, logAndCreateError, validateAccess } from "../../lib";
+import { transfer } from '../../lib/transactions.service';
+;
 
 interface DepositData {
   amount: number;
@@ -9,7 +10,7 @@ interface DepositData {
   uid: string;
 }
 
-export const deposit = functions.region('europe-west1').https.onCall(async (data: DepositData, context) => {
+export const deposit = region('europe-west1').https.onCall(async (data: DepositData, context) => {
   return validateAccess(context.auth?.uid, 'bank-admin')
     .then(() => buildDeposit(data))
     .then(() => true)
@@ -34,5 +35,5 @@ const buildDeposit = async ({ uid, amount, message }: DepositData) => {
     message: message,
     to: uid,
     involved: [uid]
-  })
-}
+  });
+};

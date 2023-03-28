@@ -1,6 +1,7 @@
 import { Player } from '@f2020/data';
-import * as functions from 'firebase-functions';
+import { region } from 'firebase-functions/v1';
 import { sendMail } from '../../lib';
+;
 
 const mailbody = (player: Player) =>
   `<h3>Hej ${player.displayName}</h3>
@@ -12,7 +13,7 @@ const mailbody = (player: Player) =>
     Wroouumm,<br/>
     F1emming`;
 
-export const nofundsTrigger = functions.region('europe-west1').firestore.document('players/{userId}')
+export const nofundsTrigger = region('europe-west1').firestore.document('players/{userId}')
   .onUpdate(async (change, context) => {
     const player: Player = change.after.data() as Player;
     if ((player.balance || 0) - 20 < -100) {

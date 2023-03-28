@@ -1,8 +1,9 @@
 import { Bid } from '@f2020/data';
-import * as functions from 'firebase-functions';
 import { DateTime } from 'luxon';
 import { currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
+;
 import admin = require('firebase-admin');
+import { region } from 'firebase-functions/v1';
 
 const resetPoints = (bid: Bid): Bid => {
   const properties: (keyof Bid)[] = [
@@ -16,7 +17,7 @@ const resetPoints = (bid: Bid): Bid => {
   return Object.fromEntries(Object.entries(bid).filter(([key]) => !properties.includes(key as keyof Bid))) as Bid;
 };
 
-export const rollbackResult = functions.region('europe-west1').https.onCall(async (round: string, context) => {
+export const rollbackResult = region('europe-west1').https.onCall(async (round: string, context) => {
   return validateAccess(context.auth?.uid, 'admin')
     .then(() => buildRollback(round))
     .then(() => true)
