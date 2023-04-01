@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angula
 import { PlayerFacade, SeasonFacade } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { debounceTime, filter, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-previous-race',
@@ -25,6 +25,7 @@ export class PreviousRaceComponent implements OnInit {
       filter(season => !!(season && season.wbc.results?.length)),
       map(season => season.wbc.results[season.wbc.results.length - 1]),
       filter(result => !!result.players?.length),
+      debounceTime(0),
       tap(() => this.isHidden = false),
     );
     this.title$ = combineLatest([
