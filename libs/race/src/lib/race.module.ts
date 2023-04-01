@@ -11,13 +11,14 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RaceApiModule } from '@f2020/api';
 import { ControlModule } from '@f2020/control';
 import { DriverModule } from '@f2020/driver';
 import { SharedModule } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BidsComponent } from './component/bids/bids.component';
 import { DisplayBidComponent } from './component/display-bid/display-bid.component';
 import { DisplayDriversComponent } from './component/display-bid/display-drivers/display-drivers.component';
@@ -33,8 +34,8 @@ import { RacesComponent } from './component/races/races.component';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
 import { RaceRoutingModule } from './race-routing.module';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import { MatCheckboxModule } from '@angular/material/checkbox';
 const MaterialModules = [
   MatCardModule,
   DragDropModule,
@@ -48,6 +49,7 @@ const MaterialModules = [
   MatToolbarModule,
   MatTooltipModule,
   MatExpansionModule,
+  MatCheckboxModule,
 ];
 
 @NgModule({

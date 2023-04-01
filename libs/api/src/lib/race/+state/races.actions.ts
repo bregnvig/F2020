@@ -135,6 +135,20 @@ export const RacesActions = {
     props<{ error: any; }>(),
   ),
 
+  rollbackResult: createAction(
+    '[Result page] Rollback result',
+    props<{ round: number; }>()
+  ),
+
+  rollbackResultSuccess: createAction(
+    '[Result API] Rollback result Success',
+  ),
+
+  rollbackResultFailure: createAction(
+    '[Result API] Rollback result Failure',
+    props<{ error: any; }>(),
+  ),
+
   submitInterimResult: createAction(
     '[Interim page] submit interim result',
   ),

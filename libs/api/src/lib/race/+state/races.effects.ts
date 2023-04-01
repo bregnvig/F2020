@@ -144,6 +144,14 @@ export class RacesEffects {
     )
   ));
 
+  rollbackResult$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.rollbackResult),
+    concatMap(({ round }) => this.service.rollbackResult(round)
+      .then(() => RacesActions.rollbackResultSuccess())
+      .catch(error => RacesActions.rollbackResultFailure({ error }))
+    ))
+  );
+
   updateBid$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.updateYourBid),
     concatMap(({ bid }) => combineLatest([

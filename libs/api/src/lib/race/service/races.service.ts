@@ -92,4 +92,8 @@ export class RacesService {
     return httpsCallable(this.functions, 'submitInterimResult')(result).then(() => true);
   }
 
+  async rollbackResult(round: number): Promise<true> {
+    return httpsCallable(this.functions, 'rollbackResult')(round).then(() => true);
+  }
+
 }

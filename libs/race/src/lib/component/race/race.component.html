@@ -22,6 +22,12 @@
             routerLink="drivers">
             DRIVERS
           </a>
+          <div *ngIf="race.state === 'completed'" class="flex items-center">
+            <mat-checkbox #confirmed="matCheckbox"></mat-checkbox>
+            <button mat-button color="warn" [disabled]="!confirmed.checked" (click)="rollbackResult()">
+              ROLLBACK
+            </button>
+          </div>
           <a *ngIf="race.state === 'closed'"
             mat-button 
             routerLink="qualify">

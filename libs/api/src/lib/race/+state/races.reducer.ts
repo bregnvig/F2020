@@ -1,5 +1,5 @@
 import { Bid, IRace, RoundResult } from '@f2020/data';
-import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 import { RacesActions } from './races.actions';
 
@@ -61,6 +61,7 @@ const racesReducer = createReducer(
     RacesActions.submitInterimResultFailure,
     RacesActions.updateRaceDriversFailure,
     RacesActions.loadLastYearFailure,
+    RacesActions.rollbackResultFailure,
     (state, { type, error }) => {
       console.error(type, error);
       return { ...state, error: error['message'] ?? error, updating: false, loaded: false };
@@ -86,6 +87,8 @@ const racesReducer = createReducer(
   on(RacesActions.submitResultSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.submitInterimResult, (state) => ({ ...state, updating: true })),
   on(RacesActions.submitInterimResultSuccess, (state) => ({ ...state, updating: false })),
+  on(RacesActions.rollbackResult, (state) => ({ ...state, updating: true })),
+  on(RacesActions.rollbackResultSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.updateRaceDrivers, (state) => ({ ...state, updating: true })),
   on(RacesActions.updateRaceDriversSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.loadLastYear, state => ({ ...state, lastYear: null })),
