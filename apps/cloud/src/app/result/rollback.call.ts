@@ -1,10 +1,10 @@
 import { Bid } from '@f2020/data';
+import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
 ;
 import admin = require('firebase-admin');
-import { firestore } from 'firebase-admin';
 
 const resetPoints = (bid: Bid): Bid => {
   const properties: (keyof Bid)[] = [
@@ -60,7 +60,7 @@ const buildRollback = async (round: string) => {
     bids.map(resetPoints).forEach(withOutPoints => {
       transaction.set(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${withOutPoints.player.uid}`), withOutPoints);
     });
-    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'closed', result: undefined });
+    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'closed', result: null });
     return Promise.resolve(`Result submitted`);
   });
 

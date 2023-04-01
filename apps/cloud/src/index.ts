@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase-admin/app';
 import { config } from 'firebase-functions/v1';
-;
 
 initializeApp(config().firebase);
 
