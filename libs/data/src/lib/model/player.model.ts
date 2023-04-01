@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 export type Role = 'player' | 'admin' | 'bookie' | 'bank-admin' | 'anonymous';
 
 export interface Player {
@@ -10,4 +12,5 @@ export interface Player {
   receiveReminders?: boolean;
   receiveBettingStarted?: string[];
   balance?: number;
+  almostTimeReminder?: DateTime;
 }
