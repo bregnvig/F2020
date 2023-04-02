@@ -1,6 +1,7 @@
-import { DisplayResultComponent } from './component/display-bid/display-result/display-result.component';
 import { RouterModule, Routes } from '@angular/router';
 import { DisplayPlayerBidComponent } from './component/display-bid/display-player-bid/display-player-bid.component';
+import { DisplayResultComponent } from './component/display-bid/display-result/display-result.component';
+import { EditRaceComponent } from './component/edit-race/edit-race.component';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';
 import { RaceOutletComponent } from './component/race-outlet/race-outlet.component';
@@ -21,6 +22,10 @@ const routes: Routes = [
       {
         path: '',
         component: RaceComponent,
+      },
+      {
+        path: 'edit',
+        component: EditRaceComponent,
       },
       {
         path: 'bid',

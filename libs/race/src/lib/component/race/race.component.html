@@ -16,6 +16,7 @@
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [href]="race.url" target="_blank">WIKI</a>
+        <a *ngIf="race.state === 'waiting' || race.state === 'open'" mat-button routerLink="edit">EDIT</a>
         <ng-container *shaHasRole="'admin'">
           <a *ngIf="race.state === 'waiting' || race.state === 'open'"
             mat-button 

@@ -113,6 +113,14 @@ export class RacesEffects {
     ))
   ));
 
+  updateRace$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.updateRace),
+    concatMap(({ race }) => this.service.updateRaceV2(race)
+      .then(() => RacesActions.submitBidSuccess())
+      .catch(error => RacesActions.submitBidFailure({ error }))
+    ))
+  );
+
   submitBid$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.submitBid),
     concatMap(({ bid }) => this.playerFacade.player$.pipe(

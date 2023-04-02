@@ -1,8 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
-import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
-import { Bid, converter, IQualifyResult, IRace, IRaceResult, mapper, Player, RoundResult } from '@f2020/data';
-import { collection } from 'firebase/firestore';
+import { Injectable } from '@angular/core';
+import { Firestore, collectionData, doc, docData, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
+import { Bid, IQualifyResult, IRace, IRaceResult, Player, RoundResult, converter, firestoreWebUtils, mapper } from '@f2020/data';
+import { unfreeze } from '@f2020/tools';
+import { collection } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';
@@ -80,6 +81,14 @@ export class RacesService {
         tokens: player.tokens,
         email: player.email,
       },
+      version: 2
+    }).then(() => true);
+  }
+
+  async updateRaceV2(race: IRace): Promise<true> {
+    const u = unfreeze;
+    return httpsCallable(this.functions, 'updateRace')({
+      ...firestoreWebUtils.convertToJSON(u(race)),
       version: 2
     }).then(() => true);
   }

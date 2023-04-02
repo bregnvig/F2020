@@ -21,7 +21,7 @@ export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | 
     }));
 };
 
-export const getRaceByRound = async (round: string): Promise<IRace | undefined> => {
+export const getRaceByRound = async (round: string | number): Promise<IRace | undefined> => {
   return currentSeason().then(season => firestore()
     .doc(`${currentRaceURL(season.id)}/${round}`)
     .withConverter<IRace>(converter.timestamp)

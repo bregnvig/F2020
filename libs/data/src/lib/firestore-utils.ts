@@ -75,5 +75,20 @@ export const firestoreWebUtils = {
       }
     });
     return input;
+  },
+  convertToJSON(input: any) {
+    if (!input || typeof input !== 'object') {
+      return input;
+    }
+    Object.keys(input).map(key => {
+      const value = input[key];
+      if (value instanceof DateTime) {
+        input[key] = value.toJSON();
+      } else if (typeof value === 'object' && value) {
+        firestoreWebUtils.convertToJSON(value);
+      }
+    });
+    return input;
+
   }
 };

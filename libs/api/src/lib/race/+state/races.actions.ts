@@ -15,6 +15,20 @@ export const RacesActions = {
     props<{ error: any; }>(),
   ),
 
+  updateRace: createAction(
+    '[Edit race page] Update Race',
+    props<{ race: IRace; }>(),
+  ),
+
+  updateRaceSuccess: createAction(
+    '[Race API] Update Race Success',
+  ),
+
+  updateRaceFailure: createAction(
+    '[Race API] Update Race Failure',
+    props<{ error: any; }>(),
+  ),
+
   selectRace: createAction(
     '[Races] Select race',
     props<{ round: string; }>(),
