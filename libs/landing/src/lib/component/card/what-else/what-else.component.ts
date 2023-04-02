@@ -9,6 +9,5 @@ import { icon } from '@f2020/shared';
 })
 export class WhatElseComponent {
   icon = icon.falRocketLaunch;
-  sadFace = icon.farFaceSadCry;
-  newPlayer = icon.farUserPlus;
+  edit = icon.farInfo;
 }

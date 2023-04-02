@@ -16,7 +16,7 @@
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [href]="race.url" target="_blank">WIKI</a>
-        <a *ngIf="race.state === 'waiting' || race.state === 'open'" mat-button routerLink="edit">EDIT</a>
+        <a *ngIf="race.state === 'waiting' || race.state === 'open'" mat-button routerLink="edit">REDIGER</a>
         <ng-container *shaHasRole="'admin'">
           <a *ngIf="race.state === 'waiting' || race.state === 'open'"
             mat-button 
@@ -46,6 +46,7 @@
           <f2020-bids [bids]="bids" [result]="race.result"></f2020-bids>
         </mat-card-content>
       </mat-card>
+      <f2020-race-updated-warning *ngIf="race.updatedBy?.length" [race]="race"></f2020-race-updated-warning>
     </ng-container>
   </sha-card-page>
   <ng-container *ngIf="(play$ | async)">

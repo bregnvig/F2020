@@ -1,19 +1,19 @@
 <mat-card>
   <mat-card-header>
-    <fa-icon mat-card-avatar [icon]="sadFace" size="2x"></fa-icon>
-    <mat-card-title>Fejl i resultat</mat-card-title>
+    <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
+    <mat-card-title>Ny version</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <p>
-      Der er desværre sket i fejl i forbindelse med resultatet af det Saudi Arabian Grand Prix
+      Med tid til hygge kodning her op til påsken er det lykkes mig at få min <a href="https://firebase.google.com/" target="_blank">Firebase</a> udvikling op og køre igen!
     </p>
     <p>
-      Jeg skal nok få det rettet, men det er desværre en større ting. Specielt fordi jeg ikke har et backend udviklingsmiljø der virker, 
-      så jeg kan ikke tilføjet en rollback funktion.
+      Det betyder også at det nu burde være muligt at lave et rollback, hvilket jeg vil forsøge mig med snarest.
     </p>
+    <h4><fa-icon [icon]="edit" size="2x" [fixedWidth]="true"></fa-icon> Redigering af løb</h4>
     <p>
-      Jeg skal nok få det gjort. Det kommer ikke til at betyde noget for 1. pladsen, så det er ikke et problem, men der vil blive rykket rundt på WBC points. 
+      Det vil nu være muligt at redigere et løb, hvis den udvalgte kører ikke giver mening, eks. Daniel Richardo, eller hvis lukke tidspunktet ikke er korrekt.
     </p>
-    <p>Så er I forberedt!</p>
+    <p>I kan alle sammen lave disse ændringer og I må meget gerne gøre det, hvis I ser en fejl! I går ind på løbet og trykker <a [routerLink]="['/2023', 'race', 4, 'edit']">Rediger</a></p>
   </mat-card-content>
 </mat-card>

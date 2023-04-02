@@ -29,6 +29,7 @@ import { DisplayResultComponent } from './component/display-bid/display-result/d
 import { EditRaceComponent } from './component/edit-race/edit-race.component';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { PartialBidWarningComponent } from './component/partial-bid-warning/partial-bid-warning.component';
+import { RaceUpdatedWarningComponent } from './component/race';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';
 import { RaceOutletComponent } from './component/race-outlet/race-outlet.component';
 import { RaceComponent } from './component/race/race.component';
@@ -70,6 +71,7 @@ const MaterialModules = [
   declarations: [
     RacesComponent,
     RaceComponent,
+    RaceUpdatedWarningComponent,
     EditRaceComponent,
     RaceStatusComponent,
     BidsComponent,
