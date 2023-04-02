@@ -6,16 +6,23 @@
     "rules": "apps/cloud/firestore.rules",
     "indexes": "apps/cloud/firestore.indexes.json"
   },
-  "hosting": {
-    "public": "apps/cloud/public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "target": "ui",
+      "public": "dist/apps/ui",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ],
   "storage": {
     "rules": "apps/cloud/storage.rules"
   },
