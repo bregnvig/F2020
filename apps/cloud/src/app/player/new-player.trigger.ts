@@ -3,6 +3,7 @@ import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMessage } from '../../lib';
+import { log } from 'firebase-functions/logger';
 ;
 
 export const newPlayerTrigger = region('europe-west1').firestore.document('players/{playerId}')
@@ -11,7 +12,7 @@ export const newPlayerTrigger = region('europe-west1').firestore.document('playe
     const db = firestore();
     const newPlayer: Player = snapshot.data() as Player;
     const admins = (await db.collection('players').where('roles', 'array-contains', 'admin').get()).docs.map(d => d.data()) as Player[];
-    console.log(`Found ${admins.length} admins`);
+    log(`Found ${admins.length} admins`);
 
     return Promise.all(admins
       .filter(a => a.tokens && a.tokens.length)

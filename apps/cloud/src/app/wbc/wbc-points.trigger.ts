@@ -4,6 +4,7 @@ import { DocumentReference } from 'firebase-admin/firestore';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL } from '../../lib';
+import { log } from 'firebase-functions/logger';
 ;
 
 const db = firestore();
@@ -44,7 +45,7 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
       points: bid.points && wbcPoints[index] || 0
     }))
   };
-  bids.forEach((b, index) => console.log(b.player?.displayName, 'Points ', b.points, 'WBC', wbcPoints[index]));
+  bids.forEach((b, index) => log(b.player?.displayName, 'Points ', b.points, 'WBC', wbcPoints[index]));
 
   ref.get()
     .then(doc => doc.data())
@@ -57,5 +58,5 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
         results
       }
     }, { merge: true }))
-    .then(() => console.log(`WBC points distributed for ${race.name}`));
+    .then(() => log(`WBC points distributed for ${race.name}`));
 };

@@ -45,7 +45,6 @@ const buildRollback = async (round: string) => {
   const winners = bids.filter(b => b.points === winnerPoints);
   const winningPrice = Math.floor(bids.length * 20 / winners.length);
 
-
   return db.runTransaction(transaction => {
     winners.forEach(winner => {
       transferInTransaction({
@@ -61,7 +60,7 @@ const buildRollback = async (round: string) => {
       transaction.set(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${withOutPoints.player.uid}`), withOutPoints);
     });
     transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'closed', result: null });
-    return Promise.resolve(`Result submitted`);
+    return Promise.resolve(`Rolled back result`);
   });
 
 

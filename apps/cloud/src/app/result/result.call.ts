@@ -1,26 +1,30 @@
 import { Bid } from '@f2020/data';
+import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { calculateResult, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
+import { calculateResult, currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
 import { validateResult } from './../../lib/validate.service';
 ;
 import admin = require('firebase-admin');
-import { firestore } from 'firebase-admin';
 
-export const submitResult = region('europe-west1').https.onCall(async (data: Bid, context) => {
+export const submitResult = region('europe-west1').https.onCall(async (data: { round: number, result: Bid; }, context) => {
   return validateAccess(context.auth?.uid, 'admin')
-    .then(() => buildResult(data))
+    .then(() => buildResult(data.round, data.result))
     .then(() => true)
     .catch(internalError);
 });
 
-const buildResult = async (result: Bid) => {
+const buildResult = async (ruond: number, result: Bid) => {
   const season = await currentSeason();
-  const race = await getCurrentRace('closed');
+  const race = await getRaceByRound(ruond);
   const bookie = await getBookie();
 
   if (!season || !race) {
     throw logAndCreateError('not-found', 'Season or race', season?.name, race?.name);
+  }
+
+  if (race.state !== 'closed') {
+    throw logAndCreateError('failed-precondition', 'Race must be closed before submitting result', race?.name);
   }
 
   validateResult(result, race);

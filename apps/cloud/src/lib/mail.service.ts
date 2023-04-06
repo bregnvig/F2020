@@ -1,3 +1,4 @@
+import { log, error } from 'firebase-functions/logger';
 import { config } from 'firebase-functions/v1';
 import * as nodemailer from 'nodemailer';
 ;
@@ -31,10 +32,10 @@ export const sendMail = async (emailAddress: string, subject: string, body: stri
       transporter.sendMail(
         msg, (error, info) => {
           if (error) {
-            console.log(`error: ${error}`);
+            error(`error: ${error}`);
             reject(error);
           } else {
-            console.log(`Message Sent 
+            log(`Message Sent 
                           ${info.response}`);
             resolve(`Message Sent  
                           ${info.response}`);

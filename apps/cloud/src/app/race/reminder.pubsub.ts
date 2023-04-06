@@ -1,4 +1,5 @@
 import { IRace, Player } from '@f2020/data';
+import { log } from 'firebase-functions/logger';
 import { pubsub } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
@@ -43,14 +44,14 @@ export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
         const closeDay = dayNames.get(race!.close.setLocale('da').toFormat('E'))!;
         const closeTime = race!.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
         return Promise.all(players.map(player => {
-          console.log(`Should mail to ${player.displayName}`);
+          log(`Should mail to ${player.displayName}`);
           const results = [
             sendMail(player.email, `Tid til at spille på det ${race!.name} `, mailBody(player, race!, closeDay, closeTime)).then((msg) => {
-              console.log(`sendMail result :(${msg})`);
+              log(`sendMail result :(${msg})`);
             })
           ];
           if (player.tokens && player.tokens.length) {
-            console.log(`Should send message to ${player.displayName}`);
+            log(`Should send message to ${player.displayName}`);
             results.push(sendMessage(player.tokens, `Husk at spille`, messageBody(race!, closeDay, closeTime)));
           }
           return Promise.all(results);
@@ -59,7 +60,7 @@ export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
       return Promise.resolve(true);
     })
     .catch(() => {
-      console.log('No open race');
+      log('No open race');
       return Promise.resolve(true);
     })
   );

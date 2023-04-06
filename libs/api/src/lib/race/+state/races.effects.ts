@@ -134,11 +134,13 @@ export class RacesEffects {
 
   submitResult$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.submitResult),
-    concatMap(() => this.facade.result$.pipe(
-      switchMap(result => this.service.submitResult(result)
+    withLatestFrom(this.facade.selectedRace$),
+    concatMap(([, race]) => this.facade.result$.pipe(
+      switchMap(result => this.service.submitResult(race.round, result)
         .then(() => RacesActions.submitResultSuccess())
         .catch(error => RacesActions.submitResultFailure({ error }))
-      ))
+      ),
+      first()),
     )
   ));
 

@@ -5,6 +5,7 @@ import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { playersURL } from '../../lib';
 import { logAndCreateError } from './../../lib/firestore-utils';
+import { log } from 'firebase-functions/logger';
 ;
 
 const db = firestore();
@@ -25,10 +26,10 @@ export const balanceTrigger = region('europe-west1').firestore.document('transac
           throw logAndCreateError('not-found', `From uid: ${transaction.from} was not found`);
         } else if (ref.exists) {
           const player = ref.data()!;
-          console.log(`Withdrawing ${transaction.amount.toFixed(2)} from ${player.displayName}`);
+          log(`Withdrawing ${transaction.amount.toFixed(2)} from ${player.displayName}`);
           firestoreTransaction.update(from, { balance: (player.balance || 0) - transaction.amount });
         } else {
-          console.log('From non migrated user', transaction.from);
+          log('From non migrated user', transaction.from);
         }
       }
       if (to) {
@@ -37,10 +38,10 @@ export const balanceTrigger = region('europe-west1').firestore.document('transac
           throw logAndCreateError('not-found', `To uid: ${transaction.to} was not found`);
         } else if (ref.exists) {
           const player = ref.data()!;
-          console.log(`Depositing ${transaction.amount.toFixed(2)} to ${player.displayName}`);
+          log(`Depositing ${transaction.amount.toFixed(2)} to ${player.displayName}`);
           firestoreTransaction.update(to, { balance: (player.balance || 0) + transaction.amount });
         } else {
-          console.log('To non migrated user', transaction.to);
+          log('To non migrated user', transaction.to);
         }
       }
       return Promise.resolve(true);

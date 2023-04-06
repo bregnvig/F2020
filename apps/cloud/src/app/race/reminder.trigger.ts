@@ -16,7 +16,7 @@ export const almostTimeTrigger = region('europe-west1').firestore.document('seas
     const before = change.before.data() as Bid;
     const after = change.after.data() as Bid;
     const race = await getCurrentRace('open');
-    if (race.close.diffNow('hours').hours < 1 && before.submitted === false && after.submitted === true) {
+    if (race?.close.diffNow('hours').hours < 1 && before.submitted === false && after.submitted === true) {
       await almostTimeReminder(race, after.player);
     }
     return Promise.resolve(true);

@@ -3,6 +3,7 @@ import { firestore } from 'firebase-admin';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { racesURL, seasonsURL, updateRace } from '../../lib';
+import { log } from 'firebase-functions/logger';
 ;
 
 const db = firestore();
@@ -20,7 +21,7 @@ export const openRace = region('europe-west1').firestore.document('seasons/{seas
         .then(snapshot => snapshot.exists ? snapshot.data() as IRace : null);
 
       if (nextRace) {
-        console.log(`Opening ${nextRace.name}`);
+        log(`Opening ${nextRace.name}`);
         return updateRace(nextRace.season, nextRace.round, { state: 'open' });
       }
     }

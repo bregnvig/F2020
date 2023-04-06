@@ -2,7 +2,6 @@ import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { internalError, logAndCreateError, validateAccess } from "../../lib";
 import { transfer } from '../../lib/transactions.service';
-;
 
 interface DepositData {
   amount: number;

@@ -2,6 +2,7 @@ import { WBC, WBCResult } from '@f2020/data';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail, sendMessage } from '../../lib';
+import { log } from 'firebase-functions/logger';
 ;
 
 const mailbody = (playerName: any, wbcPoints: number, raceName: any) =>
@@ -21,17 +22,17 @@ export const resultNotificationTrigger = region('europe-west1').firestore.docume
     const after: WBC = change.after.data()?.wbc || [];
     if ((after.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {
       const result: WBCResult = after.results[after.results.length - 1];
-      console.log('Race', result.raceName, 'Is now completed- lets send a result mails');
+      log('Race', result.raceName, 'Is now completed- lets send a result mails');
       return Promise.all(result.players.map(element => {
         const sendWBCResult = (place: string) => {
           const notifications = [
             sendMail(element.player.email, place, mailbody(element.player.displayName, element.points, result.raceName)).then((msg) => {
-              console.log(`Mail result :(${msg})`);
+              log(`Mail result :(${msg})`);
             })
           ];
           if (element.player.tokens?.length) {
             notifications.push(sendMessage(element.player.tokens, place, messageBody(result.raceName, element.points)).then((msg) => {
-              console.log(`Message result :(${msg})`);
+              log(`Message result :(${msg})`);
             }));
           }
           return Promise.all(notifications);

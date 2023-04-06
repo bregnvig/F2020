@@ -59,7 +59,7 @@
       "options": {
         "commands": [
           "node -e 'setTimeout(()=>{},5000)'",
-          "firebase functions:config:get > dist/apps/cloud/.runtimeconfig.json"
+          "cp apps/cloud/.runtimeconfig.json dist/apps/cloud/.runtimeconfig.json"
         ],
         "parallel": false
       }

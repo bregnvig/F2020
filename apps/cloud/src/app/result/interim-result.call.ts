@@ -6,6 +6,7 @@ import { validateInterimResult } from './../../lib/validate.service';
 ;
 import admin = require('firebase-admin');
 import { firestore } from 'firebase-admin';
+import { log } from 'firebase-functions/logger';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -62,10 +63,10 @@ const buildResult = async (result: Partial<Bid>) => {
   }).then(() => {
     const players = calculatedResults.map(cr => cr.player!);
     return Promise.all(players.map(player => {
-      console.log(`Should mail to ${player.displayName}`);
+      log(`Should mail to ${player.displayName}`);
       const results = [sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults))];
       if (player.tokens && player.tokens.length) {
-        console.log(`Should send message to ${player.displayName}`);
+        log(`Should send message to ${player.displayName}`);
         results.push(sendMessage(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK'));
       }
     }));

@@ -2,6 +2,7 @@ import { Player } from '@f2020/data';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail } from '../../lib';
+import { log } from 'firebase-functions/logger';
 ;
 
 
@@ -20,9 +21,9 @@ export const WelcomeMailTrigger = region('europe-west1').firestore.document('pla
     const before: Player = change.before.data() as Player;
     const after: Player = change.after.data() as Player;
     if (before.roles?.includes('anonymous') && after.roles?.includes('player')) {
-      console.log('player', after.displayName, 'Is now approved - lets send a welcome mail');
+      log('player', after.displayName, 'Is now approved - lets send a welcome mail');
       return sendMail(after.email, 'Velkommen til F1 2020 Betting', mailbody(after)).then((msg) => {
-        console.log(`sendMail result :(${msg})`);
+        log(`sendMail result :(${msg})`);
       });
     }
     return null;

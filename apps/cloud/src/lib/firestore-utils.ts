@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase-admin/firestore';
+import { error } from 'firebase-functions/logger';
 import { HttpsError } from 'firebase-functions/v1/https';
 import { FunctionsErrorCodeCore } from 'firebase/functions';
 import { DateTime } from 'luxon';
@@ -11,7 +12,7 @@ export const internalError = (errorMessage: any) => {
 };
 
 export const logAndCreateError = (httpError: FunctionsErrorCodeCore, message: string, ...additional: any[]): HttpsError => {
-  console.error(message, ...additional);
+  error(message, ...additional);
   return new HttpsError(httpError, message);
 };
 
