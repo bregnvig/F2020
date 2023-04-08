@@ -1,5 +1,6 @@
 import { Bid } from '@f2020/data';
 import { firestore } from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
@@ -21,7 +22,6 @@ const resetPoints = (bid: Bid): Bid => {
 export const rollbackResult = region('europe-west1').https.onCall(async (round: string, context) => {
   return validateAccess(context.auth?.uid, 'admin')
     .then(() => buildRollback(round))
-    .then(() => true)
     .catch(internalError);
 });
 
@@ -59,7 +59,7 @@ const buildRollback = async (round: string) => {
     bids.map(resetPoints).forEach(withOutPoints => {
       transaction.set(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${withOutPoints.player.uid}`), withOutPoints);
     });
-    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'closed', result: null });
+    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'closed', result: FieldValue.delete() });
     return Promise.resolve(`Rolled back result`);
   });
 
