@@ -16,13 +16,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { PlayerActions, PlayerApiModule, PlayerFacade, RaceApiModule, SeasonApiModule } from '@f2020/api';
 import { DriverModule } from '@f2020/driver';
-import { initializeFontAwesomeFactory, SharedModule } from '@f2020/shared';
+import { SharedModule, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { initializeApp } from "firebase/app";
 import 'firebase/auth';
+import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import 'firebase/firestore';
 import { connectFirestoreEmulator } from 'firebase/firestore';
 import { getToken, onMessage } from 'firebase/messaging';
@@ -59,6 +60,8 @@ const materialModule = [
       if (environment.useEmulator) {
         connectFirestoreEmulator(db, 'localhost', 8080);
         console.warn('Using firestore emulator');
+        connectAuthEmulator(getAuth(), 'http://localhost:9099');
+        console.warn('Using auth emulator');
       }
       return db;
     }),
