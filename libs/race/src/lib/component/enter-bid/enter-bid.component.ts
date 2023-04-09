@@ -3,29 +3,31 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
 import { IRace, ITeam } from '@f2020/data';
-import { AbstractSuperComponent } from '@f2020/shared';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
-import { debounceTime, filter, first, pairwise, switchMapTo, tap } from 'rxjs/operators';
+import { debounceTime, filter, first, pairwise, switchMap, switchMapTo, tap } from 'rxjs/operators';
 
+@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'f2020-enter-bid',
   templateUrl: './enter-bid.component.html',
   styleUrls: ['./enter-bid.component.scss']
 })
-export class EnterBidComponent extends AbstractSuperComponent implements OnInit {
+export class EnterBidComponent implements OnInit {
 
   bidControl: FormControl = new FormControl();
   race$: Observable<IRace>;
   teams$: Observable<ITeam[]>;
   updating$: Observable<boolean>;
 
+  private subscriptions = [];
+
   constructor(
     private facade: RacesFacade,
     private teamsService: TeamService,
     private router: Router) {
-    super();
   }
 
   ngOnInit(): void {
@@ -53,7 +55,7 @@ export class EnterBidComponent extends AbstractSuperComponent implements OnInit 
       this.updating$.pipe(
         pairwise(),
         filter(([previous, current]) => previous && current === false),
-        switchMapTo(this.race$),
+        switchMap(() => this.race$),
       ).subscribe(race => this.router.navigate([race.season, 'race', race.round])),
       this.facade.error$.pipe(
         filter(error => !!error),

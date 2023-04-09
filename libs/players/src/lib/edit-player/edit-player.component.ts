@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { PlayersActions, PlayersApiService, PlayersFacade } from '@f2020/api';
 import { Player, Role } from '@f2020/data';
-import { AbstractSuperComponent } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { first, pluck, switchMap, map } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 
+@UntilDestroy()
 @Component({
   templateUrl: './edit-player.component.html',
   styleUrls: ['./edit-player.component.scss']
 })
-export class EditPlayerComponent extends AbstractSuperComponent implements OnInit {
+export class EditPlayerComponent implements OnInit {
 
   player$: Observable<Player>;
   fg: FormGroup;
@@ -25,7 +26,6 @@ export class EditPlayerComponent extends AbstractSuperComponent implements OnIni
     private playerService: PlayersApiService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder) {
-    super();
   }
 
   ngOnInit(): void {
@@ -40,8 +40,8 @@ export class EditPlayerComponent extends AbstractSuperComponent implements OnIni
     });
     this.player$ = this.facade.selectedPlayer$;
     this.route.params.pipe(
-      pluck<Params, string>('id'),
-      this.takeUntilDestroyed(),
+      map(params => params['id']),
+      untilDestroyed(this),
     ).subscribe(uid => this.facade.dispatch(PlayersActions.selectPlayer({ uid })));
     this.player$.pipe(
       truthy(),

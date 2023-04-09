@@ -1,26 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { SeasonFacade, PlayerFacade } from '@f2020/api';
+import { PlayerFacade, SeasonFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { AbstractSuperComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WBCGraph } from '../../model/wbc-graph.model';
 import { WBCGraphEntry } from './../../model/wbc-graph.model';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-wbc-graph',
   templateUrl: './wbc-graph.component.html',
   styleUrls: ['./wbc-graph.component.scss']
 })
-export class WbcGraphComponent extends AbstractSuperComponent implements OnInit {
+export class WbcGraphComponent implements OnInit {
 
   data: any[];
   activeEntries: any[] = [];
   playerEntris: WBCGraphEntry[];
 
   constructor(private facade: SeasonFacade, private playerFacade: PlayerFacade) {
-    super();
   }
 
   ngOnInit(): void {
@@ -36,12 +36,12 @@ export class WbcGraphComponent extends AbstractSuperComponent implements OnInit 
         })))),
       this.playerFacade.player$
     ]).pipe(
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(([entries, player]) => {
       this.data = entries;
       this.activeEntries = entries.filter(e => e.name === player.displayName);
     });
-    graph$.pipe(this.takeUntilDestroyed()).subscribe(players => this.playerEntris = [...players.entries].sort((a, b) => b.points - a.points));
+    graph$.pipe(untilDestroyed(this)).subscribe(players => this.playerEntris = [...players.entries].sort((a, b) => b.points - a.points));
   }
 
   toggle(player: Player) {

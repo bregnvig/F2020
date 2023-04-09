@@ -5,14 +5,15 @@ import { Bid, IRace } from '@f2020/data';
 import { RacesFacade, RacesActions } from '@f2020/api';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
-import { AbstractSuperComponent } from '@f2020/shared';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-display-player-bid',
   templateUrl: './display-player-bid.component.html',
   styleUrls: ['./display-player-bid.component.scss']
 })
-export class DisplayPlayerBidComponent extends AbstractSuperComponent implements OnInit {
+export class DisplayPlayerBidComponent implements OnInit {
 
   bidControl = new FormControl({ value: null, disabled: true });
   bid$: Observable<Partial<Bid>>;
@@ -21,12 +22,11 @@ export class DisplayPlayerBidComponent extends AbstractSuperComponent implements
   constructor(
     private facade: RacesFacade,
     private route: ActivatedRoute) {
-    super();
   }
 
   ngOnInit(): void {
     this.route.params.pipe(
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(({ uid }) => {
       this.facade.dispatch(RacesActions.loadBid({ uid }));
     });
@@ -37,7 +37,7 @@ export class DisplayPlayerBidComponent extends AbstractSuperComponent implements
     ]).pipe(
       filter(([bid, { uid }]) => bid && bid.player.uid === uid),
       map(([bid]) => bid),
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     );
     this.bid$.subscribe(bid => this.bidControl.patchValue(bid));
   }

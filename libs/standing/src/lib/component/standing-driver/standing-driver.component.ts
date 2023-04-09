@@ -2,18 +2,20 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { SeasonFacade } from '@f2020/api';
 import { IDriverResult, IQualifyResult } from '@f2020/data';
-import { AbstractSuperComponent, icon } from '@f2020/shared';
-import { combineLatest, Observable } from 'rxjs';
+import { icon } from '@f2020/shared';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable, combineLatest } from 'rxjs';
 import { map, pluck, share, switchMap } from 'rxjs/operators';
 import { StandingService } from '../../service/standing.service';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-standing-driver',
   templateUrl: './standing-driver.component.html',
   styleUrls: ['./standing-driver.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StandingDriverComponent extends AbstractSuperComponent implements OnInit {
+export class StandingDriverComponent implements OnInit {
 
   currentSeasonResult$: Observable<IDriverResult>;
   currentSeasonQualifying$: Observable<IQualifyResult[]>;
@@ -29,14 +31,13 @@ export class StandingDriverComponent extends AbstractSuperComponent implements O
     private route: ActivatedRoute,
     private service: StandingService,
     private seasonFacade: SeasonFacade) {
-    super();
   }
 
   ngOnInit(): void {
     this.driverId$ = this.route.params.pipe(pluck<Params, string>('driverId'));
     this.seasonFacade.season$.pipe(
       map(season => parseInt(season.id, 10)),
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(year => {
       this.currentYear = year;
       this.previousYear = year - 1;

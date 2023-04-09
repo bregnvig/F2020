@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PlayerFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { AbstractSuperComponent, icon } from '@f2020/shared';
+import { icon } from '@f2020/shared';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-my-transactions',
   template: `
@@ -25,19 +27,17 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
   `,
   styleUrls: ['./my-transactions.component.scss']
 })
-export class MyTransactionsComponent extends AbstractSuperComponent implements OnInit {
+export class MyTransactionsComponent implements OnInit {
 
   player$: Observable<Player>;
   icon = icon.farPiggyBank;
 
-  constructor(private facade: PlayerFacade, private dialog: MatDialog) {
-    super();
-  }
+  constructor(private facade: PlayerFacade, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.player$ = this.facade.player$.pipe(
       filter(player => !!player),
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     );
   }
 

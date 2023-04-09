@@ -3,17 +3,19 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
-import { AbstractSuperComponent } from '@f2020/shared';
+
 import { shareLatest, truthy } from '@f2020/tools';
-import { combineLatest, Observable } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable, combineLatest } from 'rxjs';
 import { filter, mapTo, pairwise } from 'rxjs/operators';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-submit-result',
   templateUrl: './submit-result.component.html',
   styleUrls: ['./submit-result.component.scss']
 })
-export class SubmitResultComponent extends AbstractSuperComponent implements OnInit {
+export class SubmitResultComponent implements OnInit {
 
   resultControl: FormControl = new FormControl();
   race$: Observable<IRace>;
@@ -24,7 +26,6 @@ export class SubmitResultComponent extends AbstractSuperComponent implements OnI
   constructor(
     private facade: RacesFacade,
     private router: Router) {
-    super();
   }
 
   ngOnInit(): void {
@@ -40,16 +41,17 @@ export class SubmitResultComponent extends AbstractSuperComponent implements OnI
     ]).pipe(
       mapTo(true)
     );
-    this.subscriptions.push(
-      this.facade.result$.subscribe(result => {
-        this.result = result;
-        this.resultControl.patchValue(result || {}, { emitEvent: false });
-      }),
-      this.updating$.pipe(
-        pairwise(),
-        filter(([previous, current]) => previous && current === false) ,
-      ).subscribe(() => this.router.navigate(['/'])),
-    );
+    this.facade.result$.pipe(
+      untilDestroyed(this),
+    ).subscribe(result => {
+      this.result = result;
+      this.resultControl.patchValue(result || {}, { emitEvent: false });
+    });
+    this.updating$.pipe(
+      pairwise(),
+      filter(([previous, current]) => previous && current === false),
+      untilDestroyed(this),
+    ).subscribe(() => this.router.navigate(['/']));
   }
 
   submitResult() {

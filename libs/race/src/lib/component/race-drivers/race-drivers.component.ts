@@ -5,11 +5,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
 import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
-import { AbstractSuperComponent, icon } from '@f2020/shared';
+import { icon } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { filter, first, map, pairwise, switchMap } from 'rxjs/operators';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
 
 const message = (driverName: string, operation: Operation) => {
@@ -20,12 +20,13 @@ const message = (driverName: string, operation: Operation) => {
   }
 };
 
+@UntilDestroy()
 @Component({
   selector: 'race-drivers',
   templateUrl: './race-drivers.component.html',
   styleUrls: ['./race-drivers.component.scss']
 })
-export class RaceDriversComponent extends AbstractSuperComponent implements OnInit {
+export class RaceDriversComponent implements OnInit {
 
   drivers: string[];
   race$: Observable<IRace>;
@@ -39,7 +40,6 @@ export class RaceDriversComponent extends AbstractSuperComponent implements OnIn
     private driverFacade: DriversFacade,
     private dialog: MatDialog,
     private snackBar: MatSnackBar) {
-    super();
   }
 
   ngOnInit(): void {
@@ -55,11 +55,11 @@ export class RaceDriversComponent extends AbstractSuperComponent implements OnIn
     this.race$.pipe(
       map(race => race.drivers || []),
       first(),
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(_drivers => this.drivers = [..._drivers]);
     updated$.pipe(
       switchMap(() => allDriver$.pipe(map(drivers => drivers.find(driver => driver.driverId === this.driverId)))),
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(driver => {
       if (this.operation !== 'undo') {
         this.snackBar.open(message(driver.name, this.operation), 'UNDO', { duration: 5000 }).onAction().pipe(

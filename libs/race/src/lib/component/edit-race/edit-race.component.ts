@@ -3,15 +3,16 @@ import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
 import { IRace, ITeam } from '@f2020/data';
-import { AbstractSuperComponent } from '@f2020/shared';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { falshy, truthy } from '@f2020/tools';
 import { Observable, combineLatest, first, map, switchMap } from 'rxjs';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-edit-race',
   templateUrl: './edit-race.component.html',
 })
-export class EditRaceComponent extends AbstractSuperComponent implements OnInit {
+export class EditRaceComponent implements OnInit {
 
   race$: Observable<IRace>;
   selectedDriver$: Observable<{ teams: ITeam[], drivers: string[]; }>;
@@ -25,7 +26,6 @@ export class EditRaceComponent extends AbstractSuperComponent implements OnInit 
     private facade: RacesFacade,
     private snackBar: MatSnackBar,
     teamService: TeamService) {
-    super();
     this.race$ = facade.selectedRace$;
 
     this.selectedDriver$ = combineLatest({
@@ -38,7 +38,7 @@ export class EditRaceComponent extends AbstractSuperComponent implements OnInit 
 
   ngOnInit(): void {
     this.race$.pipe(
-      this.takeUntilDestroyed()
+      untilDestroyed(this),
     ).subscribe(race => {
       this.fg.reset({
         selectedDriver: race.selectedDriver,
