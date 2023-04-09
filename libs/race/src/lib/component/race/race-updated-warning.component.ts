@@ -14,7 +14,7 @@ import { icon } from '@f2020/shared';
         <p *ngFor="let updatedBy of race.updatedBy" class="flex flex-row items-center">
           <img [src]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName">
           <span>
-            Har ændret 
+            {{updatedBy.player.displayName}} har ændret 
             <span *ngIf="updatedBy.close">&nbsp;lukke tidspunktet til {{updatedBy.close | dateTime: 'shortTime'}}</span>
             <span *ngIf="updatedBy.close && updatedBy.selectedDriver">&nbsp;og</span>
             <span *ngIf="updatedBy.selectedDriver">&nbsp;udvalgte kører til {{updatedBy.selectedDriver | driverName}}</span>
