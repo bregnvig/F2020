@@ -13,11 +13,14 @@ import { icon } from '@f2020/shared';
         <mat-card-content>
         <p *ngFor="let updatedBy of race.updatedBy" class="flex flex-row items-center">
           <img [src]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName">
-          <span>
-            {{updatedBy.player.displayName}} har ændret 
-            <span *ngIf="updatedBy.close">&nbsp;lukke tidspunktet til {{updatedBy.close | dateTime: 'shortTime'}}</span>
-            <span *ngIf="updatedBy.close && updatedBy.selectedDriver">&nbsp;og</span>
-            <span *ngIf="updatedBy.selectedDriver">&nbsp;udvalgte kører til {{updatedBy.selectedDriver | driverName}}</span>
+          <span class="ml-2 flex flex-col">
+            <span>
+              {{updatedBy.player.displayName}} har ændret 
+              <span *ngIf="updatedBy.close">&nbsp;lukke tidspunktet til {{updatedBy.close | dateTime: 'shortTime'}}</span>
+              <span *ngIf="updatedBy.close && updatedBy.selectedDriver">&nbsp;og</span>
+              <span *ngIf="updatedBy.selectedDriver">&nbsp;udvalgte kører til {{updatedBy.selectedDriver | driverName}}</span>
+            </span>
+            <small class="text-slate-400">{{updatedBy.updatedAt | dateTime: 'short'}}</small>
           </span>
         </p>
         </mat-card-content>
