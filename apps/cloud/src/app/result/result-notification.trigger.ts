@@ -1,8 +1,8 @@
 import { WBC, WBCResult } from '@f2020/data';
+import { log } from 'firebase-functions/logger';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail, sendMessage } from '../../lib';
-import { log } from 'firebase-functions/logger';
 ;
 
 const mailbody = (playerName: any, wbcPoints: number, raceName: any) =>
@@ -21,8 +21,8 @@ export const resultNotificationTrigger = region('europe-west1').firestore.docume
     const before: WBC = change.before.data()?.wbc || [];
     const after: WBC = change.after.data()?.wbc || [];
     if ((after.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {
-      const result: WBCResult = after.results[after.results.length - 1];
-      log('Race', result.raceName, 'Is now completed- lets send a result mails');
+      const result: WBCResult = after.results.find(r => !before.results.some(({ round }) => round === r.round));
+      log('Race', result.raceName, 'Is now completed - lets send notifications');
       return Promise.all(result.players.map(element => {
         const sendWBCResult = (place: string) => {
           const notifications = [
@@ -38,7 +38,7 @@ export const resultNotificationTrigger = region('europe-west1').firestore.docume
           return Promise.all(notifications);
         };
         if ([12, 10, 8, 6, 4, 2, 1].indexOf(element.points) > -1) {
-          return sendWBCResult('🙃 Selvom du ikke kom i top tre - så fik du da points :-)');
+          return sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
         }
         if (element.points === 25) {
           return sendWBCResult('🥇 Tillykke med din første plads :-)');
