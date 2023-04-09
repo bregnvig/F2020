@@ -8,6 +8,6 @@ import { icon } from '@f2020/shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WhatElseComponent {
-  icon = icon.falRocketLaunch;
+  icon = icon.farEgg;
   edit = icon.farInfo;
 }
