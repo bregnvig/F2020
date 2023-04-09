@@ -1,6 +1,5 @@
 import { Player } from '@f2020/data';
 import { Action, createReducer, on } from '@ngrx/store';
-import * as equal from 'fast-deep-equal/es6';
 import { PlayerActions } from './player.actions';
 
 
@@ -33,13 +32,7 @@ const playerReducer = createReducer(
   on(PlayerActions.loadPlayerSuccess, (state, { player }) =>
     ({ ...state, loading: false, loaded: true, unauthorized: false, authorized: true, player })
   ),
-  on(PlayerActions.updatePlayerSuccess, (state, { partialPlayer }) => {
-    const newPlayer = { ...state.player, ...partialPlayer };
-    if (equal(newPlayer, state.player) === false) {
-      return ({ ...state, player: { ...state.player, ...partialPlayer } });
-    }
-    return state;
-  }),
+  on(PlayerActions.updatePlayerSuccess, (state, { partialPlayer }) => ({ ...state, player: { ...state.player, ...partialPlayer } })),
   on(PlayerActions.joinWBC, PlayerActions.undoWBC, state => ({ ...state, updatingWBC: true })),
   on(PlayerActions.joinWBCSuccess, PlayerActions.undoWBCSuccess, state => ({ ...state, updatingWBC: false })),
   on(PlayerActions.loadPlayerUnauthorized, PlayerActions.logoutPlayerSuccess, state => ({ ...state, unauthorized: true, authorized: false, loading: false })),
