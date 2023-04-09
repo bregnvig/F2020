@@ -32,7 +32,7 @@ export interface WeatherDay {
 })
 export class WeatherService {
 
-  readonly weather$: Observable<any>;
+  readonly weather$: Observable<WeatherDay[]>;
 
   constructor(private facade: RacesFacade, http: HttpClient) {
     const weather$ = this.facade.currentRace$.pipe(
@@ -53,8 +53,7 @@ export class WeatherService {
     ]).pipe(
       map(([race, days]) => {
         const daysInvolved = [race.close.startOf('day'), race.close.startOf('day').plus({ day: 1 }), race.close.startOf('day').plus({ day: 2 })];
-        const result = days.filter(day => daysInvolved.some(i => Math.floor(day.date.diff(i, 'days').days) === 0));
-        return result.length ? result : days.slice(days.length - 4);
+        return days.filter(day => daysInvolved.some(i => Math.floor(day.date.diff(i, 'days').days) === 0));
       })
     );
   }
