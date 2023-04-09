@@ -95,6 +95,9 @@
         },
         "development": {
           "browserTarget": "ui:build:development"
+        },
+        "test": {
+          "browserTarget": "ui:build:test"
         }
       },
       "defaultConfiguration": "development"
