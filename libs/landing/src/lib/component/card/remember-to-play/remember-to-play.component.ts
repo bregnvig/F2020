@@ -3,7 +3,7 @@ import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
-import { debounce, filter, tap } from 'rxjs/operators';
+import { debounce, debounceTime, filter, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-remember-to-play',
@@ -23,6 +23,7 @@ export class RememberToPlayComponent implements OnInit {
     this.race$ = this.facade.currentRace$.pipe(
       filter(race => race?.close > DateTime.local()),
       debounce(() => this.facade.yourBid$.pipe(filter(bid => bid && !bid.submitted))),
+      debounceTime(0),
       tap(() => this.isHidden = false),
     );
   }

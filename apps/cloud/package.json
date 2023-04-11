@@ -7,7 +7,7 @@
     "serve": "npm run build && firebase emulators:start --config=firebase.json --export-on-exit=./saved-data --import=./saved-data",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions --config firebase.json",
+    "deploy": "firebase deploy --config firebase.json --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {

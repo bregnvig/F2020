@@ -48,7 +48,7 @@ export class WeatherService {
       }))),
     );
     this.weather$ = combineLatest([
-      this.facade.currentRace$,
+      this.facade.currentRace$.pipe(truthy()),
       weather$
     ]).pipe(
       map(([race, days]) => {

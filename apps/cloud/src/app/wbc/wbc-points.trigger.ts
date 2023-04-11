@@ -1,10 +1,10 @@
 import { Bid, IRace, ISeason, Player, WBCResult } from '@f2020/data';
 import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
+import { log } from 'firebase-functions/logger';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { racesURL, seasonsURL } from '../../lib';
-import { log } from 'firebase-functions/logger';
+import { internalError, racesURL, seasonsURL } from '../../lib';
 ;
 
 const db = firestore();
@@ -45,7 +45,7 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
       points: bid.points && wbcPoints[index] || 0
     }))
   };
-  bids.forEach((b, index) => log(b.player?.displayName, 'Points ', b.points, 'WBC', wbcPoints[index]));
+  result.players.forEach((b, index) => log(b.player?.displayName, 'Points ', bids[index].points, 'WBC', wbcPoints[index]));
 
   ref.get()
     .then(doc => doc.data())
@@ -58,5 +58,6 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
         results
       }
     }, { merge: true }))
-    .then(() => log(`WBC points distributed for ${race.name}`));
+    .then(() => log(`WBC points distributed for ${race.name}`))
+    .catch(internalError);
 };
