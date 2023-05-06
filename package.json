@@ -73,7 +73,7 @@
     "core-js": "^2.5.4",
     "firebase": "^9.17.1",
     "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.1",
+    "firebase-functions": "^4.3.1",
     "luxon": "^3.2.1",
     "ngx-infinite-scroll": "^15.0.0",
     "ngx-mat-timepicker": "^15.1.6",
