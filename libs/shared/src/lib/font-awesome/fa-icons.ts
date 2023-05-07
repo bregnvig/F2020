@@ -21,6 +21,7 @@ type Icon =
   | 'farUserPlus'
   | 'farFaceSadCry'
   | 'farEgg'
+  | 'farPen'
   | 'fasHome'
   | 'fasFlagCheckered'
   | 'fasCoins'
@@ -55,6 +56,7 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farPlus: ['far', 'plus'],
   farUserPlus: ['far', 'user-plus'],
   farEgg: ['far', 'egg'],
+  farPen: ['far', 'pen'],
   fasHome: ['fas', 'home'],
   fasFlagCheckered: ['fas', 'flag-checkered'],
   fasCoins: ['fas', 'coins'],

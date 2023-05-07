@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { icon } from '@f2020/shared';
 
 @Component({
@@ -8,6 +8,12 @@ import { icon } from '@f2020/shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WhatElseComponent {
-  icon = icon.farEgg;
-  edit = icon.farInfo;
+
+  @HostBinding('hidden') isHidden = localStorage.getItem('what-else') === '1';
+  icon = icon.falRocketLaunch;
+
+  dismissMessage() {
+    localStorage.setItem('what-else', '1');
+    this.isHidden = true;
+  }
 }

@@ -3,11 +3,12 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
 import { IRace, ITeam } from '@f2020/data';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { icon } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
-import { debounceTime, filter, first, pairwise, switchMap, switchMapTo, tap } from 'rxjs/operators';
+import { debounceTime, filter, first, pairwise, switchMap, tap } from 'rxjs/operators';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -21,6 +22,7 @@ export class EnterBidComponent implements OnInit {
   race$: Observable<IRace>;
   teams$: Observable<ITeam[]>;
   updating$: Observable<boolean>;
+  editIcon = icon.farPen;
 
   private subscriptions = [];
 
