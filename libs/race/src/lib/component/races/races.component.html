@@ -6,17 +6,7 @@
     <mat-list-item *ngFor="let race of races" [routerLink]="race.round.toString(10)">
       <img matListItemAvatar [src]="race | flagURL">
       <h3 matListItemTitle>{{race.name}}</h3>
-      <p matListItemLine [ngSwitch]="race.state">
-        <span *ngSwitchCase="'closed'">Afventer resultat</span>
-        <span *ngSwitchCase="'completed'">Afgjort</span>
-        <span *ngSwitchCase="'cancelled'">Aflyst</span>
-        <span *ngSwitchDefault>
-          <ng-container *ngIf="race.state === 'open'; else opensIn">
-            Lukker {{race.close | relativeToNow}}
-          </ng-container>
-          <ng-template #opensIn>Åbner {{race.open | relativeToNow}}</ng-template>
-        </span>
-      </p>
+      <p matListItemLine>{{race | raceStatus}}</p>
     </mat-list-item>
   </mat-action-list>
 </div>

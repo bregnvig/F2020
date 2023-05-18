@@ -60,6 +60,7 @@ const pipes = [
     PolePositionTimePipe,
     DatePipe,
     DateTimePipe,
+    RelativeToNowPipe,
   ],
   imports: [
     CommonModule,
