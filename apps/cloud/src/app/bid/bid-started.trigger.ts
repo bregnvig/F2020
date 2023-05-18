@@ -2,7 +2,7 @@ import { Bid, Player } from '@f2020/data';
 import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { sendMessage } from '../../lib';
+import { sendNotification } from '../../lib';
 ;
 
 export const newBidTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
@@ -20,5 +20,5 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
       .then(playerSnapshot => playerSnapshot.docs.map(d => d.data() as Player))
       .then(_players => _players.filter(allFilter));
 
-    return Promise.all(players.map(p => sendMessage(p.tokens!, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`)));
+    return Promise.all(players.map(p => sendNotification(p.tokens!, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`)));
   });    

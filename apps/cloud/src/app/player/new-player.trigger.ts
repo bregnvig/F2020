@@ -1,9 +1,9 @@
 import { Player } from '@f2020/data';
 import { firestore } from 'firebase-admin';
+import { log } from 'firebase-functions/logger';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { sendMessage } from '../../lib';
-import { log } from 'firebase-functions/logger';
+import { sendNotification } from '../../lib';
 ;
 
 export const newPlayerTrigger = region('europe-west1').firestore.document('players/{playerId}')
@@ -16,6 +16,6 @@ export const newPlayerTrigger = region('europe-west1').firestore.document('playe
 
     return Promise.all(admins
       .filter(a => a.tokens && a.tokens.length)
-      .map(a => sendMessage(a.tokens!, 'Ny spiller!', `${newPlayer.displayName} har tilmeldt sig!`))
+      .map(a => sendNotification(a.tokens!, 'Ny spiller!', `${newPlayer.displayName} har tilmeldt sig!`))
     );
   });

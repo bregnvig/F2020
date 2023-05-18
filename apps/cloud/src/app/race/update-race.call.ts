@@ -3,7 +3,7 @@ import { firestore } from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { PlayerImpl, currentSeason, firestoreUtils, getRaceByRound, getUser, internalError, logAndCreateError, sendMessage, validateAccess } from '../../lib';
+import { PlayerImpl, currentSeason, firestoreUtils, getRaceByRound, getUser, internalError, logAndCreateError, sendNotification, validateAccess } from '../../lib';
 
 export const updateRace = region('europe-west1').https.onCall(async (data: IRace, context) => {
   return validateAccess(context.auth?.uid, 'admin', 'player')
@@ -50,6 +50,6 @@ const notifyAdmin = async (updatedBy: Partial<RaceUpdatedBy>, raceName: string):
 
   return Promise.all(admins
     .filter(a => a.tokens && a.tokens.length)
-    .map(a => sendMessage(a.tokens!, `${raceName} er blevet opdateret`, `${updatedBy.player.displayName} har opdateret løb!${driver}${close}`))
+    .map(a => sendNotification(a.tokens!, `${raceName} er blevet opdateret`, `${updatedBy.player.displayName} har opdateret løb!${driver}${close}`))
   );
 };
