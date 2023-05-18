@@ -1,12 +1,12 @@
 import { Bid, IRace, Player } from '@f2020/data';
+import { firestore } from 'firebase-admin';
+import { log } from 'firebase-functions/logger';
 import { region } from 'firebase-functions/v1';
-import { currentSeason, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, sendMail, sendMessage, validateAccess } from '../../lib';
+import { currentSeason, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, sendMail, sendNotification, validateAccess } from '../../lib';
 import { calculateInterimResult } from './../../lib/result.service';
 import { validateInterimResult } from './../../lib/validate.service';
 ;
 import admin = require('firebase-admin');
-import { firestore } from 'firebase-admin';
-import { log } from 'firebase-functions/logger';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -67,7 +67,7 @@ const buildResult = async (result: Partial<Bid>) => {
       const results = [sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults))];
       if (player.tokens && player.tokens.length) {
         log(`Should send message to ${player.displayName}`);
-        results.push(sendMessage(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK'));
+        results.push(sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK'));
       }
     }));
   });

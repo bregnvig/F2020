@@ -9,11 +9,12 @@
       <p matListItemLine [ngSwitch]="race.state">
         <span *ngSwitchCase="'closed'">Afventer resultat</span>
         <span *ngSwitchCase="'completed'">Afgjort</span>
+        <span *ngSwitchCase="'cancelled'">Aflyst</span>
         <span *ngSwitchDefault>
-          <ng-container *ngIf="race.open > now; else closes">
-            Åbner {{race.open | relativeToNow}}
+          <ng-container *ngIf="race.state === 'open'; else opensIn">
+            Lukker {{race.close | relativeToNow}}
           </ng-container>
-          <ng-template #closes>Lukker {{race.close | relativeToNow}}</ng-template>
+          <ng-template #opensIn>Åbner {{race.open | relativeToNow}}</ng-template>
         </span>
       </p>
     </mat-list-item>

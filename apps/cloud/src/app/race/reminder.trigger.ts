@@ -5,7 +5,7 @@ import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid } from '../../lib';
 import { converter } from '../../lib/timestamp.converter';
-import { sendMessage } from './../../lib';
+import { sendNotification } from './../../lib';
 
 const messageBody = (race: IRace, player: Player): string =>
   `${player.displayName} har lige afgivet sit bud til ${race.name}, og du har ikke spillet endnu😱`;
@@ -27,7 +27,7 @@ const almostTimeReminder = async (race: IRace, player: Player) => {
     .filter(p => p.tokens?.length)
     .filter(p => p.almostTimeReminder?.diffNow('hours').hours > 24);
 
-  players.forEach(p => sendMessage(p.tokens, `${race.close.diffNow('minutes').minutes} minutter tilbage`, messageBody(race, player)));
+  players.forEach(p => sendNotification(p.tokens, `${race.close.diffNow('minutes').minutes} minutter tilbage`, messageBody(race, player)));
 
   const db = firestore();
   return db.runTransaction(transaction => {

@@ -2,7 +2,7 @@ import { messaging } from "firebase-admin";
 import { log } from "firebase-functions/logger";
 import { config } from "firebase-functions/v1";
 
-export const sendMessage = (tokens: string[], title: string, body: string, data?: { [key: string]: string; }): Promise<any> => {
+export const sendNotification = (tokens: string[], title: string, body: string, data?: { [key: string]: string; }): Promise<any> => {
   if (config().test) {
     return Promise.resolve('Send message/notification in test environment');
   }

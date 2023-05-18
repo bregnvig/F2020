@@ -3,7 +3,7 @@ import { log } from 'firebase-functions/logger';
 import { pubsub } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
-import { sendMessage } from './../../lib';
+import { sendNotification } from './../../lib';
 ;
 
 const timespan = (days: number, date: DateTime): boolean => {
@@ -52,7 +52,7 @@ export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
           ];
           if (player.tokens && player.tokens.length) {
             log(`Should send message to ${player.displayName}`);
-            results.push(sendMessage(player.tokens, `Husk at spille`, messageBody(race!, closeDay, closeTime)));
+            results.push(sendNotification(player.tokens, `Husk at spille`, messageBody(race!, closeDay, closeTime)));
           }
           return Promise.all(results);
         }));

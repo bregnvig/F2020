@@ -2,7 +2,7 @@ import { WBC, WBCResult } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { sendMail, sendMessage } from '../../lib';
+import { sendMail, sendNotification } from '../../lib';
 ;
 
 const mailbody = (playerName: any, wbcPoints: number, raceName: any) =>
@@ -31,7 +31,7 @@ export const resultNotificationTrigger = region('europe-west1').firestore.docume
             })
           ];
           if (element.player.tokens?.length) {
-            notifications.push(sendMessage(element.player.tokens, place, messageBody(result.raceName, element.points)).then((msg) => {
+            notifications.push(sendNotification(element.player.tokens, place, messageBody(result.raceName, element.points)).then((msg) => {
               log(`Message result :(${msg})`);
             }));
           }
