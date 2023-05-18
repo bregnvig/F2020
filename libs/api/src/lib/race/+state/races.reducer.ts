@@ -62,6 +62,7 @@ const racesReducer = createReducer(
     RacesActions.updateRaceDriversFailure,
     RacesActions.loadLastYearFailure,
     RacesActions.rollbackResultFailure,
+    RacesActions.cancelRaceFailure,
     RacesActions.updateYourBidFailure,
     (state, { type, error }) => {
       console.error(type, error);
@@ -92,6 +93,8 @@ const racesReducer = createReducer(
   on(RacesActions.submitInterimResultSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.rollbackResult, (state) => ({ ...state, updating: true })),
   on(RacesActions.rollbackResultSuccess, (state) => ({ ...state, updating: false })),
+  on(RacesActions.cancelRace, (state) => ({ ...state, updating: true })),
+  on(RacesActions.cancelRaceSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.updateRaceDrivers, (state) => ({ ...state, updating: true })),
   on(RacesActions.updateRaceDriversSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.loadLastYear, state => ({ ...state, lastYear: null })),

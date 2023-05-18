@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
-import { icon } from '@f2020/shared';
 import { Observable, combineLatest } from 'rxjs';
 import { debounceTime, filter, first, map } from 'rxjs/operators';
 
@@ -53,5 +52,11 @@ export class RaceComponent implements OnInit {
     this.race$.pipe(
       first()
     ).subscribe(({ round }) => this.facade.dispatch(RacesActions.rollbackResult({ round })));
+  }
+
+  cancelRace() {
+    this.race$.pipe(
+      first()
+    ).subscribe(({ round }) => this.facade.dispatch(RacesActions.cancelRace({ round })));
   }
 }

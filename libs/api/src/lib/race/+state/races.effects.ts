@@ -162,6 +162,14 @@ export class RacesEffects {
     ))
   );
 
+  cancelRace$ = createEffect(() => this.actions$.pipe(
+    ofType(RacesActions.cancelRace),
+    concatMap(({ round }) => this.service.cancelRace(round)
+      .then(() => RacesActions.cancelRaceSuccess())
+      .catch(error => RacesActions.cancelRaceFailure({ error }))
+    ))
+  );
+
   updateBid$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.updateYourBid),
     concatMap(({ bid }) => combineLatest([

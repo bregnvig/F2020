@@ -5,7 +5,7 @@ import { IDriverQualifying, IDriverRaceResult } from './driver.model';
 import { Player } from './player.model';
 import { ITeam } from './team.model';
 
-export type State = 'waiting' | 'open' | 'closed' | 'completed';
+export type State = 'waiting' | 'open' | 'closed' | 'completed' | 'cancelled';
 
 export interface IRaceBasis {
   readonly round: number;

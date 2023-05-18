@@ -1,10 +1,9 @@
-import { IRace } from '@f2020/data';
+import { IRace, State } from '@f2020/data';
 import { firestore } from 'firebase-admin';
 import { log } from 'firebase-functions/logger';
-import { Change, EventContext, region } from 'firebase-functions/v1';
+import { Change, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { racesURL, seasonsURL, updateRace } from '../../lib';
-;
+import { converter, currentRaceURL, currentSeason, updateRace } from '../../lib';
 
 const db = firestore();
 
@@ -13,18 +12,24 @@ const db = firestore();
  * Since rollback we need to determine if we really should open the next race
  */
 export const openRace = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
-  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
+  .onUpdate(async (change: Change<DocumentSnapshot>) => {
     const before: IRace = change.before.data() as IRace;
     const after: IRace = change.after.data() as IRace;
-    if (before.state === 'closed' && after.state === 'completed') {
-      const nextRace: IRace | null = await db.doc(`${seasonsURL}/${context.params.seasonId}/${racesURL}/${after.round + 1}`)
-        .get()
-        .then(snapshot => snapshot.exists ? snapshot.data() as IRace : null);
+    const requiredStateToOpenCancelled: State[] = ['open', 'closed'];
+    if ((before.state === 'closed' && after.state === 'completed') || (after.state === 'cancelled' && requiredStateToOpenCancelled.includes(before.state))) {
 
-      if (nextRace && nextRace.state === 'waiting') {
-        log(`Opening ${nextRace.name}`);
-        return updateRace(nextRace.season, nextRace.round, { state: 'open' });
-      }
+      return currentSeason().then(season => firestore()
+        .collection(currentRaceURL(season.id!))
+        .where('state', '==', 'waiting')
+        .where('round', '>=', after.round)
+        .withConverter<IRace>(converter.timestamp)
+        .get()
+        .then(snapshot => snapshot.docs[0]?.data())
+        .then(nextRace => {
+          if (nextRace && nextRace.state === 'waiting') {
+            log(`Opening ${nextRace.name}`);
+            return updateRace(nextRace.season, nextRace.round, { state: 'open' });
+          }
+        }));
     }
-    return Promise.resolve(true);
   });

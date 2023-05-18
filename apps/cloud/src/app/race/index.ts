@@ -1,3 +1,4 @@
+export * from './cancel.call';
 export * from './close-race.pubsub';
 export * from './drivers.trigger';
 export * from './open-race.trigger';

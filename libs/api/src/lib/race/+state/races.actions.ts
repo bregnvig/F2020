@@ -163,6 +163,20 @@ export const RacesActions = {
     props<{ error: any; }>(),
   ),
 
+  cancelRace: createAction(
+    '[Race page] Cancel race',
+    props<{ round: number; }>()
+  ),
+
+  cancelRaceSuccess: createAction(
+    '[Race API] Cancel race Success',
+  ),
+
+  cancelRaceFailure: createAction(
+    '[Race API] Cancel race Failure',
+    props<{ error: any; }>(),
+  ),
+
   submitInterimResult: createAction(
     '[Interim page] submit interim result',
   ),
