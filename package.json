@@ -105,6 +105,7 @@
     "@nrwl/workspace": "15.8.6",
     "@schematics/angular": "~15.2.4",
     "@simondotm/nx-firebase": "^1.0.0",
+    "killport": "^1.0.2",
     "@types/jest": "^29.5.0",
     "@types/luxon": "^3.2.0",
     "@types/node": "18.7.1",
