@@ -4,7 +4,7 @@ import { WriteResult } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { converter, currentSeason } from './';
 import { racesURL, seasonsURL } from './collection-names';
-const currentRaceURL = (seasonId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}`;
+export const currentRaceURL = (seasonId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}`;
 
 export const getCurrentRace = async (state: 'open' | 'closed'): Promise<IRace | undefined> => {
   return currentSeason().then(season => firestore()
