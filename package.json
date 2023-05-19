@@ -14,6 +14,8 @@
     "deploy:hosting:all": "npm run deploy:hosting:production && npm run deploy:hosting:develop",
     "deploy:hosting:develop": "firebase use default && nx build ui --configuration test && firebase deploy --only hosting",
     "deploy:hosting:production": "firebase use production && nx build ui --prod && firebase deploy --only hosting",
+    "deploy:functions:develop": "firebase use default && nx build cloud && firebase deploy --only functions",
+    "deploy:functions:production": "firebase use production && nx build cloud && firebase deploy --only functions",
     "deploy:rules:develop": "firebase use default && firebase deploy --only firestore:rules",
     "deploy:rules:production": "firebase use production && firebase deploy --only firestore:rules",
     "e2e": "ng e2e",
