@@ -12,6 +12,14 @@ The application is developed using
 * tailwindcss
 * NgRx
 
+## Builder
+
+Use environment to decide which firestore database to populate.
+
+If you need to populate the firebase emulator use `export FIRESTORE_EMULATOR_HOST="localhost:8080"`. Remember to start the emulator before executing the builder.
+
+`npx nx serve builder --environment=dev`
+
 ## Backend
 
 * Firebase
