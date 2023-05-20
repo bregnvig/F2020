@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
-import { Router, RouterModule, Routes } from '@angular/router';
-import { PlayerFacade, SeasonLoaderService } from '@f2020/api';
+import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
+import { PlayerFacade, SeasonActions, SeasonFacade } from '@f2020/api';
 import { LoginComponent, LogoutComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { filter, map } from 'rxjs';
@@ -15,6 +15,13 @@ const mustBeAuthorized = () => {
   );
 
 };
+
+const seasonLoader = (route: ActivatedRouteSnapshot) => {
+  inject(SeasonFacade).dispatch(SeasonActions.loadSeason({ seasonId: route.params['season'] }));
+  return true;
+};
+
+
 
 const routes: Routes = [
   {
@@ -51,7 +58,7 @@ const routes: Routes = [
   },
   {
     path: ':season',
-    canActivate: [mustBeAuthorized, SeasonLoaderService],
+    canActivate: [mustBeAuthorized, seasonLoader],
     children: [
       {
         path: 'teams',
