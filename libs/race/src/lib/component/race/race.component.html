@@ -17,7 +17,7 @@
       <mat-card-actions>
         <a mat-button [href]="race.url" target="_blank">WIKI</a>
         <a *ngIf="race.state === 'waiting' || race.state === 'open'" mat-button routerLink="edit">REDIGER</a>
-        <div *shaHasRole="'admin'" class="flex-1 flex justify-between">
+        <div *shaHasRole="'admin'" class="flex-1 flex justify-between items-center">
           <a *ngIf="race.state === 'waiting' || race.state === 'open'"
             mat-button
             routerLink="drivers">
