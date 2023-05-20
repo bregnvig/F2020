@@ -22,14 +22,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/cloud/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/cloud/jest.config.ts",
@@ -57,10 +57,7 @@
     "emulate": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "node -e 'setTimeout(()=>{},5000)'",
-          "cp apps/cloud/.runtimeconfig.json dist/apps/cloud/.runtimeconfig.json"
-        ],
+        "commands": ["node -e 'setTimeout(()=>{},5000)'", "cp apps/cloud/.runtimeconfig.json dist/apps/cloud/.runtimeconfig.json"],
         "parallel": false
       }
     }

@@ -6,7 +6,7 @@
   "prefix": "teams",
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/teams"],
       "options": {
         "jestConfig": "libs/teams/jest.config.ts",
@@ -14,7 +14,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/teams/src/**/*.ts", "libs/teams/src/**/*.html"]
       }
