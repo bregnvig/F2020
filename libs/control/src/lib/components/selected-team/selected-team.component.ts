@@ -20,16 +20,16 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     }
   ],
 })
-export class SelectedTeamComponent extends AbstractControlComponent implements OnInit {
+export class SelectedTeamComponent extends AbstractControlComponent<SelectedTeamValue> implements OnInit {
 
   @Input() team: ITeam;
   driverIds: string[];
   fg: FormGroup;
-  
+
   constructor(private fb: FormBuilder) {
     super();
-   }
-  
+  }
+
   ngOnInit(): void {
     this.driverIds = this.team.drivers;
     this.fg = this.fb.group({
@@ -38,13 +38,13 @@ export class SelectedTeamComponent extends AbstractControlComponent implements O
     });
     this.fg.valueChanges.subscribe(value => this.propagateChange(value));
   }
-  
+
   writeValue(value: SelectedTeamValue): void {
     this.fg.patchValue(value || {});
   }
 
   markAllTouched(): void {
-    this.fg.markAllAsTouched()
+    this.fg.markAllAsTouched();
   }
 
   validate(): ValidationErrors | null {

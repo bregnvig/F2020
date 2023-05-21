@@ -1,6 +1,7 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
 import { IRace, SelectedDriverValue } from '@f2020/data';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
 @Component({
@@ -19,7 +20,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     },
   ],
 })
-export class SelectedDriverComponent extends AbstractControlComponent implements OnInit {
+export class SelectedDriverComponent extends AbstractControlComponent<SelectedDriverValue> implements OnInit {
 
   @Input() race: IRace;
   fg: FormGroup;
@@ -36,15 +37,15 @@ export class SelectedDriverComponent extends AbstractControlComponent implements
       finish: [null, [Validators.required, Validators.min(1), Validators.max(this.race.drivers.length)]],
     });
     this.fg.valueChanges.pipe(
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(value => this.propagateChange(value));
   }
 
   writeValue(value: SelectedDriverValue): void {
     if (value) {
-      this.fg.patchValue(value, {emitEvent: false});
+      this.fg.patchValue(value, { emitEvent: false });
     } else {
-      this.fg.reset({}, {emitEvent: false});
+      this.fg.reset({}, { emitEvent: false });
     }
   }
 

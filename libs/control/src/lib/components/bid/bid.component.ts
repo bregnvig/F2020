@@ -1,6 +1,7 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
 import { Bid, IRace, ITeam } from '@f2020/data';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
@@ -21,7 +22,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     },
   ]
 })
-export class BidComponent extends AbstractControlComponent implements OnInit {
+export class BidComponent extends AbstractControlComponent<Bid> implements OnInit {
 
   @Input() race: IRace;
   @Input() teams: ITeam[];
@@ -49,7 +50,7 @@ export class BidComponent extends AbstractControlComponent implements OnInit {
     });
     this.fg.valueChanges.pipe(
       debounceTime(300),
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(value => this.propagateChange(value));
   }
 

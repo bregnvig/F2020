@@ -1,6 +1,7 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ITeam } from '@f2020/data';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
 @Component({
@@ -15,7 +16,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     },
   ],
 })
-export class SelectDriverComponent extends AbstractControlComponent implements OnInit {
+export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {
 
   @Input() driverIds: string[];
   @Input() teams: ITeam[];
@@ -36,7 +37,7 @@ export class SelectDriverComponent extends AbstractControlComponent implements O
       }, new Map<string, string[]>()).entries());
     }
     this.selectControl.valueChanges.pipe(
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(driverId => this.propagateChange(driverId));
   }
 

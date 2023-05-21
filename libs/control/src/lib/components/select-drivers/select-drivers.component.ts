@@ -1,8 +1,9 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
-import { AbstractControlComponent } from '../../abstract-control-component';
 import { DriverNamePipe } from '@f2020/driver';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { AbstractControlComponent } from '../../abstract-control-component';
 
 type LabelFn = (index: number) => string;
 
@@ -37,7 +38,7 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
     }
   ],
 })
-export class SelectDriversComponent extends AbstractControlComponent implements OnInit {
+export class SelectDriversComponent extends AbstractControlComponent<string[]> implements OnInit {
 
   @Input() race: IRace;
   @Input() teams: ITeam[];
@@ -58,7 +59,7 @@ export class SelectDriversComponent extends AbstractControlComponent implements 
         drivers: this.drivers,
       });
     this.drivers.valueChanges.pipe(
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
     ).subscribe(value => this.propagateChange(value));
   }
 

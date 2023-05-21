@@ -1,6 +1,7 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
 import { mapper } from '@f2020/data';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, map } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
@@ -21,7 +22,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     },
   ],
 })
-export class PolePositionTimeComponent extends AbstractControlComponent implements OnInit {
+export class PolePositionTimeComponent extends AbstractControlComponent<number> implements OnInit {
 
   fg: FormGroup;
 
@@ -36,7 +37,7 @@ export class PolePositionTimeComponent extends AbstractControlComponent implemen
       milliseconds: [null, [Validators.required, Validators.min(0), Validators.max(999)]],
     });
     this.fg.valueChanges.pipe(
-      this.takeUntilDestroyed(),
+      untilDestroyed(this),
       debounceTime(100),
       map(value => mapper.polePostion.join(value))
     ).subscribe(millis => this.propagateChange(millis));
