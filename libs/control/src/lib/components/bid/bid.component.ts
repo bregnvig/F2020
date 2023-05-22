@@ -45,6 +45,7 @@ export class BidComponent extends AbstractControlComponent<Bid> implements OnIni
       podium: [{ value: null, disabled: this.isResult }, Validators.required],
       selectedDriver: [{ value: null, disabled: this.isResult }],
       selectedTeam: [{ value: null, disabled: this.isResult || !this.race.selectedTeam }],
+      slowestPitStop: [{ value: null, disabled: this.isResult }, Validators.required],
       firstCrash: [{ value: null, disabled: this.isResult }, Validators.required],
       polePositionTime: [{ value: null, disabled: this.isResult }, Validators.required],
     });
@@ -63,6 +64,7 @@ export class BidComponent extends AbstractControlComponent<Bid> implements OnIni
         selectedDriver: null,
         selectedTeam: null,
         firstCrash: null,
+        slowestPitStop: null,
         polePositionTime: null,
         ...value
       }, { emitEvent: false });

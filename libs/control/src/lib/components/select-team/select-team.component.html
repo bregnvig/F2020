@@ -1,18 +1,9 @@
 <mat-form-field class="w-full">
   <mat-label>{{label}}</mat-label>
   <mat-select [formControl]="selectControl">
-    <ng-container *ngIf="teams; else noTeams">
-      <mat-optgroup *ngFor="let teamAndDrivers of allTeamAndDrivers" [label]="teamAndDrivers[0]">
-        <mat-option *ngFor="let driverId of teamAndDrivers[1]" [value]="driverId">
-          {{driverId | driverName}}
-        </mat-option>
-      </mat-optgroup>
-    </ng-container>
-    <ng-template #noTeams>
-      <mat-option *ngFor="let driverId of driverIds" [value]="driverId">
-        {{driverId | driverName}}
-      </mat-option>
-    </ng-template>
+    <mat-option *ngFor="let team of teams" [value]="team.constructorId">
+      {{team.name}}
+    </mat-option>
   </mat-select>
   <mat-hint align="end">{{error}}</mat-hint>
 </mat-form-field>

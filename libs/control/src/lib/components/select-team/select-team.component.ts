@@ -16,28 +16,17 @@ import { AbstractControlComponent } from '../../abstract-control-component';
     },
   ],
 })
-export class SelectTeamComponent extends AbstractControlComponent implements OnInit {
+export class SelectTeamComponent extends AbstractControlComponent<string> implements OnInit {
 
   @Input() teams: ITeam[];
   @Input() label: string;
   @Input() error: string;
   selectControl = new FormControl();
-  allTeamAndDrivers: [string, string[]][];
 
   ngOnInit(): void {
-    if (this.teams) {
-      this.allTeamAndDrivers = Array.from(this.driverIds.reduce((acc, driverId) => {
-        const team = this.teams.find(t => t.drivers.includes(driverId));
-        if (!acc.has(team.name)) {
-          acc.set(team.name, []);
-        }
-        acc.get(team.name).push(driverId);
-        return acc;
-      }, new Map<string, string[]>()).entries());
-    }
     this.selectControl.valueChanges.pipe(
       untilDestroyed(this),
-    ).subscribe(driverId => this.propagateChange(driverId));
+    ).subscribe(teamId => this.propagateChange(teamId));
   }
 
   markAllTouched(): void {
@@ -49,12 +38,6 @@ export class SelectTeamComponent extends AbstractControlComponent implements OnI
   }
 
   writeValue(value: string): void {
-    setTimeout(() => {
-      if (value) {
-        this.selectControl.patchValue(value, { emitEvent: false });
-      } else {
-        this.selectControl.reset({}, { emitEvent: false });
-      }
-    });
+    this.selectControl.reset(value, { emitEvent: false });
   }
 }

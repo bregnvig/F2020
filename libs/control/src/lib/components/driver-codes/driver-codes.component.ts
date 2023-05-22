@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'f2020-driver-codes',
@@ -9,14 +9,14 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
 })
 export class DriverCodesComponent {
 
-  private _driverIds: string[];
+  #driverIds: string[];
 
   @Input() set driverIds(value: string[]) {
-    this._driverIds = (value || []).filter(id => !!id)
+    this.#driverIds = (value || []).filter(id => !!id);
   }
 
   get driverIds() {
-    return this._driverIds;
+    return this.#driverIds;
   }
 
 }

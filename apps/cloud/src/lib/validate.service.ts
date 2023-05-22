@@ -3,8 +3,8 @@ import { logAndCreateError } from "./firestore-utils";
 
 
 const noNullsInArrayFn = (array: (string | null)[]): boolean => array.every(Boolean);
-const uniqueDriversFn = (array: (string | null)[]): boolean => array.length === new Set(array).size;
-const validArraysFn = (array: (string | null)[]): boolean => noNullsInArrayFn(array) && uniqueDriversFn(array);
+const uniqueIdsFn = (array: (string | null)[]): boolean => array.length === new Set(array).size;
+const validArraysFn = (array: (string | null)[]): boolean => noNullsInArrayFn(array) && uniqueIdsFn(array);
 const validTeamFn = (team: ITeam | undefined, selected?: SelectedTeamValue): boolean => {
   if (!team) {
     return true;
@@ -18,6 +18,7 @@ export const validateBid = (bid: Bid, race: IRace): void => {
     qualify: 6,
     fastestDriver: 1,
     firstCrash: 1,
+    slowestPitStop: 1,
   } as { [key: string]: number; };
   const validArrays: boolean = Object.values(bid).filter(v => Array.isArray(v)).map(validArraysFn).every(Boolean) && Object.keys(lengths).every(key => lengths[key] === (bid as any)[key].length);
   const validPole = !!(bid.polePositionTime && (bid.polePositionTime < (1000 * 60 * 2)) && (bid.polePositionTime > (1000 * 50)));
@@ -34,6 +35,7 @@ export const validateResult = (result: Bid, race: IRace): void => {
   const lengths = {
     podium: 4,
     qualify: 7,
+    slowestPitStop: 2
   } as { [key: string]: number; };
 
   if (!result) {
@@ -42,8 +44,8 @@ export const validateResult = (result: Bid, race: IRace): void => {
 
   const validArrays: boolean = Object.values(result).filter(v => Array.isArray(v)).map(validArraysFn).every(Boolean) && Object.keys(lengths).every(key => lengths[key] === undefined || (lengths[key] === (result as any)[key].length));
   const validPole = !!(result.polePositionTime && (result.polePositionTime < (1000 * 60 * 2)) && (result.polePositionTime > (1000 * 50)));
-  const validSelected = !!(result.selectedDriver && result.selectedDriver.grid && result.selectedDriver.grid > 0 && result.selectedDriver.grid <= race.drivers!.length
-    && result.selectedDriver.finish && result.selectedDriver.finish > 0 && result.selectedDriver.finish <= race.drivers!.length);
+  const validSelected = !!(result.selectedDriver && result.selectedDriver.grid && result.selectedDriver.grid > 0 && result.selectedDriver.grid <= race.drivers.length
+    && result.selectedDriver.finish && result.selectedDriver.finish > 0 && result.selectedDriver.finish <= race.drivers.length);
   const validTeam = validTeamFn(race.selectedTeam, result.selectedTeam);
   if (![validArrays, validPole, validSelected, validTeam].every(Boolean)) {
     throw logAndCreateError('failed-precondition', `Result not valid. Arrays: ${validArrays}, valid selected: ${validSelected}, valid pole: ${validPole}, valid team: ${validTeam}`);

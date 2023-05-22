@@ -64,9 +64,10 @@ export class SubmitResultComponent implements OnInit {
 
   resultDownloaded(): boolean {
     return !!(this.result.qualify?.length === 7
-      && this.result.fastestDriver?.length <= 2
+      && this.result.fastestDriver?.length === 2
       && this.result.podium?.length === 4
       && this.result.selectedDriver && this.result.selectedDriver.grid && this.result.selectedDriver.finish
+      && this.result.slowestPitStop?.length === 2
       && this.result.polePositionTime);
   }
 
