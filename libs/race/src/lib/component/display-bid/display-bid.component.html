@@ -74,6 +74,17 @@
         </mat-list>
       </div>
     </mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true" #slowestPitStop *ngIf="bid.slowestPitStop">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Langsomste pitstop</mat-panel-title>
+        <mat-panel-description *ngIf="!slowestPitStop.expanded">
+          <f2020-driver-codes [driverIds]="bid.slowestPitStop"></f2020-driver-codes>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div>
+        <f2020-display-drivers [driverIds]="bid.slowestPitStop" [points]="bid.slowestPitStopPoints"></f2020-display-drivers>
+      </div>
+    </mat-expansion-panel>
     <mat-expansion-panel [expanded]="true" #firstCrash *ngIf="bid.firstCrash">
       <mat-expansion-panel-header>
         <mat-panel-title>Første udgået</mat-panel-title>
