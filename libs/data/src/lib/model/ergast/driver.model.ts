@@ -28,11 +28,11 @@ export interface ErgastFastestLap {
   },
   AverageSpeed: {
     speed: string;
-  }
+  };
 }
 
 export interface ErgastDriverResults extends ErgastRace {
-  Results: ErgastDriverResult[]
+  Results: ErgastDriverResult[];
 }
 
 export interface ErgastDriverResult {
@@ -49,13 +49,13 @@ export interface ErgastDriversQualifying extends ErgastRace {
   QualifyingResults: ErgastDriverQualifying[];
 }
 
-export const qualifyToMillis = (time: string): number => {
+export const qualifyToMilliseconds = (time: string): number => {
   const groups = /^(\d):(\d{2})\.(\d*)$/.exec(time);
-  const minuttes = parseInt(groups![1], 10) * 1000 * 60;
+  const minutes = parseInt(groups![1], 10) * 1000 * 60;
   const seconds = parseInt(groups![2], 10) * 1000;
-  const millis = parseInt(groups![3], 10);
-  return minuttes + seconds + millis;
-}
+  const milliseconds = parseInt(groups![3], 10);
+  return minutes + seconds + milliseconds;
+};
 
 export interface ErgastDriverQualifying {
   Driver: ErgastDriver;

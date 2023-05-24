@@ -1,4 +1,4 @@
-import { driverQualifying, driverQualifyings } from './driver-qualifying.mapper';
+import { driverQualifying, driversQualifying } from './driver-qualifying.mapper';
 import { driverResult, driverResults } from './driver-result.mapper';
 import { driverStanding, driverStandings } from './driver-standing.mapper';
 import { driver, drivers } from './driver.mapper';
@@ -22,7 +22,7 @@ export const mapper = {
   driverResult,
   driverResults,
   driverQualifying,
-  driverQualifyings,
+  driverQualifyings: driversQualifying,
   season,
   nationality,
   polePosition,
