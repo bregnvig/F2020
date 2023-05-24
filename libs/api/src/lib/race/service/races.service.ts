@@ -66,6 +66,13 @@ export class RacesService {
     });
   }
 
+  getPitStops(seasonId: string | number, round: number): Observable<IQualifyResult> {
+    return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => {
+      const race = ergastData.MRData.RaceTable.Races[0];
+      return mapper.qualifyResult(race);
+    });
+  }
+
   getLastYearResult(seasonId: number, countryCode: string): Promise<RoundResult> {
     return getDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${countryCode}`)).then(
       snapshot => snapshot.data() as RoundResult

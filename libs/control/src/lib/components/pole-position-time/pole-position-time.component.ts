@@ -39,7 +39,7 @@ export class PolePositionTimeComponent extends AbstractControlComponent<number> 
     this.fg.valueChanges.pipe(
       untilDestroyed(this),
       debounceTime(100),
-      map(value => mapper.polePostion.join(value))
+      map(value => mapper.polePosition.join(value))
     ).subscribe(millis => this.propagateChange(millis));
   }
 
@@ -53,7 +53,7 @@ export class PolePositionTimeComponent extends AbstractControlComponent<number> 
 
   writeValue(value: number): void {
     if (value !== null) {
-      this.fg.patchValue(mapper.polePostion.split(value), { emitEvent: false });
+      this.fg.patchValue(mapper.polePosition.split(value), { emitEvent: false });
     } else {
       this.fg.reset({}, { emitEvent: false });
     }

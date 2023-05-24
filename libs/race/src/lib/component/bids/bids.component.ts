@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Bid } from '@f2020/data';
 import { icon } from '@f2020/shared';
 
-const polePostionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
+const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
 
 @Component({
   selector: 'f2020-bids',
@@ -20,7 +20,7 @@ export class BidsComponent {
   @Input() result: Partial<Bid>;
 
   @Input() set bids(value: Bid[]) {
-    this._bids = [...value || []].sort((a, b) => (b.points - a.points) || (polePostionDiffComparator(a, b)));
+    this._bids = [...value || []].sort((a, b) => (b.points - a.points) || (polePositionDiffComparator(a, b)));
   }
 
   get bids(): Bid[] {
