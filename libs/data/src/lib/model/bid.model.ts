@@ -26,7 +26,7 @@ export interface Bid {
   podiumPoints?: [number, number, number];
   selectedDriver: SelectedDriverValue;
   selectedTeam?: SelectedTeamValue;
-  slowestPitStop?: [string?, string?];
+  slowestPitStop?: [string, string?];
   slowestPitStopPoints?: [number];
   polePositionTime: number;
   polePositionTimeDiff?: number;
