@@ -79,12 +79,16 @@ export class RacesEffects {
     concatMap(() => this.facade.selectedRace$.pipe(
       debounceTime(200),
       truthy(),
-      switchMap(race => combineLatest([
-        this.service.getResult(race.season, race.round),
-        this.service.getQualify(race.season, race.round),
-        of(race.selectedDriver),
-        of(race.selectedTeam)
-      ])),
+      withLatestFrom(this.facade.allRaces$),
+      switchMap(([race, races]) => {
+        const offset = races.filter(r => r.round < race.round && r.state === 'cancelled').length;
+        return combineLatest([
+          this.service.getResult(race.season, race.round - 1),
+          this.service.getQualify(race.season, race.round - 1),
+          of(race.selectedDriver),
+          of(race.selectedTeam)
+        ]);
+      }),
       map(([raceResult, qualify, selectedDriver, selectedTeam]) => {
         const result = buildResult(raceResult, qualify, selectedDriver, selectedTeam);
         return RacesActions.loadResultSuccess({ result });

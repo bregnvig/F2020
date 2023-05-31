@@ -67,7 +67,7 @@ export class SubmitResultComponent implements OnInit {
       && this.result.fastestDriver?.length === 2
       && this.result.podium?.length === 4
       && this.result.selectedDriver && this.result.selectedDriver.grid && this.result.selectedDriver.finish
-      && this.result.slowestPitStop?.length === 2
+      // && this.result.slowestPitStop?.length === 2
       && this.result.polePositionTime);
   }
 
