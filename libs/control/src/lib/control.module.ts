@@ -15,12 +15,14 @@ import { PolePositionTimeComponent } from './components/pole-position-time/pole-
 import { SelectDriverComponent } from './components/select-driver/select-driver.component';
 import { SelectDriversComponent } from './components/select-drivers/select-drivers.component';
 import { SelectTeamComponent } from './components/select-team/select-team.component';
+import { SelectTeamsComponent } from './components/select-teams/select-teams.component';
 import { SelectedDriverComponent } from './components/selected-driver/selected-driver.component';
 import { SelectedTeamComponent } from './components/selected-team/selected-team.component';
 
 const exported = [
   SelectDriverComponent,
   SelectTeamComponent,
+  SelectTeamsComponent,
   SelectedTeamComponent,
   SelectDriversComponent,
   SelectedDriverComponent,
