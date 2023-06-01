@@ -1,1 +1,1 @@
-export * from './team.pipe';
+export * from './team-name.pipe';

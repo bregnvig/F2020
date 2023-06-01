@@ -1,6 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { DisplayPlayerBidComponent } from './component/display-bid/display-player-bid/display-player-bid.component';
-import { DisplayResultComponent } from './component/display-bid/display-result/display-result.component';
+import { DisplayPlayerBidComponent, DisplayResultComponent } from './component/display-bid';
 import { EditRaceComponent } from './component/edit-race/edit-race.component';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';

@@ -1,7 +1,7 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
-import { TeamPipe } from '@f2020/teams';
+import { TeamNamePipe } from '@f2020/teams';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
@@ -37,7 +37,7 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
   `,
   styleUrls: ['./select-teams.component.scss'],
   providers: [
-    TeamPipe,
+    TeamNamePipe,
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => SelectTeamsComponent),
@@ -61,7 +61,7 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
 
   @Input() labelFn: LabelFn = (index: number) => `Vælg ${index}. hold`;
 
-  constructor(private fb: FormBuilder, private teamName: TeamPipe) {
+  constructor(private fb: FormBuilder, private teamName: TeamNamePipe) {
     super();
   }
 

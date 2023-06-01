@@ -9,6 +9,7 @@ import { DriverModule } from "@f2020/driver";
 import { SharedModule } from "@f2020/shared";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { TeamsListComponent } from './component/teams-list/teams-list.component';
+import { TeamNamePipe } from "./pipe";
 
 const MaterialModules = [
   MatToolbarModule,
@@ -32,7 +33,9 @@ const MaterialModules = [
     SharedModule,
   ],
   declarations: [
-    TeamsListComponent
+    TeamsListComponent,
+    TeamNamePipe,
   ],
+  exports: [TeamNamePipe]
 })
 export class TeamsModule { }
