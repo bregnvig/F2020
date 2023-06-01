@@ -78,17 +78,20 @@ export class RacesEffects {
 
   loadResult$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.loadResult),
-    withLatestFrom(this.driversFacade.allDriver$, this.teamsService.teams$),
-    concatMap(([, drivers, teams]) => this.facade.selectedRace$.pipe(
+    withLatestFrom(this.driversFacade.allDriver$, this.teamsService.teams$, this.facade.allRaces$),
+    concatMap(([, drivers, teams, races]) => this.facade.selectedRace$.pipe(
       debounceTime(200),
       truthy(),
-      switchMap(race => combineLatest([
-        this.service.getResult(race.season, race.round),
-        this.service.getQualify(race.season, race.round),
-        this.service.getPitStops(race.season, race.round, drivers, teams),
-        of(race.selectedDriver),
-        of(race.selectedTeam)
-      ])),
+      switchMap(race => {
+        const offset = races.filter(r => r.round < race.round && r.state === 'cancelled').length;
+        return combineLatest([
+          this.service.getResult(race.season, race.round - offset),
+          this.service.getQualify(race.season, race.round - offset),
+          this.service.getPitStops(race.season, race.round - offset, drivers, teams),
+          of(race.selectedDriver),
+          of(race.selectedTeam)
+        ]);
+      }),
       map(([raceResult, qualify, pitStops, selectedDriver, selectedTeam]) => {
         const result = buildResult(raceResult, qualify, pitStops, selectedDriver, selectedTeam);
         return RacesActions.loadResultSuccess({ result });
