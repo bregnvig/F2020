@@ -6,7 +6,7 @@ import { ITeam } from '@f2020/data';
   name: 'team',
   pure: false,
 })
-export class DriverPipe implements PipeTransform {
+export class TeamPipe implements PipeTransform {
 
   private previousId?: string;
   private team?: ITeam;
