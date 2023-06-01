@@ -15,6 +15,7 @@ import { LoadingComponent } from './component/loading/loading.component';
 import { PageComponent } from './component/page/page.component';
 import { SidebarComponent } from './component/sidebar/sidebar.component';
 import { SidenavButtonComponent } from './component/sidebar/sidenav-button/sidenav-button.component';
+import { TeamNamePipe } from "./pipe";
 import { DateTimePipe } from './pipe/date-time.pipe';
 import { FlagURLPipe } from './pipe/flag-url.pipe';
 import { PolePositionTimePipe } from './pipe/pole-position-time.pipe';
@@ -42,6 +43,7 @@ const pipes = [
   FlagURLPipe,
   PolePositionTimePipe,
   DateTimePipe,
+  TeamNamePipe,
 ];
 
 @NgModule({

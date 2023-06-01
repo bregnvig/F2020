@@ -19,7 +19,6 @@ import { RaceApiModule } from '@f2020/api';
 import { ControlModule } from '@f2020/control';
 import { DriverModule } from '@f2020/driver';
 import { SharedModule } from '@f2020/shared';
-import { TeamsModule } from '@f2020/teams';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { BidsComponent } from './component/bids/bids.component';
@@ -63,7 +62,6 @@ const MaterialModules = [
     GoogleMapsModule,
     ControlModule,
     DriverModule,
-    TeamsModule,
     MaterialModules,
     NgxMatTimepickerModule,
     RaceApiModule,
