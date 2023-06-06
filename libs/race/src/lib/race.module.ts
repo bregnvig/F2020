@@ -22,10 +22,7 @@ import { SharedModule } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { BidsComponent } from './component/bids/bids.component';
-import { DisplayBidComponent } from './component/display-bid/display-bid.component';
-import { DisplayDriversComponent } from './component/display-bid/display-drivers/display-drivers.component';
-import { DisplayPlayerBidComponent } from './component/display-bid/display-player-bid/display-player-bid.component';
-import { DisplayResultComponent } from './component/display-bid/display-result/display-result.component';
+import { DisplayBidComponent, DisplayDriversComponent, DisplayPlayerBidComponent, DisplayResultComponent, DisplayTeamsComponent } from './component/display-bid';
 import { EditRaceComponent } from './component/edit-race/edit-race.component';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { PartialBidWarningComponent } from './component/partial-bid-warning/partial-bid-warning.component';
@@ -33,11 +30,12 @@ import { RaceUpdatedWarningComponent } from './component/race';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';
 import { RaceOutletComponent } from './component/race-outlet/race-outlet.component';
 import { RaceComponent } from './component/race/race.component';
+import { RaceStatusPipe } from './component/races/race-status.pipe';
 import { RacesComponent } from './component/races/races.component';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
 import { RaceRoutingModule } from './race-routing.module';
-import { RaceStatusPipe } from './component/races/race-status.pipe';
+
 const MaterialModules = [
   MatCardModule,
   DragDropModule,
@@ -78,9 +76,11 @@ const MaterialModules = [
     SubmitResultComponent,
     SubmitInterimResultComponent,
     DisplayBidComponent,
+    DisplayPlayerBidComponent,
     PartialBidWarningComponent,
     RaceOutletComponent,
     DisplayDriversComponent,
+    DisplayTeamsComponent,
     RaceDriversComponent,
     DisplayPlayerBidComponent,
     DisplayResultComponent,

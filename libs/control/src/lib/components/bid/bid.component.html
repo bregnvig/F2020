@@ -65,7 +65,7 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-team formControlName="slowestPitStop" [teams]="teams" label="Vælg hold"></f2020-select-team>
+          <f2020-select-teams formControlName="slowestPitStop" [teams]="teams" label="Vælg hold" [noOfTeams]="1 + (isResult ? 1 : 0)"></f2020-select-teams>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #firstCrash>

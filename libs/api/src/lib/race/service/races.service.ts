@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collectionData, doc, docData, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Bid, IQualifyResult, IRace, IRaceResult, Player, RoundResult, converter, firestoreWebUtils, mapper } from '@f2020/data';
+import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, Player, RoundResult, converter, firestoreWebUtils, mapper } from '@f2020/data';
 import { unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { Observable } from 'rxjs';
@@ -66,10 +66,10 @@ export class RacesService {
     });
   }
 
-  getPitStops(seasonId: string | number, round: number): Observable<IQualifyResult> {
-    return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => {
-      const race = ergastData.MRData.RaceTable.Races[0];
-      return mapper.qualifyResult(race);
+  getPitStops(seasonId: string | number, round: number, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
+    return this.ergastService.get<IPitStop[]>(`${seasonId}/${round}/pitstops.json`, ergastData => {
+      const pitStops = ergastData.MRData.RaceTable.Races[0].PitStops;
+      return mapper.pitStops(pitStops, drivers, teams);
     });
   }
 

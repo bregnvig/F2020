@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { DriversFacade } from '@f2020/driver';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { combineLatest, of } from 'rxjs';
 import { catchError, concatMap, debounceTime, filter, first, map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { PlayerActions, PlayerFacade } from '../../player';
 import { SeasonFacade } from '../../season/+state/season.facade';
+import { TeamService } from '../../service';
 import { RacesService } from '../service/races.service';
 import { buildInterimResult, buildResult } from './../service/result-builder';
 import { RacesActions } from './races.actions';
@@ -76,17 +78,22 @@ export class RacesEffects {
 
   loadResult$ = createEffect(() => this.actions$.pipe(
     ofType(RacesActions.loadResult),
-    concatMap(() => this.facade.selectedRace$.pipe(
+    withLatestFrom(this.driversFacade.allDriver$, this.teamsService.teams$, this.facade.allRaces$),
+    concatMap(([, drivers, teams, races]) => this.facade.selectedRace$.pipe(
       debounceTime(200),
       truthy(),
-      switchMap(race => combineLatest([
-        this.service.getResult(race.season, race.round),
-        this.service.getQualify(race.season, race.round),
-        of(race.selectedDriver),
-        of(race.selectedTeam)
-      ])),
-      map(([raceResult, qualify, selectedDriver, selectedTeam]) => {
-        const result = buildResult(raceResult, qualify, selectedDriver, selectedTeam);
+      switchMap(race => {
+        const offset = races.filter(r => r.round < race.round && r.state === 'cancelled').length;
+        return combineLatest([
+          this.service.getResult(race.season, race.round - offset),
+          this.service.getQualify(race.season, race.round - offset),
+          this.service.getPitStops(race.season, race.round - offset, drivers, teams),
+          of(race.selectedDriver),
+          of(race.selectedTeam)
+        ]);
+      }),
+      map(([raceResult, qualify, pitStops, selectedDriver, selectedTeam]) => {
+        const result = buildResult(raceResult, qualify, pitStops, selectedDriver, selectedTeam);
         return RacesActions.loadResultSuccess({ result });
       }),
       first(),
@@ -214,7 +221,9 @@ export class RacesEffects {
   constructor(
     private actions$: Actions,
     private service: RacesService,
+    private teamsService: TeamService,
     private facade: RacesFacade,
+    private driversFacade: DriversFacade,
     private playerFacade: PlayerFacade,
     private seasonFacade: SeasonFacade) {
   }

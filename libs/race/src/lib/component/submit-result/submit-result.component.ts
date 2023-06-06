@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RacesActions, RacesFacade } from '@f2020/api';
-import { Bid, IRace } from '@f2020/data';
+import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
+import { Bid, IRace, ITeam } from '@f2020/data';
 
 import { shareLatest, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,10 +21,12 @@ export class SubmitResultComponent implements OnInit {
   race$: Observable<IRace>;
   updating$: Observable<boolean>;
   loaded$: Observable<boolean>;
+  teams$: Observable<ITeam[]> = this.teamsService.teams$;
   private result: Bid;
 
   constructor(
     private facade: RacesFacade,
+    private teamsService: TeamService,
     private router: Router) {
   }
 

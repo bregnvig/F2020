@@ -3,10 +3,10 @@ import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
 
 @Pipe({
-  name: 'team',
+  name: 'teamName',
   pure: false,
 })
-export class DriverPipe implements PipeTransform {
+export class TeamNamePipe implements PipeTransform {
 
   private previousId?: string;
   private team?: ITeam;
@@ -19,13 +19,13 @@ export class DriverPipe implements PipeTransform {
     });
   }
 
-  transform(constructorId: string): ITeam | undefined {
+  transform(constructorId: string): string | undefined {
 
     if (constructorId && constructorId !== this.previousId && this.teams?.length) {
       this.previousId = constructorId;
       this.team = this.teams.find(d => d.constructorId === constructorId);
     }
-    return this.team;
+    return this.team?.name;
   }
 
 }

@@ -1,10 +1,11 @@
-import { Bid, finished, IDriverQualifying, IDriverRaceResult, IQualifyResult, IRaceResult, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
+import { Bid, finished, IDriverQualifying, IDriverRaceResult, IPitStop, IQualifyResult, IRaceResult, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
 
 const getDriverId = (result: IDriverRaceResult | IDriverQualifying) => result.driver.driverId;
 
-export const buildResult = (race: IRaceResult, qualify: IQualifyResult, selectedDriver: string, selectedTeam: ITeam): Bid => {
+export const buildResult = (race: IRaceResult, qualify: IQualifyResult, pitStops: IPitStop[], selectedDriver: string, selectedTeam: ITeam): Bid => {
 
   const qualifyResult = qualify.results.slice(0, 7).map(getDriverId);
+  const pitStopResult = pitStops.sort((a, b) => b.duration - a.duration).slice(0, 2).map(p => p.team.constructorId);
 
   const fastestDriverResult = [...race.results]
     .filter(result => !!result.fastestLap)
@@ -29,6 +30,7 @@ export const buildResult = (race: IRaceResult, qualify: IQualifyResult, selected
     selectedDriver: selectedDriverResult,
     selectedTeam: selectedTeamResult,
     firstCrash: firstCrashResult,
+    slowestPitStop: pitStopResult,
     polePositionTime: qualify.results[0].q3
   };
 };

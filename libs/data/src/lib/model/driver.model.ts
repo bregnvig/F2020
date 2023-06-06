@@ -1,4 +1,5 @@
 import { IRaceResult } from './race.model';
+import { ITeam } from './team.model';
 
 export interface IDriver {
   readonly name: string;
@@ -67,4 +68,12 @@ export interface IDriverQualifying {
   q1: number;
   q2?: number;
   q3?: number;
+}
+
+export interface IPitStop {
+  driver: IDriver;
+  team: ITeam;
+  stop: number;
+  lap: number;
+  duration: number;
 }
