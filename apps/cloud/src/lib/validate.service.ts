@@ -22,8 +22,8 @@ export const validateBid = (bid: Bid, race: IRace): void => {
   } as { [key: string]: number; };
   const validArrays: boolean = Object.values(bid).filter(v => Array.isArray(v)).map(validArraysFn).every(Boolean) && Object.keys(lengths).every(key => lengths[key] === (bid as any)[key].length);
   const validPole = !!(bid.polePositionTime && (bid.polePositionTime < (1000 * 60 * 2)) && (bid.polePositionTime > (1000 * 50)));
-  const validSelected = !!(bid.selectedDriver && bid.selectedDriver.grid && bid.selectedDriver.grid > 0 && bid.selectedDriver.grid <= race.drivers!.length
-    && bid.selectedDriver.finish && bid.selectedDriver.finish > 0 && bid.selectedDriver.finish <= race.drivers!.length);
+  const validSelected = !!(bid.selectedDriver && bid.selectedDriver.grid && bid.selectedDriver.grid > 0 && bid.selectedDriver.grid <= race.drivers.length
+    && bid.selectedDriver.finish && bid.selectedDriver.finish > 0 && bid.selectedDriver.finish <= race.drivers.length);
   const validTeam = validTeamFn(race.selectedTeam, bid.selectedTeam);
 
   if (![validArrays, validPole, validSelected, validTeam].every(Boolean)) {
