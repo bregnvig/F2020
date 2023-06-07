@@ -57,17 +57,20 @@
           <f2020-selected-team formControlName="selectedTeam" [team]="team"></f2020-selected-team>
         </div>
       </mat-expansion-panel>
-      <!-- <mat-expansion-panel [expanded]="true" #slowestPitStop>
+      <mat-expansion-panel [expanded]="true" #slowestPitStop>
         <mat-expansion-panel-header>
           <mat-panel-title>Langsomste pitstop</mat-panel-title>
           <mat-panel-description *ngIf="!slowestPitStop.expanded">
+            <ng-container *ngFor="let team of fg.get('slowestPitStop').value; first as first">
+              <span *ngIf="!first">, </span>{{team.name}}
+            </ng-container>
             <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value"></f2020-driver-codes>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div>
           <f2020-select-teams formControlName="slowestPitStop" [teams]="teams" label="Vælg hold" [noOfTeams]="1 + (isResult ? 1 : 0)"></f2020-select-teams>
         </div>
-      </mat-expansion-panel> -->
+      </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #firstCrash>
         <mat-expansion-panel-header>
           <mat-panel-title>Første udgået</mat-panel-title>

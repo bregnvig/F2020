@@ -18,7 +18,7 @@ export const validateBid = (bid: Bid, race: IRace): void => {
     qualify: 6,
     fastestDriver: 1,
     firstCrash: 1,
-    // slowestPitStop: 1,
+    slowestPitStop: 1,
   } as { [key: string]: number; };
   const validArrays: boolean = Object.values(bid).filter(v => Array.isArray(v)).map(validArraysFn).every(Boolean) && Object.keys(lengths).every(key => lengths[key] === (bid as any)[key].length);
   const validPole = !!(bid.polePositionTime && (bid.polePositionTime < (1000 * 60 * 2)) && (bid.polePositionTime > (1000 * 50)));
@@ -35,7 +35,7 @@ export const validateResult = (result: Bid, race: IRace): void => {
   const lengths = {
     podium: 4,
     qualify: 7,
-    // slowestPitStop: 2
+    slowestPitStop: 2
   } as { [key: string]: number; };
 
   if (!result) {
