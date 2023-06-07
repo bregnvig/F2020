@@ -62,7 +62,7 @@
           <mat-panel-title>Langsomste pitstop</mat-panel-title>
           <mat-panel-description *ngIf="!slowestPitStop.expanded">
             <ng-container *ngFor="let team of fg.get('slowestPitStop').value; first as first">
-              <span *ngIf="!first">, </span>{{team.name}}
+              <span *ngIf="!first">, </span>{{team | teamName}}
             </ng-container>
             <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value"></f2020-driver-codes>
           </mat-panel-description>
