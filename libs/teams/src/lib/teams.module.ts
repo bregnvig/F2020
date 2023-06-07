@@ -32,7 +32,7 @@ const MaterialModules = [
     SharedModule,
   ],
   declarations: [
-    TeamsListComponent
+    TeamsListComponent,
   ],
 })
 export class TeamsModule { }

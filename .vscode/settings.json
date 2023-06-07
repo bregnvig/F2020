@@ -5,5 +5,13 @@
     "titleBar.inactiveBackground": "#AD1457",
     "titleBar.activeForeground": "#fff",
     "titleBar.inactiveForeground": "#fff000cc"
+  },
+  "cSpell.customDictionaries": {
+    "custom-dictionary-workspace": {
+      "name": "custom-dictionary-workspace",
+      "path": "${workspaceFolder:f2020}/.cspell/custom-dictionary-workspace.txt",
+      "addWords": true,
+      "scope": "workspace"
+    }
   }
 }

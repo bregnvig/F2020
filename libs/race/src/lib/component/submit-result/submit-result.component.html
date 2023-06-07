@@ -4,7 +4,7 @@
 <div class="max-width">
   <ng-container *ngIf="(loaded$ | async); else loading">
     <ng-container *ngIf="race$ | async as race">
-      <f2020-bid [formControl]="resultControl" [race]="race" [isResult]="true"></f2020-bid>
+      <f2020-bid [formControl]="resultControl" [race]="race" [teams]="teams$ | async" [isResult]="true"></f2020-bid>
     </ng-container>  
     <button *ngIf="resultDownloaded(); else refresh" mat-fab aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
       <mat-icon>cloud_upload</mat-icon>

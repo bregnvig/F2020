@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { icon } from '@f2020/shared';
 
-const versionNo = '2';
+const versionNo = "3";
 
 @Component({
   selector: 'f2020-what-else',
@@ -13,6 +13,7 @@ export class WhatElseComponent {
 
   @HostBinding('hidden') isHidden = localStorage.getItem('what-else') === versionNo;
   icon = icon.falRocketLaunch;
+  tireFlat = icon.falTireFlat;
 
   dismissMessage() {
     localStorage.setItem('what-else', versionNo);

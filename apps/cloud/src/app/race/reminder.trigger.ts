@@ -1,6 +1,6 @@
 import { Bid, IRace, Player } from '@f2020/data';
 import { firestore } from 'firebase-admin';
-import { Change, EventContext, region } from 'firebase-functions/v1';
+import { Change, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid } from '../../lib';
@@ -12,11 +12,11 @@ const messageBody = (race: IRace, player: Player): string =>
 
 
 export const almostTimeTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}/bids/{bid}')
-  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
-    const before = change.before.data() as Bid;
+  .onWrite(async (change: Change<DocumentSnapshot>) => {
+    const before = change.before?.data() as Bid;
     const after = change.after.data() as Bid;
     const race = await getCurrentRace('open');
-    if (race?.close.diffNow('hours').hours < 1 && before.submitted === false && after.submitted === true) {
+    if (race?.close.diffNow('hours').hours < 1 && !before?.submitted && after.submitted === true) {
       await almostTimeReminder(race, after.player);
     }
     return Promise.resolve(true);
@@ -25,9 +25,9 @@ export const almostTimeTrigger = region('europe-west1').firestore.document('seas
 const almostTimeReminder = async (race: IRace, player: Player) => {
   const players = (await playerWithoutBid())
     .filter(p => p.tokens?.length)
-    .filter(p => p.almostTimeReminder?.diffNow('hours').hours > 24);
+    .filter(p => !p.almostTimeReminder || (p.almostTimeReminder.diffNow('hours').hours > 24));
 
-  players.forEach(p => sendNotification(p.tokens, `${race.close.diffNow('minutes').minutes} minutter tilbage`, messageBody(race, player)));
+  players.forEach(p => sendNotification(p.tokens, `${Math.floor(race.close.diffNow('minutes').minutes)} minutter tilbage`, messageBody(race, player)));
 
   const db = firestore();
   return db.runTransaction(transaction => {

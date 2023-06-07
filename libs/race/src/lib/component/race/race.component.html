@@ -46,7 +46,7 @@
       </mat-card-actions>
     </mat-card>
     <ng-container *ngIf="bids$ | async as bids">
-      <mat-card *ngIf="bids.length">
+      <mat-card *ngIf="bids.length || race.result">
         <mat-card-header>
           <mat-card-title>Bud</mat-card-title>
         </mat-card-header>

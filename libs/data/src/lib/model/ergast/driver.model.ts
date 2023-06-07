@@ -28,11 +28,11 @@ export interface ErgastFastestLap {
   },
   AverageSpeed: {
     speed: string;
-  }
+  };
 }
 
 export interface ErgastDriverResults extends ErgastRace {
-  Results: ErgastDriverResult[]
+  Results: ErgastDriverResult[];
 }
 
 export interface ErgastDriverResult {
@@ -49,13 +49,17 @@ export interface ErgastDriversQualifying extends ErgastRace {
   QualifyingResults: ErgastDriverQualifying[];
 }
 
-export const qualifyToMillis = (time: string): number => {
-  const groups = /^(\d):(\d{2})\.(\d*)$/.exec(time);
-  const minuttes = parseInt(groups![1], 10) * 1000 * 60;
-  const seconds = parseInt(groups![2], 10) * 1000;
-  const millis = parseInt(groups![3], 10);
-  return minuttes + seconds + millis;
-}
+export const toMilliseconds = (time: string): number => {
+  const groups = /^(\d)?:?(\d{2})\.(\d*)$/.exec(time);
+  if (groups) {
+    const minutes = groups[1] ? parseInt(groups[1], 10) * 1000 * 60 : 0;
+    const seconds = parseInt(groups[2], 10) * 1000;
+    const milliseconds = parseInt(groups[3], 10);
+    return minutes + seconds + milliseconds;
+  }
+  console.warn(`Could not parse qualifying time: ${time}`);
+  return -1;
+};
 
 export interface ErgastDriverQualifying {
   Driver: ErgastDriver;
@@ -64,4 +68,12 @@ export interface ErgastDriverQualifying {
   Q1: string;
   Q2: string;
   Q3: string;
+}
+
+export interface ErgastPitStop {
+  driverId: string;
+  stop: string;
+  lap: string;
+  time: string;
+  duration: string;
 }

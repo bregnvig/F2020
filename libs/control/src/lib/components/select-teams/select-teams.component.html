@@ -1,0 +1,10 @@
+<div [formGroup]="fg" class="flex flex-col">
+  <ng-container formArrayName="teams" *ngFor="let _ of teamsArray.controls; index as i">
+    <f2020-select-team
+        [teams]="teams"
+        [label]="labelFn(i + 1)"
+        [error]="errorMessage(i)"
+        [formControlName]="i">
+    </f2020-select-team>
+  </ng-container>
+</div>

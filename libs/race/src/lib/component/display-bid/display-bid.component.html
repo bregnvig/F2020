@@ -78,11 +78,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>Langsomste pitstop</mat-panel-title>
         <mat-panel-description *ngIf="!slowestPitStop.expanded">
-          <f2020-driver-codes [driverIds]="bid.slowestPitStop"></f2020-driver-codes>
+          <span *ngFor="let constructorId of bid.slowestPitStop; last as last">
+            {{constructorId | teamName}}<span *ngIf="!last">, </span> 
+          </span>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div>
-        <f2020-display-drivers [driverIds]="bid.slowestPitStop" [points]="bid.slowestPitStopPoints"></f2020-display-drivers>
+        <f2020-display-teams [constructorIds]="bid.slowestPitStop" [points]="bid.slowestPitStopPoints"></f2020-display-teams>
       </div>
     </mat-expansion-panel> -->
     <mat-expansion-panel [expanded]="true" #firstCrash *ngIf="bid.firstCrash">

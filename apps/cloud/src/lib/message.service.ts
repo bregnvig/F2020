@@ -4,6 +4,7 @@ import { config } from "firebase-functions/v1";
 
 export const sendNotification = (tokens: string[], title: string, body: string, data?: { [key: string]: string; }): Promise<any> => {
   if (config().test) {
+    log('Send message/notification in test environment', title, body);
     return Promise.resolve('Send message/notification in test environment');
   }
   return messaging().sendMulticast({
