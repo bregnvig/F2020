@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
 import { IRace, ITeam } from '@f2020/data';
-import { falshy, truthy } from '@f2020/tools';
+import { falsy, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, combineLatest, first, map, switchMap } from 'rxjs';
 
@@ -70,7 +70,7 @@ export class EditRaceComponent implements OnInit {
     this.facade.updating$.pipe(
       truthy(),
       switchMap(() => this.facade.updating$),
-      falshy(),
+      falsy(),
       switchMap(() => this.race$),
       first(),
     ).subscribe(race => {

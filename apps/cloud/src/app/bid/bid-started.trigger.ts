@@ -20,5 +20,5 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
       .then(playerSnapshot => playerSnapshot.docs.map(d => d.data() as Player))
       .then(_players => _players.filter(allFilter));
 
-    return Promise.all(players.map(p => sendNotification(p.tokens!, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`)));
+    return Promise.all(players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`)));
   });    
