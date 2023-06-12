@@ -31,7 +31,7 @@ const mailBody = (player: Player, race: IRace, closeDay: any, closeTime: any) =>
                   
      Wroouumm,<br/>
      F1emming`;
-const messageBody = (race: IRace, closeDay: string, closeTime: string): string =>
+const notificationMessage = (race: IRace, closeDay: string, closeTime: string): string =>
   `${race.name} lukker ${closeDay} kl.${closeTime}, og du har endnu ikke spillet!`;
 
 // This will be run every day at 9:11 Europe/Copenhagen!
@@ -52,7 +52,7 @@ export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
           ];
           if (player.tokens && player.tokens.length) {
             log(`Should send message to ${player.displayName}`);
-            results.push(sendNotification(player.tokens, `Husk at spille`, messageBody(race!, closeDay, closeTime)));
+            results.push(sendNotification(player.tokens, `Husk at spille`, notificationMessage(race!, closeDay, closeTime)));
           }
           return Promise.all(results);
         }));
