@@ -4,7 +4,7 @@ import { PlayerActions, PlayerFacade, PlayersActions, PlayersFacade } from '@f20
 import { Player } from '@f2020/data';
 import { truthy, withLength } from '@f2020/tools';
 import { Observable, combineLatest } from 'rxjs';
-import { first, map, tap } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 
 @Component({
   selector: 'f2020-profile',
@@ -23,8 +23,8 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.playersFacade.dispatch(PlayersActions.loadPlayers());
 
-    this.player$ = this.facade.player$.pipe(truthy(), first(), tap(_ => console.log(_)),);
-    this.players$ = combineLatest([this.player$, this.playersFacade.allPlayers$.pipe(withLength(), first(), tap(_ => console.log(_)),)]).pipe(
+    this.player$ = this.facade.player$.pipe(truthy(), first());
+    this.players$ = combineLatest([this.player$, this.playersFacade.allPlayers$.pipe(withLength())]).pipe(
       map(([player, players]) => players.filter(p => p.uid !== player.uid).map(p => [p, !player.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)])),
     );
     this.receiveReminders$ = this.player$.pipe(
