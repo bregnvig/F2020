@@ -12,7 +12,7 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
     const db = firestore();
     const hasTokens = (p: Player) => p.tokens && p.tokens.length;
     const notYourself = (p: Player) => p.uid !== bid.player?.uid;
-    const wishToReceive = (p: Player) => !p.receiveBettingStarted || p.receiveBettingStarted.some(uid => uid === p.uid);
+    const wishToReceive = (p: Player) => !p.receiveBettingStarted || p.receiveBettingStarted.some(uid => uid === bid.player.uid);
     const allFilter = (p: Player) => [hasTokens, notYourself, wishToReceive].every(fn => fn(p));
     const players: Player[] = await db.collection(`players`)
       .where('receiveReminders', '==', true)
