@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, mapTo, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, map, withLatestFrom } from 'rxjs/operators';
 import { PlayerApiService } from '../service/player-api.service';
 import { PlayerActions } from './player.actions';
 
@@ -38,7 +38,7 @@ export class PlayerEffects {
     this.actions$.pipe(
       ofType(PlayerActions.updatePlayer),
       concatMap(({ partialPlayer }) => this.service.updatePlayer(partialPlayer).pipe(
-        mapTo(PlayerActions.updatePlayerSuccess({ partialPlayer })),
+        map(() => PlayerActions.updatePlayerSuccess({ partialPlayer })),
         catchError(error => of(PlayerActions.updatePlayerFailure({ error }))),
       )),
     ),
