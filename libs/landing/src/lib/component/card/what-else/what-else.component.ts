@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { icon } from '@f2020/shared';
 
-const versionNo = "3";
+const versionNo = '4';
 
 @Component({
   selector: 'f2020-what-else',
