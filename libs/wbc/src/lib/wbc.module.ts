@@ -22,38 +22,36 @@ const MaterialModulde = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    SeasonApiModule,
-    MaterialModulde,
-    SharedModule,
-    NgxChartsModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        component: WbcStandingsComponent
-      },
-      {
-        path: 'graph',
-        component: WbcGraphComponent
-      },
-      {
-        path: 'player/:uid',
-        component: WbcPlayerComponent
-      },
-      {
-        path: 'race/:round',
-        component: WbcRaceComponent
-      }
-      /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
-    ])
-  ],
-  declarations: [
-    WbcStandingsComponent,
-    WbcPlayerComponent,
-    WbcRaceComponent,
-    WbcGraphComponent,
-  ]
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        SeasonApiModule,
+        MaterialModulde,
+        SharedModule,
+        NgxChartsModule,
+        RouterModule.forChild([
+            {
+                path: '',
+                component: WbcStandingsComponent
+            },
+            {
+                path: 'graph',
+                component: WbcGraphComponent
+            },
+            {
+                path: 'player/:uid',
+                component: WbcPlayerComponent
+            },
+            {
+                path: 'race/:round',
+                component: WbcRaceComponent
+            }
+            /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
+        ]),
+        WbcStandingsComponent,
+        WbcPlayerComponent,
+        WbcRaceComponent,
+        WbcGraphComponent
+    ]
 })
 export class WbcModule { }

@@ -1,4 +1,4 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -10,6 +10,14 @@ import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { filter, first, map, pairwise, switchMap } from 'rxjs/operators';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DriverNamePipe } from '../../../../../driver/src/lib/pipe/driver-name.pipe';
+import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { MatIconModule } from '@angular/material/icon';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
 
 const message = (driverName: string, operation: Operation) => {
@@ -22,9 +30,11 @@ const message = (driverName: string, operation: Operation) => {
 
 @UntilDestroy()
 @Component({
-  selector: 'race-drivers',
-  templateUrl: './race-drivers.component.html',
-  styleUrls: ['./race-drivers.component.scss']
+    selector: 'race-drivers',
+    templateUrl: './race-drivers.component.html',
+    styleUrls: ['./race-drivers.component.scss'],
+    standalone: true,
+    imports: [MatToolbarModule, NgIf, MatListModule, CdkDropList, NgFor, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe]
 })
 export class RaceDriversComponent implements OnInit {
 

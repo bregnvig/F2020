@@ -1,24 +1,27 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ITeam, SelectedTeamValue } from '@f2020/data';
 import { AbstractControlComponent } from '../../abstract-control-component';
+import { SelectDriverComponent } from '../select-driver/select-driver.component';
 
 @Component({
-  selector: 'f2020-selected-team',
-  templateUrl: './selected-team.component.html',
-  styleUrls: ['./selected-team.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectedTeamComponent),
-      multi: true
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => SelectedTeamComponent),
-      multi: true
-    }
-  ],
+    selector: 'f2020-selected-team',
+    templateUrl: './selected-team.component.html',
+    styleUrls: ['./selected-team.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectedTeamComponent),
+            multi: true
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => SelectedTeamComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [ReactiveFormsModule, SelectDriverComponent],
 })
 export class SelectedTeamComponent extends AbstractControlComponent<SelectedTeamValue> implements OnInit {
 

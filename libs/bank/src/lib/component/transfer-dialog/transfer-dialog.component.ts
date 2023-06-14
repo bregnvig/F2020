@@ -1,16 +1,24 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Player } from '@f2020/data';
 import { PlayersFacade } from '@f2020/api';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AccountService } from '../../service';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor, AsyncPipe, CurrencyPipe } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  templateUrl: './transfer-dialog.component.html',
-  styleUrls: ['./transfer-dialog.component.scss']
+    templateUrl: './transfer-dialog.component.html',
+    styleUrls: ['./transfer-dialog.component.scss'],
+    standalone: true,
+    imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, NgFor, MatOptionModule, MatInputModule, MatButtonModule, AsyncPipe, CurrencyPipe]
 })
 export class TransferDialogComponent implements OnInit {
   fg: FormGroup;

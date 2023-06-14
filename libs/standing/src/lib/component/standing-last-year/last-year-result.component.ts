@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IRaceResult } from '@f2020/data';
+import { NgFor } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'f2020-last-year-result',
-  template: `
+    selector: 'f2020-last-year-result',
+    template: `
     <mat-list>
       <mat-list-item *ngFor="let result of raceResult.results">
         <h5 matListItemTitle>{{result.driver.name}}</h5>
@@ -12,7 +14,9 @@ import { IRaceResult } from '@f2020/data';
       </mat-list-item>
     </mat-list>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatListModule, NgFor]
 })
 export class LastYearResultComponent {
   @Input() raceResult: IRaceResult;

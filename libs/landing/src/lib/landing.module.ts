@@ -23,29 +23,27 @@ const MatModules = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    MatModules,
-    FontAwesomeModule,
-    ControlModule,
-    RaceApiModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        component: LandingComponent
-      }
-    ]),
-  ],
-  declarations: [
-    LandingComponent,
-    LastYearComponent,
-    WhatElseComponent,
-    JoinWbcComponent,
-    WeatherComponent,
-    WeatherDayComponent,
-    RememberToPlayComponent,
-    PreviousRaceComponent
-  ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        MatModules,
+        FontAwesomeModule,
+        ControlModule,
+        RaceApiModule,
+        RouterModule.forChild([
+            {
+                path: '',
+                component: LandingComponent
+            }
+        ]),
+        LandingComponent,
+        LastYearComponent,
+        WhatElseComponent,
+        JoinWbcComponent,
+        WeatherComponent,
+        WeatherDayComponent,
+        RememberToPlayComponent,
+        PreviousRaceComponent,
+    ],
 })
 export class LandingModule { }

@@ -4,7 +4,12 @@ import { Observable } from 'rxjs';
 import { WBCPlayer, WBCResult, Player } from '@f2020/data';
 import { SeasonFacade } from '@f2020/api';
 import { map, filter } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { FlagURLPipe } from '../../../../../shared/src/lib/pipe/flag-url.pipe';
+import { MatListModule } from '@angular/material/list';
+import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 
 interface WBCRacePlayer {
@@ -23,9 +28,11 @@ const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
 
 
 @Component({
-  templateUrl: './wbc-player.component.html',
-  styleUrls: ['./wbc-player.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    templateUrl: './wbc-player.component.html',
+    styleUrls: ['./wbc-player.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatToolbarModule, NgIf, CardPageComponent, MatListModule, NgFor, RouterLink, AsyncPipe, FlagURLPipe]
 })
 export class WbcPlayerComponent implements OnInit {
 

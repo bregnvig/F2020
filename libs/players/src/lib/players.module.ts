@@ -30,31 +30,31 @@ const MatModules = [
   MatCheckboxModule,
 ];
 @NgModule({
-  imports: [
-    RouterModule.forChild([
-      {
-        path: '',
-        component: PlayersComponent,
-        children: [
-          {
-            path: '',
-            component: PlayersListComponent
-          },
-          {
-            path: ':id',
-            component: EditPlayerComponent
-          }
-        ]
-      }
-    ]),
-    CommonModule,
-    FontAwesomeModule,
-    SharedModule,
-    PlayersApiModule,
-    ReactiveFormsModule,
-    MatModules,
-  ],
-  declarations: [PlayersListComponent, PlayersComponent, EditPlayerComponent]
+    imports: [
+        RouterModule.forChild([
+            {
+                path: '',
+                component: PlayersComponent,
+                children: [
+                    {
+                        path: '',
+                        component: PlayersListComponent
+                    },
+                    {
+                        path: ':id',
+                        component: EditPlayerComponent
+                    }
+                ]
+            }
+        ]),
+        CommonModule,
+        FontAwesomeModule,
+        SharedModule,
+        PlayersApiModule,
+        ReactiveFormsModule,
+        MatModules,
+        PlayersListComponent, PlayersComponent, EditPlayerComponent,
+    ]
 })
 export class PlayersModule {
 

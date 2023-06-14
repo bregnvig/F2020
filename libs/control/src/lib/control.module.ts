@@ -39,20 +39,20 @@ const pipes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatExpansionModule,
-    MatInputModule,
-    MatIconModule,
-    MatFormFieldModule,
-    SharedModule,
-    DriverModule,
-  ],
-  declarations: [exported, components, pipes],
-  exports: [exported, pipes],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatExpansionModule,
+        MatInputModule,
+        MatIconModule,
+        MatFormFieldModule,
+        SharedModule,
+        DriverModule,
+        exported, components, pipes,
+    ],
+    exports: [exported, pipes],
 })
 export class ControlModule {
 }

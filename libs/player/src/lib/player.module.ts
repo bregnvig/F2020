@@ -18,22 +18,20 @@ const MaterialModulde = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MaterialModulde,
-    PlayerApiModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        component: ProfileComponent
-      }
-    ]),
-    PlayerApiModule,
-    PlayersApiModule,
-  ],
-  declarations: [
-    ProfileComponent
-  ]
+    imports: [
+        CommonModule,
+        MaterialModulde,
+        PlayerApiModule,
+        RouterModule.forChild([
+            {
+                path: '',
+                component: ProfileComponent
+            }
+        ]),
+        PlayerApiModule,
+        PlayersApiModule,
+        ProfileComponent,
+    ]
 })
 export class PlayerModule {
 }

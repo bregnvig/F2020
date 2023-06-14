@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IQualifyResult } from '@f2020/data';
+import { QualifyingTimesComponent } from '../standing-driver/driver-qualifying/qualifying-times/qualifying-times.component';
+import { NgFor } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'f2020-last-year-qualify',
-  template: `
+    selector: 'f2020-last-year-qualify',
+    template: `
     <mat-list>
       <mat-list-item *ngFor="let result of qualifyResult.results">
         <h5 matListItemTitle class="flex flex-row justify-between">{{result.driver.name}}</h5>
@@ -12,7 +15,9 @@ import { IQualifyResult } from '@f2020/data';
       </mat-list-item>
     </mat-list>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatListModule, NgFor, QualifyingTimesComponent]
 })
 export class LastYearQualifyComponent {
 

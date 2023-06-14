@@ -1,26 +1,34 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { mapper } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, map } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'f2020-pole-position-time',
-  templateUrl: './pole-position-time.component.html',
-  styleUrls: ['./pole-position-time.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => PolePositionTimeComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => PolePositionTimeComponent),
-      multi: true,
-    },
-  ],
+    selector: 'f2020-pole-position-time',
+    templateUrl: './pole-position-time.component.html',
+    styleUrls: ['./pole-position-time.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => PolePositionTimeComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => PolePositionTimeComponent),
+            multi: true,
+        },
+    ],
+    standalone: true,
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+    ],
 })
 export class PolePositionTimeComponent extends AbstractControlComponent<number> implements OnInit {
 

@@ -1,20 +1,35 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { ITeam } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
+import { DriverNamePipe } from '../../../../../driver/src/lib/pipe/driver-name.pipe';
+import { MatOptionModule } from '@angular/material/core';
+import { NgIf, NgFor } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'f2020-select-driver',
-  templateUrl: './select-driver.component.html',
-  styleUrls: ['./select-driver.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectDriverComponent),
-      multi: true,
-    },
-  ],
+    selector: 'f2020-select-driver',
+    templateUrl: './select-driver.component.html',
+    styleUrls: ['./select-driver.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectDriverComponent),
+            multi: true,
+        },
+    ],
+    standalone: true,
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        NgIf,
+        NgFor,
+        MatOptionModule,
+        DriverNamePipe,
+    ],
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {
 

@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSelectionListChange } from '@angular/material/list';
+import { MatSelectionListChange, MatListModule } from '@angular/material/list';
 import { PlayerActions, PlayerFacade, PlayersActions, PlayersFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { truthy, withLength } from '@f2020/tools';
 import { Observable, combineLatest } from 'rxjs';
 import { first, map } from 'rxjs/operators';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  selector: 'f2020-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+    selector: 'f2020-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss'],
+    standalone: true,
+    imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, NgFor, AsyncPipe]
 })
 export class ProfileComponent implements OnInit {
 

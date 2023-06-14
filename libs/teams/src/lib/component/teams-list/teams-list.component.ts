@@ -6,12 +6,24 @@ import { ITeam } from '@f2020/data';
 import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
 import { icon } from '@f2020/shared';
 import { first, map, mapTo, switchMap } from 'rxjs';
+import { DriverNamePipe } from '../../../../../driver/src/lib/pipe/driver-name.pipe';
+import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatButtonModule } from '@angular/material/button';
+import { HasRoleDirective } from '../../../../../shared/src/lib/component/has-role.directive';
+import { MatListModule } from '@angular/material/list';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  selector: 'teams-teams-list',
-  templateUrl: './teams-list.component.html',
-  styleUrls: ['./teams-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'teams-teams-list',
+    templateUrl: './teams-list.component.html',
+    styleUrls: ['./teams-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatToolbarModule, CardPageComponent, NgIf, MatListModule, NgFor, HasRoleDirective, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe]
 })
 export class TeamsListComponent implements OnInit {
 

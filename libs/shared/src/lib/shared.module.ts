@@ -47,30 +47,28 @@ const pipes = [
 ];
 
 @NgModule({
-  declarations: [
-    exportComponents,
-    pipes,
-    SidenavButtonComponent,
-    HasRoleDirective,
-  ],
-  exports: [
-    exportComponents,
-    pipes,
-    HasRoleDirective,
-  ],
-  providers: [
-    PolePositionTimePipe,
-    DatePipe,
-    DateTimePipe,
-    RelativeToNowPipe,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    FontAwesomeModule,
-    PlayerApiModule,
-    materialModules
-  ],
+    exports: [
+        exportComponents,
+        pipes,
+        HasRoleDirective,
+    ],
+    providers: [
+        PolePositionTimePipe,
+        DatePipe,
+        DateTimePipe,
+        RelativeToNowPipe,
+    ],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FontAwesomeModule,
+        PlayerApiModule,
+        materialModules,
+        exportComponents,
+        pipes,
+        SidenavButtonComponent,
+        HasRoleDirective
+    ],
 })
 export class SharedModule {
 }

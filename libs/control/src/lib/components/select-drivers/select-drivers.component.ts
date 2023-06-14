@@ -1,9 +1,11 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
+import { SelectDriverComponent } from '../select-driver/select-driver.component';
+import { NgFor } from '@angular/common';
 
 type LabelFn = (index: number) => string;
 
@@ -22,21 +24,27 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
 };
 
 @Component({
-  selector: 'f2020-select-drivers',
-  templateUrl: './select-drivers.component.html',
-  styleUrls: ['./select-drivers.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectDriversComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => SelectDriversComponent),
-      multi: true
-    }
-  ],
+    selector: 'f2020-select-drivers',
+    templateUrl: './select-drivers.component.html',
+    styleUrls: ['./select-drivers.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectDriversComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => SelectDriversComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [
+        ReactiveFormsModule,
+        NgFor,
+        SelectDriverComponent,
+    ],
 })
 export class SelectDriversComponent extends AbstractControlComponent<string[]> implements OnInit {
 

@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Bid } from '@f2020/data';
 import { icon } from '@f2020/shared';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'f2020-partial-bid-warning',
-  template: `
+    selector: 'f2020-partial-bid-warning',
+    template: `
     <fa-icon 
       *ngIf="!bid.submitted"
       class="focus-meta"
@@ -15,14 +18,16 @@ import { icon } from '@f2020/shared';
       [matTooltip]="bid.player.displayName + ' har ikke indsendt sit bud'"
     ></fa-icon>
   `,
-  styles: [
-    `
+    styles: [
+        `
       fa-icon {
         color: white;
       }
     `
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, FontAwesomeModule, MatTooltipModule]
 })
 export class PartialBidWarningComponent {
 

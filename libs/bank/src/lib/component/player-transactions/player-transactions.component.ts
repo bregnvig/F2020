@@ -10,10 +10,14 @@ import { first, pluck, switchMap } from 'rxjs/operators';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
 import { TransferDialogComponent } from './../transfer-dialog/transfer-dialog.component';
 import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { TransactionsComponent } from '../transactions/transactions.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-player-transactions',
-  template: `
+    selector: 'f2020-player-transactions',
+    template: `
   <mat-toolbar color="primary" *ngIf="player$ | async as player">
     <span class="flex-auto">{{player?.displayName}}</span><span>{{player?.balance | currency: 'DKK'}}</span>
   </mat-toolbar>
@@ -23,7 +27,9 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
     <button class="my-auto flex-auto" mat-button (click)="openWithdraw(player)">Hæv</button>
     <button class="my-auto flex-auto" mat-button (click)="openTransfer(player)">Overfør</button>
   </mat-toolbar>
-  `
+  `,
+    standalone: true,
+    imports: [NgIf, MatToolbarModule, TransactionsComponent, MatButtonModule, AsyncPipe, CurrencyPipe]
 })
 export class PlayerTransactionsComponent implements OnInit {
 

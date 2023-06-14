@@ -5,11 +5,19 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Player } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { icon } from '@f2020/shared';
+import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouterLink } from '@angular/router';
+import { MatListModule } from '@angular/material/list';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  templateUrl: './players-list.component.html',
-  styleUrls: ['./players-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    templateUrl: './players-list.component.html',
+    styleUrls: ['./players-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatToolbarModule, NgIf, MatListModule, NgFor, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe]
 })
 export class PlayersListComponent implements OnInit {
 

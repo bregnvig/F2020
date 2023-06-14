@@ -18,21 +18,19 @@ const MaterialModules = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild([
-      {
-        path: '',
-        component: TeamsListComponent
-      }
-    ]),
-    MaterialModules,
-    FontAwesomeModule,
-    DriverModule,
-    SharedModule,
-  ],
-  declarations: [
-    TeamsListComponent,
-  ],
+    imports: [
+        CommonModule,
+        RouterModule.forChild([
+            {
+                path: '',
+                component: TeamsListComponent
+            }
+        ]),
+        MaterialModules,
+        FontAwesomeModule,
+        DriverModule,
+        SharedModule,
+        TeamsListComponent,
+    ],
 })
 export class TeamsModule { }

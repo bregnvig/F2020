@@ -5,7 +5,8 @@ import { PlayerFacade } from '@f2020/api';
 import { combineLatest, Subject } from 'rxjs';
 
 @Directive({
-  selector: '[shaHasRole]'
+    selector: '[shaHasRole]',
+    standalone: true
 })
 export class HasRoleDirective {
 

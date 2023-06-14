@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from "@angular/core";
 import { IRace } from '@f2020/data';
 
 @Pipe({
-  name: 'flagURL'
+    name: 'flagURL',
+    standalone: true
 })
 export class FlagURLPipe implements PipeTransform {
 

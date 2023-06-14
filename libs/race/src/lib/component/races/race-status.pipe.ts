@@ -6,7 +6,8 @@ import { DateTime } from 'luxon';
 const now = DateTime.now();
 
 @Pipe({
-  name: 'raceStatus'
+    name: 'raceStatus',
+    standalone: true
 })
 export class RaceStatusPipe implements PipeTransform {
   constructor(private relativeToNow: RelativeToNowPipe) { }

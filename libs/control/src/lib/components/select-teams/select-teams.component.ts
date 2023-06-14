@@ -1,9 +1,11 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
 import { TeamNamePipe } from '@f2020/shared';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
+import { SelectTeamComponent } from '../select-team/select-team.component';
+import { NgFor } from '@angular/common';
 
 type LabelFn = (index: number) => string;
 
@@ -22,8 +24,8 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
 };
 
 @Component({
-  selector: 'f2020-select-teams',
-  template: `
+    selector: 'f2020-select-teams',
+    template: `
   <div [formGroup]="fg" class="flex flex-col">
     <ng-container formArrayName="teams" *ngFor="let _ of teamsArray.controls; index as i">
       <f2020-select-team
@@ -35,20 +37,26 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
     </ng-container>
   </div>
   `,
-  styleUrls: ['./select-teams.component.scss'],
-  providers: [
-    TeamNamePipe,
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectTeamsComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => SelectTeamsComponent),
-      multi: true
-    }
-  ],
+    styleUrls: ['./select-teams.component.scss'],
+    providers: [
+        TeamNamePipe,
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectTeamsComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => SelectTeamsComponent),
+            multi: true
+        }
+    ],
+    standalone: true,
+    imports: [
+        ReactiveFormsModule,
+        NgFor,
+        SelectTeamComponent,
+    ],
 })
 export class SelectTeamsComponent extends AbstractControlComponent<string[]> implements OnInit {
 

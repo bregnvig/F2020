@@ -3,8 +3,9 @@ import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
 
 @Pipe({
-  name: 'teamName',
-  pure: false,
+    name: 'teamName',
+    pure: false,
+    standalone: true,
 })
 export class TeamNamePipe implements PipeTransform {
 

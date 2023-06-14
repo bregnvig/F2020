@@ -5,6 +5,13 @@ import { WBCPlayer } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { icon } from '@f2020/shared';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { RouterLink } from '@angular/router';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBCPlayer> => {
   const uid = wbcPlayer.player.uid;
@@ -14,9 +21,11 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
 };
 
 @Component({
-  templateUrl: './wbc-standings.component.html',
-  styleUrls: ['./wbc-standings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    templateUrl: './wbc-standings.component.html',
+    styleUrls: ['./wbc-standings.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatToolbarModule, MatListModule, NgFor, RouterLink, NgIf, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe]
 })
 export class WbcStandingsComponent implements OnInit {
 

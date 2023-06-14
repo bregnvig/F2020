@@ -5,11 +5,23 @@ import { notNullish, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { first, map, Observable } from 'rxjs';
 import { icon } from '../../font-awesome';
+import { LoadingComponent } from '../loading/loading.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'sha-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+    selector: 'sha-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        FontAwesomeModule,
+        LoadingComponent,
+        AsyncPipe,
+    ],
 })
 export class LoginComponent {
 

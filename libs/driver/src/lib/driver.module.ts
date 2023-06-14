@@ -33,22 +33,22 @@ const components = [
 ];
 
 @NgModule({
-  declarations: [pipes, components],
-  imports: [
-    CommonModule,
-    StoreModule.forFeature(fromDrivers.DRIVERS_FEATURE_KEY, fromDrivers.reducer),
-    EffectsModule.forFeature([DriversEffects]),
-    HttpClientModule,
-    ReactiveFormsModule,
-    MaterialModules,
-  ],
-  exports: [
-    pipes,
-    components,
-  ],
-  providers: [
-    DriverNamePipe,
-  ]
+    imports: [
+        CommonModule,
+        StoreModule.forFeature(fromDrivers.DRIVERS_FEATURE_KEY, fromDrivers.reducer),
+        EffectsModule.forFeature([DriversEffects]),
+        HttpClientModule,
+        ReactiveFormsModule,
+        MaterialModules,
+        pipes, components,
+    ],
+    exports: [
+        pipes,
+        components,
+    ],
+    providers: [
+        DriverNamePipe,
+    ]
 })
 export class DriverModule {
 }

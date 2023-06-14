@@ -3,11 +3,14 @@ import { IDriverQualifying } from '@f2020/data';
 import { interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { PolePositionTimePipe } from '@f2020/shared';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-qualifying-times',
-  template: '{{times$ | async}}',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'f2020-qualifying-times',
+    template: '{{times$ | async}}',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [AsyncPipe],
 })
 export class QualifyingTimesComponent {
 

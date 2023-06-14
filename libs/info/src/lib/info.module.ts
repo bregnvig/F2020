@@ -16,43 +16,41 @@ import { RulesComponent } from './component/rules/rules.component';
 import { GithubService } from './service/github.service';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatDividerModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule,
-    MatGridListModule,
-    HttpClientModule,
-    FontAwesomeModule,
-    SharedModule,
-    RouterModule.forChild([
-      {
-        path: 'rules',
-        component: RulesComponent,
-      },
-      {
-        path: 'about',
-        component: AboutComponent
-      },
-      {
-        path: 'privacy-policy',
-        component: PrivacyPolicyComponent,
-      },
-      {
-        path: 'roles',
-        component: MissingRoleComponent
-      }
-      /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
-    ])
-  ],
-  declarations: [
-    RulesComponent,
-    AboutComponent,
-    MissingRoleComponent, PrivacyPolicyComponent
-  ],
-  providers: [
-    GithubService
-  ]
+    imports: [
+        CommonModule,
+        MatDividerModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatCardModule,
+        MatGridListModule,
+        HttpClientModule,
+        FontAwesomeModule,
+        SharedModule,
+        RouterModule.forChild([
+            {
+                path: 'rules',
+                component: RulesComponent,
+            },
+            {
+                path: 'about',
+                component: AboutComponent
+            },
+            {
+                path: 'privacy-policy',
+                component: PrivacyPolicyComponent,
+            },
+            {
+                path: 'roles',
+                component: MissingRoleComponent
+            }
+            /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
+        ]),
+        RulesComponent,
+        AboutComponent,
+        MissingRoleComponent, PrivacyPolicyComponent
+    ],
+    providers: [
+        GithubService
+    ]
 })
 export class InfoModule { }

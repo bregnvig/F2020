@@ -1,12 +1,17 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Player } from '@f2020/data';
 import { AccountService } from '../../service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  templateUrl: './deposit-dialog.component.html',
-  styleUrls: ['./deposit-dialog.component.scss']
+    templateUrl: './deposit-dialog.component.html',
+    styleUrls: ['./deposit-dialog.component.scss'],
+    standalone: true,
+    imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
 export class DepositDialogComponent implements OnInit {
 

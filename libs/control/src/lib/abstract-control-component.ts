@@ -16,7 +16,7 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
   private _propagateTouched: (_?: any) => any;
   private readonly _uniqueId: string;
 
-  protected constructor() {
+  constructor() {
   }
 
   onBlur() {

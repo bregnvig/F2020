@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { mapper } from '@f2020/data';
 
 @Pipe({
-  name: 'polePositionTime'
+    name: 'polePositionTime',
+    standalone: true
 })
 export class PolePositionTimePipe implements PipeTransform {
 

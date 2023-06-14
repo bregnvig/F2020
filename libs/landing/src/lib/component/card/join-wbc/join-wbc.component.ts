@@ -6,11 +6,27 @@ import { truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { combineLatest, Observable } from 'rxjs';
 import { debounceTime, filter, map, pairwise, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { RelativeToNowPipe } from '../../../../../../shared/src/lib/pipe/relative-to-now.pipe';
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatCardModule } from '@angular/material/card';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-join-wbc',
-  templateUrl: './join-wbc.component.html',
-  styleUrls: ['./join-wbc.component.scss'],
+    selector: 'f2020-join-wbc',
+    templateUrl: './join-wbc.component.html',
+    styleUrls: ['./join-wbc.component.scss'],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatCardModule,
+        FontAwesomeModule,
+        MatButtonModule,
+        RouterLink,
+        AsyncPipe,
+        RelativeToNowPipe,
+    ],
 })
 export class JoinWbcComponent implements OnInit {
 

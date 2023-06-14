@@ -7,12 +7,17 @@ import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WBCGraph } from '../../model/wbc-graph.model';
 import { WBCGraphEntry } from './../../model/wbc-graph.model';
+import { NgFor } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { LineChartModule } from '@swimlane/ngx-charts';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-wbc-graph',
-  templateUrl: './wbc-graph.component.html',
-  styleUrls: ['./wbc-graph.component.scss']
+    selector: 'f2020-wbc-graph',
+    templateUrl: './wbc-graph.component.html',
+    styleUrls: ['./wbc-graph.component.scss'],
+    standalone: true,
+    imports: [LineChartModule, MatListModule, NgFor]
 })
 export class WbcGraphComponent implements OnInit {
 

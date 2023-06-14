@@ -1,14 +1,23 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { DriversFacade } from '@f2020/driver';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
+import { DriverNamePipe } from '../../pipe/driver-name.pipe';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  templateUrl: './add-driver.component.html',
-  styleUrls: ['./add-driver.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    templateUrl: './add-driver.component.html',
+    styleUrls: ['./add-driver.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, NgFor, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe]
 })
 export class AddDriverComponent implements OnInit {
 

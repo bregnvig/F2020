@@ -3,12 +3,20 @@ import { RacesActions, RacesFacade } from '@f2020/api';
 import { RoundResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { Observable, tap } from 'rxjs';
+import { PolePositionTimePipe } from '../../../../../../shared/src/lib/pipe/pole-position-time.pipe';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatCardModule } from '@angular/material/card';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-last-year',
-  templateUrl: './last-year.component.html',
-  styleUrls: ['./last-year.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'f2020-last-year',
+    templateUrl: './last-year.component.html',
+    styleUrls: ['./last-year.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgIf, MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, AsyncPipe, PolePositionTimePipe]
 })
 export class LastYearComponent implements OnInit {
 

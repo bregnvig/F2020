@@ -37,33 +37,28 @@ const materialModules = [
 ];
 
 @NgModule({
-  declarations: [
-    StandingListComponent,
-    StandingDriverComponent,
-    StandingListItemComponent,
-    NumberCardComponent,
-    DriverResultComponent,
-    DriverQualifyingComponent,
-    QualifyingTimesComponent,
-    StandingLastYearComponent,
-    LastYearQualifyComponent,
-    LastYearResultComponent,
-  ],
-  imports: [
-    CommonModule,
-    StoreModule.forFeature(
-      fromStanding.STANDING_FEATURE_KEY,
-      fromStanding.reducer,
-    ),
-    EffectsModule.forFeature([StandingEffects]),
-    FontAwesomeModule,
-    StandingRoutingModule,
-    SeasonApiModule,
-    SharedModule,
-    DriverModule,
-    materialModules,
-  ],
-  providers: [StandingFacade, StandingService],
+    imports: [
+        CommonModule,
+        StoreModule.forFeature(fromStanding.STANDING_FEATURE_KEY, fromStanding.reducer),
+        EffectsModule.forFeature([StandingEffects]),
+        FontAwesomeModule,
+        StandingRoutingModule,
+        SeasonApiModule,
+        SharedModule,
+        DriverModule,
+        materialModules,
+        StandingListComponent,
+        StandingDriverComponent,
+        StandingListItemComponent,
+        NumberCardComponent,
+        DriverResultComponent,
+        DriverQualifyingComponent,
+        QualifyingTimesComponent,
+        StandingLastYearComponent,
+        LastYearQualifyComponent,
+        LastYearResultComponent,
+    ],
+    providers: [StandingFacade, StandingService],
 })
 export class StandingModule {
 

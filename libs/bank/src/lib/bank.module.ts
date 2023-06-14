@@ -27,56 +27,54 @@ import { WithdrawDialogComponent } from './component/withdraw-dialog/withdraw-di
 import { AccountService } from './service';
 
 @NgModule({
-  declarations: [
-    TransactionsComponent,
-    AccountsComponent,
-    MyTransactionsComponent,
-    PlayerTransactionsComponent,
-    AccountsListComponent,
-    WithdrawDialogComponent,
-    DepositDialogComponent,
-    TransferDialogComponent,
-    DepositInfoDialogComponent
-  ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild([
-      {
-        path: 'me',
-        component: MyTransactionsComponent
-      },
-      {
-        path: '',
-        component: AccountsComponent,
-        children: [
-          {
-            path: '',
-            component: AccountsListComponent
-          },
-          {
-            path: ':uid',
-            component: PlayerTransactionsComponent
-          }
-        ]
-      }
-    ]),
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    FontAwesomeModule,
-    InfiniteScrollModule,
-    SharedModule,
-    PlayersApiModule,
-    ReactiveFormsModule,
-  ],
-  providers: [
-    AccountService
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild([
+            {
+                path: 'me',
+                component: MyTransactionsComponent
+            },
+            {
+                path: '',
+                component: AccountsComponent,
+                children: [
+                    {
+                        path: '',
+                        component: AccountsListComponent
+                    },
+                    {
+                        path: ':uid',
+                        component: PlayerTransactionsComponent
+                    }
+                ]
+            }
+        ]),
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatListModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        FontAwesomeModule,
+        InfiniteScrollModule,
+        SharedModule,
+        PlayersApiModule,
+        ReactiveFormsModule,
+        TransactionsComponent,
+        AccountsComponent,
+        MyTransactionsComponent,
+        PlayerTransactionsComponent,
+        AccountsListComponent,
+        WithdrawDialogComponent,
+        DepositDialogComponent,
+        TransferDialogComponent,
+        DepositInfoDialogComponent,
+    ],
+    providers: [
+        AccountService
+    ]
 })
 export class BankModule { }

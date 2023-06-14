@@ -6,12 +6,19 @@ import { RacesFacade, RacesActions } from '@f2020/api';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { LoadingComponent } from '../../../../../../shared/src/lib/component/loading/loading.component';
+import { DisplayBidComponent } from '../display-bid.component';
+import { PartialBidWarningComponent } from '../../partial-bid-warning/partial-bid-warning.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-display-player-bid',
-  templateUrl: './display-player-bid.component.html',
-  styleUrls: ['./display-player-bid.component.scss']
+    selector: 'f2020-display-player-bid',
+    templateUrl: './display-player-bid.component.html',
+    styleUrls: ['./display-player-bid.component.scss'],
+    standalone: true,
+    imports: [NgIf, MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, AsyncPipe]
 })
 export class DisplayPlayerBidComponent implements OnInit {
 

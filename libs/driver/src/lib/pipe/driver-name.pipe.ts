@@ -3,8 +3,9 @@ import { DriversFacade } from '../+state/drivers.facade';
 import { IDriver } from '@f2020/data';
 
 @Pipe({
-  name: 'driverName',
-  pure: false,
+    name: 'driverName',
+    pure: false,
+    standalone: true,
 })
 export class DriverNamePipe implements PipeTransform {
 

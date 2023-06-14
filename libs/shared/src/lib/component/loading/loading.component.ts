@@ -11,14 +11,15 @@ const tyres: string[] = [
 ];
 
 @Component({
-  selector: 'sha-loading',
-  template: `
+    selector: 'sha-loading',
+    template: `
     <div>
       <img [src]="tyre" alt="loading">
     </div>
   `,
-  styleUrls: ['./loading.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./loading.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class LoadingComponent {
   readonly tyre: string;

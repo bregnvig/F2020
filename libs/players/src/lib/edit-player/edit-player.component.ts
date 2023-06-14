@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { PlayersActions, PlayersApiService, PlayersFacade } from '@f2020/api';
@@ -8,11 +8,24 @@ import { truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
+import { LoadingComponent } from '../../../../shared/src/lib/component/loading/loading.component';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCardModule } from '@angular/material/card';
+import { CardPageComponent } from '../../../../shared/src/lib/component/card-page/card-page.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './edit-player.component.html',
-  styleUrls: ['./edit-player.component.scss']
+    templateUrl: './edit-player.component.html',
+    styleUrls: ['./edit-player.component.scss'],
+    standalone: true,
+    imports: [NgIf, MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, NgFor, MatOptionModule, LoadingComponent, AsyncPipe]
 })
 export class EditPlayerComponent implements OnInit {
 
