@@ -7,9 +7,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { PlayerApiModule, PlayersApiModule } from '@f2020/api';
-import { ProfileComponent } from './compoent/profile/profile.component';
+import { ProfileComponent } from './component/profile/profile.component';
 
-const MaterialModulde = [
+const MaterialModule = [
   MatListModule,
   MatButtonModule,
   MatToolbarModule,
@@ -18,20 +18,20 @@ const MaterialModulde = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MaterialModulde,
-        PlayerApiModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: ProfileComponent
-            }
-        ]),
-        PlayerApiModule,
-        PlayersApiModule,
-        ProfileComponent,
-    ]
+  imports: [
+    CommonModule,
+    MaterialModule,
+    PlayerApiModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        component: ProfileComponent
+      }
+    ]),
+    PlayerApiModule,
+    PlayersApiModule,
+    ProfileComponent,
+  ]
 })
 export class PlayerModule {
 }

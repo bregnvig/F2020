@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { PlayersApiModule } from "@f2020/api";
 import { AccountsListComponent } from './component/accounts-list/accounts-list.component';
 import { AccountsComponent } from './component/accounts/accounts.component';
 import { MyTransactionsComponent } from './component/my-transactions/my-transactions.component';
@@ -30,7 +31,7 @@ import { AccountService } from './service';
         ]
       }
     ]),
-
+    PlayersApiModule,
   ],
   providers: [
     AccountService

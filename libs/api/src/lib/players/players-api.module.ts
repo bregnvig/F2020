@@ -2,8 +2,8 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { EffectsModule } from "@ngrx/effects";
 import { StoreModule } from "@ngrx/store";
-import { PlayersEffects } from "./+state/players.effects";
 import * as fromPlayers from "./+state/players.reducer";
+import * as playersEffects from './+state/players.effects';
 
 @NgModule({
   imports: [
@@ -12,7 +12,7 @@ import * as fromPlayers from "./+state/players.reducer";
       fromPlayers.PLAYERS_FEATURE_KEY,
       fromPlayers.reducer
     ),
-    EffectsModule.forFeature([PlayersEffects]),
+    EffectsModule.forFeature(playersEffects),
   ],
   providers: []
 })
