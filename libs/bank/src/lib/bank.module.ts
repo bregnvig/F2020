@@ -30,6 +30,7 @@ import { AccountService } from './service';
         ]
       }
     ]),
+
   ],
   providers: [
     AccountService

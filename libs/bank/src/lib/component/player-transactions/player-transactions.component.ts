@@ -6,7 +6,7 @@ import { PlayersActions, PlayersFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
-import { first, pluck, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
 import { TransferDialogComponent } from './../transfer-dialog/transfer-dialog.component';
 import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.component';
@@ -16,8 +16,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
 
 @Component({
-    selector: 'f2020-player-transactions',
-    template: `
+  selector: 'f2020-player-transactions',
+  template: `
   <mat-toolbar color="primary" *ngIf="player$ | async as player">
     <span class="flex-auto">{{player?.displayName}}</span><span>{{player?.balance | currency: 'DKK'}}</span>
   </mat-toolbar>
@@ -28,8 +28,8 @@ import { NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
     <button class="my-auto flex-auto" mat-button (click)="openTransfer(player)">Overfør</button>
   </mat-toolbar>
   `,
-    standalone: true,
-    imports: [NgIf, MatToolbarModule, TransactionsComponent, MatButtonModule, AsyncPipe, CurrencyPipe]
+  standalone: true,
+  imports: [NgIf, MatToolbarModule, TransactionsComponent, MatButtonModule, AsyncPipe, CurrencyPipe]
 })
 export class PlayerTransactionsComponent implements OnInit {
 
@@ -43,7 +43,7 @@ export class PlayerTransactionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.pipe(
-      pluck<Params, string>('uid')
+      map<Params, string>(params => params.uid),
     ).subscribe(uid => this.facade.dispatch(PlayersActions.selectPlayer({ uid })));
     this.player$ = this.facade.selectedPlayer$.pipe(
       truthy(),

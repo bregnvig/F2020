@@ -1,23 +1,22 @@
+import { AsyncPipe, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
+import { FlagURLPipe, RelativeToNowPipe } from '@f2020/shared';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { debounce, debounceTime, filter, tap } from 'rxjs/operators';
-import { FlagURLPipe } from '../../../../../../shared/src/lib/pipe/flag-url.pipe';
-import { RelativeToNowPipe } from '../../../../../../shared/src/lib/pipe/relative-to-now.pipe';
-import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'f2020-remember-to-play',
-    templateUrl: './remember-to-play.component.html',
-    styleUrls: ['./remember-to-play.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, MatCardModule, MatButtonModule, RouterLink, AsyncPipe, RelativeToNowPipe, FlagURLPipe]
+  selector: 'f2020-remember-to-play',
+  templateUrl: './remember-to-play.component.html',
+  styleUrls: ['./remember-to-play.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, MatCardModule, MatButtonModule, RouterLink, AsyncPipe, RelativeToNowPipe, FlagURLPipe]
 })
 export class RememberToPlayComponent implements OnInit {
 

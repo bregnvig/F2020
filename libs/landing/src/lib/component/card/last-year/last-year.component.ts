@@ -3,7 +3,7 @@ import { RacesActions, RacesFacade } from '@f2020/api';
 import { RoundResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { Observable, tap } from 'rxjs';
-import { PolePositionTimePipe } from '../../../../../../shared/src/lib/pipe/pole-position-time.pipe';
+import { PolePositionTimePipe } from '@f2020/shared';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { DriverNamePipe } from '../../../../../../driver/src/lib/pipe/driver-name.pipe';
+import { DriverNamePipe } from '@f2020/driver';
 import { NgFor, NgIf } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 

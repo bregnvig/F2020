@@ -6,36 +6,36 @@ import { IRace, ITeam } from '@f2020/data';
 import { falsy, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, combineLatest, first, map, switchMap } from 'rxjs';
-import { FlagURLPipe } from '../../../../../shared/src/lib/pipe/flag-url.pipe';
+import { FlagURLPipe } from '@f2020/shared';
 import { MatButtonModule } from '@angular/material/button';
-import { SelectDriverComponent } from '../../../../../control/src/lib/components/select-driver/select-driver.component';
+import { SelectDriverComponent } from '@f2020/control';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
+import { CardPageComponent } from '@f2020/shared';
 import { NgIf, AsyncPipe } from '@angular/common';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-edit-race',
-    templateUrl: './edit-race.component.html',
-    standalone: true,
-    imports: [
-        NgIf,
-        CardPageComponent,
-        MatCardModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        NgxMatTimepickerModule,
-        MatIconModule,
-        SelectDriverComponent,
-        MatButtonModule,
-        AsyncPipe,
-        FlagURLPipe,
-    ],
+  selector: 'f2020-edit-race',
+  templateUrl: './edit-race.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    CardPageComponent,
+    MatCardModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgxMatTimepickerModule,
+    MatIconModule,
+    SelectDriverComponent,
+    MatButtonModule,
+    AsyncPipe,
+    FlagURLPipe,
+  ],
 })
 export class EditRaceComponent implements OnInit {
 

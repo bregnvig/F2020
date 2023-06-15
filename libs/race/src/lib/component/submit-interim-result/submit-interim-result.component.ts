@@ -1,26 +1,26 @@
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { RacesActions, RacesFacade } from '@f2020/api';
+import { BidComponent } from '@f2020/control';
 import { Bid, IRace } from '@f2020/data';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { LoadingComponent } from '@f2020/shared';
 import { shareLatest, truthy } from '@f2020/tools';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, mapTo, pairwise } from 'rxjs/operators';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { BidComponent } from '../../../../../control/src/lib/components/bid/bid.component';
-import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable, combineLatest } from 'rxjs';
+import { filter, map, pairwise } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-submit-interim-result',
-    templateUrl: './submit-interim-result.component.html',
-    styleUrls: ['./submit-interim-result.component.scss'],
-    standalone: true,
-    imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  selector: 'f2020-submit-interim-result',
+  templateUrl: './submit-interim-result.component.html',
+  styleUrls: ['./submit-interim-result.component.scss'],
+  standalone: true,
+  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
 })
 export class SubmitInterimResultComponent implements OnInit {
 
@@ -46,7 +46,7 @@ export class SubmitInterimResultComponent implements OnInit {
       this.facade.selectedRace$.pipe(truthy()),
       this.facade.interimResult$.pipe(truthy())
     ]).pipe(
-      mapTo(true)
+      map(() => true)
     );
     this.facade.interimResult$.pipe(
       untilDestroyed(this),

@@ -3,7 +3,7 @@ import { RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { Observable } from 'rxjs';
-import { LoadingComponent } from '../../../../../../shared/src/lib/component/loading/loading.component';
+import { LoadingComponent } from '@f2020/shared';
 import { DisplayBidComponent } from '../display-bid.component';
 import { MatListModule } from '@angular/material/list';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

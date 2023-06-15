@@ -7,7 +7,9 @@ import { catchError, concatMap, map, takeUntil } from 'rxjs/operators';
 import { PlayersActions } from './players.actions';
 
 
-@Injectable()
+@Injectable({
+  providedIn: "root",
+})
 export class PlayersEffects {
   loadPlayers$ = createEffect(() =>
     this.actions$.pipe(

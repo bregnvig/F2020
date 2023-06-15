@@ -1,19 +1,19 @@
 import { Component, OnInit, isDevMode } from '@angular/core';
+import { getToken } from '@angular/fire/messaging';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
+import { SidebarComponent } from '@f2020/shared';
 import { filterEquals, truthy } from '@f2020/tools';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
-import { SidebarComponent } from '../../../../libs/shared/src/lib/component/sidebar/sidebar.component';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { getToken } from '@angular/fire/messaging';
 import { environment } from '../environments/environment';
 
 @Component({

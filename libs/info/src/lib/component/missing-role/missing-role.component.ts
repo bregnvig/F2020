@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { icon } from '@f2020/shared';
-import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
+import { CardPageComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatToolbarModule } from '@angular/material/toolbar';
 

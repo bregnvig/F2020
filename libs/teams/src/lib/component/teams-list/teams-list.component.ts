@@ -1,29 +1,25 @@
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
-import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
-import { icon } from '@f2020/shared';
-import { first, map, mapTo, switchMap } from 'rxjs';
-import { DriverNamePipe } from '../../../../../driver/src/lib/pipe/driver-name.pipe';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
-import { MatDividerModule } from '@angular/material/divider';
+import { AddDriverComponent, DriverNamePipe, DriversActions, DriversFacade } from '@f2020/driver';
+import { CardPageComponent, HasRoleDirective, LoadingComponent, icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatButtonModule } from '@angular/material/button';
-import { HasRoleDirective } from '../../../../../shared/src/lib/component/has-role.directive';
-import { MatListModule } from '@angular/material/list';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { first, map, switchMap } from 'rxjs';
 
 @Component({
-    selector: 'teams-teams-list',
-    templateUrl: './teams-list.component.html',
-    styleUrls: ['./teams-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatToolbarModule, CardPageComponent, NgIf, MatListModule, NgFor, HasRoleDirective, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe]
+  selector: 'teams-teams-list',
+  templateUrl: './teams-list.component.html',
+  styleUrls: ['./teams-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatToolbarModule, CardPageComponent, NgIf, MatListModule, NgFor, HasRoleDirective, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe]
 })
 export class TeamsListComponent implements OnInit {
 
@@ -48,7 +44,7 @@ export class TeamsListComponent implements OnInit {
         ...team,
         drivers: [...team.drivers, driver],
       }) as ITeam),
-      switchMap(team => this.service.updateTeam(team).pipe(mapTo(team.drivers[team.drivers.length - 1]))),
+      switchMap(team => this.service.updateTeam(team).pipe(map(() => team.drivers[team.drivers.length - 1]))),
       first(),
     ).subscribe(driver => this.snackBar.open(`${driver} tilføjet til ${team.name}`, undefined, { duration: 1000 }));
   }

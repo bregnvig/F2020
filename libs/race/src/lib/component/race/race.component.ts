@@ -3,28 +3,28 @@ import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
 import { Observable, combineLatest } from 'rxjs';
 import { debounceTime, filter, first, map } from 'rxjs/operators';
-import { DateTimePipe } from '../../../../../shared/src/lib/pipe/date-time.pipe';
-import { FlagURLPipe } from '../../../../../shared/src/lib/pipe/flag-url.pipe';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { DateTimePipe } from '@f2020/shared';
+import { FlagURLPipe } from '@f2020/shared';
+import { LoadingComponent } from '@f2020/shared';
 import { MatIconModule } from '@angular/material/icon';
 import { RaceUpdatedWarningComponent } from './race-updated-warning.component';
 import { BidsComponent } from '../bids/bids.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { HasRoleDirective } from '../../../../../shared/src/lib/component/has-role.directive';
+import { HasRoleDirective } from '@f2020/shared';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatCardModule } from '@angular/material/card';
-import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
+import { CardPageComponent } from '@f2020/shared';
 import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'f2020-race',
-    styleUrls: ['./race.component.scss'],
-    templateUrl: './race.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, AsyncPipe, FlagURLPipe, DateTimePipe]
+  selector: 'f2020-race',
+  styleUrls: ['./race.component.scss'],
+  templateUrl: './race.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, AsyncPipe, FlagURLPipe, DateTimePipe]
 })
 export class RaceComponent implements OnInit {
 

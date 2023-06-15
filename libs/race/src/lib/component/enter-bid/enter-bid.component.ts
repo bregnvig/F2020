@@ -1,29 +1,28 @@
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
 import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
+import { BidComponent } from '@f2020/control';
 import { IRace, ITeam } from '@f2020/data';
-import { icon } from '@f2020/shared';
+import { LoadingComponent, icon } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { debounceTime, filter, first, pairwise, switchMap, tap } from 'rxjs/operators';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
-import { MatIconModule } from '@angular/material/icon';
-import { BidComponent } from '../../../../../control/src/lib/components/bid/bid.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
-    selector: 'f2020-enter-bid',
-    templateUrl: './enter-bid.component.html',
-    styleUrls: ['./enter-bid.component.scss'],
-    standalone: true,
-    imports: [NgIf, MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  selector: 'f2020-enter-bid',
+  templateUrl: './enter-bid.component.html',
+  styleUrls: ['./enter-bid.component.scss'],
+  standalone: true,
+  imports: [NgIf, MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
 })
 export class EnterBidComponent implements OnInit {
 

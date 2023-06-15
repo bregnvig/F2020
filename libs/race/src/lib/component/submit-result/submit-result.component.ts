@@ -7,21 +7,21 @@ import { Bid, IRace, ITeam } from '@f2020/data';
 import { shareLatest, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, combineLatest } from 'rxjs';
-import { filter, mapTo, pairwise } from 'rxjs/operators';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { filter, map, pairwise } from 'rxjs/operators';
+import { LoadingComponent } from '@f2020/shared';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { BidComponent } from '../../../../../control/src/lib/components/bid/bid.component';
+import { BidComponent } from '@f2020/control';
 import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-submit-result',
-    templateUrl: './submit-result.component.html',
-    styleUrls: ['./submit-result.component.scss'],
-    standalone: true,
-    imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  selector: 'f2020-submit-result',
+  templateUrl: './submit-result.component.html',
+  styleUrls: ['./submit-result.component.scss'],
+  standalone: true,
+  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
 })
 export class SubmitResultComponent implements OnInit {
 
@@ -49,7 +49,7 @@ export class SubmitResultComponent implements OnInit {
       this.facade.selectedRace$.pipe(truthy()),
       this.facade.result$.pipe(truthy())
     ]).pipe(
-      mapTo(true)
+      map(() => true)
     );
     this.facade.result$.pipe(
       untilDestroyed(this),

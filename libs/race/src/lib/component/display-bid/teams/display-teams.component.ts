@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { TeamNamePipe } from '../../../../../../shared/src/lib/pipe/team-name.pipe';
+import { TeamNamePipe } from '@f2020/shared';
 import { NgFor, NgIf } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-    selector: 'f2020-display-teams',
-    template: `
+  selector: 'f2020-display-teams',
+  template: `
     <mat-list>
       <mat-list-item *ngFor="let id of constructorIds; index as i">
         <h4 matListItemTitle>{{id | teamName}}</h4>
@@ -13,9 +13,9 @@ import { MatListModule } from '@angular/material/list';
       </mat-list-item>
     </mat-list>
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatListModule, NgFor, NgIf, TeamNamePipe]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatListModule, NgFor, NgIf, TeamNamePipe]
 })
 export class DisplayTeamsComponent {
 

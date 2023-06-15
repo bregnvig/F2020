@@ -3,7 +3,6 @@ import { NgModule } from "@angular/core";
 import { EffectsModule } from "@ngrx/effects";
 import { StoreModule } from "@ngrx/store";
 import { PlayersEffects } from "./+state/players.effects";
-import { PlayersFacade } from "./+state/players.facade";
 import * as fromPlayers from "./+state/players.reducer";
 
 @NgModule({
@@ -15,6 +14,6 @@ import * as fromPlayers from "./+state/players.reducer";
     ),
     EffectsModule.forFeature([PlayersEffects]),
   ],
-  providers: [PlayersFacade, PlayersEffects]
+  providers: []
 })
 export class PlayersApiModule { }

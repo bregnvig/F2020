@@ -4,9 +4,9 @@ import { Bid, IRace, ITeam } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
-import { DriverNamePipe } from '../../../../../driver/src/lib/pipe/driver-name.pipe';
-import { TeamNamePipe } from '../../../../../shared/src/lib/pipe/team-name.pipe';
-import { PolePositionTimePipe } from '../../../../../shared/src/lib/pipe/pole-position-time.pipe';
+import { DriverNamePipe } from '@f2020/driver';
+import { TeamNamePipe } from '@f2020/shared';
+import { PolePositionTimePipe } from '@f2020/shared';
 import { PolePositionTimeComponent } from '../pole-position-time/pole-position-time.component';
 import { SelectTeamsComponent } from '../select-teams/select-teams.component';
 import { SelectedTeamComponent } from '../selected-team/selected-team.component';
@@ -15,26 +15,26 @@ import { SelectDriversComponent } from '../select-drivers/select-drivers.compone
 import { DriverCodesComponent } from '../driver-codes/driver-codes.component';
 import { NgIf, NgFor } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { CardPageComponent } from '../../../../../shared/src/lib/component/card-page/card-page.component';
+import { CardPageComponent } from '@f2020/shared';
 
 @Component({
-    selector: 'f2020-bid',
-    templateUrl: './bid.component.html',
-    styleUrls: ['./bid.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => BidComponent),
-            multi: true,
-        },
-        {
-            provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => BidComponent),
-            multi: true,
-        },
-    ],
-    standalone: true,
-    imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, NgIf, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, NgFor, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
+  selector: 'f2020-bid',
+  templateUrl: './bid.component.html',
+  styleUrls: ['./bid.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => BidComponent),
+      multi: true,
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => BidComponent),
+      multi: true,
+    },
+  ],
+  standalone: true,
+  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, NgIf, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, NgFor, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
 })
 export class BidComponent extends AbstractControlComponent<Bid> implements OnInit {
 

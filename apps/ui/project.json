@@ -11,7 +11,7 @@
   "prefix": "f2020",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser-esbuild",
+      "executor": "@angular-devkit/build-angular:browser",
       "options": {
         "outputPath": "dist/apps/ui",
         "index": "apps/ui/src/index.html",

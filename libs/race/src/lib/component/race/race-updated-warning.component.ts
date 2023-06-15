@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IRace } from '@f2020/data';
 import { icon } from '@f2020/shared';
-import { DriverNamePipe } from '../../../../../driver/src/lib/pipe/driver-name.pipe';
-import { DateTimePipe } from '../../../../../shared/src/lib/pipe/date-time.pipe';
+import { DriverNamePipe } from '@f2020/driver';
+import { DateTimePipe } from '@f2020/shared';
 import { NgFor, NgIf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-    selector: 'f2020-race-updated-warning',
-    template: `
+  selector: 'f2020-race-updated-warning',
+  template: `
       <mat-card>
         <mat-card-header class="text-yellow-500" >
           <fa-icon mat-card-avatar [icon]="infoIcon" size="2x"></fa-icon>
@@ -31,9 +31,9 @@ import { MatCardModule } from '@angular/material/card';
         </mat-card-content>
       </mat-card>
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatCardModule, FontAwesomeModule, NgFor, NgIf, DateTimePipe, DriverNamePipe]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatCardModule, FontAwesomeModule, NgFor, NgIf, DateTimePipe, DriverNamePipe]
 })
 export class RaceUpdatedWarningComponent {
 

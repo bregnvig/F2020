@@ -4,7 +4,7 @@ import { IDriverStanding } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { StandingFacade } from '../../+state/standing.facade';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { LoadingComponent } from '@f2020/shared';
 import { StandingListItemComponent } from './standing-list-item/standing-list-item.component';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
@@ -12,20 +12,20 @@ import { NgIf, NgFor, AsyncPipe, LowerCasePipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    selector: 'f2020-standing-list',
-    templateUrl: './standing-list.component.html',
-    standalone: true,
-    imports: [
-        MatToolbarModule,
-        NgIf,
-        MatListModule,
-        NgFor,
-        RouterLink,
-        StandingListItemComponent,
-        LoadingComponent,
-        AsyncPipe,
-        LowerCasePipe,
-    ],
+  selector: 'f2020-standing-list',
+  templateUrl: './standing-list.component.html',
+  standalone: true,
+  imports: [
+    MatToolbarModule,
+    NgIf,
+    MatListModule,
+    NgFor,
+    RouterLink,
+    StandingListItemComponent,
+    LoadingComponent,
+    AsyncPipe,
+    LowerCasePipe,
+  ],
 })
 export class StandingListComponent implements OnInit {
 

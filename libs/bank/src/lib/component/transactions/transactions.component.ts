@@ -3,18 +3,18 @@ import { Player, Transaction } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable, scan, switchMap } from 'rxjs';
 import { AccountService } from '../../service';
-import { DateTimePipe } from '../../../../../shared/src/lib/pipe/date-time.pipe';
-import { LoadingComponent } from '../../../../../shared/src/lib/component/loading/loading.component';
+import { DateTimePipe } from '@f2020/shared';
 import { MatListModule } from '@angular/material/list';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgIf, NgFor, AsyncPipe, CurrencyPipe } from '@angular/common';
+import { LoadingComponent } from '@f2020/shared';
 
 @Component({
-    selector: 'f2020-transactions',
-    templateUrl: './transactions.component.html',
-    styleUrls: ['./transactions.component.scss'],
-    standalone: true,
-    imports: [NgIf, InfiniteScrollModule, MatListModule, NgFor, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
+  selector: 'f2020-transactions',
+  templateUrl: './transactions.component.html',
+  styleUrls: ['./transactions.component.scss'],
+  standalone: true,
+  imports: [NgIf, InfiniteScrollModule, MatListModule, NgFor, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
 })
 export class TransactionsComponent {
 

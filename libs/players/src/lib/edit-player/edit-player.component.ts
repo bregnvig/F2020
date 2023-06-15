@@ -8,7 +8,6 @@ import { truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
-import { LoadingComponent } from '../../../../shared/src/lib/component/loading/loading.component';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -16,9 +15,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
-import { CardPageComponent } from '../../../../shared/src/lib/component/card-page/card-page.component';
+import { CardPageComponent } from '@f2020/shared';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { LoadingComponent } from '@f2020/shared';
 
 @UntilDestroy()
 @Component({
