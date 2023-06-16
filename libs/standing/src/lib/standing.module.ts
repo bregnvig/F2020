@@ -12,7 +12,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StandingActions } from './+state/standing.actions';
-import { StandingEffects } from './+state/standing.effects';
+import * as standingEffects from './+state/standing.effects';
 import { StandingFacade } from './+state/standing.facade';
 import * as fromStanding from './+state/standing.reducer';
 import { DriverQualifyingComponent } from './component/standing-driver/driver-qualifying/driver-qualifying.component';
@@ -25,7 +25,6 @@ import { LastYearResultComponent } from './component/standing-last-year/last-yea
 import { StandingLastYearComponent } from './component/standing-last-year/standing-last-year.component';
 import { StandingListItemComponent } from './component/standing-list/standing-list-item/standing-list-item.component';
 import { StandingListComponent } from './component/standing-list/standing-list.component';
-import { StandingService } from './service/standing.service';
 import { StandingRoutingModule } from './standing-routing.module';
 
 const materialModules = [
@@ -37,28 +36,27 @@ const materialModules = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        StoreModule.forFeature(fromStanding.STANDING_FEATURE_KEY, fromStanding.reducer),
-        EffectsModule.forFeature([StandingEffects]),
-        FontAwesomeModule,
-        StandingRoutingModule,
-        SeasonApiModule,
-        SharedModule,
-        DriverModule,
-        materialModules,
-        StandingListComponent,
-        StandingDriverComponent,
-        StandingListItemComponent,
-        NumberCardComponent,
-        DriverResultComponent,
-        DriverQualifyingComponent,
-        QualifyingTimesComponent,
-        StandingLastYearComponent,
-        LastYearQualifyComponent,
-        LastYearResultComponent,
-    ],
-    providers: [StandingFacade, StandingService],
+  imports: [
+    CommonModule,
+    StoreModule.forFeature(fromStanding.STANDING_FEATURE_KEY, fromStanding.reducer),
+    EffectsModule.forFeature(standingEffects),
+    FontAwesomeModule,
+    StandingRoutingModule,
+    SeasonApiModule,
+    SharedModule,
+    DriverModule,
+    materialModules,
+    StandingListComponent,
+    StandingDriverComponent,
+    StandingListItemComponent,
+    NumberCardComponent,
+    DriverResultComponent,
+    DriverQualifyingComponent,
+    QualifyingTimesComponent,
+    StandingLastYearComponent,
+    LastYearQualifyComponent,
+    LastYearResultComponent,
+  ],
 })
 export class StandingModule {
 

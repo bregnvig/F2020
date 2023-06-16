@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { DriversEffects } from './+state/drivers.effects';
+import * as driversEffects from './+state/drivers.effects';
 import * as fromDrivers from './+state/drivers.reducer';
 import { AddDriverComponent } from './component';
 import { DriverNamePipe } from './pipe/driver-name.pipe';
@@ -33,22 +33,19 @@ const components = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        StoreModule.forFeature(fromDrivers.DRIVERS_FEATURE_KEY, fromDrivers.reducer),
-        EffectsModule.forFeature([DriversEffects]),
-        HttpClientModule,
-        ReactiveFormsModule,
-        MaterialModules,
-        pipes, components,
-    ],
-    exports: [
-        pipes,
-        components,
-    ],
-    providers: [
-        DriverNamePipe,
-    ]
+  imports: [
+    CommonModule,
+    StoreModule.forFeature(fromDrivers.DRIVERS_FEATURE_KEY, fromDrivers.reducer),
+    EffectsModule.forFeature(driversEffects),
+    HttpClientModule,
+    ReactiveFormsModule,
+    MaterialModules,
+    pipes, components,
+  ],
+  exports: [
+    pipes,
+    components,
+  ],
 })
 export class DriverModule {
 }

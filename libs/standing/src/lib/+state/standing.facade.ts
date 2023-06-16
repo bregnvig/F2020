@@ -5,7 +5,9 @@ import { select, Store, Action } from '@ngrx/store';
 import * as fromStanding from './standing.reducer';
 import * as StandingSelectors from './standing.selectors';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class StandingFacade {
   loaded$ = this.store.pipe(select(StandingSelectors.getStandingLoaded));
   error$ = this.store.pipe(select(StandingSelectors.getStandingError));

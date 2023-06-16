@@ -4,7 +4,9 @@ import { ErgastDriversQualifying, ErgastRaceResult, finished, IDriverResult, IDr
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class StandingService {
 
   constructor(private service: ErgastService) {
