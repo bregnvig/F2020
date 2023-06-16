@@ -4,9 +4,9 @@ import { filter } from 'rxjs/operators';
 import * as fromRaces from './races.reducer';
 import * as RacesSelectors from './races.selectors';
 
-
-
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class RacesFacade {
   loaded$ = this.store.pipe(select(RacesSelectors.getRacesLoaded));
   updating$ = this.store.pipe(select(RacesSelectors.getUpdating));
