@@ -7,10 +7,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { PlayerEffects } from './+state/player.effects';
+import * as playerEffects from './+state/player.effects';
 import * as fromPlayer from './+state/player.reducer';
 
-const MaterialModulde = [
+const MaterialModule = [
   MatListModule,
   MatButtonModule,
   MatToolbarModule,
@@ -21,9 +21,9 @@ const MaterialModulde = [
 @NgModule({
   imports: [
     CommonModule,
-    MaterialModulde,
+    MaterialModule,
     StoreModule.forFeature(fromPlayer.PLAYER_FEATURE_KEY, fromPlayer.reducer),
-    EffectsModule.forFeature([PlayerEffects]),
+    EffectsModule.forFeature(playerEffects),
   ]
 })
 export class PlayerApiModule {
