@@ -5,9 +5,7 @@
   <mat-toolbar>Påmindelser</mat-toolbar>
   <mat-list>
     <mat-list-item>
-      <div mat-line>
-        <mat-slide-toggle [checked]="receiveReminders$ | async" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
-      </div>
+      <mat-slide-toggle [checked]="receiveReminders$ | async" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
     </mat-list-item>
   </mat-list>
   <mat-toolbar class="mt-3">
