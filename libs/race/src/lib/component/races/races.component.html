@@ -4,7 +4,7 @@
 <div class="max-w-3xl mx-auto">
   <mat-action-list *ngIf="races$ | async as races; else loading">
     <mat-list-item *ngFor="let race of races" [routerLink]="race.round.toString(10)">
-      <img matListItemAvatar [src]="race | flagURL">
+      <img matListItemAvatar [alt]="race.countryCode" height="40" width="40" [ngSrc]="race | flagURL">
       <h3 matListItemTitle>{{race.name}}</h3>
       <p matListItemLine>{{race | raceStatus}}</p>
     </mat-list-item>

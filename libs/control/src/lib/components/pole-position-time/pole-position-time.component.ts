@@ -1,5 +1,5 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { mapper } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, map } from 'rxjs/operators';
@@ -8,46 +8,45 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-    selector: 'f2020-pole-position-time',
-    templateUrl: './pole-position-time.component.html',
-    styleUrls: ['./pole-position-time.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => PolePositionTimeComponent),
-            multi: true,
-        },
-        {
-            provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => PolePositionTimeComponent),
-            multi: true,
-        },
-    ],
-    standalone: true,
-    imports: [
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-    ],
+  selector: 'f2020-pole-position-time',
+  templateUrl: './pole-position-time.component.html',
+  styleUrls: ['./pole-position-time.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => PolePositionTimeComponent),
+      multi: true,
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => PolePositionTimeComponent),
+      multi: true,
+    },
+  ],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
 })
 export class PolePositionTimeComponent extends AbstractControlComponent<number> implements OnInit {
 
-  fg: FormGroup;
+  fg = this.fb.group({
+    minutes: this.fb.control<number | null>(null, [Validators.required, Validators.min(0), Validators.max(2)]),
+    seconds: this.fb.control<number | null>(null, [Validators.required, Validators.min(0), Validators.max(59)]),
+    milliseconds: this.fb.control<number | null>(null, [Validators.required, Validators.min(0), Validators.max(999)]),
+  });
 
   constructor(private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.fg = this.fb.group({
-      minutes: [null, [Validators.required, Validators.min(0), Validators.max(2)]],
-      seconds: [null, [Validators.required, Validators.min(0), Validators.max(59)]],
-      milliseconds: [null, [Validators.required, Validators.min(0), Validators.max(999)]],
-    });
     this.fg.valueChanges.pipe(
       untilDestroyed(this),
       debounceTime(100),
-      map(value => mapper.polePosition.join(value))
+      map(value => mapper.polePosition.join(value)),
     ).subscribe(millis => this.propagateChange(millis));
   }
 

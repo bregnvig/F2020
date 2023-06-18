@@ -1,5 +1,5 @@
 export interface PolePositionTime {
-  minutes: number;
-  seconds: number;
-  milliseconds: number;
+  minutes?: number;
+  seconds?: number;
+  milliseconds?: number;
 }

@@ -1,4 +1,4 @@
-import { PolePositionTime } from "../model/pole-position.model";
+import { PolePositionTime } from '../model/pole-position.model';
 
 
 const minutes = (millis: number) => Math.floor(millis / (1000 * 60));
@@ -10,10 +10,10 @@ export const polePosition = {
     return {
       minutes: minutes(value),
       seconds: seconds(value),
-      milliseconds: milliseconds(value)
+      milliseconds: milliseconds(value),
     };
   },
   join(value: PolePositionTime): number {
-    return ((value.minutes * 60) + value.seconds) * 1000 + value.milliseconds;
-  }
+    return (((value.minutes ?? 0) * 60) + (value.seconds ?? 0)) * 1000 + (value.milliseconds ?? 0);
+  },
 };

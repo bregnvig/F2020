@@ -4,16 +4,16 @@ import { createAction, props } from '@ngrx/store';
 export const SeasonActions = {
   loadSeason: createAction(
     '[Season] Load Season',
-    props<{ seasonId: string }>(),
+    props<{ seasonId: string; }>(),
   ),
 
   loadSeasonSuccess: createAction(
     '[Season] Load Season Success',
-    props<{ season: ISeason }>(),
+    props<{ season: ISeason; }>(),
   ),
 
   loadSeasonFailure: createAction(
     '[Season] Load Season Failure',
-    props<{ error: any }>(),
+    props<{ error: any; }>(),
   ),
 };

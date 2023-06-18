@@ -9,7 +9,7 @@ import { FlagURLPipe } from '@f2020/shared';
 import { LoadingComponent } from '@f2020/shared';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NgIf, NgFor, AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
@@ -27,6 +27,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AsyncPipe,
     FlagURLPipe,
     RaceStatusPipe,
+    NgOptimizedImage,
   ],
 })
 export class RacesComponent implements OnInit {

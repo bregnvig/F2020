@@ -24,33 +24,33 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
 };
 
 @Component({
-    selector: 'f2020-select-drivers',
-    templateUrl: './select-drivers.component.html',
-    styleUrls: ['./select-drivers.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => SelectDriversComponent),
-            multi: true,
-        },
-        {
-            provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => SelectDriversComponent),
-            multi: true
-        }
-    ],
-    standalone: true,
-    imports: [
-        ReactiveFormsModule,
-        NgFor,
-        SelectDriverComponent,
-    ],
+  selector: 'f2020-select-drivers',
+  templateUrl: './select-drivers.component.html',
+  styleUrls: ['./select-drivers.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SelectDriversComponent),
+      multi: true,
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => SelectDriversComponent),
+      multi: true,
+    },
+  ],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    NgFor,
+    SelectDriverComponent,
+  ],
 })
 export class SelectDriversComponent extends AbstractControlComponent<string[]> implements OnInit {
 
-  @Input() race: IRace;
-  @Input() teams: ITeam[];
-  @Input() noOfDrivers: number;
+  @Input({ required: true }) race: IRace;
+  @Input({ required: true }) teams: ITeam[];
+  @Input({ required: true }) noOfDrivers: number;
 
   fg: FormGroup;
   drivers: FormArray;

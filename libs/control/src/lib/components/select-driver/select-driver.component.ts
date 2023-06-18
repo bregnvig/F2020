@@ -5,37 +5,37 @@ import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { DriverNamePipe } from '@f2020/driver';
 import { MatOptionModule } from '@angular/material/core';
-import { NgIf, NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-    selector: 'f2020-select-driver',
-    templateUrl: './select-driver.component.html',
-    styleUrls: ['./select-driver.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => SelectDriverComponent),
-            multi: true,
-        },
-    ],
-    standalone: true,
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        ReactiveFormsModule,
-        NgIf,
-        NgFor,
-        MatOptionModule,
-        DriverNamePipe,
-    ],
+  selector: 'f2020-select-driver',
+  templateUrl: './select-driver.component.html',
+  styleUrls: ['./select-driver.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SelectDriverComponent),
+      multi: true,
+    },
+  ],
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    NgIf,
+    NgFor,
+    MatOptionModule,
+    DriverNamePipe,
+  ],
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {
 
-  @Input() driverIds: string[];
+  @Input({ required: true }) driverIds: string[];
   @Input() teams: ITeam[];
-  @Input() label: string;
+  @Input({ required: true }) label: string;
   @Input() error: string;
   selectControl = new FormControl();
   allTeamAndDrivers: [string, string[]][];
