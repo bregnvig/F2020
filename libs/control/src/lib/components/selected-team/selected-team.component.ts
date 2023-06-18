@@ -2,7 +2,7 @@ import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ITeam, SelectedTeamValue } from '@f2020/data';
 import { AbstractControlComponent } from '../../abstract-control-component';
-import { SelectDriverComponent } from '../';
+import { SelectDriverComponent } from '../select-driver/select-driver.component';
 
 @Component({
   selector: 'f2020-selected-team',

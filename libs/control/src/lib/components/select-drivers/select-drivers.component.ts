@@ -4,7 +4,7 @@ import { IRace, ITeam } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
-import { SelectDriverComponent } from '../';
+import { SelectDriverComponent } from '../select-driver/select-driver.component';
 import { NgFor } from '@angular/common';
 
 type LabelFn = (index: number) => string;
@@ -62,10 +62,10 @@ export class SelectDriversComponent extends AbstractControlComponent<string[]> i
   }
 
   ngOnInit(): void {
-    this.drivers = this.fb.array(Array.from({ length: this.noOfDrivers }, () => [null]), uniqueDrivers),
-      this.fg = this.fb.group({
-        drivers: this.drivers,
-      });
+    this.drivers = this.fb.array(Array.from({ length: this.noOfDrivers }, () => [null]), uniqueDrivers);
+    this.fg = this.fb.group({
+      drivers: this.drivers,
+    });
     this.drivers.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe(value => this.propagateChange(value));
