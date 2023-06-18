@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, numberAttribute } from '@angular/core';
 import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
@@ -14,5 +14,5 @@ import { MatCardModule } from '@angular/material/card';
 export class NumberCardComponent {
   @Input() title: string;
   @Input() icon: [IconPrefix, IconName];
-  @Input() number: string | number;
+  @Input({transform: numberAttribute}) number: number;
 }
