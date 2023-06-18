@@ -2,21 +2,21 @@ import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angula
 import { PlayerFacade, SeasonFacade } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { debounceTime, filter, map, tap } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
 
 @Component({
-    selector: 'f2020-previous-race',
-    templateUrl: './previous-race.component.html',
-    styleUrls: ['./previous-race.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgIf, MatCardModule, FontAwesomeModule, MatButtonModule, RouterLink, AsyncPipe]
+  selector: 'f2020-previous-race',
+  templateUrl: './previous-race.component.html',
+  styleUrls: ['./previous-race.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, MatCardModule, FontAwesomeModule, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
 })
 export class PreviousRaceComponent implements OnInit {
 
@@ -25,7 +25,8 @@ export class PreviousRaceComponent implements OnInit {
   title$: Observable<string>;
   icon = icon.farTrophy;
 
-  constructor(private facade: SeasonFacade, private playerFacade: PlayerFacade) { }
+  constructor(private facade: SeasonFacade, private playerFacade: PlayerFacade) {
+  }
 
   ngOnInit(): void {
     this.wbcResult$ = this.facade.season$.pipe(
@@ -37,7 +38,7 @@ export class PreviousRaceComponent implements OnInit {
     );
     this.title$ = combineLatest([
       this.wbcResult$,
-      this.playerFacade.player$
+      this.playerFacade.player$,
     ]).pipe(
       map(([wbcResult, player]) => {
         const index = wbcResult.players.findIndex(p => p.player.uid === player.uid);
@@ -45,7 +46,7 @@ export class PreviousRaceComponent implements OnInit {
           return `Tillykke med din ${index + 1}. plads!`;
         }
         return `Resultat for ${wbcResult.raceName}`;
-      })
+      }),
     );
   }
 }

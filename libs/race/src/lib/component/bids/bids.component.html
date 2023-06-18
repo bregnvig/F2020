@@ -4,8 +4,8 @@
     <span matListItemTitle>Resultat</span>
   </button>
   <button mat-list-item *ngFor="let bid of bids">
-    <img matListItemAvatar [src]="bid.player.photoURL" [alt]="bid.player.displayName"  (click)="gotoBid(bid.player.uid)">
-    <span  (click)="gotoBid(bid.player.uid)" matListItemTitle>{{bid.player.displayName}} </span>
+    <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" (click)="gotoBid(bid.player.uid)">
+    <span (click)="gotoBid(bid.player.uid)" matListItemTitle>{{bid.player.displayName}} </span>
     <f2020-partial-bid-warning matListItemMeta [bid]="bid"></f2020-partial-bid-warning>
     <p matListItemLine *ngIf="bid.points">{{bid.points}} point</p>
   </button>
