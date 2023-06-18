@@ -73,10 +73,10 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
   }
 
   ngOnInit(): void {
-    this.teamsArray = this.fb.array(Array.from({ length: this.noOfTeams }, () => [null]), uniqueTeams),
-      this.fg = this.fb.group({
-        teams: this.teamsArray,
-      });
+    this.teamsArray = this.fb.array(Array.from({ length: this.noOfTeams }, () => [null]), uniqueTeams);
+    this.fg = this.fb.group({
+      teams: this.teamsArray,
+    });
     this.teamsArray.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe(value => this.propagateChange(value));

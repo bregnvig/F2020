@@ -1,10 +1,10 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
-import { SelectDriverComponent } from '../select-driver/select-driver.component';
+import { SelectDriverComponent } from '../';
 import { NgFor } from '@angular/common';
 
 type LabelFn = (index: number) => string;
@@ -87,7 +87,7 @@ export class SelectDriversComponent extends AbstractControlComponent<string[]> i
     isDisabled ? this.fg.disable() : this.fg.enable();
   }
 
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(): ValidationErrors | null {
     return this.drivers?.valid ? null : { required: true };
   }
 
