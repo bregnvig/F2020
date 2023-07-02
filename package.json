@@ -53,6 +53,8 @@
     "@angular/platform-browser-dynamic": "^16.1.0",
     "@angular/router": "^16.1.0",
     "@angular/service-worker": "^16.1.0",
+    "@fontsource-variable/roboto-flex": "^5.0.3",
+    "@fontsource/roboto": "^5.0.3",
     "@fortawesome/angular-fontawesome": "^0.13.0",
     "@fortawesome/fontawesome-pro": "^6.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
@@ -77,6 +79,7 @@
     "firebase-admin": "^11.9.0",
     "firebase-functions": "^4.4.0",
     "luxon": "^3.3.0",
+    "material-icons": "^1.13.8",
     "ngx-infinite-scroll": "^16.0.0",
     "ngx-mat-timepicker": "^16.0.0",
     "nodemailer": "^6.9.1",
@@ -134,4 +137,3 @@
     "webpack-bundle-analyzer": "^4.8.0"
   }
 }
-

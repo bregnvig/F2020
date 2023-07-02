@@ -21,17 +21,18 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
 };
 
 @Component({
-    templateUrl: './wbc-standings.component.html',
-    styleUrls: ['./wbc-standings.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatToolbarModule, MatListModule, NgFor, RouterLink, NgIf, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe]
+  templateUrl: './wbc-standings.component.html',
+  styleUrls: ['./wbc-standings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatToolbarModule, MatListModule, NgFor, RouterLink, NgIf, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe]
 })
 export class WbcStandingsComponent implements OnInit {
 
   standings$: Observable<WBCPlayer[]>;
   participants$: Observable<string[]>;
   icon = icon.fasStar;
+  chartIcon = icon.farChartLineUpDown;
 
   constructor(private facade: SeasonFacade) { }
 

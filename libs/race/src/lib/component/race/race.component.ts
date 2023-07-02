@@ -1,18 +1,19 @@
+import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
-import { combineLatest, Observable } from 'rxjs';
+import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, LoadingComponent, icon } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Observable, combineLatest } from 'rxjs';
 import { debounceTime, filter, first, map } from 'rxjs/operators';
-import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, LoadingComponent } from '@f2020/shared';
-import { MatIconModule } from '@angular/material/icon';
-import { RaceUpdatedWarningComponent } from './race-updated-warning.component';
 import { BidsComponent } from '../bids/bids.component';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { GoogleMapsModule } from '@angular/google-maps';
-import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
+import { RaceUpdatedWarningComponent } from './race-updated-warning.component';
 
 @Component({
   selector: 'f2020-race',
@@ -20,9 +21,12 @@ import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
   templateUrl: './race.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, AsyncPipe, FlagURLPipe, DateTimePipe, NgOptimizedImage],
+  imports: [NgIf, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, AsyncPipe, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule],
 })
 export class RaceComponent implements OnInit {
+
+  downloadIcon = icon.farCloudArrowDown;
+  plusIcon = icon.farPlus;
 
   center$: Observable<google.maps.LatLng>;
   race$: Observable<IRace>;

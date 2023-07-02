@@ -4,8 +4,8 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 // import { fal } from '@fortawesome/pro-light-svg-icons';
 import { faApple, faCss3, faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
-import { faBookAlt, faCalendarAlt, faCarCrash, faEgg, faFaceSadCry, faGavel, faInfo, faPen, faPiggyBank, faPlus, faSignInAlt, faSignOutAlt, faSunCloud, faTrash, faUniversity, faUser, faUserFriends, faUserPlus, faTrophyAlt as farTrophyAlt } from '@fortawesome/pro-regular-svg-icons';
-import { faCoins, faFlagCheckered, faHome, faPeopleGroup, faStar, faSteeringWheel, faUserAstronaut, faTrophyAlt as fasTrophyAlt } from '@fortawesome/pro-solid-svg-icons';
+import { faBookAlt, faCalendarAlt, faCarCrash, faChartLineUpDown, faEgg, faFaceSadCry, faGavel, faInfo, faPen, faPiggyBank, faPlus, faSignInAlt, faSignOutAlt, faSunCloud, faTrash, faUniversity, faUser, faUserFriends, faUserPlus, faTrophyAlt as farTrophyAlt } from '@fortawesome/pro-regular-svg-icons';
+import { faBars, faCloudArrowDown, faCloudArrowUp, faCoins, faFlagCheckered, faHome, faPeopleGroup, faRotateRight, faStar, faSteeringWheel, faUserAstronaut, faTrophyAlt as fasTrophyAlt } from '@fortawesome/pro-solid-svg-icons';
 
 const farIcons = [
   faSunCloud,
@@ -27,9 +27,12 @@ const farIcons = [
   faFaceSadCry,
   faEgg,
   faPen,
+  faChartLineUpDown,
 ];
 
 const fasIcons = [
+  faCloudArrowDown,
+  faCloudArrowUp,
   fasTrophyAlt,
   faHome,
   faFlagCheckered,
@@ -38,7 +41,8 @@ const fasIcons = [
   faPeopleGroup,
   faUserAstronaut,
   faStar,
-
+  faBars,
+  faRotateRight,
 ];
 
 const falIcons = [

@@ -22,6 +22,7 @@ type Icon =
   | 'farFaceSadCry'
   | 'farEgg'
   | 'farPen'
+  | 'farChartLineUpDown'
   | 'fasHome'
   | 'fasFlagCheckered'
   | 'fasCoins'
@@ -29,11 +30,15 @@ type Icon =
   | 'fasPeopleGroup'
   | 'fasUserAstronaut'
   | 'fasStar'
+  | 'fasBars'
   | 'falTireFlat'
   | 'fabGoogle'
   | 'fabFacebookF'
   | 'fabApple'
   | 'fabCss3'
+  | 'farCloudArrowDown'
+  | 'farCloudArrowUp'
+  | 'fasRotateRight'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -64,10 +69,15 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fasPeopleGroup: ['fas', 'people-group'],
   fasUserAstronaut: ['fas', 'user-astronaut'],
   fasStar: ['fas', 'star'],
+  fasBars: ['fas', 'bars'],
   falTireFlat: ['fal', 'tire-flat'],
   fabGoogle: ['fab', 'google'],
   fabFacebookF: ['fab', 'facebook-f'],
   fabApple: ['fab', 'apple'],
   fabCss3: ['fab', 'css3'],
   farFaceSadCry: ['far', 'face-sad-cry'],
+  farChartLineUpDown: ['far', 'chart-line-up-down'],
+  farCloudArrowDown: ['fas', 'cloud-arrow-down'],
+  farCloudArrowUp: ['fas', 'cloud-arrow-up'],
+  fasRotateRight: ['fas', 'rotate-right'],
 };

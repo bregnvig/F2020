@@ -8,12 +8,13 @@ import { shareLatest, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, combineLatest } from 'rxjs';
 import { filter, map, pairwise } from 'rxjs/operators';
-import { LoadingComponent } from '@f2020/shared';
+import { LoadingComponent, icon } from '@f2020/shared';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { BidComponent } from '@f2020/control';
 import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @UntilDestroy()
 @Component({
@@ -21,9 +22,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   templateUrl: './submit-result.component.html',
   styleUrls: ['./submit-result.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule]
 })
 export class SubmitResultComponent implements OnInit {
+
+  uploadIcon = icon.farCloudArrowUp;
+  refreshIcon = icon.fasRotateRight;
 
   resultControl: FormControl = new FormControl();
   race$: Observable<IRace>;

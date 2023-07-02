@@ -10,11 +10,12 @@ import { SwUpdate } from '@angular/service-worker';
 import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { DriversActions, DriversFacade } from '@f2020/driver';
-import { SidebarComponent } from '@f2020/shared';
+import { SidebarComponent, icon } from '@f2020/shared';
 import { filterEquals, truthy } from '@f2020/tools';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import { FaIconComponent, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'f2020-root',
@@ -28,9 +29,12 @@ import { environment } from '../environments/environment';
     MatSidenavModule,
     SidebarComponent,
     RouterOutlet,
+    FontAwesomeModule,
   ],
 })
 export class AppComponent implements OnInit {
+
+  bars = icon.fasBars;
 
   constructor(
     private playerFacade: PlayerFacade,

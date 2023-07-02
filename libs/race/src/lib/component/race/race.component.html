@@ -59,12 +59,12 @@
   </sha-card-page>
   <ng-container *ngIf="(play$ | async)">
     <button mat-fab aria-label="Deltag i løbet" routerLink="bid">
-      <mat-icon>add</mat-icon>
+      <fa-icon [icon]="plusIcon" size="lg"></fa-icon>
     </button>
   </ng-container>
   <ng-container *shaHasRole="'admin'">
     <button mat-fab aria-label="Upload resultat" routerLink="upload-result" *ngIf="race.state === 'closed'">
-      <mat-icon>cloud_download</mat-icon>
+      <fa-icon [icon]="downloadIcon" size="lg"></fa-icon>
     </button>
   </ng-container>
 </ng-container>
