@@ -31,6 +31,7 @@ export class EnterBidComponent implements OnInit {
   teams$: Observable<ITeam[]>;
   updating$: Observable<boolean>;
   editIcon = icon.farPen;
+  sendIcon = icon.fasPaperPlane;
 
   private subscriptions = [];
 

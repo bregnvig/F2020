@@ -24,6 +24,7 @@ type Icon =
   | 'farPen'
   | 'farChartLineUpDown'
   | 'fasHome'
+  | 'fasPaperPlane'
   | 'fasFlagCheckered'
   | 'fasCoins'
   | 'fasSteeringWheel'
@@ -70,6 +71,7 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fasUserAstronaut: ['fas', 'user-astronaut'],
   fasStar: ['fas', 'star'],
   fasBars: ['fas', 'bars'],
+  fasRotateRight: ['fas', 'rotate-right'],
   falTireFlat: ['fal', 'tire-flat'],
   fabGoogle: ['fab', 'google'],
   fabFacebookF: ['fab', 'facebook-f'],
@@ -79,5 +81,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farChartLineUpDown: ['far', 'chart-line-up-down'],
   farCloudArrowDown: ['fas', 'cloud-arrow-down'],
   farCloudArrowUp: ['fas', 'cloud-arrow-up'],
-  fasRotateRight: ['fas', 'rotate-right'],
+  fasPaperPlane: ['fas', 'paper-plane'],
 };

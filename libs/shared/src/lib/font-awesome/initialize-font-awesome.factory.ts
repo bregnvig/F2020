@@ -5,7 +5,7 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faApple, faCss3, faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
 import { faBookAlt, faCalendarAlt, faCarCrash, faChartLineUpDown, faEgg, faFaceSadCry, faGavel, faInfo, faPen, faPiggyBank, faPlus, faSignInAlt, faSignOutAlt, faSunCloud, faTrash, faUniversity, faUser, faUserFriends, faUserPlus, faTrophyAlt as farTrophyAlt } from '@fortawesome/pro-regular-svg-icons';
-import { faBars, faCloudArrowDown, faCloudArrowUp, faCoins, faFlagCheckered, faHome, faPeopleGroup, faRotateRight, faStar, faSteeringWheel, faUserAstronaut, faTrophyAlt as fasTrophyAlt } from '@fortawesome/pro-solid-svg-icons';
+import { faBars, faCloudArrowDown, faCloudArrowUp, faCoins, faFlagCheckered, faHome, faPeopleGroup, faPaperPlane, faRotateRight, faStar, faSteeringWheel, faUserAstronaut, faTrophyAlt as fasTrophyAlt } from '@fortawesome/pro-solid-svg-icons';
 
 const farIcons = [
   faSunCloud,
@@ -31,6 +31,7 @@ const farIcons = [
 ];
 
 const fasIcons = [
+  faPaperPlane,
   faCloudArrowDown,
   faCloudArrowUp,
   fasTrophyAlt,
