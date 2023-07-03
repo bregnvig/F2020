@@ -41,7 +41,7 @@ const buildRollback = async (round: string) => {
     .then(bids => bids.sort((a, b) => b.points - a.points));
   // .then(bids => bids.map(resetPoints));
 
-  const winnerPoints = bids[0].points;
+  const winnerPoints = bids[0]?.points;
   const winners = bids.filter(b => b.points === winnerPoints);
   const winningPrice = Math.floor(bids.length * 20 / winners.length);
 
