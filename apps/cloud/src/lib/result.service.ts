@@ -16,7 +16,7 @@ export const offsetPoints = (bid: string[], result: string[], maxOffset: number)
 
 export type PropertySet = { [key: string]: number; };
 export const propertyPoints = (bid: any, result: any, maxPoints = 3): PropertySet => {
-  return Object.keys(bid).reduce((acc, key) => {
+  return Object.keys(bid).filter(key => !key.endsWith('Points')).reduce((acc, key) => {
     acc[key + 'Points'] = Math.max(maxPoints - Math.abs(bid[key] - result[key]), 0) || 0;
     return acc;
   }, <PropertySet>{});
