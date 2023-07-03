@@ -14,9 +14,9 @@ export const submitResult = region('europe-west1').https.onCall(async (data: { r
     .catch(internalError);
 });
 
-const buildResult = async (ruond: number, result: Bid) => {
+const buildResult = async (round: number, result: Bid) => {
   const season = await currentSeason();
-  const race = await getRaceByRound(ruond);
+  const race = await getRaceByRound(round);
   const bookie = await getBookie();
 
   if (!season || !race) {
