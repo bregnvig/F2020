@@ -1,4 +1,4 @@
-<mat-form-field class="w-full">
+<mat-form-field class="w-full" subscriptSizing="dynamic">
   <mat-label>{{label}}</mat-label>
   <mat-select [formControl]="selectControl">
     <ng-container *ngIf="teams; else noTeams">
@@ -14,5 +14,5 @@
       </mat-option>
     </ng-template>
   </mat-select>
-  <mat-hint align="end">{{error}}</mat-hint>
+  <mat-hint *ngIf="error" align="end">{{error}}</mat-hint>
 </mat-form-field>
