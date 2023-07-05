@@ -1,22 +1,22 @@
+import { AsyncPipe, CurrencyPipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { icon } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 import { TransactionsComponent } from '../transactions/transactions.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatButtonModule } from '@angular/material/button';
-import { NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-my-transactions',
-    template: `
+  selector: 'f2020-my-transactions',
+  template: `
   <div class="flex flex-col h-full">
     <mat-toolbar color="primary">
       <span class="flex-auto">Saldo</span>
@@ -30,9 +30,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     <f2020-transactions class="flex-auto" [player]="player$ | async"></f2020-transactions>
   </div>
   `,
-    styleUrls: ['./my-transactions.component.scss'],
-    standalone: true,
-    imports: [MatToolbarModule, NgIf, MatButtonModule, FontAwesomeModule, TransactionsComponent, AsyncPipe, CurrencyPipe]
+  styleUrls: ['./my-transactions.component.scss'],
+  standalone: true,
+  imports: [MatToolbarModule, NgIf, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, AsyncPipe, CurrencyPipe]
 })
 export class MyTransactionsComponent implements OnInit {
 
