@@ -1,6 +1,9 @@
+import { AsyncPipe, CurrencyPipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Params } from '@angular/router';
 import { PlayersActions, PlayersFacade } from '@f2020/api';
 import { Player } from '@f2020/data';
@@ -8,12 +11,9 @@ import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
+import { TransactionsComponent } from '../transactions/transactions.component';
 import { TransferDialogComponent } from './../transfer-dialog/transfer-dialog.component';
 import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.component';
-import { MatButtonModule } from '@angular/material/button';
-import { TransactionsComponent } from '../transactions/transactions.component';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'f2020-player-transactions',
@@ -29,7 +29,7 @@ import { NgIf, AsyncPipe, CurrencyPipe } from '@angular/common';
   </mat-toolbar>
   `,
   standalone: true,
-  imports: [NgIf, MatToolbarModule, TransactionsComponent, MatButtonModule, AsyncPipe, CurrencyPipe]
+  imports: [NgIf, MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, AsyncPipe, CurrencyPipe]
 })
 export class PlayerTransactionsComponent implements OnInit {
 
