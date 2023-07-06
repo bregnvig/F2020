@@ -6,7 +6,7 @@ import { IRace, ITeam } from '@f2020/data';
 import { falsy, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, combineLatest, first, map, switchMap } from 'rxjs';
-import { FlagURLPipe } from '@f2020/shared';
+import { FlagURLPipe, icon } from '@f2020/shared';
 import { MatButtonModule } from '@angular/material/button';
 import { SelectDriverComponent } from '@f2020/control';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { CardPageComponent } from '@f2020/shared';
 import { NgIf, AsyncPipe } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @UntilDestroy()
 @Component({
@@ -35,10 +36,12 @@ import { NgIf, AsyncPipe } from '@angular/common';
     MatButtonModule,
     AsyncPipe,
     FlagURLPipe,
+    FontAwesomeModule,
   ],
 })
 export class EditRaceComponent implements OnInit {
 
+  clockIcon = icon.farClock;
   race$: Observable<IRace>;
   selectedDriver$: Observable<{ teams: ITeam[], drivers: string[]; }>;
   fg = this.fb.group({

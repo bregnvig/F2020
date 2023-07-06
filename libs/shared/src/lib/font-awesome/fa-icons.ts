@@ -22,6 +22,7 @@ type Icon =
   | 'farFaceSadCry'
   | 'farEgg'
   | 'farPen'
+  | 'farClock'
   | 'farChartLineUpDown'
   | 'fasHome'
   | 'fasPaperPlane'
@@ -82,4 +83,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farCloudArrowDown: ['fas', 'cloud-arrow-down'],
   farCloudArrowUp: ['fas', 'cloud-arrow-up'],
   fasPaperPlane: ['fas', 'paper-plane'],
+  farClock: ['far', 'clock'],
 };
