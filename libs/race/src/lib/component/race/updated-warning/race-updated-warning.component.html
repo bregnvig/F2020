@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-header class="text-yellow-500">
+    <fa-icon mat-card-avatar [icon]="infoIcon" size="2x"></fa-icon>
+    <mat-card-title>Løbet er blevet opdateret</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p *ngFor="let updatedBy of race.updatedBy; index as i" class="flex flex-row items-center">
+      <img [src]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName">
+      <span class="ml-2 flex flex-col">
+        <span>{{messages[i]}}</span>
+        <small class="text-slate-400">{{updatedBy.updatedAt | dateTime: 'short'}}</small>
+      </span>
+    </p>
+  </mat-card-content>
+</mat-card>

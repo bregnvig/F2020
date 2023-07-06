@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
 import { Observable, combineLatest } from 'rxjs';
 import { debounceTime, filter, first, map } from 'rxjs/operators';
 import { BidsComponent } from '../bids/bids.component';
-import { RaceUpdatedWarningComponent } from './race-updated-warning.component';
+import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 
 @Component({
   selector: 'f2020-race',
