@@ -20,6 +20,7 @@ export interface IRaceBasis {
 export interface RaceUpdatedBy extends Pick<IRace, 'close' | 'selectedDriver'> {
   player: Pick<Player, 'displayName' | 'photoURL' | 'uid'>;
   updatedAt: DateTime;
+  previous?: Pick<IRace, 'close' | 'selectedDriver'>;
 }
 
 export interface IRace extends IRaceBasis {

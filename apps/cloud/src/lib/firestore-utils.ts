@@ -51,7 +51,7 @@ export const firestoreUtils = {
     });
     return input;
   },
-  convertTimestamp(input: Timestamp): DateTime | any {
+  convertTimestamp(input: Timestamp): DateTime {
     if (input instanceof Timestamp) {
       return DateTime.fromJSDate(input.toDate());
     }

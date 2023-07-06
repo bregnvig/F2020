@@ -30,13 +30,17 @@ const update = async (race: IRace, player: PlayerImpl): Promise<any> => {
     },
     close: +race.close === +firestoreRace.close ? undefined : race.close,
     selectedDriver: race.selectedDriver === firestoreRace.selectedDriver ? undefined : race.selectedDriver,
+    previous: {
+      close: firestoreRace.close,
+      selectedDriver: firestoreRace.selectedDriver
+    },
     updatedAt: DateTime.now()
   }).filter(([, value]) => value !== undefined));
 
   return currentSeason()
     .then(season => db.doc(`seasons/${season.id}/races/${race.round}`).update(firestoreUtils.convertDateTimes({
       ...payload,
-      updatedBy: FieldValue.arrayUnion(updatedBy),
+      updatedBy: FieldValue.arrayUnion({ ...updatedBy }),
     })))
     .then(() => notifyAdmin(updatedBy, race.name));
 };
