@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '5';
+const versionNo = '6';
 
 @Component({
   selector: 'f2020-what-else',
@@ -18,8 +18,7 @@ const versionNo = '5';
 export class WhatElseComponent {
 
   @HostBinding('hidden') isHidden = localStorage.getItem('what-else') === versionNo;
-  // icon = icon.falRocketLaunch;
-  icon = icon.farFaceSadCry;
+  icon = icon.falRocketLaunch;
   tireFlat = icon.falTireFlat;
 
   dismissMessage() {
