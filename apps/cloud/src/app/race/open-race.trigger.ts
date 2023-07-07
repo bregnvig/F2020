@@ -16,12 +16,19 @@ export const openRace = region('europe-west1').firestore.document('seasons/{seas
     const before: IRace = change.before.data() as IRace;
     const after: IRace = change.after.data() as IRace;
     const requiredStateToOpenCancelled: State[] = ['open', 'closed'];
-    if ((before.state === 'closed' && after.state === 'completed') || (after.state === 'cancelled' && requiredStateToOpenCancelled.includes(before.state))) {
+    const noOpenRaces = await currentSeason().then(season => firestore()
+      .collection(currentRaceURL(season.id!))
+      .where('state', '==', 'open')
+      .get()
+      .then(snapshot => snapshot.empty));
+
+    if ((noOpenRaces && before.state === 'closed' && after.state === 'completed') || (after.state === 'cancelled' && requiredStateToOpenCancelled.includes(before.state))) {
 
       return currentSeason().then(season => firestore()
         .collection(currentRaceURL(season.id!))
         .where('state', '==', 'waiting')
         .where('round', '>=', after.round)
+        .orderBy('round')
         .withConverter<IRace>(converter.timestamp)
         .get()
         .then(snapshot => snapshot.docs[0]?.data())
