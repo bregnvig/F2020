@@ -25,6 +25,7 @@ mat-card-actions > button > span, mat-card-actions > a {
 
 button[mat-fab] {
   position: fixed;
+  z-index: 1;
   right: 16px;
   bottom: 16px;
 }

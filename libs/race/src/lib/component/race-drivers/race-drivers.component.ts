@@ -1,23 +1,21 @@
-import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
-import { AddDriverComponent, DriversActions, DriversFacade } from '@f2020/driver';
-import { icon } from '@f2020/shared';
+import { AddDriverComponent, DriverNamePipe, DriversActions, DriversFacade } from '@f2020/driver';
+import { LoadingComponent, icon } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter, first, map, pairwise, switchMap } from 'rxjs/operators';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { DriverNamePipe } from '@f2020/driver';
-import { LoadingComponent } from '@f2020/shared';
-import { MatIconModule } from '@angular/material/icon';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatButtonModule } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
 
 const message = (driverName: string, operation: Operation) => {
@@ -30,17 +28,18 @@ const message = (driverName: string, operation: Operation) => {
 
 @UntilDestroy()
 @Component({
-    selector: 'race-drivers',
-    templateUrl: './race-drivers.component.html',
-    styleUrls: ['./race-drivers.component.scss'],
-    standalone: true,
-    imports: [MatToolbarModule, NgIf, MatListModule, CdkDropList, NgFor, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe]
+  selector: 'race-drivers',
+  templateUrl: './race-drivers.component.html',
+  styleUrls: ['./race-drivers.component.scss'],
+  standalone: true,
+  imports: [MatToolbarModule, NgIf, MatListModule, CdkDropList, NgFor, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe]
 })
 export class RaceDriversComponent implements OnInit {
 
   drivers: string[];
   race$: Observable<IRace>;
-  icon = icon.farTrash;
+  removeIcon = icon.farTrash;
+  addIcon = icon.farPlus;
   private driverId: string;
   private operation: Operation;
   private previousDrivers: string[];

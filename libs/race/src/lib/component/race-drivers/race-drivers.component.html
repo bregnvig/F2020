@@ -1,22 +1,24 @@
 <mat-toolbar color="primary">
-    <span class="flex-auto">{{(race$ | async)?.name}}</span>
-    <span *ngIf="drivers">{{drivers.length}} kørere</span>
+  <span class="flex-auto">{{(race$ | async)?.name}}</span>
+  <span *ngIf="drivers">{{drivers.length}} kørere</span>
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
   <mat-list cdkDropList cdkDropListLockAxis="y" *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
-      <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
-          <p matListItemLine>{{driverId | driverName}}</p>
-          <div matListItemMeta>
-            <button mat-button (click)="removeDriver(i)">
-              <fa-icon [icon]="icon" size="lg"></fa-icon>
-            </button>
-          </div>
-      </mat-list-item>
+    <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
+      <p matListItemLine>{{driverId | driverName}}</p>
+      <div matListItemMeta>
+        <button mat-button (click)="removeDriver(i)">
+          <fa-icon [icon]="removeIcon" size="lg"></fa-icon>
+        </button>
+      </div>
+    </mat-list-item>
   </mat-list>
 </div>
-<button mat-fab aria-label="Tilføj kører" (click)="addDriver()">
-    <mat-icon>add</mat-icon>
+<button mat-fab color="primary" aria-label="Tilføj kører" (click)="addDriver()">
+  <mat-icon>
+    <fa-icon [icon]="addIcon" size="lg"></fa-icon>
+  </mat-icon>
 </button>
 <ng-template #loading>
-    <sha-loading></sha-loading>
+  <sha-loading></sha-loading>
 </ng-template>
