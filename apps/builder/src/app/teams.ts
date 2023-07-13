@@ -1,12 +1,12 @@
 import { ErgastConstructorStanding, ErgastDriver, IRace, ITeam, mapper } from '@f2020/data';
-import { getConstructorDrivers, getContructorStandings } from '@f2020/ergast';
+import { getConstructorDrivers, getConstructorStandings } from '@f2020/ergast-api';
 import { WriteResult } from '@google-cloud/firestore';
 import { firestoreUtils } from './converter/firestore-utils';
 import { firebaseApp } from './firebase';
 
 export const getTeams = async (seasonId: number): Promise<Map<string, ITeam>> => {
 
-  const constructors: ErgastConstructorStanding[] = await getContructorStandings(seasonId);
+  const constructors: ErgastConstructorStanding[] = await getConstructorStandings(seasonId);
 
   const drivers: ErgastDriver[][] = await Promise.all(constructors.map(async c => await getConstructorDrivers(seasonId, c.Constructor.constructorId)));
   // console.log(drivers);

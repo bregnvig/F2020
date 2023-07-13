@@ -1,5 +1,5 @@
 import { IDriver, IRace, ISeason, mapper } from '@f2020/data';
-import { getFullSeasonDrivers, getSeason, getSeasonDrivers } from '@f2020/ergast';
+import { getFullSeasonDrivers, getSeason, getSeasonDrivers } from '@f2020/ergast-api';
 import { WriteResult } from '@google-cloud/firestore';
 import { converter } from './converter';
 import { firebaseApp } from './firebase';

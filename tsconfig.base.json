@@ -21,7 +21,7 @@
       "@f2020/control": ["libs/control/src/index.ts"],
       "@f2020/data": ["libs/data/src/index.ts"],
       "@f2020/driver": ["libs/driver/src/index.ts"],
-      "@f2020/ergast": ["libs/ergast/src/index.ts"],
+      "@f2020/ergast-api": ["libs/ergast-api/src/index.ts"],
       "@f2020/info": ["libs/info/src/index.ts"],
       "@f2020/landing": ["libs/landing/src/index.ts"],
       "@f2020/player": ["libs/player/src/index.ts"],

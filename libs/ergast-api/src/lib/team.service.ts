@@ -1,7 +1,7 @@
 import { ErgastConstructorStanding, ErgastDriver } from '@f2020/data';
 import { getClient } from './axios';
 
-export const getContructorStandings = async (seasonId: string | number): Promise<ErgastConstructorStanding[]> => {
+export const getConstructorStandings = async (seasonId: string | number): Promise<ErgastConstructorStanding[]> => {
 
   const http = getClient();
 

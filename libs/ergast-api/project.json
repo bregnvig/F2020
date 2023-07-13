@@ -1,0 +1,26 @@
+{
+  "name": "ergast-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ergast-api/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/ergast-api",
+        "main": "libs/ergast-api/src/index.ts",
+        "tsConfig": "libs/ergast-api/tsconfig.lib.json",
+        "assets": []
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/ergast-api/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

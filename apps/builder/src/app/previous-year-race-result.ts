@@ -1,5 +1,5 @@
 import { IQualifyResult, IRaceResult, mapper } from '@f2020/data';
-import { getQualifyResults, getRaceResults } from '@f2020/ergast';
+import { getQualifyResults, getRaceResults } from '@f2020/ergast-api';
 import { firestoreUtils } from './converter/firestore-utils';
 import { firebaseApp } from './firebase';
 

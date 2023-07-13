@@ -45,6 +45,7 @@ export interface IDriverStanding {
 }
 
 export interface IDriverResult {
+  driverId: string;
   retired: number;
   averageGridPosition: number;
   averageFinishPosition: number;
