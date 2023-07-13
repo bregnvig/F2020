@@ -18,6 +18,10 @@ service cloud.firestore {
       allow update, write, delete, create:  if getUserData().roles.hasAny(['admin']);
     }
 
+    match /seasons/{Seasons}/standings/{Standings} {
+      allow read: if getUserData().roles.hasAny(['admin', 'player']);
+    }
+
     match /seasons/{Seasons}/teams/{Contructor} {
       allow read: if getUserData().roles.hasAny(['player']);
       allow update, write, delete, create:  if  getUserData().roles.hasAny(['admin']);

@@ -1,5 +1,5 @@
-import { getClient } from './axios';
 import { ErgastConstructor, ErgastConstructorStanding, ErgastDriver, ErgastDriverStanding } from '@f2020/data';
+import { getClient } from './axios';
 
 /**
  * Given a season id an array of drivers will be returned.
@@ -39,22 +39,22 @@ export const getDrivers = async (): Promise<ErgastDriver[]> => {
  */
 export const getFullSeasonDrivers = async (seasonId: string): Promise<ErgastDriver[]> => {
   const constructorStanding: ErgastConstructorStanding[] = await getClient().get(`/${seasonId}/constructorStandings.json`)
-  .then(result => result.data)
-  // .then(data => console.log(data.MRData.StandingsTable));
-  .then(data => data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings);
+    .then(result => result.data)
+    // .then(data => console.log(data.MRData.StandingsTable));
+    .then(data => data.MRData.StandingsTable.StandingsLists[0].ConstructorStandings);
 
   const constructorIds: string[] = constructorStanding.map(cs => cs.Constructor.constructorId);
-  const driverStanding: ErgastDriverStanding[] = await getDriverStandings(parseInt(seasonId, 10))
+  const driverStanding: ErgastDriverStanding[] = await getDriverStandings(parseInt(seasonId, 10));
 
   driverStanding.sort((a, b) => {
     const aConstructorIndex = constructorIds.indexOf(a.Constructor.constructorId);
     const bConstructorIndex = constructorIds.indexOf(b.Constructor.constructorId);
     return aConstructorIndex - bConstructorIndex || b.points - a.points;
-  })
+  });
 
   return Promise.resolve(driverStanding.map(ds => ds.Driver));
 
-}
+};
 /**
  * Returns the latest know drivers for given season.
  * @param seasonId
@@ -97,15 +97,10 @@ const getDriverStandings = async (seasonId: number, round?: number): Promise<Erg
     .then(result => result.data)
     .then(mrData => mrData.MRData.StandingsTable.StandingsLists[0].DriverStandings)
     .then((standings: any[]) => standings.map(s => <ErgastDriverStanding>{
-        wins: parseInt(s.wins, 10),
-        points: parseInt(s.points, 10),
-        Driver: s.Driver,
-        Constructor: s.Constructors[s.Constructors.length-1]
-      })
+      wins: s.wins,
+      points: parseInt(s.points, 10),
+      Driver: s.Driver,
+      Constructor: s.Constructors[s.Constructors.length - 1]
+    })
     );
-};
-
-const getRoundDrivers = async (seasonId: number, round: number): Promise<ErgastDriver[]> => {
-  return getClient().get(`/${seasonId}/${round}/drivers.json`)
-    .then(result => result.data.MRData.DriverTable.Drivers);
 };

@@ -5,7 +5,7 @@ export const driverStanding = (d: ErgastDriverStanding): IDriverStanding => {
   return {
     driver: driverMap.driver(d.Driver),
     points: d.points,
-    wins: d.wins
+    wins: parseInt(d.wins)
   };
 };
 

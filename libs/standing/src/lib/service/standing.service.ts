@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { ErgastService } from '@f2020/api';
-import { ErgastDriversQualifying, ErgastRaceResult, finished, IDriverResult, IDriverStanding, mapper, IQualifyResult } from '@f2020/data';
+import { ErgastDriversQualifying, ErgastRaceResult, IDriverResult, IDriverStanding, IQualifyResult, converter, finished, mapper } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -9,11 +10,13 @@ import { map } from 'rxjs/operators';
 })
 export class StandingService {
 
-  constructor(private service: ErgastService) {
+  constructor(private service: ErgastService, private afs: Firestore) {
   }
 
   getStandings(seasonId: string | number): Observable<IDriverStanding[]> {
-    return this.service.get(`${seasonId}/driverStandings.json`, ergastData => mapper.driverStandings(ergastData.MRData.StandingsTable.StandingsLists[0]?.DriverStandings ?? []));
+    return docData(doc(this.afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[]; }>())).pipe(
+      map(({ standing }) => standing)
+    );
   }
 
   getDriverResult(seasonId: string | number, driverId: string): Observable<IDriverResult> {
