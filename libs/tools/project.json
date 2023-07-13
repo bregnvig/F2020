@@ -3,15 +3,23 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/tools/src",
   "projectType": "library",
-  "generators": {},
   "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "jestConfig": "libs/tools/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/tools"]
+        "outputPath": "dist/libs/tools",
+        "main": "libs/tools/src/index.ts",
+        "tsConfig": "libs/tools/tsconfig.lib.json",
+        "assets": []
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/tools/**/*.ts"]
+      }
     }
   },
   "tags": []
