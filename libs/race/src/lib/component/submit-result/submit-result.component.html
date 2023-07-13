@@ -6,11 +6,11 @@
     <ng-container *ngIf="race$ | async as race">
       <f2020-bid [formControl]="resultControl" [race]="race" [teams]="teams$ | async" [isResult]="true"></f2020-bid>
     </ng-container>  
-    <button *ngIf="resultDownloaded(); else refresh" mat-fab aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
+    <button *ngIf="resultDownloaded(); else refresh" mat-fab color="primary" aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
       <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
     </button>
     <ng-template #refresh>
-      <button mat-fab aria-label="Hent resultat igen" (click)="loadResult()">
+      <button mat-fab color="primary" aria-label="Hent resultat igen" (click)="loadResult()">
         <fa-icon [icon]="refreshIcon" size="lg"></fa-icon>
       </button>
     </ng-template>
