@@ -1,5 +1,4 @@
 import { ErgastDriversQualifying, ErgastRaceResult, IDriverResult, IDriverStanding, IQualifyResult, finished, mapper } from "@f2020/data";
-// import { getQualifyResults, getRaceResults, getDriverStandings as getStandings } from "@f2020/ergast";
 import { getQualifyResults, getRaceResults, getDriverStandings as getStandings } from "@f2020/ergast-api";
 
 export const getDriverStandings = async (seasonId: string): Promise<IDriverStanding[]> => {
@@ -30,19 +29,17 @@ export const getDriverResults = async (seasonId: string): Promise<{ driverId: st
   });
 };
 
-export const getDriverQualify = async (seasonId: string): Promise<{ driverId: string, results: IQualifyResult[]; }[]> => {
+export const getDriverQualify = async (seasonId: string): Promise<Record<string, IQualifyResult[]>> => {
   const ergastQualifying = await getQualifyResults(seasonId);
   const driverIds = new Set<string>(
     ergastQualifying.flatMap(race => race.QualifyingResults.map(result => result.Driver.driverId)),
   );
-  return [...driverIds].map(driverId => {
-    return {
-      driverId,
-      results: ergastQualifying.map(race => ({
-        ...race,
-        QualifyingResults: race.QualifyingResults.filter(result => result.Driver.driverId === driverId)
-      }) as ErgastDriversQualifying)
-        .map(mapper.qualifyResult)
-    };
-  });
+  return [...driverIds].reduce((acc, driverId) => {
+    acc[driverId] = ergastQualifying.map(race => ({
+      ...race,
+      QualifyingResults: race.QualifyingResults.filter(result => result.Driver.driverId === driverId)
+    }) as ErgastDriversQualifying)
+      .map(mapper.qualifyResult);
+    return acc;
+  }, {});
 };

@@ -9,7 +9,7 @@ export const driverQualifying = (result: ErgastDriverQualifying): IDriverQualify
     q1: result.Q1 ? toMilliseconds(result.Q1) : -1,
     q2: result.Q2 ? toMilliseconds(result.Q2) : undefined,
     q3: result.Q3 ? toMilliseconds(result.Q3) : undefined,
-  });
+  }) as IDriverQualifying;
 };
 
 export const driversQualifying = (_drivers: ErgastDriverQualifying[]) => _drivers.map(driverQualifying);

@@ -19,34 +19,26 @@ export const standingTrigger = region('europe-west1').firestore.document('season
     if (before.state !== 'completed' || after.state === 'completed') {
       const season = await currentSeason();
       setStandings(season.id);
-      setDriverResult(season.id);
-      setDriverQualify(season.id);
+      setDriver(season.id);
     }
   });
 
 const setStandings = async (seasonId: string) => {
   const standing = await getDriverStandings('2023');
-  db.doc(`${seasonsURL}/${seasonId}/standings/drivers`).set({ standing });
+  db.doc(`${seasonsURL}/${seasonId}/standings/all-drivers`).set({ standing });
 };
 
-const setDriverResult = async (seasonId: string) => {
+const setDriver = async (seasonId: string) => {
   const results = await getDriverResults(seasonId);
+  const qualifies = await getDriverQualify(seasonId);
   return db.runTransaction(transaction => {
     results.forEach(({ driverId, result }) => {
-      const doc = db.doc(`${seasonsURL}/${seasonId}/standings/race/result/${driverId}`);
-      transaction.set(doc, firestoreUtils.convertDateTimes(result));
+      const doc = db.doc(`${seasonsURL}/${seasonId}/standings/${driverId}`);
+      transaction.set(doc, firestoreUtils.convertDateTimes({
+        ...result,
+        qualify: qualifies[driverId]
+      }));
     });
     return Promise.resolve('Drivers results updated');
-  });
-};
-
-const setDriverQualify = async (seasonId: string) => {
-  const results = await getDriverQualify(seasonId);
-  return db.runTransaction(transaction => {
-    results.forEach(({ driverId, results }) => {
-      const doc = db.doc(`${seasonsURL}/${seasonId}/standings/race/qualify/${driverId}`);
-      transaction.set(doc, firestoreUtils.convertDateTimes({ results }));
-    });
-    return Promise.resolve('Drivers qualification updated');
   });
 };

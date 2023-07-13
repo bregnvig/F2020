@@ -50,8 +50,8 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
   ref.get()
     .then(doc => doc.data())
     .then((season: ISeason) => {
-      (season.wbc?.results ?? []).splice(race.round - 1, 0, result);
-      return season.wbc?.results ?? [];
+      const results = (season.wbc?.results ?? []).filter(r => r.round !== result.round);
+      return [...results, result].sort((a, b) => a.round - b.round);
     })
     .then(results => ref.set({
       wbc: {
