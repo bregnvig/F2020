@@ -20,8 +20,9 @@ export const standingTrigger = region('europe-west1').firestore.document('season
       const season = await currentSeason();
       await setStandings(season.id);
       await setDriver(season.id);
-      const noPreviousYear = (await db.collection(`${seasonsURL}/${season.id}/standings/drivers/previous`).count().get()).data().count === 0;
-      noPreviousYear && await setDriver(season.id, parseInt(season.id) - 1 + '');
+      const previousSeasonId = parseInt(season.id) - 1 + '';
+      const noPreviousYear = (await db.collection(`${seasonsURL}/${season.id}/standings/drivers/${previousSeasonId}`).count().get()).data().count === 0;
+      noPreviousYear && await setDriver(season.id, previousSeasonId);
     }
   });
 
@@ -35,7 +36,7 @@ const setDriver = async (seasonId: string, resultSeasonId = seasonId) => {
   const qualifies = await getDriverQualify(seasonId);
   return db.runTransaction(transaction => {
     results.forEach(({ driverId, result }) => {
-      const doc = db.doc(`${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId === seasonId ? 'current' : 'previous'}/${driverId}`);
+      const doc = db.doc(`${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`);
       transaction.set(doc, firestoreUtils.convertDateTimes({
         ...result,
         qualify: qualifies[driverId]
