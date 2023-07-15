@@ -49,7 +49,7 @@ export const getFullSeasonDrivers = async (seasonId: string): Promise<ErgastDriv
   driverStanding.sort((a, b) => {
     const aConstructorIndex = constructorIds.indexOf(a.Constructor.constructorId);
     const bConstructorIndex = constructorIds.indexOf(b.Constructor.constructorId);
-    return aConstructorIndex - bConstructorIndex || b.points - a.points;
+    return aConstructorIndex - bConstructorIndex || parseInt(b.points) - parseInt(a.points);
   });
 
   return Promise.resolve(driverStanding.map(ds => ds.Driver));
@@ -82,9 +82,9 @@ export const getSeasonDrivers = async (seasonId: string, round: string): Promise
 const getConstructorDrivers = async (constructorId: string, seasonId: string, previousYearDriverStanding: ErgastDriverStanding[], round: string): Promise<ErgastDriver[]> => {
   const http = getClient();
   const sort = (a: ErgastDriver, b: ErgastDriver): number => {
-    const aStanding = previousYearDriverStanding.find(ds => ds.Driver.code === a.code);
-    const bStanding = previousYearDriverStanding.find(ds => ds.Driver.code === b.code);
-    return (bStanding?.points ?? 0) - (aStanding?.points ?? 0);
+    const aStandingPoints = parseInt(previousYearDriverStanding.find(ds => ds.Driver.code === a.code)?.points ?? '0', 10);
+    const bStandingPoints = parseInt(previousYearDriverStanding.find(ds => ds.Driver.code === b.code)?.points ?? '0', 10);
+    return bStandingPoints - aStandingPoints;
   };
   return http.get(`/${seasonId}/${round}/constructors/${constructorId}/drivers.json`)
     .then<ErgastDriver[]>(result => result.data.MRData.DriverTable.Drivers)
@@ -98,7 +98,7 @@ const getDriverStandings = async (seasonId: number, round?: number): Promise<Erg
     .then(mrData => mrData.MRData.StandingsTable.StandingsLists[0].DriverStandings)
     .then((standings: any[]) => standings.map(s => <ErgastDriverStanding>{
       wins: s.wins,
-      points: parseInt(s.points, 10),
+      points: s.points,
       Driver: s.Driver,
       Constructor: s.Constructors[s.Constructors.length - 1]
     })

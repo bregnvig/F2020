@@ -15,7 +15,7 @@ export interface ErgastDriver {
 
 export interface ErgastDriverStanding {
   wins: string;
-  points: number;
+  points: string;
   Driver: ErgastDriver;
   Constructor: ErgastConstructor;
 }

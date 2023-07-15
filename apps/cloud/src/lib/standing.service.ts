@@ -16,6 +16,7 @@ export const getDriverResults = async (seasonId: string): Promise<{ driverId: st
         ...race,
         Results: race.Results.filter(result => result.Driver.driverId === driverId)
       }) as ErgastRaceResult)
+      .filter(race => race.Results.length > 0)
       .map(mapper.raceResult);
     return {
       driverId,
@@ -39,6 +40,7 @@ export const getDriverQualify = async (seasonId: string): Promise<Record<string,
       ...race,
       QualifyingResults: race.QualifyingResults.filter(result => result.Driver.driverId === driverId)
     }) as ErgastDriversQualifying)
+      .filter(race => race.QualifyingResults.length > 0)
       .map(mapper.qualifyResult);
     return acc;
   }, {});
