@@ -1,4 +1,4 @@
-import { IRaceResult } from './race.model';
+import { IQualifyResult, IRaceResult } from './race.model';
 import { ITeam } from './team.model';
 
 export interface IDriver {
@@ -49,6 +49,7 @@ export interface IDriverResult {
   averageGridPosition: number;
   averageFinishPosition: number;
   races: IRaceResult[];
+  qualify: IQualifyResult[];
 }
 
 export const finished = (status?: string): boolean => /(\+[0-9] Lap)|(Finished)/.test(status ?? '');

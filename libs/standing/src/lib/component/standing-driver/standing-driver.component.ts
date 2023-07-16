@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SeasonFacade } from '@f2020/api';
-import { IDriverResult, IQualifyResult } from '@f2020/data';
-import { icon } from '@f2020/shared';
+import { IDriverResult } from '@f2020/data';
+import { CardPageComponent, icon, LoadingComponent } from '@f2020/shared';
+import { shareLatest } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, combineLatest } from 'rxjs';
-import { map, share, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { StandingService } from '../../service/standing.service';
 import { DriverNamePipe } from '@f2020/driver';
-import { LoadingComponent } from '@f2020/shared';
 import { DriverResultComponent } from './driver-result/driver-result.component';
 import { DriverQualifyingComponent } from './driver-qualifying/driver-qualifying.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NumberCardComponent } from './number-card/number-card.component';
-import { NgIf, AsyncPipe, DecimalPipe } from '@angular/common';
-import { CardPageComponent } from '@f2020/shared';
+import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @UntilDestroy()
@@ -41,10 +40,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 export class StandingDriverComponent implements OnInit {
 
   currentSeasonResult$: Observable<IDriverResult>;
-  currentSeasonQualifying$: Observable<IQualifyResult[]>;
   previousSeasonResult$: Observable<IDriverResult>;
-  previousSeasonQualifying$: Observable<IQualifyResult[]>;
+
   driverId$: Observable<string>;
+
   currentYear: number;
   previousYear: number;
 
@@ -58,35 +57,28 @@ export class StandingDriverComponent implements OnInit {
 
   ngOnInit(): void {
     this.driverId$ = this.route.params.pipe(map(params => params.driverId));
-    this.seasonFacade.season$.pipe(
+    const currentYear$ = this.seasonFacade.season$.pipe(
       map(season => parseInt(season.id, 10)),
+      shareLatest(),
       untilDestroyed(this),
-    ).subscribe(year => {
+    );
+    currentYear$.subscribe(year => {
       this.currentYear = year;
       this.previousYear = year - 1;
     });
     this.currentSeasonResult$ = combineLatest([
       this.driverId$,
-      this.seasonFacade.season$.pipe(map(season => season.id)),
+      currentYear$,
     ]).pipe(
-      switchMap(([driverId, seasonId]) => this.service.getDriverResult(seasonId, driverId)),
-      share(),
+      switchMap(([driverId, currentYear]) => this.service.getDriverResult(currentYear, currentYear, driverId)),
+      shareLatest(),
     );
-  }
-
-  load(index: number) {
-    if (index === 0 && !this.currentSeasonQualifying$) {
-      this.currentSeasonQualifying$ = this.driverId$.pipe(
-        switchMap(driverId => this.service.getDriverQualify(this.currentYear, driverId)),
-      );
-    } else if (index === 2 && !this.previousSeasonQualifying$) {
-      this.previousSeasonQualifying$ = this.driverId$.pipe(
-        switchMap(driverId => this.service.getDriverQualify(this.previousYear, driverId)),
-      );
-    } else if (index === 3 && !this.previousSeasonResult$) {
-      this.previousSeasonResult$ = this.driverId$.pipe(
-        switchMap(driverId => this.service.getDriverResult(this.previousYear, driverId)),
-      );
-    }
+    this.previousSeasonResult$ = combineLatest([
+      this.driverId$,
+      currentYear$,
+    ]).pipe(
+      switchMap(([driverId, currentYear]) => this.service.getDriverResult(currentYear, currentYear - 1, driverId)),
+      shareLatest(),
+    );
   }
 }
