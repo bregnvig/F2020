@@ -8,7 +8,7 @@ import { getDriverQualify, getDriverResults, getDriverStandings } from '../../li
 const db = firestore();
 
 /**
- * This trigger fetches the current standing for all drivers and for each driver. 
+ * This trigger fetches the current standing for all drivers and for each driver.
  * For each driver both result and qualify.
  */
 export const standingTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
@@ -32,14 +32,14 @@ const setStandings = async (seasonId: string) => {
 };
 
 const setDriver = async (seasonId: string, resultSeasonId = seasonId) => {
-  const results = await getDriverResults(seasonId);
-  const qualifies = await getDriverQualify(seasonId);
+  const results = await getDriverResults(resultSeasonId);
+  const qualifies = await getDriverQualify(resultSeasonId);
   return db.runTransaction(transaction => {
     results.forEach(({ driverId, result }) => {
       const doc = db.doc(`${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`);
       transaction.set(doc, firestoreUtils.convertDateTimes({
         ...result,
-        qualify: qualifies[driverId]
+        qualify: qualifies[driverId],
       }));
     });
     logger.info(`Drivers results updated for ${resultSeasonId}`);
