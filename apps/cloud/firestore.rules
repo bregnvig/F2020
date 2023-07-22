@@ -20,10 +20,12 @@ service cloud.firestore {
 
     match /seasons/{Seasons}/standings/{Standings} {
       allow read: if getUserData().roles.hasAny(['admin', 'player']);
+      allow update, write, delete, create:  if false;
     }
 
     match /seasons/{Seasons}/standings/{Standings}/{Drivers=**} {
       allow read: if getUserData().roles.hasAny(['admin', 'player']);
+      allow update, write, delete, create:  if false;
     }
 
     match /seasons/{Seasons}/teams/{Contructor} {
@@ -33,6 +35,11 @@ service cloud.firestore {
 
     match /seasons/{Seasons}/lastYear/{Country} {
       allow read: if getUserData().roles.hasAny(['player']);
+      allow update, write, delete, create:  if false;
+    }
+
+    match /seasons/{Seasons}/races/{Races}/participants/{Participants} {
+      allow read: if getUserData().roles.hasAny(['player']) 
       allow update, write, delete, create:  if false;
     }
 
