@@ -34,7 +34,7 @@ export class RacesService {
   }
 
   getParticipants(seasonId: string, race: IRace): Observable<Participant[]> {
-    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/players`).withConverter(bidConverter));
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/participants`).withConverter(bidConverter));
   }
 
   getBid(seasonId: string, round: number, uid: string): Observable<Bid> {

@@ -1,10 +1,10 @@
-import { Bid } from '@f2020/data';
+import { Bid, Participant } from '@f2020/data';
 import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
-import { racesURL, seasonsURL } from '../../lib/collection-names';
+import { PlayerImpl, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, validateAccess } from "../../lib";
+import { documentPaths } from '../../lib/collection-names';
 import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
 ;
@@ -46,9 +46,11 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   validateBid(bid, race);
   validateBalance(player);
 
-  const doc = db.doc(`${seasonsURL}/${season.id}/${racesURL}/${race.round}/bids/${player.uid}`) as DocumentReference<Bid>;
+  const bidDoc = db.doc(documentPaths.bid(season.id, race.round, player.uid)) as DocumentReference<Bid>;
+  const participantDoc = db.doc(documentPaths.participant(season.id, race.round, player.uid)) as DocumentReference<Participant>;
   return db.runTransaction(transaction => {
-    transaction.set(doc, { ...bid, submitted: true }, { merge: true });
+    transaction.set(bidDoc, { ...bid, submitted: true }, { merge: true });
+    transaction.set(participantDoc, { submitted: true }, { merge: true });
     transferInTransaction({
       date: DateTime.local(),
       amount: 20,

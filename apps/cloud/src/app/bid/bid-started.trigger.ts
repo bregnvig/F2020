@@ -3,7 +3,7 @@ import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { currentSeason, getCurrentRace, racesURL, seasonsURL, sendNotification } from '../../lib';
+import { currentSeason, documentPaths, getCurrentRace, racesURL, seasonsURL, sendNotification } from '../../lib';
 ;
 
 export const newBidTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
@@ -27,7 +27,7 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
     return Promise.all([
       ...players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`)),
       db.runTransaction(transaction => {
-        const doc = db.doc(`${seasonsURL}/${season.id}/${racesURL}/${race.round}/participants/${bid.player.uid}`) as DocumentReference<{ player: Player, submitted: false; }>;
+        const doc = db.doc(documentPaths.participant(season.id, race.round, bid.player.uid)) as DocumentReference<{ player: Player, submitted: false; }>;
         transaction.set(doc, { player: bid.player, submitted: false });
         return Promise.resolve('Bid without data written');
       })
