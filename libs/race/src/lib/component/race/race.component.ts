@@ -6,13 +6,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { RacesActions, RacesFacade } from '@f2020/api';
+import { PlayerFacade, RacesActions, RacesFacade } from '@f2020/api';
 import { Bid, IRace, Participant } from '@f2020/data';
-import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, LoadingComponent, icon } from '@f2020/shared';
+import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { debounceTime, first, map } from 'rxjs/operators';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
@@ -33,6 +33,7 @@ export class RaceComponent implements OnInit {
   center$: Observable<google.maps.LatLng>;
   race$: Observable<IRace>;
   play$: Observable<boolean>;
+  clickable$: Observable<boolean>;
   bids$: Observable<Bid[] | Participant[]>;
 
   options: google.maps.MapOptions = {
@@ -46,7 +47,7 @@ export class RaceComponent implements OnInit {
     mapTypeId: 'roadmap',
   };
 
-  constructor(private facade: RacesFacade) {
+  constructor(private facade: RacesFacade, private playerFacade: PlayerFacade) {
   }
 
   ngOnInit(): void {
@@ -56,17 +57,22 @@ export class RaceComponent implements OnInit {
     );
     this.race$.pipe(
       map(race => DateTime.local() > race.close),
-      first()
+      first(),
     ).subscribe(closed => {
       this.facade.dispatch(closed ? RacesActions.loadBids() : RacesActions.loadParticipants());
       this.bids$ = closed ? this.facade.bids$ : this.facade.participants$;
       this.play$ = combineLatest([
         this.race$,
         this.bids$,
+        this.playerFacade.player$,
       ]).pipe(
         debounceTime(100),
-        map(([race, bids]) => race.close > DateTime.local() && !(bids || []).length),
+        map(([race, bids, player]) => {
+          return race.close > DateTime.local()
+            && !(bids || []).some(bid => bid.player.uid === player.uid && bid.submitted);
+        }),
       );
+      this.clickable$ = this.play$.pipe(map(play => !play));
     });
   }
 

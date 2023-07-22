@@ -51,7 +51,7 @@
           <mat-card-title>Bud</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <f2020-bids [bids]="bids" [result]="race.result"></f2020-bids>
+          <f2020-bids [bids]="bids" [clickable]="clickable$ | async" [result]="race.result"></f2020-bids>
         </mat-card-content>
       </mat-card>
       <f2020-race-updated-warning *ngIf="race.updatedBy?.length" [race]="race"></f2020-race-updated-warning>

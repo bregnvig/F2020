@@ -21,6 +21,7 @@ export class BidsComponent {
 
   private _bids: Bid[] | Participant[] = [];
   icon = icon.fasFlagCheckered;
+  @Input() clickable = false;
   isBid = (bid: Bid | Participant): bid is Bid => (bid as Bid).points !== undefined;
 
 
