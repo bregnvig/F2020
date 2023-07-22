@@ -20,14 +20,12 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
   <div class="flex flex-col h-full">
     <mat-toolbar color="primary">
       <span class="flex-auto">Saldo</span>
-      <ng-container *ngIf="player$ | async as player">
-        <button mat-icon-button (click)="showInfo()">
-          <fa-icon [icon]="icon"></fa-icon>
-        </button>
-        <span>{{player.balance | currency: 'DKK'}}</span>
-      </ng-container>
+      <span *ngIf="player$ | async as player">{{player.balance | currency: 'DKK'}}</span>
     </mat-toolbar>
     <f2020-transactions class="flex-auto" [player]="player$ | async"></f2020-transactions>
+    <button mat-fab aria-label="Indsæt penge" color="primary" (click)="showInfo()">
+      <fa-icon [icon]="icon" size="lg"></fa-icon>
+    </button>
   </div>
   `,
   styleUrls: ['./my-transactions.component.scss'],
