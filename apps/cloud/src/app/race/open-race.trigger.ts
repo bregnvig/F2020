@@ -3,7 +3,7 @@ import { firestore } from 'firebase-admin';
 import { log } from 'firebase-functions/logger';
 import { Change, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { converter, currentRaceURL, currentSeason, updateRace } from '../../lib';
+import { collectionPaths, converter, currentSeason, updateRace } from '../../lib';
 
 const db = firestore();
 
@@ -17,7 +17,7 @@ export const openRace = region('europe-west1').firestore.document('seasons/{seas
     const after: IRace = change.after.data() as IRace;
     const requiredStateToOpenCancelled: State[] = ['open', 'closed'];
     const noOpenRaces = await currentSeason().then(season => firestore()
-      .collection(currentRaceURL(season.id!))
+      .collection(collectionPaths.races(season.id!))
       .where('state', '==', 'open')
       .get()
       .then(snapshot => snapshot.empty));
@@ -25,7 +25,7 @@ export const openRace = region('europe-west1').firestore.document('seasons/{seas
     if ((noOpenRaces && before.state === 'closed' && after.state === 'completed') || (after.state === 'cancelled' && requiredStateToOpenCancelled.includes(before.state))) {
 
       return currentSeason().then(season => firestore()
-        .collection(currentRaceURL(season.id!))
+        .collection(collectionPaths.races(season.id!))
         .where('state', '==', 'waiting')
         .where('round', '>=', after.round)
         .orderBy('round')

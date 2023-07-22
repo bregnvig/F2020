@@ -1,5 +1,5 @@
 import { assertFails, assertSucceeds } from '@firebase/testing';
-import { playersURL, seasonsURL } from '../../lib/collection-names';
+import { playersURL, seasonsURL } from '../../lib/paths';
 import { Player } from '../../lib/model/player.model';
 import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, unauthenticated } from '../../test-utils/firestore-test-utils';

@@ -10,5 +10,5 @@ export const converter = {
     data: firestore.QueryDocumentSnapshot,
   ): PlayerImpl {
     return new PlayerImpl(firestoreUtils.convertTimestamps(data.data()));
-  }
+  },
 };

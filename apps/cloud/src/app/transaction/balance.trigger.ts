@@ -3,14 +3,15 @@ import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { playersURL } from '../../lib';
 import { logAndCreateError } from './../../lib/firestore-utils';
 import { log } from 'firebase-functions/logger';
+import { documentPaths } from '../../lib';
+
 ;
 
 const db = firestore();
 
-const playerURL = (uid: string) => `${playersURL}/${uid}`;
+const playerURL = (uid: string) => documentPaths.player(uid);
 
 export const balanceTrigger = region('europe-west1').firestore.document('transactions/{transactionId}')
   .onCreate(async (snapshot: DocumentSnapshot) => {

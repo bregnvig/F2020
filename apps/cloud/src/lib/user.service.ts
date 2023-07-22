@@ -3,8 +3,8 @@ import { firestore } from 'firebase-admin';
 import { converter } from './auth.converter';
 import { PlayerImpl } from './auth.model';
 import { getUser } from './auth.service';
-import { playersURL } from './collection-names';
 import { logAndCreateError } from './firestore-utils';
+import { collectionPaths } from './paths';
 
 export const validateAccess = async (uid: string | undefined, ...role: Role[]): Promise<PlayerImpl> => {
   if (uid) {
@@ -29,7 +29,7 @@ export const getBookie = (): Promise<PlayerImpl> => {
   if (_bookie) {
     return _bookie;
   }
-  _bookie = firestore().collection(playersURL)
+  _bookie = firestore().collection(collectionPaths.players())
     .where('roles', 'array-contains', 'bookie')
     .withConverter(converter)
     .get()
@@ -43,5 +43,5 @@ export const getBookie = (): Promise<PlayerImpl> => {
       throw logAndCreateError('internal', `${docs.length} bookies exists. Only one bookie allowed`);
     });
   return _bookie;
-}
+};
 

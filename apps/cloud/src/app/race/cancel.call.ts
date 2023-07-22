@@ -4,8 +4,18 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, sendNotification, transferInTransaction, validateAccess } from '../../lib';
-;
+import {
+  collectionPaths,
+  currentSeason,
+  documentPaths,
+  getBookie,
+  getRaceByRound,
+  internalError,
+  logAndCreateError,
+  sendNotification,
+  transferInTransaction,
+  validateAccess,
+} from '../../lib';
 
 export const cancelRace = region('europe-west1').https.onCall(async (round: string, context) => {
   return validateAccess(context.auth?.uid, 'admin')
@@ -23,11 +33,11 @@ const doCancel = async (round: string) => {
   }
 
   const db = firestore();
-  const bids: ({ id: string, bid: Bid; })[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).get()
+  const bids: ({ id: string, bid: Bid; })[] = await db.collection(collectionPaths.bids(race.season, race.round)).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => ({
       id: s.id,
-      bid: s.data() as Bid
+      bid: s.data() as Bid,
     })));
 
 
@@ -42,11 +52,11 @@ const doCancel = async (round: string) => {
           from: bookie.uid,
           involved: [bookie.uid, bid.player.uid],
         }, transaction);
-        log(`Deleting ${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${id}`);
+        log(`Deleting bid from season ${race.season} race ${race.round} bid ${id}`);
 
-        transaction.delete(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${id}`));
+        transaction.delete(db.doc(documentPaths.bid(season.id, race.round, id)));
       });
-      transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'cancelled', result: FieldValue.delete() });
+      transaction.update(db.doc(documentPaths.race(race.season, race.round)), { state: 'cancelled', result: FieldValue.delete() });
       return Promise.resolve(`Rolled back result`);
     }),
     sendNotifications(race),
@@ -55,7 +65,7 @@ const doCancel = async (round: string) => {
 
 const sendNotifications = async (race: IRace) => {
   const db = firestore();
-  const players: Player[] = await db.collection(`players`)
+  const players: Player[] = await db.collection(collectionPaths.players())
     .where('receiveReminders', '==', true)
     .get()
     .then(snapshot => snapshot.docs.map(d => d.data() as Player))

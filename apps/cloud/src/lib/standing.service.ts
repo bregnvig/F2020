@@ -1,5 +1,5 @@
-import { ErgastDriversQualifying, ErgastRaceResult, IDriverResult, IDriverStanding, IQualifyResult, finished, mapper } from "@f2020/data";
-import { getQualifyResults, getRaceResults, getDriverStandings as getStandings } from "@f2020/ergast-api";
+import { ErgastDriversQualifying, ErgastRaceResult, finished, IDriverResult, IDriverStanding, IQualifyResult, mapper } from '@f2020/data';
+import { getDriverStandings as getStandings, getQualifyResults, getRaceResults } from '@f2020/ergast-api';
 
 export const getDriverStandings = async (seasonId: string): Promise<IDriverStanding[]> => {
   return getStandings(seasonId).then(standings => mapper.driverStandings(standings));
@@ -14,7 +14,7 @@ export const getDriverResults = async (seasonId: string): Promise<{ driverId: st
     const races = ergastRaces
       .map(race => ({
         ...race,
-        Results: race.Results.filter(result => result.Driver.driverId === driverId)
+        Results: race.Results.filter(result => result.Driver.driverId === driverId),
       }) as ErgastRaceResult)
       .filter(race => race.Results.length > 0)
       .map(mapper.raceResult);
@@ -25,7 +25,7 @@ export const getDriverResults = async (seasonId: string): Promise<{ driverId: st
         retired: races.reduce((acc, race) => acc += (finished(race.results[0].status) ? 0 : 1), 0),
         averageFinishPosition: races.reduce((acc, race) => acc + race.results[0].position, 0) / races.length,
         averageGridPosition: races.reduce((acc, race) => acc + race.results[0].grid, 0) / races.length,
-      } as IDriverResult
+      } as IDriverResult,
     };
   });
 };
@@ -38,7 +38,7 @@ export const getDriverQualify = async (seasonId: string): Promise<Record<string,
   return [...driverIds].reduce((acc, driverId) => {
     acc[driverId] = ergastQualifying.map(race => ({
       ...race,
-      QualifyingResults: race.QualifyingResults.filter(result => result.Driver.driverId === driverId)
+      QualifyingResults: race.QualifyingResults.filter(result => result.Driver.driverId === driverId),
     }) as ErgastDriversQualifying)
       .filter(race => race.QualifyingResults.length > 0)
       .map(mapper.qualifyResult);

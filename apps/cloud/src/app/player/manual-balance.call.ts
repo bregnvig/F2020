@@ -1,8 +1,7 @@
 import { firestore } from 'firebase-admin';
 import { region } from 'firebase-functions/v1';
-import { internalError, validateAccess } from "../../lib";
-import { playersURL } from './../../lib/collection-names';
-;
+import { internalError, validateAccess } from '../../lib';
+import { documentPaths } from '../../lib/paths';
 
 interface BalanceData {
   uid: string;
@@ -19,5 +18,5 @@ export const manualBalance = region('europe-west1').https.onCall(async (data: Ba
 
 const updateBalance = async ({ uid, balance }: BalanceData) => {
   const db = firestore();
-  return db.doc(`${playersURL}/${uid}`).update({ balance });
+  return db.doc(documentPaths.player(uid)).update({ balance });
 };

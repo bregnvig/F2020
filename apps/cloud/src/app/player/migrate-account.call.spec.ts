@@ -3,7 +3,7 @@ import { collections } from '../../test-utils';
 // import { test } from '../../test-utils/firebase-initialize';
 import { adminApp, authedApp, clearFirestoreData, unauthenticated } from '../../test-utils/firestore-test-utils';
 import { players } from '../../test-utils/players.collection';
-import { playersURL, transactionsURL } from './../../lib/collection-names';
+import { playersURL, transactionsURL } from '../../lib/paths';
 import { permissionDenied } from './../../test-utils/firestore-test-utils';
 import { Transaction } from '../../lib/model';
 
@@ -30,7 +30,7 @@ describe('Migrate unittest', () => {
 
   afterEach(async () => {
     await clearFirestoreData();
-  })
+  });
 
   it('should deny a migration, when user not logged in', async () => {
     const app = await authedApp();
@@ -81,6 +81,6 @@ describe('Migrate unittest', () => {
         expect(t!.from).toBe('mba');
         expect(t.involved.includes(collections.players.player.uid)).toBeTruthy();
         expect(t.involved.includes('flb')).toBeFalsy();
-      })
-    });
+      });
+  });
 });

@@ -9,5 +9,5 @@ export const converter = {
     data: firestore.QueryDocumentSnapshot,
   ): T {
     return firestoreUtils.convertTimestamps(data.data());
-  }
+  },
 };

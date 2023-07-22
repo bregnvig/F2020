@@ -1,6 +1,6 @@
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { internalError, logAndCreateError, validateAccess } from "../../lib";
+import { internalError, logAndCreateError, validateAccess } from '../../lib';
 import { transfer } from '../../lib/transactions.service';
 
 interface DepositData {
@@ -33,6 +33,6 @@ const buildDeposit = async ({ uid, amount, message }: DepositData) => {
     amount: amount,
     message: message,
     to: uid,
-    involved: [uid]
+    involved: [uid],
   });
 };

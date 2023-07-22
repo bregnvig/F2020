@@ -3,7 +3,8 @@ import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { currentSeason, documentPaths, getCurrentRace, racesURL, seasonsURL, sendNotification } from '../../lib';
+import { collectionPaths, currentSeason, documentPaths, getCurrentRace, sendNotification } from '../../lib';
+
 ;
 
 export const newBidTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
@@ -15,7 +16,7 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
     const notYourself = (p: Player) => p.uid !== bid.player?.uid;
     const wishToReceive = (p: Player) => !p.receiveBettingStarted || p.receiveBettingStarted.some(uid => uid === bid.player.uid);
     const allFilter = (p: Player) => [hasTokens, notYourself, wishToReceive].every(fn => fn(p));
-    const players: Player[] = await db.collection(`players`)
+    const players: Player[] = await db.collection(collectionPaths.players())
       .where('receiveReminders', '==', true)
       .get()
       .then(playerSnapshot => playerSnapshot.docs.map(d => d.data() as Player))
@@ -30,7 +31,7 @@ export const newBidTrigger = region('europe-west1').firestore.document('seasons/
         const doc = db.doc(documentPaths.participant(season.id, race.round, bid.player.uid)) as DocumentReference<{ player: Player, submitted: false; }>;
         transaction.set(doc, { player: bid.player, submitted: false });
         return Promise.resolve('Bid without data written');
-      })
+      }),
 
     ]);
   });    

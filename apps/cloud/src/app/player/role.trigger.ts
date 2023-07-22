@@ -1,6 +1,7 @@
 import { Player } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
 import { region } from 'firebase-functions/v1';
+
 ;
 
 export const setAnonymousRole = region('europe-west1').firestore.document('players/{userId}')
@@ -12,6 +13,6 @@ export const setAnonymousRole = region('europe-west1').firestore.document('playe
     return newUser.roles?.length
       ? Promise.resolve()
       : snap.ref.update({
-        roles: ['anonymous']
+        roles: ['anonymous'],
       });
   });    

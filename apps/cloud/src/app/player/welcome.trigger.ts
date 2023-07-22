@@ -3,6 +3,7 @@ import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail } from '../../lib';
 import { log } from 'firebase-functions/logger';
+
 ;
 
 

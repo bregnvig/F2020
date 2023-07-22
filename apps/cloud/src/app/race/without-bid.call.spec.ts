@@ -1,14 +1,13 @@
-
 // const clone = require('clone');
 
-import { assertSucceeds } from "@firebase/testing";
-import { playersURL, seasonsURL } from "../../lib/collection-names";
-import { collections } from "../../test-utils";
-import { adminApp, authedApp, clearFirestoreData } from "../../test-utils/firestore-test-utils";
+import { assertSucceeds } from '@firebase/testing';
+import { playersURL, seasonsURL } from '../../lib/paths';
+import { collections } from '../../test-utils';
+import { adminApp, authedApp, clearFirestoreData } from '../../test-utils/firestore-test-utils';
 
 describe('Reminder unittest', () => {
 
- let adminFirestore: firebase.firestore.Firestore;
+  let adminFirestore: firebase.firestore.Firestore;
 
   // const writeBid = async (bid: any, uid: string) => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).set(bid);
   // const readBid = async (uid: string): Promise<Bid> => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).get().then(ref => ref.data() as Bid);

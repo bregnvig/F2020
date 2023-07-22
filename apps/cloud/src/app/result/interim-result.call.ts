@@ -2,11 +2,9 @@ import { Bid, IRace, Player } from '@f2020/data';
 import { firestore } from 'firebase-admin';
 import { log } from 'firebase-functions/logger';
 import { region } from 'firebase-functions/v1';
-import { currentSeason, getCurrentRace, internalError, logAndCreateError, racesURL, seasonsURL, sendMail, sendNotification, validateAccess } from '../../lib';
+import { collectionPaths, currentSeason, documentPaths, getCurrentRace, internalError, logAndCreateError, sendMail, sendNotification, validateAccess } from '../../lib';
 import { calculateInterimResult } from './../../lib/result.service';
 import { validateInterimResult } from './../../lib/validate.service';
-;
-import admin = require('firebase-admin');
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -48,7 +46,7 @@ const buildResult = async (result: Partial<Bid>) => {
   validateInterimResult(result, race);
 
   const db = firestore();
-  const calculatedResults: Partial<Bid>[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
+  const calculatedResults: Partial<Bid>[] = await db.collection(collectionPaths.bids(race.season, race.round)).where('submitted', '==', true).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data()))
     .then(bids => bids.map(bid => calculateInterimResult(bid as Bid, result)))
@@ -56,9 +54,9 @@ const buildResult = async (result: Partial<Bid>) => {
 
   return db.runTransaction(transaction => {
     calculatedResults.forEach(cr => {
-      transaction.set(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${cr.player!.uid}`), cr);
+      transaction.set(db.doc(documentPaths.bid(race.season, race.round, cr.player.uid)), cr);
     });
-    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { result });
+    transaction.update(db.doc(documentPaths.race(race.season, race.round)), { result });
     return Promise.resolve(`Interim result submitted`);
   }).then(() => {
     const players = calculatedResults.map(cr => cr.player!);

@@ -3,7 +3,7 @@ import { collections } from '../../test-utils';
 // import { test } from '../../test-utils/firebase-initialize';
 import { adminApp, authedApp, clearFirestoreData, unauthenticated } from '../../test-utils/firestore-test-utils';
 import { players } from '../../test-utils/players.collection';
-import { playersURL } from './../../lib/collection-names';
+import { playersURL } from '../../lib/paths';
 import { permissionDenied } from './../../test-utils/firestore-test-utils';
 
 describe('Manual balance unittest', () => {
@@ -23,7 +23,7 @@ describe('Manual balance unittest', () => {
 
   afterEach(async () => {
     await clearFirestoreData();
-  })
+  });
 
   it('should deny a manual update, when user not logged in', async () => {
     const app = await authedApp();
@@ -43,5 +43,5 @@ describe('Manual balance unittest', () => {
         const t = await readPlayer(players.player.uid);
         expect(t!.balance).toBe(111);
       });
-    });
+  });
 });

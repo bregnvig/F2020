@@ -3,10 +3,11 @@ import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { PlayerImpl, currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, validateAccess } from "../../lib";
-import { documentPaths } from '../../lib/collection-names';
+import { currentSeason, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from '../../lib';
+import { documentPaths } from '../../lib/paths';
 import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
+
 ;
 
 

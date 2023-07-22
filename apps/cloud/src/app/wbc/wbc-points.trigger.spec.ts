@@ -1,5 +1,5 @@
 import { assertSucceeds } from '@firebase/testing';
-import { playersURL, seasonsURL } from '../../lib/collection-names';
+import { playersURL, seasonsURL } from '../../lib/paths';
 import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData, retry } from '../../test-utils/firestore-test-utils';
 import { WBCPlayer, WBCResult } from './../../lib/model/wbc.model';
@@ -14,8 +14,8 @@ describe('WBC points', () => {
   const writeBid = async (bid: any, uid: string, round: number) => adminFirestore.doc(`${seasonsURL}/9999/races/${round}/bids/${uid}`).set(bid);
   const byUid = (uid: string) => (wp: WBCPlayer): boolean => wp.player.uid === uid;
 
-  const readWBC = (length = 1) => retry(() => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => (ref.data()?.wbc?.results ?? [])), (results: WBCResult[]) => results  && results.length === length); 
-  
+  const readWBC = (length = 1) => retry(() => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => (ref.data()?.wbc?.results ?? [])), (results: WBCResult[]) => results && results.length === length);
+
   beforeEach(async () => {
     adminFirestore = adminApp();
     await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set({ ...collections.players.admin });
@@ -29,7 +29,7 @@ describe('WBC points', () => {
 
   afterEach(async () => {
     await clearFirestoreData();
-  })
+  });
 
   it('should add player entry to the wbc of the season', async () => {
     await writeBid({ ...clone(collections.bids[0]), submitted: true }, collections.players.admin.uid, collections.races[1].round);
@@ -45,13 +45,13 @@ describe('WBC points', () => {
         expect(admin).toBeTruthy();
         expect(admin.points).toBeTruthy();
         expect(admin.points).toEqual(18);
-        expect(admin.player.uid).toEqual(collections.players.admin.uid)
+        expect(admin.player.uid).toEqual(collections.players.admin.uid);
         const player = wbc[0].players[0];
         expect(player).toBeTruthy();
         expect(player.points).toBeTruthy();
         expect(player.points).toEqual(25);
-        expect(player.player.uid).toEqual(collections.players.player.uid)
-      })
+        expect(player.player.uid).toEqual(collections.players.player.uid);
+      });
 
     await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[0].round}`).set({ ...collections.races[0], state: 'closed' });
     await writeBid({ ...clone(collections.bids[0]), submitted: true }, collections.players.admin.uid, collections.races[0].round);
@@ -67,23 +67,23 @@ describe('WBC points', () => {
         expect(admin).toBeTruthy();
         expect(admin.points).toBeTruthy();
         expect(admin.points).toEqual(25);
-        expect(admin.player.uid).toEqual(collections.players.admin.uid)
+        expect(admin.player.uid).toEqual(collections.players.admin.uid);
         const player = wbc[1].players[1];
         expect(player).toBeTruthy();
         expect(player.points).toBeTruthy();
         expect(player.points).toEqual(18);
-        expect(player.player.uid).toEqual(collections.players.player.uid)
+        expect(player.player.uid).toEqual(collections.players.player.uid);
       });
   });
 
   it('should award WBC based on pole time, if points are equal', async () => {
     await writeBid({ ...clone(collections.bids[0]), submitted: true }, collections.players.admin.uid, collections.races[1].round);
     await writeBid({
-      ...clone(collections.bids[0]),
-      player: collections.players.player,
-      polePositionTime: collections.results[0].polePositionTime,
-      submitted: true
-    },
+        ...clone(collections.bids[0]),
+        player: collections.players.player,
+        polePositionTime: collections.results[0].polePositionTime,
+        submitted: true,
+      },
       collections.players.player.uid,
       collections.races[1].round);
 
@@ -100,13 +100,13 @@ describe('WBC points', () => {
         expect(admin).toBeTruthy();
         expect(admin.points).toBeTruthy();
         expect(admin.points).toEqual(18);
-        expect(admin.player.uid).toEqual(collections.players.admin.uid)
+        expect(admin.player.uid).toEqual(collections.players.admin.uid);
         const player = wbc[0].players.find(byUid(collections.players.player.uid))!;
         expect(player).toBeTruthy();
         expect(player.points).toBeTruthy();
         expect(player.points).toEqual(25);
-        expect(player.player.uid).toEqual(collections.players.player.uid)
-      })
+        expect(player.player.uid).toEqual(collections.players.player.uid);
+      });
   });
 
   it('should not include not submitted bids', async () => {
@@ -119,8 +119,8 @@ describe('WBC points', () => {
       .then(() => readWBC())
       .then((wbc: WBCResult[]) => {
         expect(wbc.length).toEqual(1);
-        expect(wbc[0].players.length).toBe(2)
-      })
+        expect(wbc[0].players.length).toBe(2);
+      });
   });
 
   it('should include bids, even if they got zero points', async () => {
@@ -135,7 +135,7 @@ describe('WBC points', () => {
         expect(wbc.length).toEqual(1);
         expect(wbc[0].players.length).toBe(3);
         expect(wbc[0].players.find(p => p.player.uid === collections.players.player1.uid)!.points).toBe(0);
-      })
+      });
   });
 
 });

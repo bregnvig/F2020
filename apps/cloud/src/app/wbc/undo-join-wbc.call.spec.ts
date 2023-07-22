@@ -1,8 +1,8 @@
 import { assertFails, assertSucceeds } from '@firebase/testing';
 import { DateTime } from 'luxon';
-import { playersURL, seasonsURL } from '../../lib/collection-names';
+import { playersURL, seasonsURL } from '../../lib/paths';
 import { collections } from '../../test-utils';
-import { adminApp, authedApp, failedPrecondition, notFound, unauthenticated, clearFirestoreData } from '../../test-utils/firestore-test-utils';
+import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, unauthenticated } from '../../test-utils/firestore-test-utils';
 import { Player } from '../../lib/model';
 
 const clone = require('clone');
@@ -10,7 +10,7 @@ const clone = require('clone');
 describe('Join WBC unittest', () => {
 
   let adminFirestore: firebase.firestore.Firestore;
-  
+
   beforeEach(async () => {
     adminFirestore = adminApp();
     await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).set(clone(collections.players.player));
@@ -20,8 +20,8 @@ describe('Join WBC unittest', () => {
     await adminFirestore.doc(`${seasonsURL}/9999`).set({
       ...clone(collections.seasons[0]), wbc: {
         latestWBCJoinDate: DateTime.local().plus({ day: 1 }).toJSDate(),
-        participants: [collections.players.player.uid]
-      }
+        participants: [collections.players.player.uid],
+      },
     });
   });
 

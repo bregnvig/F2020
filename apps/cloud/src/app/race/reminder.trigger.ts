@@ -3,7 +3,7 @@ import { firestore } from 'firebase-admin';
 import { Change, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { DateTime } from 'luxon';
-import { getCurrentRace, playerWithoutBid } from '../../lib';
+import { documentPaths, getCurrentRace, playerWithoutBid } from '../../lib';
 import { converter } from '../../lib/timestamp.converter';
 import { sendNotification } from './../../lib';
 
@@ -31,7 +31,7 @@ const almostTimeReminder = async (race: IRace, player: Player) => {
 
   const db = firestore();
   return db.runTransaction(transaction => {
-    players.forEach(({ uid }) => transaction.update(db.doc(`players/${uid}`), converter.toFirestore({ almostTimeReminder: DateTime.now() })));
+    players.forEach(({ uid }) => transaction.update(db.doc(documentPaths.player(uid)), converter.toFirestore({ almostTimeReminder: DateTime.now() })));
     return Promise.resolve();
   });
 };

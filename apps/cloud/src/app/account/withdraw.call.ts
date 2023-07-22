@@ -1,7 +1,8 @@
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { getUser, internalError, logAndCreateError, PlayerImpl, validateAccess } from "../../lib";
+import { getUser, internalError, logAndCreateError, PlayerImpl, validateAccess } from '../../lib';
 import { transfer } from '../../lib/transactions.service';
+
 ;
 
 const validateBalance = (player: PlayerImpl, amount: number): void => {

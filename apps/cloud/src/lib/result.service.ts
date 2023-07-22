@@ -1,11 +1,11 @@
-import { Bid, SelectedDriverValue, SelectedTeamValue } from "@f2020/data";
+import { Bid, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
 
 // tslint:disable:next-line
 const sumPoints = (acc: number, points: number): number => acc + points;
 
 /**
  * This rules award you point base on offset in the array.
- * 
+ *
  */
 export const offsetPoints = (bid: string[], result: string[], maxOffset: number): number[] => {
   return bid.map((driver, index) => {

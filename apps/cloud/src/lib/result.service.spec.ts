@@ -1,6 +1,7 @@
 import { collections } from '../test-utils';
 import { SelectedDriverValue } from './model/bid.model';
 import { calculateResult, offsetPoints, propertyPoints } from './result.service';
+
 describe('Result service test', () => {
 
   it('should award points to qualify', () => {

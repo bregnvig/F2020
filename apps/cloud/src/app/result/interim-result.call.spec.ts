@@ -1,8 +1,8 @@
 import { assertFails, assertSucceeds } from '@firebase/testing';
-import { playersURL, seasonsURL } from '../../lib/collection-names';
+import { playersURL, seasonsURL } from '../../lib/paths';
 import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
-import { SelectedTeamValue, Bid } from './../../lib/model/bid.model';
+import { Bid, SelectedTeamValue } from './../../lib/model/bid.model';
 import { Player } from '../../lib/model';
 
 const clone = require('clone');

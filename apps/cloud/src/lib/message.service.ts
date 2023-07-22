@@ -1,6 +1,6 @@
-import { messaging } from "firebase-admin";
-import { log } from "firebase-functions/logger";
-import { config } from "firebase-functions/v1";
+import { messaging } from 'firebase-admin';
+import { log } from 'firebase-functions/logger';
+import { config } from 'firebase-functions/v1';
 
 export const sendNotification = (tokens: string[], title: string, body: string, data?: { [key: string]: string; }): Promise<any> => {
   if (config().test) {
@@ -17,9 +17,9 @@ export const sendNotification = (tokens: string[], title: string, body: string, 
     webpush: {
       notification: {
         badge: 'https://f2020.bregnvig.dk/assets/messaging/badge.v2.png',
-        icon: 'https://f2020.bregnvig.dk/assets/icons/icon-192x192.png'
-      }
-    }
+        icon: 'https://f2020.bregnvig.dk/assets/icons/icon-192x192.png',
+      },
+    },
   }).then((response) => {
     // Response is a message ID string.
     log('Successfully sent message:', response);

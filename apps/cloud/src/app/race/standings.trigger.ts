@@ -2,7 +2,7 @@ import { IRace } from '@f2020/data';
 import { firestore } from 'firebase-admin';
 import { Change, logger, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { currentSeason, firestoreUtils, seasonsURL } from '../../lib';
+import { collectionPaths, currentSeason, documentPaths, firestoreUtils } from '../../lib';
 import { getDriverQualify, getDriverResults, getDriverStandings } from '../../lib/standing.service';
 
 const db = firestore();
@@ -21,14 +21,14 @@ export const standingTrigger = region('europe-west1').firestore.document('season
       await setStandings(season.id);
       await setDriver(season.id);
       const previousSeasonId = parseInt(season.id) - 1 + '';
-      const noPreviousYear = (await db.collection(`${seasonsURL}/${season.id}/standings/drivers/${previousSeasonId}`).count().get()).data().count === 0;
+      const noPreviousYear = (await db.collection(collectionPaths.standings.drivers(season.id, previousSeasonId)).count().get()).data().count === 0;
       noPreviousYear && await setDriver(season.id, previousSeasonId);
     }
   });
 
 const setStandings = async (seasonId: string) => {
   const standing = await getDriverStandings(seasonId);
-  db.doc(`${seasonsURL}/${seasonId}/standings/all-drivers`).set({ standing });
+  db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing });
 };
 
 const setDriver = async (seasonId: string, resultSeasonId = seasonId) => {
@@ -36,7 +36,7 @@ const setDriver = async (seasonId: string, resultSeasonId = seasonId) => {
   const qualifies = await getDriverQualify(resultSeasonId);
   return db.runTransaction(transaction => {
     results.forEach(({ driverId, result }) => {
-      const doc = db.doc(`${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`);
+      const doc = db.doc(documentPaths.standing.driver(seasonId, resultSeasonId, driverId));
       transaction.set(doc, firestoreUtils.convertDateTimes({
         ...result,
         qualify: qualifies[driverId],

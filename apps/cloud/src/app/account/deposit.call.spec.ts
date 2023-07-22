@@ -3,7 +3,7 @@ import { assertFails, assertSucceeds } from '@firebase/testing';
 import { Player } from '../../lib/model/player.model';
 import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
 import { players } from '../../test-utils/players.collection';
-import { playersURL } from './../../lib/collection-names';
+import { playersURL } from '../../lib/paths';
 
 describe('Deposit unittest', () => {
 

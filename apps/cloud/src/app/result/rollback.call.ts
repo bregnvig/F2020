@@ -3,9 +3,7 @@ import { firestore } from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { currentSeason, getBookie, getRaceByRound, internalError, logAndCreateError, racesURL, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
-;
-import admin = require('firebase-admin');
+import { collectionPaths, currentSeason, documentPaths, getBookie, getRaceByRound, internalError, logAndCreateError, transferInTransaction, validateAccess } from '../../lib';
 
 const resetPoints = (bid: Bid): Bid => {
   const properties: (keyof Bid)[] = [
@@ -14,7 +12,7 @@ const resetPoints = (bid: Bid): Bid => {
     'firstCrashPoints',
     'podiumPoints',
     'points',
-    'polePositionTimeDiff'
+    'polePositionTimeDiff',
   ];
   return Object.fromEntries(Object.entries(bid).filter(([key]) => !properties.includes(key as keyof Bid))) as Bid;
 };
@@ -35,7 +33,7 @@ const buildRollback = async (round: string) => {
   }
 
   const db = firestore();
-  const bids: Bid[] = await db.collection(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids`).where('submitted', '==', true).get()
+  const bids: Bid[] = await db.collection(collectionPaths.bids(race.season, race.round)).where('submitted', '==', true).get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data() as Bid))
     .then(bids => bids.sort((a, b) => b.points - a.points));
@@ -57,9 +55,9 @@ const buildRollback = async (round: string) => {
       }, transaction);
     });
     bids.map(resetPoints).forEach(withOutPoints => {
-      transaction.set(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}/bids/${withOutPoints.player.uid}`), withOutPoints);
+      transaction.set(db.doc(documentPaths.bid(race.season, race.round, withOutPoints.player.uid)), withOutPoints);
     });
-    transaction.update(db.doc(`${seasonsURL}/${race.season}/${racesURL}/${race.round}`), { state: 'closed', result: FieldValue.delete() });
+    transaction.update(db.doc(documentPaths.race(race.season, race.round)), { state: 'closed', result: FieldValue.delete() });
     return Promise.resolve(`Rolled back result`);
   });
 

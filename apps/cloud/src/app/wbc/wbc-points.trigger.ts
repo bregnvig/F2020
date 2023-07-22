@@ -4,8 +4,7 @@ import { DocumentReference } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { internalError, racesURL, seasonsURL } from '../../lib';
-;
+import { collectionPaths, documentPaths, internalError } from '../../lib';
 
 const db = firestore();
 const wbcPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
@@ -18,13 +17,13 @@ export const wbcPointsTrigger = region('europe-west1').firestore.document('seaso
     const before: IRace = change.before.data() as IRace;
     const after: IRace = change.after.data() as IRace;
     if (before.state === 'closed' && after.state === 'completed') {
-      const bids: Bid[] = await db.collection(`${seasonsURL}/${context.params.seasonId}/${racesURL}/${context.params.round}/bids`)
+      const bids: Bid[] = await db.collection(collectionPaths.bids(context.params.seasonId, context.params.round))
         .where('submitted', '==', true)
         .orderBy('points', 'desc')
         .orderBy('polePositionTimeDiff', 'asc')
         .get()
         .then(snapshot => snapshot.docs.map(s => s.data() as Bid));
-      await createWBCRace(after, bids, db.doc(`${seasonsURL}/${context.params.seasonId}`));
+      await createWBCRace(after, bids, db.doc(documentPaths.season(context.params.seasonId)));
     }
     return Promise.resolve(true);
   });
@@ -42,8 +41,8 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
         email: bid.player?.email,
         tokens: bid.player?.tokens ?? [],
       } as Player,
-      points: bid.points && wbcPoints[index] || 0
-    }))
+      points: bid.points && wbcPoints[index] || 0,
+    })),
   };
   result.players.forEach((b, index) => log(b.player?.displayName, 'Points ', bids[index].points, 'WBC', wbcPoints[index]));
 
@@ -55,8 +54,8 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
     })
     .then(results => ref.set({
       wbc: {
-        results
-      }
+        results,
+      },
     }, { merge: true }))
     .then(() => log(`WBC points distributed for ${race.name}`))
     .catch(internalError);

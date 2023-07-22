@@ -1,5 +1,5 @@
-import { Bid, IRace, ITeam, SelectedTeamValue } from "@f2020/data";
-import { logAndCreateError } from "./firestore-utils";
+import { Bid, IRace, ITeam, SelectedTeamValue } from '@f2020/data';
+import { logAndCreateError } from './firestore-utils';
 
 
 const noNullsInArrayFn = (array: (string | null)[]): boolean => array.every(Boolean);
@@ -35,7 +35,7 @@ export const validateResult = (result: Bid, race: IRace): void => {
   const lengths = {
     podium: 4,
     qualify: 7,
-    slowestPitStop: 2
+    slowestPitStop: 2,
   } as { [key: string]: number; };
 
   if (!result) {

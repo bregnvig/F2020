@@ -3,8 +3,7 @@ import { firestore } from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { currentSeason, getBookie, internalError, logAndCreateError, PlayerImpl, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
-;
+import { currentSeason, documentPaths, getBookie, internalError, logAndCreateError, PlayerImpl, transferInTransaction, validateAccess } from '../../lib';
 
 export const undoWBC = region('europe-west1').https.onCall(async (data: any, context) => {
   return validateAccess(context.auth?.uid, 'player')
@@ -27,12 +26,12 @@ const undo = async (player: PlayerImpl) => {
 
   const db = firestore();
   const bookie = await getBookie();
-  const doc = db.doc(`${seasonsURL}/${season.id}`);
+  const doc = db.doc(documentPaths.season(season.id));
   return db.runTransaction(transaction => {
     transaction.set(doc, {
       wbc: {
-        participants: FieldValue.arrayRemove(player.uid)
-      }
+        participants: FieldValue.arrayRemove(player.uid),
+      },
     }, { merge: true });
     transferInTransaction({
       date: DateTime.local(),

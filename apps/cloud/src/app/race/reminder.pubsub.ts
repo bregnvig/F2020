@@ -4,6 +4,7 @@ import { pubsub } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendNotification } from './../../lib';
+
 ;
 
 const timespan = (days: number, date: DateTime): boolean => {
@@ -48,7 +49,7 @@ export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
           const results = [
             sendMail(player.email, `Tid til at spille på det ${race!.name} `, mailBody(player, race!, closeDay, closeTime)).then((msg) => {
               log(`sendMail result :(${msg})`);
-            })
+            }),
           ];
           if (player.tokens && player.tokens.length) {
             log(`Should send message to ${player.displayName}`);
@@ -62,5 +63,5 @@ export const mailReminderCrontab = pubsub.schedule('11 9 * * *')
     .catch(() => {
       log('No open race');
       return Promise.resolve(true);
-    })
+    }),
   );

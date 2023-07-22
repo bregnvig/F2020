@@ -3,9 +3,8 @@ import { firestore } from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
-import { getBookie, internalError, logAndCreateError, PlayerImpl, seasonsURL, transferInTransaction, validateAccess } from '../../lib';
+import { documentPaths, getBookie, internalError, logAndCreateError, PlayerImpl, transferInTransaction, validateAccess } from '../../lib';
 import { currentSeason } from './../../lib/season.service';
-;
 
 export const joinWBC = region('europe-west1').https.onCall(async (data: any, context) => {
   return validateAccess(context.auth?.uid, 'player')
@@ -32,12 +31,12 @@ const join = async (player: PlayerImpl) => {
 
   const db = firestore();
   const bookie = await getBookie();
-  const doc = db.doc(`${seasonsURL}/${season.id}`);
+  const doc = db.doc(documentPaths.season(season.id));
   return db.runTransaction(transaction => {
     transaction.set(doc, {
       wbc: {
-        participants: FieldValue.arrayUnion(player.uid)
-      }
+        participants: FieldValue.arrayUnion(player.uid),
+      },
     }, { merge: true });
     transferInTransaction({
       date: DateTime.local(),

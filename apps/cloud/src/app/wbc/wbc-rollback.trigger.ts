@@ -3,8 +3,7 @@ import { firestore } from 'firebase-admin';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { seasonsURL } from '../../lib';
-;
+import { documentPaths } from '../../lib';
 
 const db = firestore();
 
@@ -17,7 +16,7 @@ export const rollbackWBCTrigger = region('europe-west1').firestore.document('sea
     const before: IRace = change.before.data() as IRace;
     const after: IRace = change.after.data() as IRace;
     if (before.state === 'completed' && after.state === 'closed') {
-      await rollbackWBCRace(after, db.doc(`${seasonsURL}/${context.params.seasonId}`));
+      await rollbackWBCRace(after, db.doc(documentPaths.season(context.params.seasonId)));
     }
     return Promise.resolve(true);
   });
@@ -32,7 +31,7 @@ const rollbackWBCRace = async (race: IRace, ref: DocumentReference) => {
     })
     .then(results => ref.set({
       wbc: {
-        results
-      }
+        results,
+      },
     }, { merge: true }));
 };

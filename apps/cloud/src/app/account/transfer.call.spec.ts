@@ -1,5 +1,5 @@
 import { assertFails, assertSucceeds } from '@firebase/testing';
-import { playersURL } from '../../lib/collection-names';
+import { playersURL } from '../../lib/paths';
 import { Player } from '../../lib/model/player.model';
 // import { test } from '../../test-utils/firebase-initialize';
 import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
@@ -19,7 +19,7 @@ describe('Withdraw unittest', () => {
 
   afterEach(async () => {
     await clearFirestoreData();
-  })
+  });
 
   it('should deny a transfer, when user not logged in', async () => {
     const app = await authedApp();
@@ -30,61 +30,61 @@ describe('Withdraw unittest', () => {
   it('should deny a transfer, when user but not know', async () => {
     const app = await authedApp({ uid: 'jckS2Q0' });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(notFound)
+      .then(notFound);
   });
 
   it('should deny a transfer, when the amount is not specified or zero', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 0, message: 'Hello' }))
-    .then(failedPrecondition)
+      .then(failedPrecondition);
   });
 
   it('should deny a transfer, when the amount is negative', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: -100, message: 'Hello' }))
-    .then(failedPrecondition)
+      .then(failedPrecondition);
   });
-  
+
   it('should deny a transfer, when the user does not have the role of bank-admin', async () => {
     const app = await authedApp({ uid: players.player.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(permissionDenied)
+      .then(permissionDenied);
   });
 
   it('should deny a transfer, when the from uid is unknown', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: 'jckS2Q0', toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(notFound)
+      .then(notFound);
   });
 
   it('should deny a transfer, when the to uid is unknown', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: 'jckS2Q0', amount: 100, message: 'Hello' }))
-      .then(notFound)
+      .then(notFound);
   });
 
   it('should deny a transfer, when the from and to are identical', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.player.uid, amount: 100, message: 'Hello' }))
-      .then(failedPrecondition)
+      .then(failedPrecondition);
   });
 
   it('should deny a transfer, when the account does not have enough money', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 201, message: 'Hello' }))
-      .then(failedPrecondition)
+      .then(failedPrecondition);
   });
 
   it('should accept a transfer', async () => {
     const app = await authedApp({ uid: players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-    .then(() => new Promise(resolve => setTimeout(() => resolve(), 500)))
-    .then(() => adminFirestore.doc(`${playersURL}/${players.player.uid}`).get())
-    .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-    .then((player: Player) => expect(player.balance).toEqual(100))
-    .then(() => adminFirestore.doc(`${playersURL}/${players.admin.uid}`).get())
-    .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-    .then((player: Player) => expect(player.balance).toEqual(200))
+      .then(() => new Promise(resolve => setTimeout(() => resolve(), 500)))
+      .then(() => adminFirestore.doc(`${playersURL}/${players.player.uid}`).get())
+      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
+      .then((player: Player) => expect(player.balance).toEqual(100))
+      .then(() => adminFirestore.doc(`${playersURL}/${players.admin.uid}`).get())
+      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
+      .then((player: Player) => expect(player.balance).toEqual(200));
   });
 });
 
