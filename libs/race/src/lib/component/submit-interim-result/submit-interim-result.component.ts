@@ -8,11 +8,12 @@ import { Router } from '@angular/router';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace } from '@f2020/data';
-import { LoadingComponent } from '@f2020/shared';
+import { icon, LoadingComponent } from '@f2020/shared';
 import { shareLatest, truthy } from '@f2020/tools';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map, pairwise } from 'rxjs/operators';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @UntilDestroy()
 @Component({
@@ -20,10 +21,12 @@ import { filter, map, pairwise } from 'rxjs/operators';
   templateUrl: './submit-interim-result.component.html',
   styleUrls: ['./submit-interim-result.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
 })
 export class SubmitInterimResultComponent implements OnInit {
 
+  uploadIcon = icon.farCloudArrowUp;
+  refreshIcon = icon.fasRotateRight;
   resultControl: FormControl = new FormControl();
   race$: Observable<IRace>;
   updating$: Observable<boolean>;
@@ -44,9 +47,9 @@ export class SubmitInterimResultComponent implements OnInit {
     this.updating$ = this.facade.updating$;
     this.loaded$ = combineLatest([
       this.facade.selectedRace$.pipe(truthy()),
-      this.facade.interimResult$.pipe(truthy())
+      this.facade.interimResult$.pipe(truthy()),
     ]).pipe(
-      map(() => true)
+      map(() => true),
     );
     this.facade.interimResult$.pipe(
       untilDestroyed(this),

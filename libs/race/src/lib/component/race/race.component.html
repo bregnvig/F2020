@@ -26,7 +26,7 @@
           <a *ngIf="race.state === 'closed'"
              mat-button
              routerLink="qualify">
-            Kvalifikation
+            {{'Kvalifikation' | uppercase}}
           </a>
           <div>
             <div *ngIf="race.state === 'completed'" class="flex items-center">

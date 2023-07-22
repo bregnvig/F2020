@@ -1,7 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collectionData, doc, docData, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, Participant, Player, RoundResult, converter, firestoreWebUtils, mapper } from '@f2020/data';
+import {
+  Bid,
+  converter,
+  ErgastDriversQualifying,
+  firestoreWebUtils,
+  IDriver,
+  IPitStop,
+  IQualifyResult,
+  IRace,
+  IRaceResult,
+  ITeam,
+  mapper,
+  Participant,
+  Player,
+  RoundResult,
+} from '@f2020/data';
 import { unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { Observable } from 'rxjs';
@@ -29,7 +44,7 @@ export class RacesService {
 
   getBids(seasonId: string, race: IRace, uid: string): Observable<Bid[]> {
     return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/bids`).withConverter(bidConverter)).pipe(
-      map((bids: Bid[]) => bids.some(b => b.player.uid === uid && b.submitted || race.state !== 'open') ? bids : [])
+      map((bids: Bid[]) => bids.some(b => b.player.uid === uid && b.submitted || race.state !== 'open') ? bids : []),
     );
   }
 
@@ -52,7 +67,7 @@ export class RacesService {
         displayName: player.displayName,
         photoURL: player.photoURL,
         email: player.email,
-      }
+      },
     });
   }
 
@@ -63,10 +78,10 @@ export class RacesService {
     });
   }
 
-  getQualify(seasonId: string | number, round: number): Observable<IQualifyResult> {
+  getQualify(seasonId: string | number, round: number): Observable<IQualifyResult | undefined> {
     return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => {
-      const race = ergastData.MRData.RaceTable.Races[0];
-      return mapper.qualifyResult(race);
+      const race: ErgastDriversQualifying | undefined = ergastData.MRData.RaceTable.Races[0];
+      return race && mapper.qualifyResult(race);
     });
   }
 
@@ -79,7 +94,7 @@ export class RacesService {
 
   getLastYearResult(seasonId: number, countryCode: string): Promise<RoundResult> {
     return getDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${countryCode}`)).then(
-      snapshot => snapshot.data() as RoundResult
+      snapshot => snapshot.data() as RoundResult,
     );
   }
 
@@ -92,7 +107,7 @@ export class RacesService {
         tokens: player.tokens,
         email: player.email,
       },
-      version: 2
+      version: 2,
     }).then(() => true);
   }
 
@@ -100,7 +115,7 @@ export class RacesService {
     const u = unfreeze;
     return httpsCallable(this.functions, 'updateRace')({
       ...firestoreWebUtils.convertToJSON(u(race)),
-      version: 2
+      version: 2,
     }).then(() => true);
   }
 
