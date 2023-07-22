@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collectionData, doc, docData, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, Player, RoundResult, converter, firestoreWebUtils, mapper } from '@f2020/data';
+import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, Participant, Player, RoundResult, converter, firestoreWebUtils, mapper } from '@f2020/data';
 import { unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { Observable } from 'rxjs';
@@ -31,6 +31,10 @@ export class RacesService {
     return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/bids`).withConverter(bidConverter)).pipe(
       map((bids: Bid[]) => bids.some(b => b.player.uid === uid && b.submitted || race.state !== 'open') ? bids : [])
     );
+  }
+
+  getParticipants(seasonId: string, race: IRace): Observable<Participant[]> {
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/players`).withConverter(bidConverter));
   }
 
   getBid(seasonId: string, round: number, uid: string): Observable<Bid> {

@@ -34,3 +34,5 @@ export interface Bid {
   points?: number;
   player?: Player;
 }
+
+export type Participant = Pick<Bid, 'player' | 'submitted'>; 

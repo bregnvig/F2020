@@ -1,11 +1,11 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Bid } from '@f2020/data';
-import { icon } from '@f2020/shared';
-import { PartialBidWarningComponent } from '../partial-bid-warning/partial-bid-warning.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Bid, Participant } from '@f2020/data';
+import { icon } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PartialBidWarningComponent } from '../partial-bid-warning/partial-bid-warning.component';
 
 const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
 
@@ -19,17 +19,23 @@ const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number =>
 })
 export class BidsComponent {
 
-  private _bids: Bid[];
+  private _bids: Bid[] | Participant[] = [];
   icon = icon.fasFlagCheckered;
+  isBid = (bid: Bid | Participant): bid is Bid => (bid as Bid).points !== undefined;
 
 
   @Input() result: Partial<Bid>;
 
-  @Input({ required: true }) set bids(value: Bid[]) {
-    this._bids = [...value || []].sort((a, b) => (b.points - a.points) || (polePositionDiffComparator(a, b)));
+  @Input({ required: true }) set bids(value: Bid[] | Participant[]) {
+    this._bids = [...value || []].sort((a, b) => {
+      if (this.isBid(a) && this.isBid(b)) {
+        return (b.points - a.points) || (polePositionDiffComparator(a, b));
+      }
+      return a.player.displayName.localeCompare(b.player.displayName);
+    });
   }
 
-  get bids(): Bid[] {
+  get bids(): Bid[] | Participant[] {
     return this._bids;
   }
 

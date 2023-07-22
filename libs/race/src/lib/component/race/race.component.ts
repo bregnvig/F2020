@@ -7,12 +7,13 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { RacesActions, RacesFacade } from '@f2020/api';
-import { Bid, IRace } from '@f2020/data';
+import { Bid, IRace, Participant } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, LoadingComponent, icon } from '@f2020/shared';
+import { truthy } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { Observable, combineLatest } from 'rxjs';
-import { debounceTime, filter, first, map } from 'rxjs/operators';
+import { debounceTime, first, map } from 'rxjs/operators';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 
@@ -32,7 +33,7 @@ export class RaceComponent implements OnInit {
   center$: Observable<google.maps.LatLng>;
   race$: Observable<IRace>;
   play$: Observable<boolean>;
-  bids$: Observable<Bid[]>;
+  bids$: Observable<Bid[] | Participant[]>;
 
   options: google.maps.MapOptions = {
     draggable: true,
@@ -49,20 +50,24 @@ export class RaceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.facade.dispatch(RacesActions.loadBids());
-
-    this.race$ = this.facade.selectedRace$.pipe(filter(race => !!race));
-    this.bids$ = this.facade.bids$;
-    this.play$ = combineLatest([
-      this.race$,
-      this.bids$,
-    ]).pipe(
-      debounceTime(100),
-      map(([race, bids]) => race.close > DateTime.local() && !(bids || []).length),
-    );
+    this.race$ = this.facade.selectedRace$.pipe(truthy());
     this.center$ = this.race$.pipe(
       map(race => new google.maps.LatLng(race.location.lat, race.location.lng)),
     );
+    this.race$.pipe(
+      map(race => DateTime.local() > race.close),
+      first()
+    ).subscribe(closed => {
+      this.facade.dispatch(closed ? RacesActions.loadBids() : RacesActions.loadParticipants());
+      this.bids$ = closed ? this.facade.bids$ : this.facade.participants$;
+      this.play$ = combineLatest([
+        this.race$,
+        this.bids$,
+      ]).pipe(
+        debounceTime(100),
+        map(([race, bids]) => race.close > DateTime.local() && !(bids || []).length),
+      );
+    });
   }
 
   rollbackResult() {

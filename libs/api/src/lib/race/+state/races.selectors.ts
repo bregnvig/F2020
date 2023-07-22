@@ -7,7 +7,7 @@ import {
 } from './races.reducer';
 
 // Lookup the 'Races' feature state managed by NgRx
-export const getRacesState = createFeatureSelector< State>(
+export const getRacesState = createFeatureSelector<State>(
   RACES_FEATURE_KEY
 );
 
@@ -57,6 +57,11 @@ export const getYourBid = createSelector(
 export const getBids = createSelector(
   getRacesState,
   state => state.bids
+);
+
+export const getParticipants = createSelector(
+  getRacesState,
+  state => state.participants
 );
 
 export const getBid = createSelector(

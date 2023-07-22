@@ -1,4 +1,4 @@
-import { Bid, IRace, RoundResult } from '@f2020/data';
+import { Bid, IRace, Participant, RoundResult } from '@f2020/data';
 import { createAction, props } from '@ngrx/store';
 
 export const RacesActions = {
@@ -76,6 +76,20 @@ export const RacesActions = {
 
   loadBidsFailure: createAction(
     '[Bid API] Load bids Failure',
+    props<{ error: any; }>(),
+  ),
+
+  loadParticipants: createAction(
+    '[Race page] Load participants',
+  ),
+
+  loadParticipantsSuccess: createAction(
+    '[Bid API] Load participants Success',
+    props<{ participants: Participant[]; }>(),
+  ),
+
+  loadParticipantsFailure: createAction(
+    '[Bid API] Load participants Failure',
     props<{ error: any; }>(),
   ),
 

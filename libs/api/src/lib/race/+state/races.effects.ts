@@ -77,6 +77,26 @@ export const loadBids$ = createEffect((
   { functional: true }
 );
 
+export const loadParticipants$ = createEffect((
+  actions$ = inject(Actions),
+  facade = inject(RacesFacade),
+  seasonFacade = inject(SeasonFacade),
+  service = inject(RacesService),
+) => actions$.pipe(
+  ofType(RacesActions.loadParticipants),
+  concatMap(() => combineLatest([
+    seasonFacade.season$,
+    facade.selectedRace$,
+  ]).pipe(
+    debounceTime(200),
+    switchMap(([season, race]) => service.getParticipants(season.id, race)),
+    map(participants => RacesActions.loadParticipantsSuccess({ participants })),
+    catchError(error => of(RacesActions.loadParticipantsFailure({ error }))),
+    takeUntil(actions$.pipe(ofType(RacesActions.loadParticipants, PlayerActions.logoutPlayer))),
+  ))),
+  { functional: true }
+);
+
 export const loadBid$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
