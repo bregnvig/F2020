@@ -7,7 +7,7 @@
       </button>
     </mat-toolbar>
     <f2020-bid [formControl]="bidControl" [race]="race" [teams]="teams"></f2020-bid>
-    <button mat-fab aria-label="Indsend bud" [disabled]="bidControl.invalid || (updating$ | async)" *ngIf="bidControl.enabled && isOpen(race)" (click)="submitBid()">
+    <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid || (updating$ | async)" *ngIf="bidControl.enabled && isOpen(race)" (click)="submitBid()">
       <fa-icon [icon]="sendIcon" size="lg"></fa-icon>
     </button>
   </ng-container>
