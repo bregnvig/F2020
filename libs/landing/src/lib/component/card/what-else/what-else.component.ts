@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '6';
+const versionNo = '7';
 
 @Component({
   selector: 'f2020-what-else',
@@ -13,7 +13,7 @@ const versionNo = '6';
   styleUrls: ['./what-else.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule]
+  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule],
 })
 export class WhatElseComponent {
 

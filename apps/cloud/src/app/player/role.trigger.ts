@@ -2,8 +2,6 @@ import { Player } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
 import { region } from 'firebase-functions/v1';
 
-;
-
 export const setAnonymousRole = region('europe-west1').firestore.document('players/{userId}')
   .onCreate(async (snap) => {
     const newUser: Player = snap.data() as Player;
