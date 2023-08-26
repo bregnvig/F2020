@@ -164,7 +164,7 @@
       "executor": "@storybook/angular:build-storybook",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "outputDir": "dist/storybook/nestext",
+        "outputDir": "dist/storybook/ui",
         "configDir": "apps/ui/.storybook",
         "browserTarget": "ui:build",
         "compodoc": false
