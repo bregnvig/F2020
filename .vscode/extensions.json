@@ -2,7 +2,7 @@
   "recommendations": [
     "nrwl.angular-console",
     "angular.ng-template",
-    "ms-vscode.vscode-typescript-tslint-plugin",
+    "ms-playwright.playwright",
     "esbenp.prettier-vscode",
     "firsttris.vscode-jest-runner"
   ]
