@@ -5,7 +5,7 @@ const getDriverId = (result: IDriverRaceResult | IDriverQualifying) => result.dr
 export const buildResult = (race: IRaceResult, qualify: IQualifyResult, pitStops: IPitStop[], selectedDriver: string, selectedTeam: ITeam): Bid => {
 
   const qualifyResult = qualify.results.slice(0, 7).map(getDriverId);
-  const pitStopResult = pitStops.sort((a, b) => b.duration - a.duration).slice(0, 2).map(p => p.team.constructorId);
+  const pitStopResult = [...new Set<string>(pitStops.sort((a, b) => b.duration - a.duration).map(p => p.team.constructorId))].slice(0, 2);
 
   const fastestDriverResult = [...race.results]
     .filter(result => !!result.fastestLap)
