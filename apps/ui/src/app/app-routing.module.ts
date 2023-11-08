@@ -79,7 +79,7 @@ const routes: Routes = [
       },
       {
         path: 'standings',
-        loadChildren: () => import('@f2020/standing').then(m => m.StandingModule),
+        loadChildren: () => import('@f2020/standing').then(m => m.StandingRoutes),
       }
     ]
   }

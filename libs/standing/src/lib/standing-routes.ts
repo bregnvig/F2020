@@ -3,7 +3,7 @@ import { StandingDriverComponent } from './component/standing-driver/standing-dr
 import { StandingLastYearComponent } from './component/standing-last-year/standing-last-year.component';
 import { StandingListComponent } from './component/standing-list/standing-list.component';
 
-const routes: Routes = [
+export const StandingRoutes: Routes = [
   {
     path: '',
     component: StandingListComponent,
@@ -17,5 +17,3 @@ const routes: Routes = [
     component: StandingDriverComponent,
   },
 ];
-
-export const StandingRoutingModule = RouterModule.forChild(routes);

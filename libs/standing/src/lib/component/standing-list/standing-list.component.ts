@@ -1,15 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { IDriverStanding } from '@f2020/data';
-import { Observable } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { StandingFacade } from '../../+state/standing.facade';
-import { LoadingComponent } from '@f2020/shared';
-import { StandingListItemComponent } from './standing-list-item/standing-list-item.component';
-import { RouterLink } from '@angular/router';
+import { AsyncPipe, LowerCasePipe, NgFor, NgIf } from '@angular/common';
+import { Component, OnInit, Signal, computed, effect } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { NgIf, NgFor, AsyncPipe, LowerCasePipe } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
+import { IDriverStanding } from '@f2020/data';
+import { LoadingComponent } from '@f2020/shared';
+import { StandingStore } from '../../+state/standing.store';
+import { StandingListItemComponent } from './standing-list-item/standing-list-item.component';
 
 @Component({
   selector: 'f2020-standing-list',
@@ -26,24 +24,25 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AsyncPipe,
     LowerCasePipe,
   ],
+  providers: [
+    StandingStore
+  ]
 })
 export class StandingListComponent implements OnInit {
 
-  standings$: Observable<IDriverStanding[]>;
+  standings: Signal<IDriverStanding[]>;
 
-  constructor(private facade: StandingFacade, private snackBar: MatSnackBar) {
+  constructor(private store: StandingStore, private snackBar: MatSnackBar) {
+    this.store.loadStandings();
   }
 
   ngOnInit(): void {
-    this.standings$ = this.facade.loaded$.pipe(
-      filter(loaded => loaded),
-      switchMap(() => this.facade.standings$),
-      map(standings => [...standings].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name))),
-      tap(standings => {
-        if (!standings.length) {
-          this.snackBar.open('Der findes ingen resultater endnu', null, { duration: 3000 });
-        }
-      })
-    );
+    this.standings = computed(() => [...this.store.standings()].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));
+
+    effect(() => {
+      if (this.store.loaded() && !this.store.standings()?.length) {
+        this.snackBar.open('Der findes ingen resultater endnu', null, { duration: 3000 });
+      }
+    });
   }
 }

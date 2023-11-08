@@ -1,1 +1,1 @@
-export * from "./lib/standing.module";
+export * from "./lib/standing-routes";
