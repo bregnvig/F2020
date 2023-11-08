@@ -65,3 +65,5 @@ saved-data-backup
 **/.firebase/*
 *.log
 
+
+.nx/cache
