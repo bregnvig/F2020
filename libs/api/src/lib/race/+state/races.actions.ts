@@ -152,6 +152,7 @@ export const RacesActions = {
 
   submitResult: createAction(
     '[Result page] submit result',
+    props<{ result: Bid; }>(),
   ),
 
   submitResultSuccess: createAction(

@@ -208,13 +208,11 @@ export const submitResult$ = createEffect((
 ) => actions$.pipe(
   ofType(RacesActions.submitResult),
   withLatestFrom(facade.selectedRace$),
-  concatMap(([, race]) => facade.result$.pipe(
-    switchMap(result => service.submitResult(race.round, result)
-      .then(() => RacesActions.submitResultSuccess())
-      .catch(error => RacesActions.submitResultFailure({ error }))
-    ),
-    first()),
-  )),
+  concatMap(([{ result }, race]) => service.submitResult(race.round, result)
+    .then(() => RacesActions.submitResultSuccess())
+    .catch(error => RacesActions.submitResultFailure({ error }))
+  ),
+  first()),
   { functional: true }
 );
 
