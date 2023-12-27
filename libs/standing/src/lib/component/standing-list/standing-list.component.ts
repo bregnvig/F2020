@@ -1,5 +1,5 @@
 import { AsyncPipe, LowerCasePipe, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit, Signal, computed, effect } from '@angular/core';
+import { Component, computed, effect, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -25,19 +25,16 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
     LowerCasePipe,
   ],
   providers: [
-    StandingStore
-  ]
+    StandingStore,
+  ],
 })
-export class StandingListComponent implements OnInit {
+export class StandingListComponent {
 
   standings: Signal<IDriverStanding[]>;
 
   constructor(private store: StandingStore, private snackBar: MatSnackBar) {
     this.store.loadStandings();
-  }
-
-  ngOnInit(): void {
-    this.standings = computed(() => [...this.store.standings()].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));
+    this.standings = computed(() => [...(this.store.standings() ?? [])].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));
 
     effect(() => {
       if (this.store.loaded() && !this.store.standings()?.length) {
