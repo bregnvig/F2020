@@ -2,10 +2,10 @@
   <span>Spillere</span>
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
-  <mat-action-list *ngIf="players$ | async as players; else loading">
-    <mat-list-item *ngFor="let player of players" [routerLink]="[player.uid]">
+  <mat-action-list *ngIf="players(); else loading">
+    <mat-list-item *ngFor="let player of players()" [routerLink]="[player.uid]">
       <img matListItemAvatar [src]="player.photoURL">
-      <h3 matListItemTitle>{{player.displayName}}</h3>
+      <h3 matListItemTitle>{{ player.displayName }}</h3>
       <div matListItemMeta>
         <fa-icon *ngIf="isAnonymous(player)" class="text-white ml-2" [icon]="icon.farCarCrash" size="lg"></fa-icon>
         <fa-icon *ngIf="isBankAdmin(player)" class="text-white ml-2" [icon]="icon.farUniversity" size="lg"></fa-icon>

@@ -1,12 +1,12 @@
-<h1 mat-dialog-title>{{data.player.displayName}}</h1>
+<h1 mat-dialog-title>{{ data.player.displayName }}</h1>
 <div mat-dialog-content [formGroup]="fg" fxLayout="column">
   <p>Hvor mange penge skal der overføres og til hvem?</p>
-  <p>Dog maksimalt {{data.player.balance | currency: 'DKK'}}</p>
+  <p>Dog maksimalt {{ data.player.balance | currency: 'DKK' }}</p>
   <mat-form-field>
     <mat-label>Modtager</mat-label>
-    <mat-select formControlName="to" cdkFocusInitial> 
-      <mat-option *ngFor="let player of players$ | async" [value]=player>
-        {{player.displayName}}
+    <mat-select formControlName="to" cdkFocusInitial>
+      <mat-option *ngFor="let player of players()" [value]=player>
+        {{ player.displayName }}
       </mat-option>
     </mat-select>
   </mat-form-field>

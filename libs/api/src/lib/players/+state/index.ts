@@ -1,2 +1,1 @@
-export * from './players.actions';
-export * from './players.facade';
+export * from './players.store';

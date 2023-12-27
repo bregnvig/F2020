@@ -1,41 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, effect, OnInit, Signal } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
-import { PlayerActions, PlayerFacade, PlayersActions, PlayersFacade } from '@f2020/api';
+import { PlayerActions, PlayerFacade, PlayersStore } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { truthy, withLength } from '@f2020/tools';
-import { combineLatest, Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { truthy } from '@f2020/tools';
+import { first } from 'rxjs/operators';
 import { AsyncPipe, NgFor, NgOptimizedImage } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'f2020-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
   standalone: true,
   imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, NgFor, AsyncPipe, NgOptimizedImage],
+  providers: [PlayersStore],
 })
 export class ProfileComponent implements OnInit {
 
-  receiveReminders$: Observable<boolean>;
-  player$: Observable<Player>;
-  players$: Observable<[Player, boolean][]>;
+  receiveReminders: Signal<boolean>;
+  player: Signal<Player>;
+  players: Signal<[Player, boolean][]>;
 
-  constructor(private facade: PlayerFacade, private playersFacade: PlayersFacade) {
+  constructor(private facade: PlayerFacade, private playersStore: PlayersStore) {
+    this.playersStore.loadPlayers();
+    this.player = toSignal(this.facade.player$.pipe(truthy(), first()));
+    effect(() => console.log(this.playersStore.players()));
   }
 
   ngOnInit(): void {
-    this.playersFacade.dispatch(PlayersActions.loadPlayers());
-
-    this.player$ = this.facade.player$.pipe(truthy(), first());
-    this.players$ = combineLatest([this.player$, this.playersFacade.allPlayers$.pipe(withLength())]).pipe(
-      map(([player, players]) => players.filter(p => p.uid !== player.uid).map(p => [p, !player.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)])),
-    );
-    this.receiveReminders$ = this.player$.pipe(
-      truthy(),
-      map(player => player.receiveReminders ?? true),
-    );
+    this.players = computed(() => {
+      const player = this.player();
+      return (this.playersStore.players() ?? []).filter(p => p.uid !== player.uid).map(p => [p, !player.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)]);
+    });
+    this.receiveReminders = computed(() => this.player().receiveReminders ?? true);
   }
 
   selectionChanged(change: MatSelectionListChange) {

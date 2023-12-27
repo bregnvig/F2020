@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PlayersApiModule } from '@f2020/api';
 import { PlayersListComponent } from './component/players-list/players-list.component';
 import { PlayersComponent } from './component/players/players.component';
 import { EditPlayerComponent } from './edit-player/edit-player.component';
@@ -14,17 +13,16 @@ import { EditPlayerComponent } from './edit-player/edit-player.component';
         children: [
           {
             path: '',
-            component: PlayersListComponent
+            component: PlayersListComponent,
           },
           {
             path: ':id',
-            component: EditPlayerComponent
-          }
-        ]
-      }
+            component: EditPlayerComponent,
+          },
+        ],
+      },
     ]),
-    PlayersApiModule,
-  ]
+  ],
 })
 export class PlayersModule {
 

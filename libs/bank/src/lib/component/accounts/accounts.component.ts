@@ -1,22 +1,17 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PlayersFacade, PlayersActions } from '@f2020/api';
+import { Component } from '@angular/core';
+import { PlayersStore } from '@f2020/api';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-    selector: 'f2020-accounts',
-    template: '<router-outlet></router-outlet>',
-    standalone: true,
-    imports: [RouterOutlet],
+  selector: 'f2020-accounts',
+  template: '<router-outlet></router-outlet>',
+  standalone: true,
+  imports: [RouterOutlet],
+  providers: [PlayersStore],
 })
-export class AccountsComponent implements OnInit, OnDestroy {
+export class AccountsComponent {
 
-  constructor(private facade: PlayersFacade) { }
-
-  ngOnInit(): void {
-    this.facade.dispatch(PlayersActions.loadPlayers());
-  }
-
-  ngOnDestroy() {
-    this.facade.dispatch(PlayersActions.unloadPlayers());
+  constructor(store: PlayersStore) {
+    store.loadPlayers();
   }
 }

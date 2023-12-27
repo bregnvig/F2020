@@ -1,35 +1,30 @@
-import { truthy } from '@f2020/tools';
-import { Observable } from 'rxjs';
-import { PlayersFacade } from '@f2020/api';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { PlayersStore } from '@f2020/api';
+import { ChangeDetectionStrategy, Component, computed, OnInit, Signal } from '@angular/core';
 import { Player } from '@f2020/data';
-import { map } from 'rxjs/operators';
-import { LoadingComponent, icon } from '@f2020/shared';
+import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    templateUrl: './players-list.component.html',
-    styleUrls: ['./players-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatToolbarModule, NgIf, MatListModule, NgFor, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe]
+  templateUrl: './players-list.component.html',
+  styleUrls: ['./players-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatToolbarModule, NgIf, MatListModule, NgFor, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe],
 })
 export class PlayersListComponent implements OnInit {
 
-  players$: Observable<Player[]>;
+  players: Signal<Player[]>;
   icon = icon;
 
-  constructor(private facade: PlayersFacade) { }
+  constructor(private store: PlayersStore) {
+  }
 
   ngOnInit(): void {
-    this.players$ = this.facade.allPlayers$.pipe(
-      truthy(),
-      map(players => players.filter(p => !p.roles.includes('bookie')))
-    );
+    this.players = computed(() => (this.store.players() ?? []).filter(p => !p.roles.includes('bookie')));
   }
 
   isAnonymous(player: Player): boolean {

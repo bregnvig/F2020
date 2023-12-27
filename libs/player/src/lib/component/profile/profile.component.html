@@ -5,16 +5,16 @@
   <mat-toolbar>Påmindelser</mat-toolbar>
   <mat-list>
     <mat-list-item>
-      <mat-slide-toggle [checked]="receiveReminders$ | async" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
+      <mat-slide-toggle [checked]="receiveReminders()" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
     </mat-list-item>
   </mat-list>
   <mat-toolbar class="mt-3">
     Giv besked når der spilles
   </mat-toolbar>
   <mat-selection-list (selectionChange)="selectionChanged($event)">
-    <mat-list-option *ngFor="let player of players$ | async" [selected]="player[1]" [value]="player[0].uid">
+    <mat-list-option *ngFor="let player of players()" [selected]="player[1]" [value]="player[0].uid">
       <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName">
-      <h3 matListItemTitle>{{player[0].displayName}}</h3>
+      <h3 matListItemTitle>{{ player[0].displayName }}</h3>
     </mat-list-option>
   </mat-selection-list>
 </div>

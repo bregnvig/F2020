@@ -1,11 +1,12 @@
-import { Injectable, Signal } from "@angular/core";
-import { SeasonFacade } from "@f2020/api";
-import { IDriverStanding } from "@f2020/data";
-import { Store } from "@f2020/shared";
-import { truthy } from "@f2020/tools";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { switchMap } from "rxjs";
-import { StandingService } from "../service/standing.service";
+import { effect, Injectable, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { SeasonFacade } from '@f2020/api';
+import { IDriverStanding } from '@f2020/data';
+import { Store } from '@f2020/shared';
+import { truthy } from '@f2020/tools';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { switchMap } from 'rxjs';
+import { StandingService } from '../service/standing.service';
 
 export interface StandingState {
   standings?: IDriverStanding[];
@@ -26,19 +27,13 @@ export class StandingStore extends Store<StandingState> {
   }
 
   loadStandings() {
-    this.setState(state => ({ ...state, loaded: false, error: null }));
-    !this.state().loaded && this.facade.season$.pipe(
-      truthy(),
-      switchMap(season => this.service.getStandings(season.id)),
-      untilDestroyed(this)).subscribe({
-        next: standings => {
-          this.setState(state => ({ ...state, standings, loaded: true }));
-        },
-        error: error => {
-          console.error(error);
-          this.setState(state => ({ ...state, error: error['message'] ?? error, loaded: false }));
-        }
-      });
+    if (!this.loaded()) {
+      const standings = toSignal(this.facade.season$.pipe(
+        truthy(),
+        switchMap(season => this.service.getStandings(season.id)),
+      ));
+      effect(() => this.setState(() => ({ standings: standings(), loaded: true })));
+    }
   }
 
   get standings(): Signal<IDriverStanding[]> {

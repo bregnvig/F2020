@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { PlayersFacade, PlayersActions } from '@f2020/api';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { PlayersStore } from '@f2020/api';
 
 @Component({
-    template: `<router-outlet></router-outlet>`,
-    standalone: true,
-    imports: [RouterOutlet],
+  template: `
+    <router-outlet></router-outlet>`,
+  standalone: true,
+  imports: [RouterOutlet],
+  providers: [PlayersStore],
 })
-export class PlayersComponent implements OnInit {
+export class PlayersComponent {
 
-  constructor(private facade: PlayersFacade) { }
-
-  ngOnInit(): void {
-    this.facade.dispatch(PlayersActions.loadPlayers());
+  constructor(store: PlayersStore) {
+    store.loadPlayers();
   }
-
 }
