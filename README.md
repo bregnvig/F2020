@@ -42,6 +42,6 @@ Start by adding a `.runtimeconfig.json` to the `apps/cloud` folder
 
 You can create it using `firebase functions:config:get > .runtimeconfig.json`	
 
-1. Start by running npx nx serve cloud
+1. Start by running `npx nx serve cloud`
 2. Run emulators use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions` Delete `export`, `import` and/or `--inspect-functions` if not wanted
 3. If ports are already taken, run `npm run kill-ports` 
