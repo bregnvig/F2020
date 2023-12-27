@@ -9,11 +9,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BidComponent } from '@f2020/control';
-import { LoadingComponent, icon } from '@f2020/shared';
-import { shareLatest, truthy } from '@f2020/tools';
+import { icon, LoadingComponent } from '@f2020/shared';
+import { isNullish, shareLatest, truthy } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map, pairwise } from 'rxjs/operators';
 
 @UntilDestroy()
@@ -22,7 +22,7 @@ import { filter, map, pairwise } from 'rxjs/operators';
   templateUrl: './submit-result.component.html',
   styleUrls: ['./submit-result.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule]
+  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
 })
 export class SubmitResultComponent implements OnInit {
 
@@ -51,9 +51,9 @@ export class SubmitResultComponent implements OnInit {
     this.updating$ = this.facade.updating$;
     this.loaded$ = combineLatest([
       this.facade.selectedRace$.pipe(truthy()),
-      this.facade.result$.pipe(truthy())
+      this.facade.result$.pipe(truthy()),
     ]).pipe(
-      map(() => true)
+      map(() => true),
     );
     this.facade.result$.pipe(
       untilDestroyed(this),
@@ -69,7 +69,13 @@ export class SubmitResultComponent implements OnInit {
   }
 
   submitResult() {
-    this.resultControl.valid && this.facade.dispatch(RacesActions.submitResult({ result: this.resultControl.value }));
+    if (this.resultControl.valid) {
+      const result = Object.fromEntries(
+        Object.entries(this.resultControl.value).map(([key, value]) => [key, Array.isArray(value) ? value.filter(v => !isNullish(v)) : value]),
+      ) as Bid;
+      this.facade.dispatch(RacesActions.submitResult({ result }));
+
+    }
   }
 
   loadResult() {
