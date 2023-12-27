@@ -1,5 +1,5 @@
 import localeDa from '@angular/common/locales/da';
-import { APP_INITIALIZER, LOCALE_ID, enableProdMode, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, enableProdMode, importProvidersFrom, LOCALE_ID } from '@angular/core';
 
 import { registerLocaleData } from '@angular/common';
 import { provideFirebaseApp } from '@angular/fire/app';
@@ -12,12 +12,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { PlayerApiModule, RaceApiModule, SeasonApiModule } from '@f2020/api';
-import { DriverModule } from '@f2020/driver';
-import { SharedModule, initializeFontAwesomeFactory } from '@f2020/shared';
+import { initializeFontAwesomeFactory, SharedModule } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -32,6 +31,7 @@ import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
 import { metaReducers, reducers } from './app/reducers';
 import { environment } from './environments/environment';
+import { HttpClientModule } from '@angular/common/http';
 
 const materialModule = [
   MatSidenavModule,
@@ -54,8 +54,8 @@ bootstrapApplication(AppComponent, {
       materialModule,
       FontAwesomeModule,
       PlayerApiModule,
-      DriverModule,
       SeasonApiModule,
+      HttpClientModule,
       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
       ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
       provideFirestore(() => {
@@ -92,7 +92,7 @@ bootstrapApplication(AppComponent, {
       multi: true,
     },
     provideAnimations(),
-  ]
+  ],
 }).then(() => {
   if ('serviceWorker' in navigator && environment.production) {
     navigator.serviceWorker.register('ngsw-worker.js');

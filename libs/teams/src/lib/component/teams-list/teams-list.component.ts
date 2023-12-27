@@ -1,5 +1,5 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -8,8 +8,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
-import { AddDriverComponent, DriverNamePipe, DriversActions, DriversFacade } from '@f2020/driver';
-import { CardPageComponent, HasRoleDirective, LoadingComponent, icon } from '@f2020/shared';
+import { AddDriverComponent, DriverNamePipe, DriversStore } from '@f2020/driver';
+import { CardPageComponent, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { first, map, switchMap } from 'rxjs';
 
@@ -19,27 +19,25 @@ import { first, map, switchMap } from 'rxjs';
   styleUrls: ['./teams-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, CardPageComponent, NgIf, MatListModule, NgFor, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe]
+  imports: [MatToolbarModule, CardPageComponent, NgIf, MatListModule, NgFor, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
+  providers: [DriversStore],
 })
-export class TeamsListComponent implements OnInit {
+export class TeamsListComponent {
 
   teams$ = this.service.teams$;
   icon = icon;
 
   constructor(
     private dialog: MatDialog,
-    private driverFacade: DriversFacade,
+    private store: DriversStore,
     private service: TeamService,
     private snackBar: MatSnackBar,
-  ) { }
-
-  ngOnInit(): void {
-    this.driverFacade.dispatch(DriversActions.loadDrivers());
+  ) {
+    store.loadDrivers();
   }
 
   addDriver(team: ITeam) {
-    this.driverFacade.allDriver$.pipe(
-      switchMap(drivers => this.dialog.open(AddDriverComponent, { data: drivers }).afterClosed()),
+    this.dialog.open(AddDriverComponent, { data: this.store.drivers() }).afterClosed().pipe(
       map(driver => ({
         ...team,
         drivers: [...team.drivers, driver],
@@ -52,7 +50,7 @@ export class TeamsListComponent implements OnInit {
   removeDriver(driver: string, team: ITeam) {
     const payload: ITeam = {
       ...team,
-      drivers: team.drivers.filter(existing => existing !== driver)
+      drivers: team.drivers.filter(existing => existing !== driver),
     };
     this.service.updateTeam(payload).pipe(
       first(),

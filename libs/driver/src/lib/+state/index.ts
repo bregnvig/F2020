@@ -1,2 +1,1 @@
-export * from './drivers.facade';
-export * from './drivers.actions';
+export * from './drivers.store';

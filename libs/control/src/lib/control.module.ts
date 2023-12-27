@@ -7,7 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { DriverModule } from '@f2020/driver';
 import { SharedModule } from '@f2020/shared';
 import { BidComponent } from './components/bid/bid.component';
 import { DriverCodesComponent } from './components/driver-codes/driver-codes.component';
@@ -31,28 +30,24 @@ const exported = [
   DriverCodesComponent,
 ];
 
-const components = [
+const components = [];
 
-];
-
-const pipes = [
-];
+const pipes = [];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatExpansionModule,
-        MatInputModule,
-        MatIconModule,
-        MatFormFieldModule,
-        SharedModule,
-        DriverModule,
-        exported, components, pipes,
-    ],
-    exports: [exported, pipes],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatExpansionModule,
+    MatInputModule,
+    MatIconModule,
+    MatFormFieldModule,
+    SharedModule,
+    exported, components, pipes,
+  ],
+  exports: [exported, pipes],
 })
 export class ControlModule {
 }

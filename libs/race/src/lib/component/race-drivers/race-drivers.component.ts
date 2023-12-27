@@ -9,20 +9,24 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RacesActions, RacesFacade } from '@f2020/api';
 import { IRace } from '@f2020/data';
-import { AddDriverComponent, DriverNamePipe, DriversActions, DriversFacade } from '@f2020/driver';
-import { LoadingComponent, icon } from '@f2020/shared';
+import { AddDriverComponent, DriverNamePipe, DriversStore } from '@f2020/driver';
+import { icon, LoadingComponent } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { filter, first, map, pairwise, switchMap } from 'rxjs/operators';
+import { filter, first, map, pairwise } from 'rxjs/operators';
+
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
 
 const message = (driverName: string, operation: Operation) => {
   switch (operation) {
-    case 'added': return `${driverName} er blevet tilføjet`;
-    case 'moved': return `${driverName} er blevet flyttet`;
-    case 'removed': return `${driverName} er blevet fjernet`;
+    case 'added':
+      return `${driverName} er blevet tilføjet`;
+    case 'moved':
+      return `${driverName} er blevet flyttet`;
+    case 'removed':
+      return `${driverName} er blevet fjernet`;
   }
 };
 
@@ -32,7 +36,7 @@ const message = (driverName: string, operation: Operation) => {
   templateUrl: './race-drivers.component.html',
   styleUrls: ['./race-drivers.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, NgIf, MatListModule, CdkDropList, NgFor, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe]
+  imports: [MatToolbarModule, NgIf, MatListModule, CdkDropList, NgFor, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe],
 })
 export class RaceDriversComponent implements OnInit {
 
@@ -46,13 +50,12 @@ export class RaceDriversComponent implements OnInit {
 
   constructor(
     private facade: RacesFacade,
-    private driverFacade: DriversFacade,
+    private store: DriversStore,
     private dialog: MatDialog,
     private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
-    this.driverFacade.dispatch(DriversActions.loadDrivers());
     this.race$ = this.facade.selectedRace$.pipe(
       truthy(),
     );
@@ -60,14 +63,14 @@ export class RaceDriversComponent implements OnInit {
       pairwise(),
       filter(([previous, current]) => previous && !current),
     );
-    const allDriver$ = this.driverFacade.allDriver$.pipe(truthy());
+
     this.race$.pipe(
       map(race => race.drivers || []),
       first(),
       untilDestroyed(this),
     ).subscribe(_drivers => this.drivers = [..._drivers]);
     updated$.pipe(
-      switchMap(() => allDriver$.pipe(map(drivers => drivers.find(driver => driver.driverId === this.driverId)))),
+      map(() => this.store.drivers().find(driver => driver.driverId === this.driverId)),
       untilDestroyed(this),
     ).subscribe(driver => {
       if (this.operation !== 'undo') {
@@ -99,7 +102,7 @@ export class RaceDriversComponent implements OnInit {
   addDriver() {
     const previousDrivers = [...this.drivers];
     this.dialog.open(AddDriverComponent, { data: this.drivers }).afterClosed().pipe(
-      first()
+      first(),
     ).subscribe(driver => {
       this.drivers.push(driver);
       this.updateDrivers('added', driver, previousDrivers);

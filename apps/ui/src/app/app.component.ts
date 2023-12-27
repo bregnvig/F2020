@@ -1,4 +1,4 @@
-import { Component, OnInit, isDevMode } from '@angular/core';
+import { Component, isDevMode, OnInit } from '@angular/core';
 import { getToken } from '@angular/fire/messaging';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,13 +9,13 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { DriversActions, DriversFacade } from '@f2020/driver';
-import { SidebarComponent, icon } from '@f2020/shared';
+import { icon, SidebarComponent } from '@f2020/shared';
 import { filterEquals, truthy } from '@f2020/tools';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, startWith, switchMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-import { FaIconComponent, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DriversStore } from '@f2020/driver';
 
 @Component({
   selector: 'f2020-root',
@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private playerFacade: PlayerFacade,
-    private driverFacade: DriversFacade,
+    private driverStore: DriversStore,
     private racesFacade: RacesFacade,
     private updates: SwUpdate,
     private versionService: VersionService,
@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
     const messaging = getMessaging();
     getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
       currentToken => isDevMode() && console.log(currentToken),
-      error => console.error('An error occurred while retrieving token', error.message)
+      error => console.error('An error occurred while retrieving token', error.message),
     );
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
@@ -63,13 +63,13 @@ export class AppComponent implements OnInit {
       startWith(null as Player),
       filterEquals(),
     ).subscribe(player => {
+      this.driverStore.loadDrivers();
       if (player.roles && player.roles.includes('player')) {
         this.racesFacade.dispatch(RacesActions.loadRaces());
-        this.driverFacade.dispatch(DriversActions.loadDrivers());
         if (this.router.url === '/info/roles') {
           this.router.navigate(['/']);
         }
-        if (Notification.permission === "granted") {
+        if (Notification.permission === 'granted') {
           this.playerFacade.dispatch(PlayerActions.loadMessagingToken());
         } else if (Notification.permission === 'denied') {
           console.log('Messaging denied');
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
     ).subscribe(() => location.reload());
     this.versionService.setVersion({
       ui: 2,
-      api: 2
+      api: 2,
     });
     this.playerFacade.authorized$.pipe(
       truthy(),
@@ -101,7 +101,7 @@ export class AppComponent implements OnInit {
       first(),
     ).subscribe(ok => {
       if (!ok) {
-        this.snackBar.open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', "OK").onAction().pipe(
+        this.snackBar.open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', 'OK').onAction().pipe(
           switchMap(() => this.updates.checkForUpdate()),
           switchMap(() => this.updates.activateUpdate()),
         ).subscribe(() => location.reload());

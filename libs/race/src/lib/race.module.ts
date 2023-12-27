@@ -17,7 +17,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RaceApiModule } from '@f2020/api';
 import { ControlModule } from '@f2020/control';
-import { DriverModule } from '@f2020/driver';
 import { SharedModule } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
@@ -53,37 +52,36 @@ const MaterialModules = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        FontAwesomeModule,
-        RaceRoutingModule,
-        SharedModule,
-        GoogleMapsModule,
-        ControlModule,
-        DriverModule,
-        MaterialModules,
-        NgxMatTimepickerModule,
-        RaceApiModule,
-        RacesComponent,
-        RaceComponent,
-        RaceUpdatedWarningComponent,
-        EditRaceComponent,
-        BidsComponent,
-        EnterBidComponent,
-        SubmitResultComponent,
-        SubmitInterimResultComponent,
-        DisplayBidComponent,
-        DisplayPlayerBidComponent,
-        PartialBidWarningComponent,
-        RaceOutletComponent,
-        DisplayDriversComponent,
-        DisplayTeamsComponent,
-        RaceDriversComponent,
-        DisplayPlayerBidComponent,
-        DisplayResultComponent,
-        RaceStatusPipe,
-    ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    RaceRoutingModule,
+    SharedModule,
+    GoogleMapsModule,
+    ControlModule,
+    MaterialModules,
+    NgxMatTimepickerModule,
+    RaceApiModule,
+    RacesComponent,
+    RaceComponent,
+    RaceUpdatedWarningComponent,
+    EditRaceComponent,
+    BidsComponent,
+    EnterBidComponent,
+    SubmitResultComponent,
+    SubmitInterimResultComponent,
+    DisplayBidComponent,
+    DisplayPlayerBidComponent,
+    PartialBidWarningComponent,
+    RaceOutletComponent,
+    DisplayDriversComponent,
+    DisplayTeamsComponent,
+    RaceDriversComponent,
+    DisplayPlayerBidComponent,
+    DisplayResultComponent,
+    RaceStatusPipe,
+  ],
 })
 export class RaceModule {
 }

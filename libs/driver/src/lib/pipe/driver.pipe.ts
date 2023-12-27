@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
-import { DriversFacade } from '../+state/drivers.facade';
+import { ChangeDetectorRef, effect, Pipe, PipeTransform } from '@angular/core';
 import { IDriver } from '@f2020/data';
+import { DriversStore } from '../+state';
 
 @Pipe({
-    name: 'driver',
-    pure: false,
-    standalone: true,
+  name: 'driver',
+  pure: false,
+  standalone: true,
 })
 export class DriverPipe implements PipeTransform {
 
@@ -13,9 +13,9 @@ export class DriverPipe implements PipeTransform {
   private driver: IDriver;
   private drivers: IDriver[];
 
-  constructor(facade: DriversFacade, changeDetectorRef: ChangeDetectorRef) {
-    facade.allDriver$.subscribe(drivers => {
-      this.drivers = drivers;
+  constructor(facade: DriversStore, changeDetectorRef: ChangeDetectorRef) {
+    effect(() => {
+      this.drivers = facade.drivers();
       changeDetectorRef.markForCheck();
     });
   }
