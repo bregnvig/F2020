@@ -1,5 +1,5 @@
 import { Component, effect, OnInit, Signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { PlayersApiService, PlayersStore } from '@f2020/api';
@@ -27,7 +27,11 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 export class EditPlayerComponent implements OnInit {
 
   player: Signal<Player>;
-  fg: FormGroup;
+  fg = this.fb.group({
+    player: this.fb.nonNullable.control<boolean>(false),
+    admin: this.fb.nonNullable.control<boolean>(false),
+    bankAdmin: this.fb.nonNullable.control<boolean>(false),
+  });
 
   constructor(
     private store: PlayersStore,
@@ -35,32 +39,26 @@ export class EditPlayerComponent implements OnInit {
     private service: PlayersApiService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder) {
-  }
-
-  ngOnInit(): void {
-    this.fg = this.fb.group({
-      roles: this.fb.group({
-        player: [],
-        admin: [],
-        bankAdmin: [],
-      }),
-    });
     this.player = this.store.player;
-    this.route.params.pipe(
-      map(params => params['id']),
-      untilDestroyed(this),
-    ).subscribe(uid => this.store.setPlayer(uid));
     effect(() => {
-      this.fg.get('roles').patchValue({
-        player: this.player().roles.includes('player'),
-        admin: this.player().roles.includes('admin'),
-        bankAdmin: this.player().roles.includes('bank-admin'),
+
+      this.fg.reset({
+        player: this.player()?.roles.includes('player') ?? false,
+        admin: this.player()?.roles.includes('admin') ?? false,
+        bankAdmin: this.player()?.roles.includes('bank-admin') ?? false,
       }, { emitEvent: false });
     });
   }
 
+  ngOnInit(): void {
+    this.route.params.pipe(
+      map(params => params['id']),
+      untilDestroyed(this),
+    ).subscribe(uid => this.store.setPlayer(uid));
+  }
+
   updateRoles() {
-    const value = Object.values(this.fg.get('roles').value);
+    const value = Object.values(this.fg.value);
     const roles: Role[] = (['player', 'admin', 'bank-admin'] as Role[]).filter((_, index) => value[index]);
     this.service.updatePlayer(this.player().uid, { roles: roles.length ? roles : ['anonymous'] }).then(
       () => this.snackBar.open('Roller opdateret', null, { duration: 2000 }),

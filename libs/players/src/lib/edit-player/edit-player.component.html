@@ -1,12 +1,12 @@
 <ng-container *ngIf="player(); else loading">
   <mat-toolbar color="primary">
     <img class="avatar" [src]="player().photoURL" alt="Profil billede">
-    <span>{{player().displayName}}</span>
+    <span>{{ player().displayName }}</span>
   </mat-toolbar>
   <sha-card-page [formGroup]="fg">
     <mat-card>
       <h2>Roller</h2>
-      <mat-card-content formGroupName="roles">
+      <mat-card-content>
         <section>
           <mat-checkbox formControlName="player">Spiller</mat-checkbox>
           <mat-checkbox formControlName="admin">Admin</mat-checkbox>
