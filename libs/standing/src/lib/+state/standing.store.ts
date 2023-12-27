@@ -1,5 +1,4 @@
-import { effect, Injectable, Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Injectable, Signal } from '@angular/core';
 import { SeasonFacade } from '@f2020/api';
 import { IDriverStanding } from '@f2020/data';
 import { Store } from '@f2020/shared';
@@ -27,13 +26,10 @@ export class StandingStore extends Store<StandingState> {
   }
 
   loadStandings() {
-    if (!this.loaded()) {
-      const standings = toSignal(this.facade.season$.pipe(
-        truthy(),
-        switchMap(season => this.service.getStandings(season.id)),
-      ));
-      effect(() => this.setState(() => ({ standings: standings(), loaded: true })));
-    }
+    this.facade.season$.pipe(
+      truthy(),
+      switchMap(season => this.service.getStandings(season.id)),
+    ).subscribe(standings => this.setState(() => ({ standings, loaded: true })));
   }
 
   get standings(): Signal<IDriverStanding[]> {
@@ -41,7 +37,7 @@ export class StandingStore extends Store<StandingState> {
   }
 
   get loaded(): Signal<boolean> {
-    return this.select(state => !state.loaded);
+    return this.select(state => state.loaded);
   }
 
   get error(): Signal<string | null> {
