@@ -32,13 +32,13 @@ export class StandingListComponent {
 
   standings: Signal<IDriverStanding[]>;
 
-  constructor(private store: StandingStore, private snackBar: MatSnackBar) {
-    this.store.loadStandings();
-    this.standings = computed(() => [...(this.store.standings() ?? [])].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));
+  constructor(store: StandingStore, snackBar: MatSnackBar) {
+    store.loadStandings();
+    this.standings = computed(() => [...(store.standings() ?? [])].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));
 
     effect(() => {
-      if (this.store.loaded() && !this.store.standings()?.length) {
-        this.snackBar.open('Der findes ingen resultater endnu', null, { duration: 3000 });
+      if (store.loaded() && !store.standings()?.length) {
+        snackBar.open('Der findes ingen resultater endnu', null, { duration: 3000 });
       }
     });
   }
