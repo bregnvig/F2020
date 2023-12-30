@@ -43,7 +43,7 @@ export class WbcGraphComponent {
     })));
     this.activeEntries = computed(() => this.data()?.filter(e => this.selected().includes(e.name)));
     effect(() => localStorage.setItem('selectedWBCPlayers', JSON.stringify(this.selected())));
-    this.playerEntries = computed(() => [...graph().entries].sort((a, b) => b.points - a.points));
+    this.playerEntries = computed(() => [...graph()?.entries ?? []].sort((a, b) => b.points - a.points));
   }
 
   toggle(player: Player) {
