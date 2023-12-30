@@ -56,7 +56,7 @@ export class RaceComponent {
       (closed() ? this.facade.bids$ : this.facade.participants$).pipe(
         untilDestroyed(this),
       ).subscribe(bids => this.bids.set(bids));
-    });
+    }, { allowSignalWrites: true });
     this.play = computed(() => {
       return this.race()?.close > DateTime.local()
         && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);
