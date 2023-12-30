@@ -1,26 +1,25 @@
 <div class="fit">
   <ngx-charts-line-chart
-    [legend]="false"
-    [activeEntries]="activeEntries"
-    [showXAxisLabel]="false"
-    [showYAxisLabel]="false"
-    [xAxis]="true"
-    [yAxis]="false"
-    xAxisLabel="Løb"
-    yAxisLabel="Position"
-    [tooltipDisabled]="true"
-    [autoScale]="false"
-    [results]="data"
-    (deactivate)="ngxBug()"
-    >
+      [legend]="false"
+      [activeEntries]="activeEntries()"
+      [showXAxisLabel]="false"
+      [showYAxisLabel]="false"
+      [xAxis]="true"
+      [yAxis]="false"
+      xAxisLabel="Løb"
+      yAxisLabel="Position"
+      [tooltipDisabled]="true"
+      [autoScale]="false"
+      [results]="data"
+  >
   </ngx-charts-line-chart>
 </div>
 <div>
   <mat-selection-list>
-    <mat-list-option *ngFor="let entry of playerEntris" (click)="toggle(entry.player)" [selected]="isSelected(entry)">
-      <img matListItemAvatar [src]="entry.player.photoURL">
-      <h3 matListItemLine class="selected">{{entry.player.displayName}} </h3>
-      <p matListItemLine>{{entry.points}} point</p>
+    <mat-list-option *ngFor="let entry of playerEntries()" (click)="toggle(entry.player)" [selected]="isSelected(entry)">
+      <img matListItemAvatar height="40" width="40" [ngSrc]="entry.player.photoURL">
+      <h3 matListItemLine class="selected">{{ entry.player.displayName }} </h3>
+      <p matListItemLine>{{ entry.points }} point</p>
     </mat-list-option>
   </mat-selection-list>
 </div>

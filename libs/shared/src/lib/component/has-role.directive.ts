@@ -1,12 +1,10 @@
-import { filter } from 'rxjs/operators';
 import { NgIfContext } from '@angular/common';
-import { Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { PlayerFacade } from '@f2020/api';
-import { combineLatest, Subject } from 'rxjs';
+import { Directive, effect, EmbeddedViewRef, Input, signal, TemplateRef, ViewContainerRef } from '@angular/core';
+import { PlayerStore } from '@f2020/api';
 
 @Directive({
-    selector: '[shaHasRole]',
-    standalone: true
+  selector: '[shaHasRole]',
+  standalone: true,
 })
 export class HasRoleDirective {
 
@@ -14,17 +12,14 @@ export class HasRoleDirective {
   private thenViewRef: EmbeddedViewRef<NgIfContext> | null = null;
   private elseViewRef: EmbeddedViewRef<NgIfContext> | null = null;
   private condition = false;
-  private role$ = new Subject<string[]>();
+  private roles = signal<string[]>([]);
 
   constructor(
-    readonly service: PlayerFacade,
+    { player }: PlayerStore,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef) {
-    combineLatest([
-      service.player$.pipe(filter(p => !!p)),
-      this.role$
-    ]).subscribe(([player, roles]) => {
-      this.condition = (player.roles || []).some(r => roles.some(role => role === r));
+    effect(() => {
+      this.condition = (player()?.roles || []).some(r => this.roles().some(role => role === r));
       this.updateView();
     });
   }
@@ -37,7 +32,7 @@ export class HasRoleDirective {
   }
 
   @Input() set shaHasRole(roles: string | string[]) {
-    this.role$.next(Array.isArray(roles) ? roles : [roles]);
+    this.roles.set(Array.isArray(roles) ? roles : [roles]);
   }
 
   private updateView() {

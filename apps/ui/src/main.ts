@@ -15,7 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { PlayerApiModule, RaceApiModule, SeasonApiModule } from '@f2020/api';
+import { RaceApiModule, SeasonApiModule } from '@f2020/api';
 import { initializeFontAwesomeFactory, SharedModule } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
@@ -53,7 +53,6 @@ bootstrapApplication(AppComponent, {
       GoogleMapsModule,
       materialModule,
       FontAwesomeModule,
-      PlayerApiModule,
       SeasonApiModule,
       HttpClientModule,
       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),

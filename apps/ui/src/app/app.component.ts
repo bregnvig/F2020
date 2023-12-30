@@ -1,4 +1,4 @@
-import { Component, isDevMode, OnInit } from '@angular/core';
+import { Component, effect, isDevMode, untracked } from '@angular/core';
 import { getToken } from '@angular/fire/messaging';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,12 +7,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { PlayerActions, PlayerFacade, RacesActions, RacesFacade, VersionService } from '@f2020/api';
-import { Player } from '@f2020/data';
+import { PlayerStore, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
-import { filterEquals, truthy } from '@f2020/tools';
 import { getMessaging, onMessage } from 'firebase/messaging';
-import { filter, first, startWith, switchMap } from 'rxjs/operators';
+import { filter, first, switchMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DriversStore } from '@f2020/driver';
@@ -32,19 +30,18 @@ import { DriversStore } from '@f2020/driver';
     FontAwesomeModule,
   ],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   bars = icon.fasBars;
 
   constructor(
-    private playerFacade: PlayerFacade,
+    private playerStore: PlayerStore,
     private driverStore: DriversStore,
     private racesFacade: RacesFacade,
     private updates: SwUpdate,
     private versionService: VersionService,
     private snackBar: MatSnackBar,
     private router: Router) {
-    playerFacade.dispatch(PlayerActions.loadPlayer());
     const messaging = getMessaging();
     getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
       currentToken => isDevMode() && console.log(currentToken),
@@ -53,36 +50,26 @@ export class AppComponent implements OnInit {
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
     });
-
+    this.checkForVersionUpdate();
+    effect(() => {
+      if (this.playerStore.authorized()) {
+        untracked(this.driverStore.loadDrivers.bind(this.driverStore));
+        this.checkForOutdatedVersion();
+        const player = this.playerStore.player();
+        if (player.roles && player.roles.includes('player')) {
+          this.racesFacade.dispatch(RacesActions.loadRaces());
+          if (this.router.url === '/info/roles') {
+            this.router.navigate(['/']);
+          }
+          this.setupMessaging();
+        } else {
+          this.router.navigate(['info', 'roles']);
+        }
+      }
+    }, { allowSignalWrites: true });
   }
 
-  ngOnInit() {
-    this.playerFacade.authorized$.pipe(
-      filter(authorized => authorized),
-      switchMap(() => this.playerFacade.player$),
-      startWith(null as Player),
-      filterEquals(),
-    ).subscribe(player => {
-      this.driverStore.loadDrivers();
-      if (player.roles && player.roles.includes('player')) {
-        this.racesFacade.dispatch(RacesActions.loadRaces());
-        if (this.router.url === '/info/roles') {
-          this.router.navigate(['/']);
-        }
-        if (Notification.permission === 'granted') {
-          this.playerFacade.dispatch(PlayerActions.loadMessagingToken());
-        } else if (Notification.permission === 'denied') {
-          console.log('Messaging denied');
-        } else {
-          setTimeout(() => {
-            this.snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction()
-              .subscribe(() => this.playerFacade.dispatch(PlayerActions.loadMessagingToken()));
-          });
-        }
-      } else {
-        this.router.navigate(['info', 'roles']);
-      }
-    });
+  private checkForVersionUpdate() {
     this.updates.versionUpdates.pipe(
       filter(event => event.type === 'VERSION_READY'),
       first(),
@@ -90,14 +77,14 @@ export class AppComponent implements OnInit {
       switchMap(() => this.updates.activateUpdate()),
       first(),
     ).subscribe(() => location.reload());
+  }
+
+  private checkForOutdatedVersion() {
     this.versionService.setVersion({
       ui: 2,
       api: 2,
     });
-    this.playerFacade.authorized$.pipe(
-      truthy(),
-      first(),
-      switchMap(() => this.versionService.versionOK$),
+    this.versionService.versionOK$.pipe(
       first(),
     ).subscribe(ok => {
       if (!ok) {
@@ -107,7 +94,18 @@ export class AppComponent implements OnInit {
         ).subscribe(() => location.reload());
       }
     });
-    const messaing = getMessaging();
-    onMessage(messaing, message => this.snackBar.open(message.notification.body, null, { duration: 2000 }));
+  }
+
+  private setupMessaging() {
+    if (Notification.permission === 'granted') {
+      this.playerStore.loadMessaging();
+    } else if (Notification.permission === 'denied') {
+      console.log('Messaging denied');
+    } else {
+      setTimeout(() => {
+        this.snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction()
+          .subscribe(() => this.playerStore.loadMessaging());
+      });
+    }
   }
 }

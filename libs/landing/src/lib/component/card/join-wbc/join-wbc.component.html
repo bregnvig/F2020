@@ -7,10 +7,10 @@
     <mat-card-content>
       <p>Har du lyst til at deltag i det samlet mesterskab?</p>
       <p>Så tilmeld dig <strong>WBC!</strong> Det koster 100,00 kr</p>
-      <p>Tilmeldingen lukker om {{latestWBCJoinDate | relativeToNow}}</p>
+      <p>Tilmeldingen lukker om {{ latestWBCJoinDate | relativeToNow }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button [disabled]="loading$ | async" (click)="joinWBC()">Deltag</button>
+      <button mat-button [disabled]="loading()" (click)="joinWBC()">Deltag</button>
       <button mat-button routerLink="/info/rules">Mere information</button>
     </mat-card-actions>
   </mat-card>

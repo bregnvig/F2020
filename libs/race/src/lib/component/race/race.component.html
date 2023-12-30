@@ -1,41 +1,41 @@
-<ng-container *ngIf="race$ | async as race; else loading">
+<ng-container *ngIf="race(); else loading">
   <sha-card-page>
     <mat-card>
       <mat-card-header>
-        <img mat-card-avatar height="40" width="40" [ngSrc]="race | flagURL" [alt]="race.countryCode">
-        <mat-card-title>{{race.name}}</mat-card-title>
-        <mat-card-subtitle>{{race.raceStart | dateTime: 'medium'}}</mat-card-subtitle>
+        <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
+        <mat-card-title>{{ race.name }}</mat-card-title>
+        <mat-card-subtitle>{{ race().raceStart | dateTime: 'medium' }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content style="height: 33vh">
         <google-map
             width="100%"
             height="100%"
-            [center]="center$ | async"
+            [center]="center()"
             [options]="options">
         </google-map>
       </mat-card-content>
       <mat-card-actions>
-        <a mat-button [href]="race.url" target="_blank">WIKI</a>
-        <a *ngIf="race.state === 'waiting' || race.state === 'open'" mat-button routerLink="edit">REDIGER</a>
+        <a mat-button [href]="race().url" target="_blank">WIKI</a>
+        <a *ngIf="race().state === 'waiting' || race().state === 'open'" mat-button routerLink="edit">REDIGER</a>
         <div *shaHasRole="'admin'" class="flex-1 flex justify-between items-center">
-          <a *ngIf="race.state === 'waiting' || race.state === 'open'"
+          <a *ngIf="race().state === 'waiting' || race().state === 'open'"
              mat-button
              routerLink="drivers">
             DRIVERS
           </a>
-          <a *ngIf="race.state === 'closed'"
+          <a *ngIf="race().state === 'closed'"
              mat-button
              routerLink="qualify">
-            {{'Kvalifikation' | uppercase}}
+            {{ 'Kvalifikation' | uppercase }}
           </a>
           <div>
-            <div *ngIf="race.state === 'completed'" class="flex items-center">
+            <div *ngIf="race().state === 'completed'" class="flex items-center">
               <mat-checkbox #confirmed="matCheckbox"></mat-checkbox>
               <button mat-button color="warn" [disabled]="!confirmed.checked" (click)="rollbackResult()">
                 ROLLBACK
               </button>
             </div>
-            <div *ngIf="race.state !== 'completed' && race.state !== 'cancelled'" class="flex items-center">
+            <div *ngIf="race().state !== 'completed' && race().state !== 'cancelled'" class="flex items-center">
               <mat-checkbox #confirmedCancellation="matCheckbox"></mat-checkbox>
               <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
                 AFLYS
@@ -45,25 +45,25 @@
         </div>
       </mat-card-actions>
     </mat-card>
-    <ng-container *ngIf="bids$ | async as bids">
-      <mat-card *ngIf="bids.length || race.result">
+    <ng-container *ngIf="bids()">
+      <mat-card *ngIf="bids().length || race().result">
         <mat-card-header>
           <mat-card-title>Bud</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <f2020-bids [bids]="bids" [clickable]="clickable$ | async" [result]="race.result"></f2020-bids>
+          <f2020-bids [bids]="bids()" [clickable]="clickable()" [result]="race().result"></f2020-bids>
         </mat-card-content>
       </mat-card>
-      <f2020-race-updated-warning *ngIf="race.updatedBy?.length" [race]="race"></f2020-race-updated-warning>
+      <f2020-race-updated-warning *ngIf="race().updatedBy?.length" [race]="race()"></f2020-race-updated-warning>
     </ng-container>
   </sha-card-page>
-  <ng-container *ngIf="(play$ | async)">
+  <ng-container *ngIf="play()">
     <button mat-fab color="primary" aria-label="Deltag i løbet" routerLink="bid">
       <fa-icon [icon]="plusIcon" size="lg"></fa-icon>
     </button>
   </ng-container>
   <ng-container *shaHasRole="'admin'">
-    <button mat-fab color="primary" aria-label="Upload resultat" routerLink="upload-result" *ngIf="race.state === 'closed'">
+    <button mat-fab color="primary" aria-label="Upload resultat" routerLink="upload-result" *ngIf="race().state === 'closed'">
       <fa-icon [icon]="downloadIcon" size="lg"></fa-icon>
     </button>
   </ng-container>

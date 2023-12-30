@@ -1,22 +1,19 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, Signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PlayerActions, PlayerFacade, SeasonFacade } from '@f2020/api';
-import { icon } from '@f2020/shared';
-import { truthy } from '@f2020/tools';
+import { PlayerStore, SeasonFacade } from '@f2020/api';
+import { icon, RelativeToNowPipe } from '@f2020/shared';
 import { DateTime } from 'luxon';
-import { combineLatest, Observable } from 'rxjs';
-import { debounceTime, filter, map, pairwise, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { RelativeToNowPipe } from '@f2020/shared';
+import { combineLatest, firstValueFrom, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 
 @Component({
   selector: 'f2020-join-wbc',
   templateUrl: './join-wbc.component.html',
-  styleUrls: ['./join-wbc.component.scss'],
   standalone: true,
   imports: [
     NgIf,
@@ -33,43 +30,34 @@ export class JoinWbcComponent implements OnInit {
   @HostBinding('hidden') isHidden = true;
   latestWBCJoinDate$: Observable<DateTime>;
   canJoin$: Observable<boolean>;
-  loading$: Observable<boolean>;
+  loading: Signal<boolean>;
   icon = icon.fasTrophy;
 
   constructor(
-    private playerFacade: PlayerFacade,
+    private playerStore: PlayerStore,
     private seasonFacade: SeasonFacade,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar) {
+  }
 
   ngOnInit(): void {
-    this.loading$ = this.playerFacade.updatingWBC$;
+    this.loading = this.playerStore.updatingWBC;
     this.latestWBCJoinDate$ = this.seasonFacade.season$.pipe(
-      map(season => season.wbc?.latestWBCJoinDate)
+      map(season => season.wbc?.latestWBCJoinDate),
     );
-    const uid$ = this.playerFacade.player$.pipe(
-      truthy(),
-      map(player => player.uid)
-    );
+    const uid = this.playerStore.player().uid;
     this.canJoin$ = combineLatest([
       this.latestWBCJoinDate$,
       this.seasonFacade.season$,
-      uid$
     ]).pipe(
-      map(([lastestJoinDate, { wbc }, uid]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local()),
+      map(([lastestJoinDate, { wbc }]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local()),
       tap(canJoin => this.isHidden = !canJoin),
     );
-    this.loading$.pipe(
-      pairwise(),
-      filter(([previous, current]) => previous && !current),
-      debounceTime(300),
-      withLatestFrom(this.canJoin$),
-      filter(([_, canJoin]) => canJoin === false),
-      switchMap(() => this.snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', { duration: 5000 }).onAction())
-    ).subscribe(() => this.playerFacade.dispatch(PlayerActions.undoWBC()));
   }
 
   joinWBC() {
-    this.playerFacade.dispatch(PlayerActions.joinWBC());
+    this.playerStore.joinWBC()
+      .then(() => firstValueFrom(this.snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', { duration: 5000 }).onAction()))
+      .then(() => this.playerStore.undoWBC());
   }
 
 }

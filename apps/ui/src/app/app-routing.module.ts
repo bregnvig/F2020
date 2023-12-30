@@ -1,17 +1,18 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
-import { PlayerFacade, SeasonActions, SeasonFacade } from '@f2020/api';
+import { PlayerStore, SeasonActions, SeasonFacade } from '@f2020/api';
 import { LoginComponent, LogoutComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { filter, map } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 const mustBeAuthorized = () => {
-  const facade = inject(PlayerFacade);
+  const store = inject(PlayerStore);
   const router = inject(Router);
 
-  return facade.unauthorized$.pipe(
+  return toObservable(store.unauthorized).pipe(
     filter(unauthorized => !isNullish(unauthorized)),
-    map(unauthorized => unauthorized ? router.navigate(['login']).then(() => false) : true)
+    map(unauthorized => unauthorized ? router.navigate(['login']).then(() => false) : true),
   );
 
 };
@@ -22,12 +23,11 @@ const seasonLoader = (route: ActivatedRouteSnapshot) => {
 };
 
 
-
 const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '2023'
+    redirectTo: '2023',
   },
   {
     path: 'login',
@@ -80,9 +80,9 @@ const routes: Routes = [
       {
         path: 'standings',
         loadChildren: () => import('@f2020/standing').then(m => m.StandingRoutes),
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 export const AppRoutingModule = RouterModule.forRoot(routes);
