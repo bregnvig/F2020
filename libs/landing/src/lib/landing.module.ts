@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { RaceApiModule } from '@f2020/api';
-import { ControlModule } from '@f2020/control';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { JoinWbcComponent } from './component/card/join-wbc/join-wbc.component';
 import { LastYearComponent } from './component/card/last-year/last-year.component';
@@ -27,7 +26,6 @@ const MatModules = [
     CommonModule,
     MatModules,
     FontAwesomeModule,
-    ControlModule,
     RaceApiModule,
     RouterModule.forChild([
       {
