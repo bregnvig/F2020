@@ -17,7 +17,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RaceApiModule } from '@f2020/api';
 import { ControlModule } from '@f2020/control';
-import { SharedModule } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { BidsComponent } from './component/bids/bids.component';
@@ -57,7 +56,6 @@ const MaterialModules = [
     ReactiveFormsModule,
     FontAwesomeModule,
     RaceRoutingModule,
-    SharedModule,
     GoogleMapsModule,
     ControlModule,
     MaterialModules,

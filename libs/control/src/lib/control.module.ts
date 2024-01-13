@@ -7,7 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { SharedModule } from '@f2020/shared';
 import { BidComponent } from './components/bid/bid.component';
 import { DriverCodesComponent } from './components/driver-codes/driver-codes.component';
 import { PolePositionTimeComponent } from './components/pole-position-time/pole-position-time.component';
@@ -44,7 +43,6 @@ const pipes = [];
     MatInputModule,
     MatIconModule,
     MatFormFieldModule,
-    SharedModule,
     exported, components, pipes,
   ],
   exports: [exported, pipes],

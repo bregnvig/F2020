@@ -16,7 +16,7 @@ import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { RaceApiModule, SeasonApiModule } from '@f2020/api';
-import { initializeFontAwesomeFactory, SharedModule } from '@f2020/shared';
+import { initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -79,7 +79,7 @@ bootstrapApplication(AppComponent, {
           strictStateImmutability: true,
           strictActionImmutability: true,
         },
-      }), EffectsModule.forRoot([]), AppRoutingModule, SharedModule, RaceApiModule, StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })),
+      }), EffectsModule.forRoot([]), AppRoutingModule, RaceApiModule, StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })),
     {
       provide: LOCALE_ID,
       useValue: 'da',

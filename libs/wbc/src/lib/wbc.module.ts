@@ -1,13 +1,12 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from "@angular/material/list";
+import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from "@angular/router";
+import { RouterModule } from '@angular/router';
 import { SeasonApiModule } from '@f2020/api';
-import { SharedModule } from '@f2020/shared';
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { WbcGraphComponent } from './component/wbc-graph/wbc-graph.component';
 import { WbcPlayerComponent } from './component/wbc-player/wbc-player.component';
@@ -22,36 +21,36 @@ const MaterialModulde = [
 ];
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FontAwesomeModule,
-        SeasonApiModule,
-        MaterialModulde,
-        SharedModule,
-        NgxChartsModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: WbcStandingsComponent
-            },
-            {
-                path: 'graph',
-                component: WbcGraphComponent
-            },
-            {
-                path: 'player/:uid',
-                component: WbcPlayerComponent
-            },
-            {
-                path: 'race/:round',
-                component: WbcRaceComponent
-            }
-            /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
-        ]),
-        WbcStandingsComponent,
-        WbcPlayerComponent,
-        WbcRaceComponent,
-        WbcGraphComponent
-    ]
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    SeasonApiModule,
+    MaterialModulde,
+    NgxChartsModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        component: WbcStandingsComponent,
+      },
+      {
+        path: 'graph',
+        component: WbcGraphComponent,
+      },
+      {
+        path: 'player/:uid',
+        component: WbcPlayerComponent,
+      },
+      {
+        path: 'race/:round',
+        component: WbcRaceComponent,
+      },
+      /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
+    ]),
+    WbcStandingsComponent,
+    WbcPlayerComponent,
+    WbcRaceComponent,
+    WbcGraphComponent,
+  ],
 })
-export class WbcModule { }
+export class WbcModule {
+}
