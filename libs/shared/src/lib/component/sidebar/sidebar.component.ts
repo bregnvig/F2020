@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, OnInit, Output, Signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { PlayerStore, SeasonFacade } from '@f2020/api';
+import { PlayerStore, SeasonStore } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { icon } from '../../font-awesome';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatDividerModule } from '@angular/material/divider';
@@ -25,15 +23,15 @@ export class SidebarComponent implements OnInit {
 
   @Output() closing = new EventEmitter<void>();
   player: Signal<Player>;
-  seasonId$: Observable<string>;
+  seasonId: Signal<string>;
   icon = icon;
 
-  constructor(private store: PlayerStore, private seasonFacade: SeasonFacade, private router: Router) {
+  constructor(store: PlayerStore, private seasonStore: SeasonStore, private router: Router) {
     this.player = store.player;
+    this.seasonId = computed(() => this.seasonStore.season()?.id);
   }
 
   ngOnInit(): void {
-    this.seasonId$ = this.seasonFacade.season$.pipe(map(season => season.id));
   }
 
   signIn() {

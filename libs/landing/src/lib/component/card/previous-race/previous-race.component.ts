@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
-import { PlayerStore, SeasonFacade } from '@f2020/api';
+import { PlayerStore, SeasonStore } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { Observable } from 'rxjs';
@@ -24,11 +24,11 @@ export class PreviousRaceComponent implements OnInit {
   title$: Observable<string>;
   icon = icon.farTrophy;
 
-  constructor(private facade: SeasonFacade, private playerStore: PlayerStore) {
+  constructor(private store: SeasonStore, private playerStore: PlayerStore) {
   }
 
   ngOnInit(): void {
-    this.wbcResult$ = this.facade.season$.pipe(
+    this.wbcResult$ = this.store.season$.pipe(
       filter(season => !!(season && season.wbc.results?.length)),
       map(season => season.wbc.results[season.wbc.results.length - 1]),
       filter(result => !!result.players?.length),

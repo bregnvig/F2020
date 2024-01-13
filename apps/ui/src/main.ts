@@ -1,7 +1,7 @@
 import localeDa from '@angular/common/locales/da';
 import { APP_INITIALIZER, enableProdMode, importProvidersFrom, LOCALE_ID } from '@angular/core';
 
-import { registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { connectFunctionsEmulator, getFunctions, provideFunctions } from '@angular/fire/functions';
@@ -15,8 +15,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { RaceApiModule, SeasonApiModule } from '@f2020/api';
-import { initializeFontAwesomeFactory } from '@f2020/shared';
+import { RaceApiModule } from '@f2020/api';
+import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -53,7 +53,6 @@ bootstrapApplication(AppComponent, {
       GoogleMapsModule,
       materialModule,
       FontAwesomeModule,
-      SeasonApiModule,
       HttpClientModule,
       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
       ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
@@ -66,24 +65,32 @@ bootstrapApplication(AppComponent, {
           console.warn('Using auth emulator');
         }
         return db;
-      }), provideFunctions(() => {
+      }),
+      provideFunctions(() => {
         const functions = getFunctions(undefined, 'europe-west1');
         if (environment.useEmulator) {
           connectFunctionsEmulator(functions, 'localhost', 5001);
           console.warn('Using functions emulator');
         }
         return functions;
-      }), provideMessaging(() => getMessaging()), StoreModule.forRoot(reducers, {
+      }),
+      provideMessaging(() => getMessaging()), StoreModule.forRoot(reducers, {
         metaReducers,
         runtimeChecks: {
           strictStateImmutability: true,
           strictActionImmutability: true,
         },
-      }), EffectsModule.forRoot([]), AppRoutingModule, RaceApiModule, StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })),
+      }),
+      EffectsModule.forRoot([]),
+      AppRoutingModule,
+      RaceApiModule,
+      StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })),
     {
       provide: LOCALE_ID,
       useValue: 'da',
     },
+    DatePipe,
+    DateTimePipe,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeFontAwesomeFactory,

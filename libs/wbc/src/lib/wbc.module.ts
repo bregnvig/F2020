@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { SeasonApiModule } from '@f2020/api';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { WbcGraphComponent } from './component/wbc-graph/wbc-graph.component';
@@ -24,7 +23,6 @@ const MaterialModulde = [
   imports: [
     CommonModule,
     FontAwesomeModule,
-    SeasonApiModule,
     MaterialModulde,
     NgxChartsModule,
     RouterModule.forChild([

@@ -4,7 +4,7 @@ export abstract class Store<S> {
 
   private readonly _state: WritableSignal<S>;
 
-  protected constructor(private initialState: S) {
+  protected constructor(initialState: S) {
     this._state = signal(initialState);
   }
 

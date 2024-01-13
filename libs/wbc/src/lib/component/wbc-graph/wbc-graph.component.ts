@@ -1,15 +1,12 @@
 import { Component, computed, effect, signal, Signal } from '@angular/core';
-import { PlayerStore, SeasonFacade } from '@f2020/api';
+import { SeasonStore } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { shareLatest } from '@f2020/tools';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { map } from 'rxjs/operators';
 import { WBCGraph, WBCGraphPlayerEntry } from '../../model/wbc-graph.model';
 import { WBCGraphEntry } from './../../model/wbc-graph.model';
 import { NgFor, NgOptimizedImage } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { LineChartModule } from '@swimlane/ngx-charts';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 interface GraphEntry {
   name: string;
@@ -32,11 +29,8 @@ export class WbcGraphComponent {
 
   private selected = signal<string[]>(JSON.parse(localStorage.getItem('selectedWBCPlayers')) ?? []);
 
-  constructor(private facade: SeasonFacade, private store: PlayerStore) {
-    const graph = toSignal(this.facade.season$.pipe(
-      map(season => new WBCGraph(season.wbc)),
-      shareLatest(),
-    ));
+  constructor(private store: SeasonStore) {
+    const graph = computed(() => new WBCGraph(store.season().wbc));
     this.data = computed(() => graph()?.entries.map(e => ({
       name: e.player.displayName,
       series: e.entries,

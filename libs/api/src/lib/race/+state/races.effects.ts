@@ -4,7 +4,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { combineLatest, merge, of, tap } from 'rxjs';
 import { catchError, concatMap, debounceTime, filter, first, map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { PlayerStore } from '../../player';
-import { SeasonFacade } from '../../season/+state/season.facade';
+import { SeasonStore } from '../../season/+state';
 import { TeamService } from '../../service';
 import { RacesService } from '../service/races.service';
 import { buildInterimResult, buildResult } from './../service/result-builder';
@@ -15,7 +15,7 @@ import { DriversStore } from '../../drivers';
 
 export const loadRaces$ = createEffect((
   actions$ = inject(Actions),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   service = inject(RacesService),
   playerStore = inject(PlayerStore),
 ) => {
@@ -35,7 +35,7 @@ export const loadRaces$ = createEffect((
 export const loadYourBid$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   playerStore = inject(PlayerStore),
   service = inject(RacesService),
 ) => {
@@ -61,7 +61,7 @@ export const loadYourBid$ = createEffect((
 export const loadBids$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   playerStore = inject(PlayerStore),
   service = inject(RacesService),
 ) => {
@@ -89,7 +89,7 @@ export const loadBids$ = createEffect((
 export const loadParticipants$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   service = inject(RacesService),
   playerStore = inject(PlayerStore),
 ) => {
@@ -112,7 +112,7 @@ export const loadParticipants$ = createEffect((
 export const loadBid$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   service = inject(RacesService),
   playerStore = inject(PlayerStore),
 ) => {
@@ -281,7 +281,7 @@ export const cancelRace$ = createEffect((
 export const updateBid$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   playerStore = inject(PlayerStore),
   service = inject(RacesService),
 ) => {
@@ -304,7 +304,7 @@ export const updateBid$ = createEffect((
 export const updateRaceDrivers$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonFacade),
+  seasonFacade = inject(SeasonStore),
   service = inject(RacesService),
 ) => {
   return actions$.pipe(

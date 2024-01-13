@@ -1,6 +1,6 @@
 import { shareLatest } from '@f2020/tools';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { SeasonFacade } from '@f2020/api';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { SeasonStore } from '@f2020/api';
 import { WBCPlayer } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,9 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBCPlayer> => {
   const uid = wbcPlayer.player.uid;
@@ -25,26 +26,25 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
   styleUrls: ['./wbc-standings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, MatListModule, NgFor, RouterLink, NgIf, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe]
+  imports: [MatToolbarModule, MatListModule, NgFor, RouterLink, NgIf, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe],
 })
-export class WbcStandingsComponent implements OnInit {
+export class WbcStandingsComponent {
 
   standings$: Observable<WBCPlayer[]>;
   participants$: Observable<string[]>;
   icon = icon.fasStar;
   chartIcon = icon.farChartLineUpDown;
 
-  constructor(private facade: SeasonFacade) { }
+  constructor(private store: SeasonStore) {
 
-  ngOnInit(): void {
-    this.standings$ = this.facade.season$.pipe(
+    this.standings$ = toObservable(this.store.season).pipe(
       map(season => season?.wbc?.results || []),
       map(results => Array.from<WBCPlayer>(results.map(r => r.players).flat().reduce(sum, new Map<string, WBCPlayer>()).values())),
-      map(players => players.sort((a, b) => b.points - a.points))
+      map(players => players.sort((a, b) => b.points - a.points)),
     );
-    this.participants$ = this.facade.season$.pipe(
+    this.participants$ = toObservable(this.store.season).pipe(
       map(season => season?.wbc?.participants || []),
-      shareLatest()
+      shareLatest(),
     );
   }
 

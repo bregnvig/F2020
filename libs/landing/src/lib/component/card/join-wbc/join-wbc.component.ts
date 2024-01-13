@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit, Signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PlayerStore, SeasonFacade } from '@f2020/api';
+import { PlayerStore, SeasonStore } from '@f2020/api';
 import { icon, RelativeToNowPipe } from '@f2020/shared';
 import { DateTime } from 'luxon';
 import { combineLatest, firstValueFrom, Observable } from 'rxjs';
@@ -35,19 +35,19 @@ export class JoinWbcComponent implements OnInit {
 
   constructor(
     private playerStore: PlayerStore,
-    private seasonFacade: SeasonFacade,
+    private seasonStore: SeasonStore,
     private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
     this.loading = this.playerStore.updatingWBC;
-    this.latestWBCJoinDate$ = this.seasonFacade.season$.pipe(
+    this.latestWBCJoinDate$ = this.seasonStore.season$.pipe(
       map(season => season.wbc?.latestWBCJoinDate),
     );
     const uid = this.playerStore.player().uid;
     this.canJoin$ = combineLatest([
       this.latestWBCJoinDate$,
-      this.seasonFacade.season$,
+      this.seasonStore.season$,
     ]).pipe(
       map(([lastestJoinDate, { wbc }]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local()),
       tap(canJoin => this.isHidden = !canJoin),

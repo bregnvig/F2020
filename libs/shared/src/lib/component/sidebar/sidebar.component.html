@@ -2,12 +2,12 @@
   <img class="avatar" height="40" width="40" [ngSrc]="player()?.photoURL ?? 'assets/loading/red.svg'" alt="Profil billede">{{ player()?.displayName ?? 'Velkommen' }}
 </mat-toolbar>
 <mat-action-list style="padding: 1rem 1.5rem 0 1.5rem">
-  <ng-container *ngIf="seasonId$ | async as seasonId">
-    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasHome" [routerLink]="seasonId" (click)="closing.emit()">Forside</sha-sidenav-button>
-    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasFlagCheckered" [routerLink]="[seasonId, 'race']" (click)="closing.emit()">Løb</sha-sidenav-button>
-    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.farTrophy" [routerLink]="[seasonId, 'wbc']" (click)="closing.emit()">WBC</sha-sidenav-button>
-    <sha-sidenav-button [icon]="icon.fasPeopleGroup" [routerLink]="[seasonId, 'teams']" (click)="closing.emit()">Hold</sha-sidenav-button>
-    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasSteeringWheel" [routerLink]="[seasonId, 'standings']" (click)="closing.emit()">Kører</sha-sidenav-button>
+  <ng-container *ngIf="seasonId()">
+    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasHome" [routerLink]="seasonId()" (click)="closing.emit()">Forside</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasFlagCheckered" [routerLink]="[seasonId(), 'race']" (click)="closing.emit()">Løb</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.farTrophy" [routerLink]="[seasonId(), 'wbc']" (click)="closing.emit()">WBC</sha-sidenav-button>
+    <sha-sidenav-button [icon]="icon.fasPeopleGroup" [routerLink]="[seasonId(), 'teams']" (click)="closing.emit()">Hold</sha-sidenav-button>
+    <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasSteeringWheel" [routerLink]="[seasonId(), 'standings']" (click)="closing.emit()">Kører</sha-sidenav-button>
   </ng-container>
   <mat-divider></mat-divider>
   <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasCoins" [routerLink]="['accounts', 'me']" (click)="closing.emit()">Konto - {{ player()?.balance }}kr.

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SeasonFacade } from '@f2020/api';
+import { SeasonStore } from '@f2020/api';
 import { IDriverResult } from '@f2020/data';
 import { CardPageComponent, icon, LoadingComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
@@ -52,12 +52,12 @@ export class StandingDriverComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private service: StandingService,
-    private seasonFacade: SeasonFacade) {
+    private store: SeasonStore) {
   }
 
   ngOnInit(): void {
     this.driverId$ = this.route.params.pipe(map(params => params.driverId));
-    const currentYear$ = this.seasonFacade.season$.pipe(
+    const currentYear$ = this.store.season$.pipe(
       map(season => parseInt(season.id, 10)),
       shareLatest(),
       untilDestroyed(this),
