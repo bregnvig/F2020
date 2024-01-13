@@ -1,11 +1,11 @@
 import { Player } from '@f2020/data';
-import { Store } from '@f2020/shared';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { first } from 'rxjs/operators';
 import { Injectable, Signal } from '@angular/core';
 import { PlayerApiService } from '../service/player-api.service';
 import { filterEquals } from '@f2020/tools';
+import { Store } from '../../store';
 
 export interface PlayerState {
   player?: Player;

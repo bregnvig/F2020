@@ -1,7 +1,6 @@
 import { Injectable, Signal } from '@angular/core';
-import { SeasonFacade } from '@f2020/api';
+import { SeasonFacade, Store } from '@f2020/api';
 import { IDriverStanding } from '@f2020/data';
-import { Store } from '@f2020/shared';
 import { truthy } from '@f2020/tools';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs';

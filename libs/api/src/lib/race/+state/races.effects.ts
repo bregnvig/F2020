@@ -1,5 +1,4 @@
 import { inject } from '@angular/core';
-import { DriversStore } from '@f2020/driver';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { combineLatest, merge, of, tap } from 'rxjs';
@@ -12,6 +11,7 @@ import { buildInterimResult, buildResult } from './../service/result-builder';
 import { RacesActions } from './races.actions';
 import { RacesFacade } from './races.facade';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { DriversStore } from '../../drivers';
 
 export const loadRaces$ = createEffect((
   actions$ = inject(Actions),

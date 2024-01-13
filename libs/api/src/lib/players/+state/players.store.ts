@@ -1,7 +1,7 @@
 import { Injectable, Signal } from '@angular/core';
 import { Player } from '@f2020/data';
-import { Store } from '@f2020/shared';
 import { PlayersApiService } from '../service/players-api.service';
+import { Store } from '../../store';
 
 export interface PlayersState {
   players?: Player[];

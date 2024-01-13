@@ -7,13 +7,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { PlayerStore, RacesActions, RacesFacade, VersionService } from '@f2020/api';
+import { DriversStore, PlayerStore, RacesActions, RacesFacade, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { DriversStore } from '@f2020/driver';
 
 @Component({
   selector: 'f2020-root',

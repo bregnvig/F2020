@@ -1,8 +1,8 @@
-import { Signal, WritableSignal, computed, signal } from "@angular/core";
+import { computed, Signal, signal, WritableSignal } from '@angular/core';
 
 export abstract class Store<S> {
 
-  private _state: WritableSignal<S>;
+  private readonly _state: WritableSignal<S>;
 
   protected constructor(private initialState: S) {
     this._state = signal(initialState);
@@ -14,7 +14,7 @@ export abstract class Store<S> {
 
   // Reducer
   setState<K extends keyof S, E extends Partial<Pick<S, K>>>(
-    fn: (state: S) => E
+    fn: (state: S) => E,
   ): void {
     const state = fn(this.state());
     this._state.set(({ ...this.state(), ...state }));

@@ -10,8 +10,8 @@ import { AsyncPipe, NgFor } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { DriversStore } from '../../+state';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { DriversStore } from '@f2020/api';
 
 @Component({
   templateUrl: './add-driver.component.html',

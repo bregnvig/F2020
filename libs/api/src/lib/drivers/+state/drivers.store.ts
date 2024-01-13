@@ -1,8 +1,8 @@
 import { Injectable, Signal } from '@angular/core';
-import { Store } from '@f2020/shared';
 import { IDriver } from '@f2020/data';
 import { DriverService } from '../service/driver.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '../../store';
 
 export interface DriversState {
   drivers?: IDriver[],

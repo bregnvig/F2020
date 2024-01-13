@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, effect, Pipe, PipeTransform } from '@angular/core';
 import { IDriver } from '@f2020/data';
-import { DriversStore } from '../+state';
+import { DriversStore } from '@f2020/api';
 
 @Pipe({
   name: 'driverName',
