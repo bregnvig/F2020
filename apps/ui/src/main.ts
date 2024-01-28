@@ -27,11 +27,12 @@ import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import 'firebase/firestore';
 import { connectFirestoreEmulator } from 'firebase/firestore';
 import { Settings } from 'luxon';
-import { AppRoutingModule } from './app/app-routing.module';
+import { routes } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
 import { metaReducers, reducers } from './app/reducers';
 import { environment } from './environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 const materialModule = [
   MatSidenavModule,
@@ -47,6 +48,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideRouter(routes, withComponentInputBinding()),
     importProvidersFrom(
       BrowserModule,
       ServiceWorkerModule,
@@ -82,7 +84,6 @@ bootstrapApplication(AppComponent, {
         },
       }),
       EffectsModule.forRoot([]),
-      AppRoutingModule,
       RaceApiModule,
       StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })),
     {

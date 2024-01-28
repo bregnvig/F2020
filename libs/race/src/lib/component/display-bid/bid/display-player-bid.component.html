@@ -1,12 +1,12 @@
-<ng-container *ngIf="(bid$ | async) as bid; else loading">
+<ng-container *ngIf="bid(); else loading">
   <mat-toolbar color="primary">
-    <img class="avatar" [src]="bid.player.photoURL" alt="Profil billede">
-    <span class="flex-auto">{{bid.player.displayName}}</span>
-    <f2020-partial-bid-warning [bid]="bid"></f2020-partial-bid-warning>
-    <ng-container *ngIf="bid.points !== undefined">{{bid.points}} point</ng-container>
+    <img class="avatar" width="40" height="40" [ngSrc]="bid().player.photoURL" alt="Profil billede">
+    <span class="flex-auto">{{ bid().player.displayName }}</span>
+    <f2020-partial-bid-warning [bid]="bid()"></f2020-partial-bid-warning>
+    <ng-container *ngIf="bid().points !== undefined">{{ bid().points }} point</ng-container>
   </mat-toolbar>
   <div class="max-width py-3">
-    <f2020-display-bid [bid]="bid" [race]="race$ | async"></f2020-display-bid>
+    <f2020-display-bid [bid]="bid()" [race]="race()"></f2020-display-bid>
   </div>
 </ng-container>
 <ng-template #loading>

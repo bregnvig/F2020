@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, Routes } from '@angular/router';
 import { PlayerStore, SeasonStore } from '@f2020/api';
 import { LoginComponent, LogoutComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
@@ -23,7 +23,7 @@ const seasonLoader = (route: ActivatedRouteSnapshot) => {
 };
 
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
@@ -84,5 +84,3 @@ const routes: Routes = [
     ],
   },
 ];
-
-export const AppRoutingModule = RouterModule.forRoot(routes);

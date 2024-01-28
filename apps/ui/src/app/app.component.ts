@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { DriversStore, PlayerStore, RacesActions, RacesFacade, VersionService } from '@f2020/api';
+import { DriversStore, PlayerStore, RacesActions, RacesFacade, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, switchMap } from 'rxjs/operators';
@@ -37,10 +37,12 @@ export class AppComponent {
     private playerStore: PlayerStore,
     private driverStore: DriversStore,
     private racesFacade: RacesFacade,
+    private racesStore: RacesStore,
     private updates: SwUpdate,
     private versionService: VersionService,
     private snackBar: MatSnackBar,
     private router: Router) {
+    this.racesStore.loadRaces();
     const messaging = getMessaging();
     getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
       currentToken => isDevMode() && console.log(currentToken),

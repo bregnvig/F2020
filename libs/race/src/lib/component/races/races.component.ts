@@ -1,16 +1,13 @@
 import { DateTime } from 'luxon';
-import { filter } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Signal } from '@angular/core';
 import { IRace } from '@f2020/data';
-import { RacesFacade } from '@f2020/api';
 import { RaceStatusPipe } from './race-status.pipe';
-import { FlagURLPipe } from '@f2020/shared';
-import { LoadingComponent } from '@f2020/shared';
+import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { NgIf, NgFor, AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RacesStore } from '@f2020/api';
 
 @Component({
   selector: 'f2020-races',
@@ -30,17 +27,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     NgOptimizedImage,
   ],
 })
-export class RacesComponent implements OnInit {
+export class RacesComponent {
 
-  races$: Observable<IRace[]>;
+  races: Signal<IRace[]>;
   now = DateTime.local();
 
-  constructor(private facade: RacesFacade) {
+  constructor(store: RacesStore) {
+    this.races = store.races;
   }
 
-  ngOnInit(): void {
-    this.races$ = this.facade.allRaces$.pipe(
-      filter(races => !!races.length)
-    );
-  }
 }

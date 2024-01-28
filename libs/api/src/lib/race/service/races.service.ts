@@ -39,7 +39,9 @@ export class RacesService {
   }
 
   getRaces(seasonId: string): Observable<IRace[]> {
-    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races`).withConverter(converter.timestamp<IRace>()));
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races`).withConverter(converter.timestamp<IRace>())).pipe(
+      map(races => races.sort((a, b) => a.round - b.round)),
+    );
   }
 
   getBids(seasonId: string, race: IRace, uid: string): Observable<Bid[]> {
