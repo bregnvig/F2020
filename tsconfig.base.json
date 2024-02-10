@@ -1,39 +1,81 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "ES2020",
-    "module": "esnext",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["ES2022", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@f2020/api": ["libs/api/src/index.ts"],
-      "@f2020/bank": ["libs/bank/src/index.ts"],
-      "@f2020/control": ["libs/control/src/index.ts"],
-      "@f2020/data": ["libs/data/src/index.ts"],
-      "@f2020/driver": ["libs/driver/src/index.ts"],
-      "@f2020/ergast-api": ["libs/ergast-api/src/index.ts"],
-      "@f2020/info": ["libs/info/src/index.ts"],
-      "@f2020/landing": ["libs/landing/src/index.ts"],
-      "@f2020/player": ["libs/player/src/index.ts"],
-      "@f2020/players": ["libs/players/src/index.ts"],
-      "@f2020/race": ["libs/race/src/index.ts"],
-      "@f2020/season": ["libs/seson/src/index.ts"],
-      "@f2020/shared": ["libs/shared/src/index.ts"],
-      "@f2020/standing": ["libs/standing/src/index.ts"],
-      "@f2020/teams": ["libs/teams/src/index.ts"],
-      "@f2020/tools": ["libs/tools/src/index.ts"],
-      "@f2020/wbc": ["libs/wbc/src/index.ts"]
+  "compileOnSave" : false,
+  "compilerOptions" : {
+    "rootDir" : ".",
+    "sourceMap" : true,
+    "declaration" : false,
+    "moduleResolution" : "node",
+    "emitDecoratorMetadata" : true,
+    "experimentalDecorators" : true,
+    "importHelpers" : true,
+    "target" : "ES2020",
+    "module" : "esnext",
+    "typeRoots" : [
+      "node_modules/@types"
+    ],
+    "lib" : [
+      "esnext",
+      "dom"
+    ],
+    "skipLibCheck" : true,
+    "skipDefaultLibCheck" : true,
+    "baseUrl" : ".",
+    "paths" : {
+      "@f2020/api" : [
+        "libs/api/src/index.ts"
+      ],
+      "@f2020/bank" : [
+        "libs/bank/src/index.ts"
+      ],
+      "@f2020/control" : [
+        "libs/control/src/index.ts"
+      ],
+      "@f2020/data" : [
+        "libs/data/src/index.ts"
+      ],
+      "@f2020/driver" : [
+        "libs/driver/src/index.ts"
+      ],
+      "@f2020/ergast-api" : [
+        "libs/ergast-api/src/index.ts"
+      ],
+      "@f2020/info" : [
+        "libs/info/src/index.ts"
+      ],
+      "@f2020/landing" : [
+        "libs/landing/src/index.ts"
+      ],
+      "@f2020/player" : [
+        "libs/player/src/index.ts"
+      ],
+      "@f2020/players" : [
+        "libs/players/src/index.ts"
+      ],
+      "@f2020/race" : [
+        "libs/race/src/index.ts"
+      ],
+      "@f2020/season" : [
+        "libs/seson/src/index.ts"
+      ],
+      "@f2020/shared" : [
+        "libs/shared/src/index.ts"
+      ],
+      "@f2020/standing" : [
+        "libs/standing/src/index.ts"
+      ],
+      "@f2020/teams" : [
+        "libs/teams/src/index.ts"
+      ],
+      "@f2020/tools" : [
+        "libs/tools/src/index.ts"
+      ],
+      "@f2020/wbc" : [
+        "libs/wbc/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude" : [
+    "node_modules",
+    "tmp"
+  ]
 }
