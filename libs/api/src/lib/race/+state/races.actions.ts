@@ -3,18 +3,6 @@ import { createAction, props } from '@ngrx/store';
 
 export const RacesActions = {
 
-  loadRaces: createAction('[Races] Load Races'),
-
-  loadRacesSuccess: createAction(
-    '[Races] Load Races Success',
-    props<{ races: IRace[]; }>(),
-  ),
-
-  loadRacesFailure: createAction(
-    '[Races] Load Races Failure',
-    props<{ error: any; }>(),
-  ),
-
   updateRace: createAction(
     '[Edit race page] Update Race',
     props<{ race: IRace; }>(),
@@ -53,7 +41,7 @@ export const RacesActions = {
 
   updateYourBid: createAction(
     '[Enter bid page] Update the your bid',
-    props<{ bid: Bid; }>()
+    props<{ bid: Bid; }>(),
   ),
 
   updateYourBidSuccess: createAction(
@@ -95,7 +83,7 @@ export const RacesActions = {
 
   loadBid: createAction(
     '[Bid page] Load bid',
-    props<{ uid: string; }>()
+    props<{ uid: string; }>(),
   ),
 
   loadBidSuccess: createAction(
@@ -166,7 +154,7 @@ export const RacesActions = {
 
   rollbackResult: createAction(
     '[Result page] Rollback result',
-    props<{ round: number; }>()
+    props<{ round: number; }>(),
   ),
 
   rollbackResultSuccess: createAction(
@@ -180,7 +168,7 @@ export const RacesActions = {
 
   cancelRace: createAction(
     '[Race page] Cancel race',
-    props<{ round: number; }>()
+    props<{ round: number; }>(),
   ),
 
   cancelRaceSuccess: createAction(
@@ -207,7 +195,7 @@ export const RacesActions = {
 
   updateRaceDrivers: createAction(
     '[Edit race drivers page] Update race drivers',
-    props<{ drivers: string[]; }>()
+    props<{ drivers: string[]; }>(),
   ),
 
   updateRaceDriversSuccess: createAction(

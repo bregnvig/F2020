@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { combineLatest, merge, of, tap } from 'rxjs';
+import { combineLatest, merge, of } from 'rxjs';
 import { catchError, concatMap, debounceTime, filter, first, map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { PlayerStore } from '../../player';
 import { SeasonStore } from '../../season/+state';
@@ -12,25 +12,6 @@ import { RacesActions } from './races.actions';
 import { RacesFacade } from './races.facade';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { DriversStore } from '../../drivers';
-
-export const loadRaces$ = createEffect((
-  actions$ = inject(Actions),
-  seasonFacade = inject(SeasonStore),
-  service = inject(RacesService),
-  playerStore = inject(PlayerStore),
-) => {
-  const logoff$ = toObservable(playerStore.unauthorized).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.loadRaces),
-    concatMap(() => seasonFacade.season$.pipe(
-      tap(_ => console.log(_)),
-      switchMap(season => service.getRaces(season.id)),
-      map(races => RacesActions.loadRacesSuccess({ races })),
-      catchError(error => of(RacesActions.loadRacesFailure({ error }))),
-      takeUntil(merge(actions$.pipe(ofType(RacesActions.loadRaces)), logoff$)),
-    )),
-  );
-}, { functional: true });
 
 export const loadYourBid$ = createEffect((
   actions$ = inject(Actions),

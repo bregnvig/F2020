@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { DriversStore, PlayerStore, RacesActions, RacesFacade, RacesStore, VersionService } from '@f2020/api';
+import { DriversStore, PlayerStore, RacesFacade, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, switchMap } from 'rxjs/operators';
@@ -58,7 +58,6 @@ export class AppComponent {
         this.checkForOutdatedVersion();
         const player = this.playerStore.player();
         if (player.roles && player.roles.includes('player')) {
-          this.racesFacade.dispatch(RacesActions.loadRaces());
           if (this.router.url === '/info/roles') {
             this.router.navigate(['/']);
           }

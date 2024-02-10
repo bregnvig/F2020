@@ -1,5 +1,5 @@
 import { Bid, IRace, Participant, RoundResult } from '@f2020/data';
-import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
+import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 import { RacesActions } from './races.actions';
 
@@ -40,16 +40,7 @@ export const initialState: State = racesAdapter.getInitialState(<State>{
 
 const racesReducer = createReducer(
   initialState,
-  on(RacesActions.loadRaces, state => ({
-    ...state,
-    loaded: false,
-    error: null,
-  })),
-  on(RacesActions.loadRacesSuccess, (state, { races }) =>
-    racesAdapter.setAll(races, { ...state, loaded: true }),
-  ),
   on(
-    RacesActions.loadRacesFailure,
     RacesActions.loadYourBidFailure,
     RacesActions.loadBidsFailure,
     RacesActions.loadParticipantsFailure,
@@ -68,15 +59,15 @@ const racesReducer = createReducer(
     (state, { type, error }) => {
       console.error(type, error);
       return { ...state, error: error['message'] ?? error, updating: false, loaded: false };
-    }
+    },
   ),
   on(RacesActions.selectRace, (state, { round }) => ({
-    ...state,
-    selectedId: round,
-    bids: null,
-    bid: null,
-    yourBid: null,
-  })
+      ...state,
+      selectedId: round,
+      bids: null,
+      bid: null,
+      yourBid: null,
+    }),
   ),
   on(RacesActions.loadYourBidSuccess, (state, { bid }) => ({ ...state, yourBid: bid })),
   on(RacesActions.loadBidsSuccess, (state, { bids }) => ({ ...state, bids })),
