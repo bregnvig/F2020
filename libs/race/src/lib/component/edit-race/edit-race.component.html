@@ -1,9 +1,9 @@
-<sha-card-page *ngIf="race$ | async as race">
+<sha-card-page *ngIf="race()">
   <mat-card>
     <mat-card-header>
-      <img mat-card-avatar [src]="race | flagURL">
-      <mat-card-title>{{race.name}}</mat-card-title>
-      <mat-card-subtitle>{{race.location.nationality}}</mat-card-subtitle>
+      <img mat-card-avatar [src]="race() | flagURL">
+      <mat-card-title>{{ race().name }}</mat-card-title>
+      <mat-card-subtitle>{{ race().location.nationality }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <p>Desværre har der et par gange været en udvalgt kører der ikke deltager i sæsonen. Tidspunktet spillet lukker har heller ikke altid været korrekt😕</p>
@@ -21,24 +21,24 @@
           <mat-form-field class="w-full">
             <mat-label>Spillet lukkes</mat-label>
             <input matInput
-              formControlName="close"
-              [format]="24"
-              [ngxMatTimepicker]="raceClose"
-              readonly />
+                   formControlName="close"
+                   [format]="24"
+                   [ngxMatTimepicker]="raceClose"
+                   readonly/>
             <mat-icon matSuffix
-              (click)="raceClose.open()">
-              <fa-icon [icon]="clockIcon" size="lg"></fa-icon> 
+                      (click)="raceClose.open()">
+              <fa-icon [icon]="clockIcon" size="lg"></fa-icon>
             </mat-icon>
           </mat-form-field>
           <ngx-mat-timepicker #raceClose></ngx-mat-timepicker>
         </div>
         <div>
           <f2020-select-driver
-            *ngIf="selectedDriver$ | async as selectedDriver"
-            formControlName="selectedDriver"
-            label="Udvalgte kører"
-            [driverIds]="selectedDriver.drivers"
-            [teams]="selectedDriver.teams"></f2020-select-driver>
+              *ngIf="selectedDriver$ | async as selectedDriver"
+              formControlName="selectedDriver"
+              label="Udvalgte kører"
+              [driverIds]="selectedDriver.drivers"
+              [teams]="selectedDriver.teams"></f2020-select-driver>
         </div>
       </div>
     </mat-card-content>

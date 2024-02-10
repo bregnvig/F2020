@@ -170,19 +170,6 @@ export const loadInterimResult$ = createEffect((
 
 }, { functional: true });
 
-export const updateRace$ = createEffect((
-  actions$ = inject(Actions),
-  service = inject(RacesService),
-) => {
-  return actions$.pipe(
-    ofType(RacesActions.updateRace),
-    concatMap(({ race }) => service.updateRaceV2(race)
-      .then(() => RacesActions.submitBidSuccess())
-      .catch(error => RacesActions.submitBidFailure({ error })),
-    ));
-
-}, { functional: true });
-
 export const submitBid$ = createEffect((
   actions$ = inject(Actions),
   playerStore = inject(PlayerStore),
@@ -278,26 +265,6 @@ export const updateBid$ = createEffect((
       switchMap(([season, race, player]) => service.updateBid(season.id, race.round, player, bid)),
       map(() => RacesActions.updateYourBidSuccess()),
       catchError(error => of(RacesActions.updateYourBidFailure({ error }))),
-    )));
-
-}, { functional: true });
-
-export const updateRaceDrivers$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonStore),
-  service = inject(RacesService),
-) => {
-  return actions$.pipe(
-    ofType(RacesActions.updateRaceDrivers),
-    concatMap(({ drivers }) => combineLatest([
-      seasonFacade.season$,
-      facade.selectedRace$,
-    ]).pipe(
-      first(),
-      switchMap(([season, race]) => service.updateRace(season.id, race.round, { drivers })),
-      map(() => RacesActions.updateRaceDriversSuccess()),
-      catchError(error => of(RacesActions.updateRaceDriversFailure({ error }))),
     )));
 
 }, { functional: true });

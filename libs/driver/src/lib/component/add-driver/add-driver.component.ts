@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, Inject, OnInit, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DriverNamePipe } from '../../pipe/driver-name.pipe';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,30 +14,30 @@ import { DriversStore } from '@f2020/api';
 
 @Component({
   templateUrl: './add-driver.component.html',
-  styleUrls: ['./add-driver.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, NgFor, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe],
 })
 export class AddDriverComponent implements OnInit {
 
-  filteredDrivers$: Observable<string[]>;
   filteredDrivers: Signal<string[]>;
   driverControl = new FormControl(null, Validators.required);
+
+  #term: Signal<string>;
 
   constructor(
     private store: DriversStore,
     @Inject(MAT_DIALOG_DATA) public currentDrivers: string[]) {
-  }
-
-  ngOnInit() {
-    const term = toSignal(this.driverControl.valueChanges.pipe(
+    this.#term = toSignal(this.driverControl.valueChanges.pipe(
       startWith(''),
       map<string, string>(term => term.toLocaleLowerCase()),
     ));
+  }
+
+  ngOnInit() {
     this.filteredDrivers = computed(() => {
       const drivers = (this.store.drivers() ?? []).filter(driver => !this.currentDrivers.some(currentDriver => currentDriver === driver.driverId));
-      return drivers.filter(driver => driver.name.toLocaleLowerCase().includes(term())).map(d => d.driverId);
+      return drivers.filter(driver => driver.name.toLocaleLowerCase().includes(this.#term())).map(d => d.driverId);
     });
   }
 }

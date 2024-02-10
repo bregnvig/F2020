@@ -1,21 +1,19 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { DriversStore, RacesActions, RacesFacade } from '@f2020/api';
+import { RaceStore } from '@f2020/api';
 import { IRace } from '@f2020/data';
 import { AddDriverComponent, DriverNamePipe } from '@f2020/driver';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { truthy } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
-import { filter, first, map, pairwise } from 'rxjs/operators';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { first } from 'rxjs/operators';
 
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
 
@@ -40,80 +38,55 @@ const message = (driverName: string, operation: Operation) => {
 })
 export class RaceDriversComponent implements OnInit {
 
-  drivers: string[];
-  race$: Observable<IRace>;
+  race: Signal<IRace>;
   removeIcon = icon.farTrash;
   addIcon = icon.farPlus;
-  private driverId: string;
   private operation: Operation;
   private previousDrivers: string[];
 
   constructor(
-    private facade: RacesFacade,
-    private store: DriversStore,
+    private raceStore: RaceStore,
     private dialog: MatDialog,
     private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
-    this.race$ = this.facade.selectedRace$.pipe(
-      truthy(),
-    );
-    const updated$ = this.facade.updating$.pipe(
-      pairwise(),
-      filter(([previous, current]) => previous && !current),
-    );
-
-    this.race$.pipe(
-      map(race => race.drivers || []),
-      first(),
-      untilDestroyed(this),
-    ).subscribe(_drivers => this.drivers = [..._drivers]);
-    updated$.pipe(
-      map(() => this.store.drivers().find(driver => driver.driverId === this.driverId)),
-      untilDestroyed(this),
-    ).subscribe(driver => {
-      if (this.operation !== 'undo') {
-        this.snackBar.open(message(driver.name, this.operation), 'UNDO', { duration: 5000 }).onAction().pipe(
-          first(),
-        ).subscribe(() => {
-          this.drivers = [...this.previousDrivers];
-          this.updateDrivers('undo');
-        });
-      }
-    });
+    this.race = this.raceStore.race;
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    const driver = this.drivers[event.previousIndex];
-    const previousDrivers = [...this.drivers];
+    const driver = this.race().drivers[event.previousIndex];
+    const drivers = [...this.race().drivers];
+    const previousDrivers = [...drivers];
 
-    moveItemInArray(this.drivers, event.previousIndex, event.currentIndex);
-    this.updateDrivers('moved', driver, previousDrivers);
+    moveItemInArray(drivers, event.previousIndex, event.currentIndex);
+    this.updateDrivers('moved', drivers, driver, previousDrivers);
   }
 
   removeDriver(index: number): void {
-    const driver = this.drivers[index];
-    const previousDrivers = [...this.drivers];
-    this.drivers.splice(index, 1);
-    this.updateDrivers('removed', driver, previousDrivers);
+    const drivers = [...this.race().drivers];
+    const driver = drivers[index];
+    const previousDrivers = [...drivers];
+    drivers.splice(index, 1); // Switch toSliced
+    this.updateDrivers('removed', drivers, driver, previousDrivers);
   }
 
   addDriver() {
-    const previousDrivers = [...this.drivers];
-    this.dialog.open(AddDriverComponent, { data: this.drivers }).afterClosed().pipe(
+    const drivers = [...this.race().drivers];
+    const previousDrivers = [...drivers];
+    this.dialog.open(AddDriverComponent, { data: drivers }).afterClosed().pipe(
       first(),
-    ).subscribe(driver => {
-      this.drivers.push(driver);
-      this.updateDrivers('added', driver, previousDrivers);
-    });
+    ).subscribe(driver => this.updateDrivers('added', [...drivers, driver], driver, previousDrivers));
   }
 
-  private updateDrivers(operation: Operation, driver?: string, previousDrivers?: string[]) {
+  private updateDrivers(operation: Operation, drivers: string[], driverId?: string, previousDrivers?: string[]) {
     this.operation = operation;
-    this.driverId = driver;
     this.previousDrivers = previousDrivers;
-    this.facade.dispatch(RacesActions.updateRaceDrivers({ drivers: [...this.drivers] }));
+    this.raceStore.updateDrivers(drivers).then(() => {
+      operation !== 'undo' && this.snackBar.open(message(driverId, this.operation), 'UNDO', { duration: 5000 }).onAction().pipe(
+        first(),
+      ).subscribe(() => this.updateDrivers('undo', this.previousDrivers, driverId));
+    });
   }
 
 }

@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
+import { RaceStore, TeamService } from '@f2020/api';
 import { IRace, ITeam } from '@f2020/data';
-import { falsy, truthy } from '@f2020/tools';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, combineLatest, first, map, switchMap } from 'rxjs';
-import { FlagURLPipe, icon } from '@f2020/shared';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { combineLatest, map, Observable } from 'rxjs';
+import { CardPageComponent, FlagURLPipe, icon } from '@f2020/shared';
 import { MatButtonModule } from '@angular/material/button';
 import { SelectDriverComponent } from '@f2020/control';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,8 +13,7 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-import { CardPageComponent } from '@f2020/shared';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @UntilDestroy()
@@ -39,10 +37,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     FontAwesomeModule,
   ],
 })
-export class EditRaceComponent implements OnInit {
+export class EditRaceComponent {
 
   clockIcon = icon.farClock;
-  race$: Observable<IRace>;
+  race: Signal<IRace>;
   selectedDriver$: Observable<{ teams: ITeam[], drivers: string[]; }>;
   fg = this.fb.group({
     close: this.fb.control<string>(null),
@@ -51,59 +49,38 @@ export class EditRaceComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private facade: RacesFacade,
+    private store: RaceStore,
     private snackBar: MatSnackBar,
     teamService: TeamService) {
-    this.race$ = facade.selectedRace$;
+    this.race = store.race;
 
     this.selectedDriver$ = combineLatest({
       teams: teamService.teams$,
       drivers: teamService.teams$.pipe(
-        map(teams => teams.flatMap(team => team.drivers))
-      )
+        map(teams => teams.flatMap(team => team.drivers)),
+      ),
+    });
+    effect(() => {
+      this.race() && this.fg.reset({
+        selectedDriver: this.race().selectedDriver,
+        close: this.race().close.toFormat('HH:mm'),
+      });
     });
   }
 
-  ngOnInit(): void {
-    this.race$.pipe(
-      untilDestroyed(this),
-    ).subscribe(race => {
-      this.fg.reset({
-        selectedDriver: race.selectedDriver,
-        close: race.close.toFormat('HH:mm'),
-      });
-    });
-  };
-
   save() {
-    this.race$.pipe(
-      first(),
-      map(race => {
-        const close = race.close.set({
-          hour: parseInt(this.fg.value.close.substring(0, 2)),
-          minute: parseInt(this.fg.value.close.substring(3)),
-        });
-        const isChanged = race.selectedDriver !== this.fg.value.selectedDriver || +race.close !== +close;
-        return isChanged
-          ? ({
-            ...race, ...{
-              selectedDriver: this.fg.value.selectedDriver,
-              close
-            }
-          })
-          : undefined;
-      }),
-      first(),
-    ).subscribe(race => race ? this.facade.dispatch(RacesActions.updateRace({ race })) : window.history.back());
-    this.facade.updating$.pipe(
-      truthy(),
-      switchMap(() => this.facade.updating$),
-      falsy(),
-      switchMap(() => this.race$),
-      first(),
-    ).subscribe(race => {
-      this.snackBar.open(`✔ ${race.name} er blevet opdateret`, null, { duration: 3000 });
-      window.history.back();
+    const race = { ...this.race() };
+    const close = race.close.set({
+      hour: parseInt(this.fg.value.close.substring(0, 2)),
+      minute: parseInt(this.fg.value.close.substring(3)),
     });
+    const isChanged = race.selectedDriver !== this.fg.value.selectedDriver || +race.close !== +close;
+    if (isChanged) {
+      this.store.update({
+        ...race,
+        selectedDriver: this.fg.value.selectedDriver,
+        close,
+      }).then(() => window.history.back());
+    }
   }
 }

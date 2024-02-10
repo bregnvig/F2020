@@ -64,11 +64,19 @@ export class RaceStore extends Store<RaceState> {
   }
 
   rollback() {
-    this.service.rollbackResult(this.#round()).then(() => this.snackBar.open(`✔ Resultat for ${this.race().name} er blevet rullet tilbage`, null, { duration: 3000 }));
+    return this.service.rollbackResult(this.#round()).then(() => this.snackBar.open(`✔ Resultat for ${this.race().name} er blevet rullet tilbage`, null, { duration: 3000 }));
   }
 
   cancel() {
-    this.service.cancelRace(this.#round()).then(() => this.snackBar.open(`✔ ${this.race().name} er blevet aflyst`, null, { duration: 3000 }));
+    return this.service.cancelRace(this.#round()).then(() => this.snackBar.open(`✔ ${this.race().name} er blevet aflyst`, null, { duration: 3000 }));
+  }
+
+  update(race: IRace) {
+    return this.service.updateRaceV2(race).then(() => this.snackBar.open(`✔ ${race.name} er blevet opdateret`, null, { duration: 3000 }));
+  }
+
+  updateDrivers(drivers: string[]) {
+    return this.service.updateRace(this.seasonStore.season().id, this.#round(), { drivers });
   }
 
   loadYourBid() {

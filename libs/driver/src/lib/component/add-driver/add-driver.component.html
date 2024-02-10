@@ -1,22 +1,22 @@
 <h1 mat-dialog-title>Tilføj kører</h1>
 <div mat-dialog-content>
-    <mat-form-field>
-        <mat-label>kører</mat-label>
-        <input 
-            type="text" 
-            placeholder="Find kører" 
-            aria-label="Find kører" 
-            matInput 
-            [formControl]="driverControl"
-            [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let driver of filteredDrivers$ | async" [value]="driver">
-                {{ driver | driverName }}
-            </mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>kører</mat-label>
+    <input
+        type="text"
+        placeholder="Find kører"
+        aria-label="Find kører"
+        matInput
+        [formControl]="driverControl"
+        [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let driver of filteredDrivers()" [value]="driver">
+        {{ driver | driverName }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
 </div>
 <div mat-dialog-actions>
-    <button mat-button mat-dialog-close>Luk</button>
-    <button mat-button [mat-dialog-close]="driverControl.value" [disabled]="driverControl.invalid">OK</button>
+  <button mat-button mat-dialog-close>Luk</button>
+  <button mat-button [mat-dialog-close]="driverControl.value" [disabled]="driverControl.invalid">OK</button>
 </div>

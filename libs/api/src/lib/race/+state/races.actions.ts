@@ -1,21 +1,7 @@
-import { Bid, IRace, Participant, RoundResult } from '@f2020/data';
+import { Bid, Participant, RoundResult } from '@f2020/data';
 import { createAction, props } from '@ngrx/store';
 
 export const RacesActions = {
-
-  updateRace: createAction(
-    '[Edit race page] Update Race',
-    props<{ race: IRace; }>(),
-  ),
-
-  updateRaceSuccess: createAction(
-    '[Race API] Update Race Success',
-  ),
-
-  updateRaceFailure: createAction(
-    '[Race API] Update Race Failure',
-    props<{ error: any; }>(),
-  ),
 
   selectRace: createAction(
     '[Races] Select race',
@@ -190,20 +176,6 @@ export const RacesActions = {
 
   submitInterimResultFailure: createAction(
     '[Interim API] Submit interim result Failure',
-    props<{ error: any; }>(),
-  ),
-
-  updateRaceDrivers: createAction(
-    '[Edit race drivers page] Update race drivers',
-    props<{ drivers: string[]; }>(),
-  ),
-
-  updateRaceDriversSuccess: createAction(
-    '[Edit race drivers API] Update race drivers Success',
-  ),
-
-  updateRaceDriversFailure: createAction(
-    '[Edit race drivers API] Update race drivers Failure',
     props<{ error: any; }>(),
   ),
 

@@ -1,11 +1,11 @@
 <mat-toolbar color="primary">
-  <span class="flex-auto">{{(race$ | async)?.name}}</span>
-  <span *ngIf="drivers">{{drivers.length}} kørere</span>
+  <span class="flex-auto">{{ race()?.name }}</span>
+  <span *ngIf="race()?.drivers?.length">{{ race()?.drivers.length }} kørere</span>
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
-  <mat-list cdkDropList cdkDropListLockAxis="y" *ngIf="drivers; else loading" (cdkDropListDropped)="drop($event)">
-    <mat-list-item *ngFor="let driverId of drivers; index as i" cdkDrag>
-      <p matListItemLine>{{driverId | driverName}}</p>
+  <mat-list cdkDropList cdkDropListLockAxis="y" *ngIf="race()?.drivers?.length; else loading" (cdkDropListDropped)="drop($event)">
+    <mat-list-item *ngFor="let driverId of race().drivers; index as i" cdkDrag>
+      <p matListItemLine>{{ driverId | driverName }}</p>
       <div matListItemMeta>
         <button mat-button (click)="removeDriver(i)">
           <fa-icon [icon]="removeIcon" size="lg"></fa-icon>
