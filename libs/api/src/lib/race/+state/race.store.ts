@@ -92,7 +92,6 @@ export class RaceStore extends Store<RaceState> {
     let s: Subscription;
     effect(() => {
       s?.unsubscribe();
-      const player = this.playerStore.player();
       const unauthorized = this.playerStore.unauthorized();
       const race = this.race();
       const season = this.seasonStore.season();
