@@ -9,6 +9,7 @@ import { DateTime } from 'luxon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { filterEquals } from '@f2020/tools';
 
 interface RaceState {
   race?: IRace;
@@ -23,12 +24,12 @@ interface RaceState {
 @Injectable()
 export class RaceStore extends Store<RaceState> {
 
-  readonly race = this.select(state => state.race);
-  readonly bid = this.select(state => state.bid);
-  readonly bids = this.select(state => state.bids);
-  readonly result = this.select(state => state.result);
-  readonly loaded = this.select(state => state.loaded);
-  readonly error = this.select(state => state.error);
+  readonly race = this.state.race;
+  readonly bid = this.state.bid;
+  readonly bids = this.state.bids;
+  readonly result = this.state.result;
+  readonly loaded = this.state.loaded;
+  readonly error = this.state.error;
 
   #round = signal<number | undefined>(undefined);
 
@@ -89,11 +90,19 @@ export class RaceStore extends Store<RaceState> {
       const season = this.seasonStore.season();
       !unauthorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
         map(bid => bid || {}),
+        filterEquals(),
       ).subscribe({
-        next: bid => this.setState(() => ({ bid, loaded: true, error: undefined })),
+        next: bid => this.setState(() => ({ bid })),
         error: error => this.setState(() => ({ error })),
       }));
     }, { allowSignalWrites: true });
+  }
+
+  updateBid(bid: Bid) {
+    if (bid && this.seasonStore.season() && this.playerStore.player()) {
+      return this.service.updateBid(this.seasonStore.season().id, this.#round(), this.playerStore.player(), bid);
+    }
+    return Promise.resolve();
   }
 
   loadBid(playerId: string) {
@@ -109,6 +118,10 @@ export class RaceStore extends Store<RaceState> {
         error: error => this.setState(() => ({ error })),
       }));
     }, { allowSignalWrites: true });
+  }
+
+  submitBid(bid: Bid) {
+    return this.service.submitBid(bid, this.playerStore.player());
   }
 
   loadResult() {

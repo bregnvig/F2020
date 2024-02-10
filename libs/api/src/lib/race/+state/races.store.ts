@@ -26,7 +26,7 @@ interface RacesState {
 @Injectable({ providedIn: 'root' })
 export class RacesStore extends Store<RacesState> {
 
-  races: Signal<IRace[]> = this.select(state => state.races);
+  races: Signal<IRace[]> = this.state.races;
 
   constructor(private seasonStore: SeasonStore, private service: RacesService, private playerStore: PlayerStore) {
     super({ loaded: false, updating: false });

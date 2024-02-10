@@ -47,7 +47,7 @@ export class PolePositionTimeComponent extends AbstractControlComponent<number> 
       untilDestroyed(this),
       debounceTime(100),
       map(value => mapper.polePosition.join(value)),
-    ).subscribe(millis => this.propagateChange(millis));
+    ).subscribe(millis => this.propagateChange(millis || null));
   }
 
   markAllTouched(): void {

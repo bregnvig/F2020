@@ -1,4 +1,4 @@
-import { Injectable, Signal } from '@angular/core';
+import { computed, Injectable, Signal } from '@angular/core';
 import { Player } from '@f2020/data';
 import { PlayersApiService } from '../service/players-api.service';
 import { Store } from '../../store';
@@ -17,6 +17,10 @@ const initialState: PlayersState = {
 
 @Injectable()
 export class PlayersStore extends Store<PlayersState> {
+
+  players = this.state.players;
+  loaded = this.state.loaded;
+  player: Signal<Player | undefined> = computed(() => this.state.players().find(p => p.uid === this.state.selectedId()));
 
   constructor(private service: PlayersApiService) {
     super(initialState);
@@ -38,17 +42,5 @@ export class PlayersStore extends Store<PlayersState> {
 
   setPlayer(uid: string) {
     this.setState(() => ({ selectedId: uid }));
-  }
-
-  get players(): Signal<Player[]> {
-    return this.select(state => state.players);
-  }
-
-  get loaded(): Signal<boolean> {
-    return this.select(state => state.loaded);
-  }
-
-  get player(): Signal<Player | undefined> {
-    return this.select(state => state.players?.find(p => p.uid === state.selectedId));
   }
 }

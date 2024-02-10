@@ -16,10 +16,10 @@ export interface SeasonState {
 })
 export class SeasonStore extends Store<SeasonState> {
 
-  readonly season = this.select(state => state.season);
-  readonly season$: Observable<ISeason> = toObservable(this.season);
-  readonly error = this.select(state => state.error);
-  readonly loaded = this.select(state => state.loaded);
+  readonly season = this.state.season;
+  readonly season$: Observable<ISeason> = toObservable(this.state.season);
+  readonly error = this.state.error;
+  readonly loaded = this.state.loaded;
 
   #s: Subscription;
 

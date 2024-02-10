@@ -1,85 +1,67 @@
 import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, effect, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
-import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
+import { RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
-import { IRace, ITeam } from '@f2020/data';
-import { LoadingComponent, icon } from '@f2020/shared';
-import { shareLatest } from '@f2020/tools';
+import { Bid, IRace, ITeam } from '@f2020/data';
+import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { DateTime } from 'luxon';
-import { Observable } from 'rxjs';
-import { debounceTime, filter, first, pairwise, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, filter, tap } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filterEquals } from '@f2020/tools';
 
-@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'f2020-enter-bid',
   templateUrl: './enter-bid.component.html',
   styleUrls: ['./enter-bid.component.scss'],
   standalone: true,
-  imports: [NgIf, MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  imports: [NgIf, MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe],
 })
-export class EnterBidComponent implements OnInit {
+export class EnterBidComponent {
 
-  bidControl: FormControl = new FormControl();
-  race$: Observable<IRace>;
-  teams$: Observable<ITeam[]>;
-  updating$: Observable<boolean>;
+  bidControl: FormControl = new FormControl<Bid>(null);
+  isOpen: Signal<boolean>;
+  race: Signal<IRace>;
+  teams: Signal<ITeam[]>;
   editIcon = icon.farPen;
   sendIcon = icon.fasPaperPlane;
 
-  private subscriptions = [];
-
   constructor(
-    private facade: RacesFacade,
+    private store: RaceStore,
     private teamsService: TeamService,
     private router: Router) {
-  }
-
-  ngOnInit(): void {
-    this.facade.dispatch(RacesActions.loadYourBid());
-    this.race$ = this.facade.selectedRace$.pipe(
-      filter(race => !!race),
+    this.race = this.store.race;
+    this.teams = toSignal(this.teamsService.teams$);
+    this.isOpen = computed(() => store.race()?.close >= DateTime.local());
+    effect(() => {
+      this.bidControl.patchValue(store.bid() ?? {}, { emitEvent: false });
+      store.bid()?.submitted && this.bidControl.disable({ emitEvent: false });
+    });
+    effect(() => store.error() && this.bidControl.enable({ emitEvent: false }));
+    const updatedBid = toSignal(this.bidControl.valueChanges.pipe(
+      debounceTime(3000),
+      filter(bid => !bid?.submitted),
+      filterEquals(),
       tap(_ => console.log(_)),
-      shareLatest(),
-    );
-
-    this.teams$ = this.teamsService.teams$;
-    this.updating$ = this.facade.updating$;
-    this.subscriptions.push(
-      this.facade.yourBid$.pipe(
-        filter(bid => bid && !bid.submitted),
-        first(),
-      ).subscribe(bid => this.bidControl.patchValue(bid || {}, { emitEvent: false })),
-      this.facade.yourBid$.pipe(
-        filter(bid => bid && bid.submitted),
-      ).subscribe(() => this.bidControl.disable()),
-      this.bidControl.valueChanges.pipe(
-        debounceTime(3000),
-        filter(bid => !bid?.submitted),
-      ).subscribe(value => this.facade.dispatch(RacesActions.updateYourBid({ bid: value }))),
-      this.updating$.pipe(
-        pairwise(),
-        filter(([previous, current]) => previous && current === false),
-        switchMap(() => this.race$),
-      ).subscribe(race => this.router.navigate([race.season, 'race', race.round])),
-      this.facade.error$.pipe(
-        filter(error => !!error),
-      ).subscribe(error => this.bidControl.enable({ emitEvent: false }))
-    );
+    ));
+    effect(() => this.store.updateBid(updatedBid()));
+    this.store.loadYourBid();
   }
 
   submitBid() {
-    this.facade.dispatch(RacesActions.submitBid({ bid: this.bidControl.value }));
+    this.store.submitBid(this.bidControl.value)
+      .then(() => this.router.navigate([this.race().season, 'race', this.race().round]))
+      .catch(error => {
+        this.bidControl.enable({ emitEvent: false });
+        console.info(this.bidControl.value);
+        console.error(error);
+      });
     this.bidControl.disable({ emitEvent: false });
   }
 
-  isOpen(race: IRace): boolean {
-    return race.close >= DateTime.local();
-  }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { SeasonStore, Store } from '@f2020/api';
 import { IDriverStanding } from '@f2020/data';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -18,6 +18,10 @@ const initialState: StandingState = {
 @UntilDestroy()
 @Injectable()
 export class StandingStore extends Store<StandingState> {
+  standings = this.state.standings;
+  loaded = this.state.loaded;
+  error = this.state.error;
+
   constructor(private service: StandingService, private seasonStore: SeasonStore) {
     super(initialState);
   }
@@ -25,17 +29,4 @@ export class StandingStore extends Store<StandingState> {
   loadStandings() {
     this.service.getStandings(this.seasonStore.season().id).subscribe(standings => this.setState(() => ({ standings, loaded: true })));
   }
-
-  get standings(): Signal<IDriverStanding[]> {
-    return this.select(state => state.standings);
-  }
-
-  get loaded(): Signal<boolean> {
-    return this.select(state => state.loaded);
-  }
-
-  get error(): Signal<string | null> {
-    return this.select(state => state.error);
-  }
-
 }

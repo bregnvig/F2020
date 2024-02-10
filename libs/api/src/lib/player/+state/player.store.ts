@@ -2,7 +2,7 @@ import { Player } from '@f2020/data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { first } from 'rxjs/operators';
-import { Injectable, Signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PlayerApiService } from '../service/player-api.service';
 import { filterEquals } from '@f2020/tools';
 import { Store } from '../../store';
@@ -21,12 +21,12 @@ export interface PlayerState {
 @Injectable({ providedIn: 'root' })
 export class PlayerStore extends Store<PlayerState> {
 
-  readonly authorized: Signal<boolean> = this.select(state => state.authorized);
-  readonly player = this.select(state => state.player);
-  readonly error = this.select(state => state.error);
-  readonly loading = this.select(state => state.loading);
-  readonly unauthorized = this.select(state => state.unauthorized);
-  readonly updatingWBC = this.select(state => state.updatingWBC);
+  readonly authorized = this.state.authorized;
+  readonly player = this.state.player;
+  readonly error = this.state.error;
+  readonly loading = this.state.loading;
+  readonly unauthorized = this.state.unauthorized;
+  readonly updatingWBC = this.state.updatingWBC;
 
   constructor(private service: PlayerApiService) {
     super({
@@ -59,7 +59,7 @@ export class PlayerStore extends Store<PlayerState> {
     this.service.updatePlayer(partialPlayer).pipe(
       first(),
     ).subscribe({
-      next: () => this.setState(state => ({ player: { ...state.player, ...partialPlayer } })),
+      next: () => this.setState(() => ({ player: { ...this.player(), ...partialPlayer } })),
       error: error => this.setState(() => ({ error })),
     });
   }

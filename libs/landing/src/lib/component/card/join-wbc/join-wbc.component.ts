@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
 import { AsyncPipe, NgIf } from '@angular/common';
+import { truthy } from '@f2020/tools';
 
 @Component({
   selector: 'f2020-join-wbc',
@@ -42,6 +43,7 @@ export class JoinWbcComponent implements OnInit {
   ngOnInit(): void {
     this.loading = this.playerStore.updatingWBC;
     this.latestWBCJoinDate$ = this.seasonStore.season$.pipe(
+      truthy(),
       map(season => season.wbc?.latestWBCJoinDate),
     );
     const uid = this.playerStore.player().uid;

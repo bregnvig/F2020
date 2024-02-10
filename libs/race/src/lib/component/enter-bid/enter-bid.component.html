@@ -1,19 +1,17 @@
-<ng-container *ngIf="(race$ | async) as race; else loading">
-  <ng-container *ngIf="(teams$ | async) as teams; else loading">
+<ng-container *ngIf="race(); else loading">
+  <ng-container *ngIf="teams(); else loading">
     <mat-toolbar color="primary">
-      <span class="flex-auto">Bud - {{race.name}}</span>
+      <span class="flex-auto">Bud - {{ race.name }}</span>
       <button mat-icon-button routerLink="../edit">
         <fa-icon [icon]="editIcon"></fa-icon>
       </button>
     </mat-toolbar>
-    <f2020-bid [formControl]="bidControl" [race]="race" [teams]="teams"></f2020-bid>
-    <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid || (updating$ | async)" *ngIf="bidControl.enabled && isOpen(race)" (click)="submitBid()">
+    <f2020-bid [formControl]="bidControl" [race]="race()" [teams]="teams()"></f2020-bid>
+    <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid" *ngIf="bidControl.enabled && isOpen()"
+            (click)="submitBid()">
       <fa-icon [icon]="sendIcon" size="lg"></fa-icon>
     </button>
   </ng-container>
-</ng-container>
-<ng-container *ngIf="updating$ | async">
-  <ng-container *ngTemplateOutlet="loading"></ng-container> 
 </ng-container>
 <ng-template #loading>
   <sha-loading></sha-loading>

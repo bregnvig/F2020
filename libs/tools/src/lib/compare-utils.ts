@@ -71,8 +71,8 @@ export const deepCompareFn = (filteredUINames: Set<string>) => function deepComp
   }
 
   return uiKeys.every((i) => {
-    return p.indexOf(i) !== -1;
-  }) &&
+      return p.indexOf(i) !== -1;
+    }) &&
     p.every((i) => {
       const result = deepCompareInner(fromBackend[i], fromUI[i]);
       debug(result, 'Not equal', i, 'Backend:', fromBackend[i], 'UI:', fromUI[i]);
