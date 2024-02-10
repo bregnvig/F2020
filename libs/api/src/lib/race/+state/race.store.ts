@@ -7,6 +7,8 @@ import { SeasonStore } from '../../season/+state';
 import { PlayerStore } from '../../player';
 import { DateTime } from 'luxon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 interface RaceState {
   race?: IRace;
@@ -68,4 +70,42 @@ export class RaceStore extends Store<RaceState> {
   cancel() {
     this.service.cancelRace(this.#round()).then(() => this.snackBar.open(`✔ ${this.race().name} er blevet aflyst`, null, { duration: 3000 }));
   }
+
+  loadYourBid() {
+    let s: Subscription;
+    effect(() => {
+      s?.unsubscribe();
+      const player = this.playerStore.player();
+      const unauthorized = this.playerStore.unauthorized();
+      const race = this.race();
+      const season = this.seasonStore.season();
+      !unauthorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
+        map(bid => bid || {}),
+      ).subscribe({
+        next: bid => this.setState(() => ({ bid, loaded: true, error: undefined })),
+        error: error => this.setState(() => ({ error })),
+      }));
+    }, { allowSignalWrites: true });
+  }
+
+  loadBid(playerId: string) {
+    let s: Subscription;
+    effect(() => {
+      s?.unsubscribe();
+      const player = this.playerStore.player();
+      const unauthorized = this.playerStore.unauthorized();
+      const race = this.race();
+      const season = this.seasonStore.season();
+      !unauthorized && race && (s = this.service.getBid(season.id, race.round, playerId).pipe(
+      ).subscribe({
+        next: bid => this.setState(() => ({ bid, error: undefined })),
+        error: error => this.setState(() => ({ error })),
+      }));
+    }, { allowSignalWrites: true });
+  }
+
+  loadResult() {
+
+  }
+
 }

@@ -42,8 +42,8 @@ export class PlayerStore extends Store<PlayerState> {
         player,
         loaded: true,
         loading: false,
-        unauthorized: false,
-        authorized: true,
+        unauthorized: !player,
+        authorized: !!player,
       })),
       error: error => this.setState(() => ({ error, loaded: false, loading: false })),
     });

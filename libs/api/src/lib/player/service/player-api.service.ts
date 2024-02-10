@@ -27,8 +27,8 @@ export class PlayerApiService {
         switchMap(user => docData(doc(this.afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
       ),
       this.currentUser$.pipe(
-        filter(user => !user || !(user?.uid))
-      )
+        filter(user => !user || !(user?.uid)),
+      ),
     );
     getRedirectResult(this.auth).then(result => {
       if (result && result.user) {
@@ -36,7 +36,7 @@ export class PlayerApiService {
       }
     });
     onAuthStateChanged(this.auth, user => {
-      this.currentUser$.next({ ...user });
+      this.currentUser$.next(user ? ({ ...user }) : undefined);
       if (user) {
         this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
       }
@@ -48,14 +48,14 @@ export class PlayerApiService {
   signInWithGoogle(): Promise<void> {
     return signInWithRedirect(this.auth, new GoogleAuthProvider()).then(
       _ => console.log('Signed in using google'),
-      error => console.error('Unable to sign in', error)
+      error => console.error('Unable to sign in', error),
     );
   }
 
   signInWithFacebook(): Promise<void> {
     return signInWithRedirect(this.auth, new FacebookAuthProvider()).then(
       _ => console.log('Signed in using facebook'),
-      error => console.error('Unable to sign in', error)
+      error => console.error('Unable to sign in', error),
     );
   }
 
@@ -68,13 +68,13 @@ export class PlayerApiService {
     if (partialPlayer.tokens) {
       payload = {
         ...partialPlayer,
-        tokens: arrayUnion(...partialPlayer.tokens)
+        tokens: arrayUnion(...partialPlayer.tokens),
       };
     }
     return this.player$.pipe(
       switchMap(player => updateDoc(doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`), payload).then(() => player)),
       switchMap(player => docData(doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`))),
-      first()
+      first(),
     );
   }
 
@@ -97,7 +97,7 @@ export class PlayerApiService {
     };
     const docRef = doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
     return getDoc(docRef).then(
-      snapshot => snapshot.exists() ? updateDoc(docRef, _player) : setDoc(docRef, _player)
+      snapshot => snapshot.exists() ? updateDoc(docRef, _player) : setDoc(docRef, _player),
     );
   }
 }

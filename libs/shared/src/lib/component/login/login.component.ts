@@ -2,7 +2,6 @@ import { Component, computed, effect, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PlayerApiService, PlayerStore } from '@f2020/api';
 import { isNullish } from '@f2020/tools';
-import { DateTime } from 'luxon';
 import { icon } from '../../font-awesome';
 import { LoadingComponent } from '../loading/loading.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -30,7 +29,7 @@ export class LoginComponent {
   isUnauthorized: Signal<boolean>;
 
   constructor(private service: PlayerApiService, store: PlayerStore, private router: Router) {
-    effect(() => store.authorized() && this.router.navigate([DateTime.now().year]));
+    effect(() => store.authorized() && this.router.navigate(['']));
     this.isUnauthorized = store.unauthorized;
     this.isAuthorizationKnown = computed(() => !isNullish(store.authorized()));
   }
