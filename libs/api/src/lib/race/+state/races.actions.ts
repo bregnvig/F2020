@@ -109,21 +109,6 @@ export const RacesActions = {
     '[Interim API] Load intermim result Failure',
     props<{ error: any; }>(),
   ),
-
-  submitBid: createAction(
-    '[Bid page] submit bid',
-    props<{ bid: Bid; }>(),
-  ),
-
-  submitBidSuccess: createAction(
-    '[Bid API] Submit bid Success',
-  ),
-
-  submitBidFailure: createAction(
-    '[Bid API] Submit bid Failure',
-    props<{ error: any; }>(),
-  ),
-
   submitResult: createAction(
     '[Result page] submit result',
     props<{ result: Bid; }>(),
@@ -135,34 +120,6 @@ export const RacesActions = {
 
   submitResultFailure: createAction(
     '[Result API] Submit result Failure',
-    props<{ error: any; }>(),
-  ),
-
-  rollbackResult: createAction(
-    '[Result page] Rollback result',
-    props<{ round: number; }>(),
-  ),
-
-  rollbackResultSuccess: createAction(
-    '[Result API] Rollback result Success',
-  ),
-
-  rollbackResultFailure: createAction(
-    '[Result API] Rollback result Failure',
-    props<{ error: any; }>(),
-  ),
-
-  cancelRace: createAction(
-    '[Race page] Cancel race',
-    props<{ round: number; }>(),
-  ),
-
-  cancelRaceSuccess: createAction(
-    '[Race API] Cancel race Success',
-  ),
-
-  cancelRaceFailure: createAction(
-    '[Race API] Cancel race Failure',
     props<{ error: any; }>(),
   ),
 

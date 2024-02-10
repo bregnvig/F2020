@@ -170,24 +170,6 @@ export const loadInterimResult$ = createEffect((
 
 }, { functional: true });
 
-export const submitBid$ = createEffect((
-  actions$ = inject(Actions),
-  playerStore = inject(PlayerStore),
-  service = inject(RacesService),
-) => {
-  const player$ = toObservable(playerStore.player).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.submitBid),
-    concatMap(({ bid }) => player$.pipe(
-      first(),
-      switchMap(player => service.submitBid(bid, player)
-        .then(() => RacesActions.submitBidSuccess())
-        .catch(error => RacesActions.submitBidFailure({ error })),
-      )),
-    ));
-
-}, { functional: true });
-
 export const submitResult$ = createEffect((
   actions$ = inject(Actions),
   facade = inject(RacesFacade),
@@ -217,55 +199,6 @@ export const submitInterimResult$ = createEffect((
         .catch(error => RacesActions.submitInterimResultFailure({ error })),
       )),
     ));
-
-}, { functional: true });
-
-export const rollbackResult$ = createEffect((
-  actions$ = inject(Actions),
-  service = inject(RacesService),
-) => {
-  return actions$.pipe(
-    ofType(RacesActions.rollbackResult),
-    concatMap(({ round }) => service.rollbackResult(round)
-      .then(() => RacesActions.rollbackResultSuccess())
-      .catch(error => RacesActions.rollbackResultFailure({ error })),
-    ));
-
-}, { functional: true });
-
-export const cancelRace$ = createEffect((
-  actions$ = inject(Actions),
-  service = inject(RacesService),
-) => {
-  return actions$.pipe(
-    ofType(RacesActions.cancelRace),
-    concatMap(({ round }) => service.cancelRace(round)
-      .then(() => RacesActions.cancelRaceSuccess())
-      .catch(error => RacesActions.cancelRaceFailure({ error })),
-    ));
-
-}, { functional: true });
-
-export const updateBid$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonStore),
-  playerStore = inject(PlayerStore),
-  service = inject(RacesService),
-) => {
-  const player$ = toObservable(playerStore.player).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.updateYourBid),
-    concatMap(({ bid }) => combineLatest([
-      seasonFacade.season$,
-      facade.selectedRace$,
-      player$,
-    ]).pipe(
-      first(),
-      switchMap(([season, race, player]) => service.updateBid(season.id, race.round, player, bid)),
-      map(() => RacesActions.updateYourBidSuccess()),
-      catchError(error => of(RacesActions.updateYourBidFailure({ error }))),
-    )));
 
 }, { functional: true });
 
