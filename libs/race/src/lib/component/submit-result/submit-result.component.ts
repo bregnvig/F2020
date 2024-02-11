@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, effect, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RacesActions, RacesFacade, TeamService } from '@f2020/api';
+import { RaceStore, TeamService } from '@f2020/api';
 import { Bid, IRace, ITeam } from '@f2020/data';
 
 import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
@@ -10,11 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BidComponent } from '@f2020/control';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { isNullish, shareLatest, truthy } from '@f2020/tools';
+import { isNullish } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, map, pairwise } from 'rxjs/operators';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
@@ -24,48 +24,26 @@ import { filter, map, pairwise } from 'rxjs/operators';
   standalone: true,
   imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
 })
-export class SubmitResultComponent implements OnInit {
+export class SubmitResultComponent {
 
   uploadIcon = icon.farCloudArrowUp;
-  refreshIcon = icon.fasRotateRight;
 
   resultControl = new FormControl<Bid | null>(null);
-  race$: Observable<IRace>;
+  race: Signal<IRace>;
   updating$: Observable<boolean>;
-  loaded$: Observable<boolean>;
-  teams$: Observable<ITeam[]> = this.teamsService.teams$;
-  private result: Bid;
+  loaded: Signal<boolean>;
+  teams: Signal<ITeam[]> = toSignal(this.teamsService.teams$);
+  private result: Signal<Bid>;
 
   constructor(
-    private facade: RacesFacade,
+    private store: RaceStore,
     private teamsService: TeamService,
     private router: Router) {
-  }
-
-  ngOnInit(): void {
-    this.facade.dispatch(RacesActions.loadResult());
-    this.race$ = this.facade.selectedRace$.pipe(
-      filter(race => !!race),
-      shareLatest(),
-    );
-    this.updating$ = this.facade.updating$;
-    this.loaded$ = combineLatest([
-      this.facade.selectedRace$.pipe(truthy()),
-      this.facade.result$.pipe(truthy()),
-    ]).pipe(
-      map(() => true),
-    );
-    this.facade.result$.pipe(
-      untilDestroyed(this),
-    ).subscribe(result => {
-      this.result = result;
-      result && this.resultControl.patchValue(result, { emitEvent: false });
-    });
-    this.updating$.pipe(
-      pairwise(),
-      filter(([previous, current]) => previous && current === false),
-      untilDestroyed(this),
-    ).subscribe(() => this.router.navigate(['/']));
+    this.loaded = computed(() => store.loaded() && !!store.result());
+    this.race = store.race;
+    this.result = store.result;
+    store.loadResult();
+    effect(() => store.result() && this.resultControl.patchValue(store.result(), { emitEvent: false }));
   }
 
   submitResult() {
@@ -73,22 +51,17 @@ export class SubmitResultComponent implements OnInit {
       const result = Object.fromEntries(
         Object.entries(this.resultControl.value).map(([key, value]) => [key, Array.isArray(value) ? value.filter(v => !isNullish(v)) : value]),
       ) as Bid;
-      this.facade.dispatch(RacesActions.submitResult({ result }));
-
+      this.store.submitResult(result).then(() => this.router.navigate(['/']));
     }
   }
 
-  loadResult() {
-    this.facade.dispatch(RacesActions.loadResult());
-  }
-
   resultDownloaded(): boolean {
-    return !!(this.result.qualify?.length === 7
-      && this.result.fastestDriver?.length === 2
-      && this.result.podium?.length === 4
-      && this.result.selectedDriver && this.result.selectedDriver.grid && this.result.selectedDriver.finish
-      && this.result.slowestPitStop?.length === 2
-      && this.result.polePositionTime);
+    return !!(this.result()?.qualify?.length === 7
+      && this.result()?.fastestDriver?.length === 2
+      && this.result()?.podium?.length === 4
+      && this.result()?.selectedDriver && this.result()?.selectedDriver.grid && this.result()?.selectedDriver.finish
+      && this.result()?.slowestPitStop?.length === 2
+      && this.result()?.polePositionTime);
   }
 
 }

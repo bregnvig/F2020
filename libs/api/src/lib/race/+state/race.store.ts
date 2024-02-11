@@ -7,6 +7,11 @@ import { SeasonStore } from '../../season/+state';
 import { PlayerStore } from '../../player';
 import { DateTime } from 'luxon';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { combineLatest, of, switchMap } from 'rxjs';
+import { first, map } from 'rxjs/operators';
+import { buildResult } from '../service/result-builder';
+import { DriversStore } from '../../drivers';
+import { TeamService } from '../../service';
 
 interface RaceState {
   race?: IRace;
@@ -24,7 +29,7 @@ export class RaceStore extends Store<RaceState> {
   readonly race = this.state.race;
   readonly bids = this.state.bids;
   readonly result = this.state.result;
-  readonly loaded = this.state.loaded;
+  readonly loaded = computed(() => !!this.state.race());
   readonly error = this.state.error;
   readonly bid = computed(() => this.bids()?.find(bid => bid.player.uid === this.playerStore.player()?.uid));
 
@@ -34,7 +39,9 @@ export class RaceStore extends Store<RaceState> {
     private racesStore: RacesStore,
     private service: RacesService,
     private seasonStore: SeasonStore,
+    private driversStore: DriversStore,
     private snackBar: MatSnackBar,
+    private teamsService: TeamService,
     private playerStore: PlayerStore) {
     super({ loaded: false });
     effect(() => {
@@ -87,6 +94,28 @@ export class RaceStore extends Store<RaceState> {
   }
 
   loadResult() {
+    effect(() => {
+      const race = this.race();
+      if (race) {
+        const offset = this.racesStore.races().filter(r => r.round < race.round && r.state === 'cancelled').length;
+        this.teamsService.teams$.pipe(
+          switchMap(teams => combineLatest([
+            this.service.getResult(race.season, race.round - offset),
+            this.service.getQualify(race.season, race.round - offset),
+            this.service.getPitStops(race.season, race.round - offset, this.driversStore.drivers(), teams),
+            of(race.selectedDriver),
+            of(race.selectedTeam),
+          ]))).pipe(
+          map(([raceResult, qualify, pitStops, selectedDriver, selectedTeam]) => {
+            return buildResult(raceResult, qualify, pitStops, selectedDriver, selectedTeam);
+          }),
+          first(),
+        ).subscribe(result => this.setState(() => ({ result })));
+      }
+    });
+  }
 
+  submitResult(result: Bid) {
+    return this.service.submitResult(this.#round(), result);
   }
 }

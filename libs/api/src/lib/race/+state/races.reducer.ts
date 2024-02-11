@@ -41,20 +41,14 @@ export const initialState: State = racesAdapter.getInitialState(<State>{
 const racesReducer = createReducer(
   initialState,
   on(
-    RacesActions.loadResultFailure,
     RacesActions.loadInterimResultFailure,
-    RacesActions.submitResultFailure,
     RacesActions.submitInterimResultFailure,
     (state, { type, error }) => {
       console.error(type, error);
       return { ...state, error: error['message'] ?? error, updating: false, loaded: false };
     },
   ),
-  on(RacesActions.loadResult, (state) => ({ ...state, loaded: false })),
-  on(RacesActions.loadResultSuccess, (state, { result }) => ({ ...state, result, loaded: true })),
   on(RacesActions.loadInterimResultSuccess, (state, { result }) => ({ ...state, interimResult: result, loaded: true })),
-  on(RacesActions.submitResult, (state) => ({ ...state, updating: true })),
-  on(RacesActions.submitResultSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.submitInterimResult, (state) => ({ ...state, updating: true })),
   on(RacesActions.submitInterimResultSuccess, (state) => ({ ...state, updating: false })),
 );

@@ -3,20 +3,6 @@ import { createAction, props } from '@ngrx/store';
 
 export const RacesActions = {
 
-  loadResult: createAction(
-    '[Result page] Load result',
-  ),
-
-  loadResultSuccess: createAction(
-    '[Result API] Load result Success',
-    props<{ result: Bid; }>(),
-  ),
-
-  loadResultFailure: createAction(
-    '[Result API] Load result Failure',
-    props<{ error: any; }>(),
-  ),
-
   loadInterimResult: createAction(
     '[Interim page] Load intermim result',
   ),
@@ -30,20 +16,6 @@ export const RacesActions = {
     '[Interim API] Load intermim result Failure',
     props<{ error: any; }>(),
   ),
-  submitResult: createAction(
-    '[Result page] submit result',
-    props<{ result: Bid; }>(),
-  ),
-
-  submitResultSuccess: createAction(
-    '[Result API] Submit result Success',
-  ),
-
-  submitResultFailure: createAction(
-    '[Result API] Submit result Failure',
-    props<{ error: any; }>(),
-  ),
-
   submitInterimResult: createAction(
     '[Interim page] submit interim result',
   ),

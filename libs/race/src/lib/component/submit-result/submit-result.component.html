@@ -1,22 +1,17 @@
 <mat-toolbar color="primary">
-  <span>Result - {{(race$ | async)?.name}}</span>
+  <span>Result - {{ race()?.name }}</span>
 </mat-toolbar>
 <div class="max-width">
-  <ng-container *ngIf="(loaded$ | async); else loading">
-    <ng-container *ngIf="race$ | async as race">
-      <f2020-bid [formControl]="resultControl" [race]="race" [teams]="teams$ | async" [isResult]="true"></f2020-bid>
-    </ng-container>  
-    <button *ngIf="resultDownloaded(); else refresh" mat-fab color="primary" aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
+  <ng-container *ngIf="loaded(); else loading">
+    <ng-container *ngIf="race()">
+      <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" [isResult]="true"></f2020-bid>
+    </ng-container>
+    <button *ngIf="resultDownloaded()" mat-fab color="primary" aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
       <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
     </button>
-    <ng-template #refresh>
-      <button mat-fab color="primary" aria-label="Hent resultat igen" (click)="loadResult()">
-        <fa-icon [icon]="refreshIcon" size="lg"></fa-icon>
-      </button>
-    </ng-template>
   </ng-container>
   <ng-container *ngIf="updating$ | async">
-    <ng-container *ngTemplateOutlet="loading"></ng-container> 
+    <ng-container *ngTemplateOutlet="loading"></ng-container>
   </ng-container>
 </div>
 <ng-template #loading>
