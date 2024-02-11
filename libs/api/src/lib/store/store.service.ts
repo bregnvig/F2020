@@ -1,5 +1,5 @@
 import { Signal, signal, WritableSignal } from '@angular/core';
-import { TypedObject } from '@f2020/tools';
+import { deepCompare, TypedObject } from '@f2020/tools';
 
 
 export abstract class Store<S extends object> {
@@ -10,11 +10,6 @@ export abstract class Store<S extends object> {
   protected constructor(initialState: S) {
 
     this._state = new Proxy({} as typeof this._state, {
-      set: (target, prop, value) => {
-        !target[prop] && (target[prop] = signal(undefined)); // Add new state if not already present
-        target[prop].set(value);
-        return undefined;
-      },
       get: (target, prop) => {
         !target[prop] && (target[prop] = signal(undefined)); // Add new state if not already present
         return target[prop];
@@ -33,8 +28,9 @@ export abstract class Store<S extends object> {
   ): void {
     const state = fn();
     TypedObject.entries(state).forEach(([key, value]) => {
-      this._state[key].set(value);
+      const prop = this._state[key];
+      const previousValue = prop();
+      deepCompare(previousValue, value) || prop.set(value);
     });
   }
-
 }

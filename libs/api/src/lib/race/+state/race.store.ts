@@ -40,22 +40,21 @@ export class RaceStore extends Store<RaceState> {
     private snackBar: MatSnackBar,
     private playerStore: PlayerStore) {
     super({ loaded: false });
+    this.loadYourBid();
     effect(() => {
       const player = this.playerStore.player();
       const unauthorized = this.playerStore.unauthorized();
       const race = this.racesStore.races()?.find(r => r.round === this.#round());
-      if (race !== this.race()) {
+      if (!unauthorized && race) {
+        const submitted = this.state.bid()?.submitted;
         const closed = race.close < DateTime.now();
         const season = this.seasonStore.season();
-        if (!unauthorized && race) {
-          (closed
-            ? this.service.getBids(season.id, race, player.uid)
-            : this.service.getParticipants(season.id, race)).subscribe({
-            next: bids => this.setState(() => ({ race, bids, loaded: true, error: undefined })),
-            error: error => this.setState(() => ({ error })),
-          });
-          // closed &&
-        }
+        ((closed || submitted)
+          ? this.service.getBids(season.id, race, player.uid)
+          : this.service.getParticipants(season.id, race)).subscribe({
+          next: bids => this.setState(() => ({ race, bids, loaded: true, error: undefined })),
+          error: error => this.setState(() => ({ error })),
+        });
       }
     }, { allowSignalWrites: true });
   }
@@ -80,7 +79,22 @@ export class RaceStore extends Store<RaceState> {
     return this.service.updateRace(this.seasonStore.season().id, this.#round(), { drivers });
   }
 
-  loadYourBid() {
+  updateBid(bid: Bid) {
+    if (bid && this.seasonStore.season() && this.playerStore.player()) {
+      return this.service.updateBid(this.seasonStore.season().id, this.#round(), this.playerStore.player(), bid);
+    }
+    return Promise.resolve();
+  }
+
+  submitBid(bid: Bid) {
+    return this.service.submitBid(bid, this.playerStore.player());
+  }
+
+  loadResult() {
+
+  }
+
+  private loadYourBid() {
     let s: Subscription;
     effect(() => {
       s?.unsubscribe();
@@ -96,36 +110,6 @@ export class RaceStore extends Store<RaceState> {
         error: error => this.setState(() => ({ error })),
       }));
     }, { allowSignalWrites: true });
-  }
-
-  updateBid(bid: Bid) {
-    if (bid && this.seasonStore.season() && this.playerStore.player()) {
-      return this.service.updateBid(this.seasonStore.season().id, this.#round(), this.playerStore.player(), bid);
-    }
-    return Promise.resolve();
-  }
-
-  loadBid(playerId: string) {
-    let s: Subscription;
-    effect(() => {
-      s?.unsubscribe();
-      const unauthorized = this.playerStore.unauthorized();
-      const race = this.race();
-      const season = this.seasonStore.season();
-      !unauthorized && race && (s = this.service.getBid(season.id, race.round, playerId).pipe(
-      ).subscribe({
-        next: bid => this.setState(() => ({ bid, error: undefined })),
-        error: error => this.setState(() => ({ error })),
-      }));
-    }, { allowSignalWrites: true });
-  }
-
-  submitBid(bid: Bid) {
-    return this.service.submitBid(bid, this.playerStore.player());
-  }
-
-  loadResult() {
-
   }
 
 }

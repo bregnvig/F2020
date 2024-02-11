@@ -1,9 +1,8 @@
 import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
-import { Component, computed, effect, Signal } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, computed, Signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
-import { RacesFacade, RaceStore } from '@f2020/api';
+import { RaceStore } from '@f2020/api';
 import { Bid, IRace } from '@f2020/data';
 import { LoadingComponent } from '@f2020/shared';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -20,19 +19,14 @@ import { DisplayBidComponent } from '../display-bid.component';
 })
 export class DisplayPlayerBidComponent {
 
-  bidControl = new FormControl({ value: null, disabled: true });
   bid: Signal<Partial<Bid> | undefined>;
   race: Signal<IRace | undefined>;
 
   constructor(
     store: RaceStore,
-    private facade: RacesFacade,
-    private route: ActivatedRoute) {
+    route: ActivatedRoute) {
     this.race = store.race;
-    this.bid = computed(() => store.bids().find(bid => bid.player.uid === this.route.snapshot.params.uid));
-    effect(() => {
-      this.bid() && this.bidControl.patchValue(this.bid());
-    });
+    this.bid = computed(() => store.bids()?.find(bid => bid.player.uid === route.snapshot.params.uid));
   }
 
 }

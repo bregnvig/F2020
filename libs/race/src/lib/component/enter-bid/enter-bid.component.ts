@@ -11,7 +11,7 @@ import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
-import { debounceTime, filter, tap } from 'rxjs/operators';
+import { debounceTime, filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filterEquals } from '@f2020/tools';
 
@@ -47,10 +47,8 @@ export class EnterBidComponent {
       debounceTime(3000),
       filter(bid => !bid?.submitted),
       filterEquals(),
-      tap(_ => console.log(_)),
     ));
     effect(() => this.store.updateBid(updatedBid()));
-    this.store.loadYourBid();
   }
 
   submitBid() {
