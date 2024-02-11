@@ -1,116 +1,14 @@
 import { inject } from '@angular/core';
 import { truthy } from '@f2020/tools';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { combineLatest, merge, of } from 'rxjs';
-import { catchError, concatMap, debounceTime, filter, first, map, switchMap, takeUntil, withLatestFrom } from 'rxjs/operators';
-import { PlayerStore } from '../../player';
-import { SeasonStore } from '../../season/+state';
+import { combineLatest, of } from 'rxjs';
+import { catchError, concatMap, debounceTime, first, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { TeamService } from '../../service';
 import { RacesService } from '../service/races.service';
 import { buildInterimResult, buildResult } from './../service/result-builder';
 import { RacesActions } from './races.actions';
 import { RacesFacade } from './races.facade';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { DriversStore } from '../../drivers';
-
-export const loadYourBid$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonStore),
-  playerStore = inject(PlayerStore),
-  service = inject(RacesService),
-) => {
-  const player$ = toObservable(playerStore.player).pipe(truthy());
-  const logoff$ = toObservable(playerStore.unauthorized).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.loadYourBid, RacesActions.loadYourBidFromLanding),
-    concatMap(() => combineLatest([
-      seasonFacade.season$,
-      facade.currentRace$,
-      player$,
-    ]).pipe(
-      filter(([season, race, player]) => !!race),
-      switchMap(([season, race, player]) => service.getBid(season.id, race.round, player.uid)),
-      map(bid => bid || {}),
-      map(bid => RacesActions.loadYourBidSuccess({ bid })),
-      catchError(error => of(RacesActions.loadYourBidFailure({ error }))),
-      takeUntil(merge(actions$.pipe(ofType(RacesActions.loadYourBid)), logoff$)),
-    )));
-
-}, { functional: true });
-
-export const loadBids$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonStore),
-  playerStore = inject(PlayerStore),
-  service = inject(RacesService),
-) => {
-  const player$ = toObservable(playerStore.player).pipe(truthy());
-  const logoff$ = toObservable(playerStore.unauthorized).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.loadBids),
-    concatMap(() => combineLatest([
-      seasonFacade.season$,
-      facade.selectedRace$,
-      player$,
-    ]).pipe(
-      debounceTime(200),
-      switchMap(([season, race, player]) => service.getBids(season.id, race, player.uid)),
-      map(bids => RacesActions.loadBidsSuccess({ bids })),
-      catchError(error => {
-        const permissionError = error.code === 'permission-denied';
-        return of(permissionError ? RacesActions.loadBidsSuccess({ bids: [] }) : RacesActions.loadBidsFailure({ error }));
-      }),
-      takeUntil(merge(actions$.pipe(ofType(RacesActions.loadBids)), logoff$)),
-    )));
-
-}, { functional: true });
-
-export const loadParticipants$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonStore),
-  service = inject(RacesService),
-  playerStore = inject(PlayerStore),
-) => {
-  const logoff$ = toObservable(playerStore.unauthorized).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.loadParticipants),
-    concatMap(() => combineLatest([
-      seasonFacade.season$,
-      facade.selectedRace$,
-    ]).pipe(
-      debounceTime(200),
-      switchMap(([season, race]) => service.getParticipants(season.id, race)),
-      map(participants => RacesActions.loadParticipantsSuccess({ participants })),
-      catchError(error => of(RacesActions.loadParticipantsFailure({ error }))),
-      takeUntil(merge(actions$.pipe(ofType(RacesActions.loadParticipants)), logoff$)),
-    )));
-
-}, { functional: true });
-
-export const loadBid$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  seasonFacade = inject(SeasonStore),
-  service = inject(RacesService),
-  playerStore = inject(PlayerStore),
-) => {
-  const logoff$ = toObservable(playerStore.unauthorized).pipe(truthy());
-  return actions$.pipe(
-    ofType(RacesActions.loadBid),
-    concatMap(({ uid }) => combineLatest([
-      seasonFacade.season$,
-      facade.selectedRace$,
-    ]).pipe(
-      debounceTime(200),
-      switchMap(([season, race]) => service.getBid(season.id, race.round, uid)),
-      map(bid => RacesActions.loadBidSuccess({ bid })),
-      catchError(error => of(RacesActions.loadBidFailure({ error }))),
-      takeUntil(merge(actions$.pipe(ofType(RacesActions.loadBid)), logoff$)))));
-
-}, { functional: true });
 
 export const loadResult$ = createEffect((
   actions$ = inject(Actions),
@@ -202,23 +100,4 @@ export const submitInterimResult$ = createEffect((
 
 }, { functional: true });
 
-export const loadLastYear$ = createEffect((
-  actions$ = inject(Actions),
-  facade = inject(RacesFacade),
-  service = inject(RacesService),
-) => {
-  return actions$.pipe(
-    ofType(RacesActions.loadLastYear),
-    withLatestFrom(facade.lastYear$),
-    concatMap(([_, lastYear]) => lastYear
-      ? of(RacesActions.loadLastYearSuccess({ result: lastYear }))
-      : facade.allRaces$.pipe(
-        map(races => races.find(r => r.state === 'open' || r.state === 'closed')),
-        filter(race => !!race),
-        switchMap(race => service.getLastYearResult(race.season, race.countryCode)),
-        map(result => RacesActions.loadLastYearSuccess({ result })),
-        first(),
-      )));
-
-}, { functional: true });
 

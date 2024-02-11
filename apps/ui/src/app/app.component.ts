@@ -43,6 +43,7 @@ export class AppComponent {
     private snackBar: MatSnackBar,
     private router: Router) {
     this.racesStore.loadRaces();
+    this.racesStore.loadYourBid();
     const messaging = getMessaging();
     getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
       currentToken => isDevMode() && console.log(currentToken),

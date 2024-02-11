@@ -1,22 +1,23 @@
-<mat-card *ngIf="lastYear$ | async as lastYear" class="max-w-3xl">
+<mat-card *ngIf="lastYear()" class="max-w-3xl">
   <mat-card-header>
     <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
     <mat-card-title>Sidste år</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <p>
-      Sidste år endte 
-        <a [routerLink]="['standings', lastYear.result.results[0].driver.driverId]">{{lastYear.result.results[0].driver.name}}</a>, 
-        <a [routerLink]="['standings', lastYear.result.results[1].driver.driverId]">{{lastYear.result.results[1].driver.name}}</a> og 
-        <a [routerLink]="['standings', lastYear.result.results[2].driver.driverId]">{{lastYear.result.results[2].driver.name}}</a> på podiet.
+      Sidste år endte
+      <a [routerLink]="['standings', lastYear().result.results[0].driver.driverId]">{{ lastYear().result.results[0].driver.name }}</a>,
+      <a [routerLink]="['standings', lastYear().result.results[1].driver.driverId]">{{ lastYear().result.results[1].driver.name }}</a> og
+      <a [routerLink]="['standings', lastYear().result.results[2].driver.driverId]">{{ lastYear().result.results[2].driver.name }}</a> på podiet.
     </p>
     <p>
-      <a [routerLink]="['standings', lastYear.qualify.results[0].driver.driverId]">{{lastYear.qualify.results[0].driver.name}}</a> fik pole position på {{lastYear.qualify.results[0].q3 | polePositionTime}}
+      <a [routerLink]="['standings', lastYear().qualify.results[0].driver.driverId]">{{ lastYear().qualify.results[0].driver.name }}</a> fik pole position
+      på {{ lastYear().qualify.results[0].q3 | polePositionTime }}
     </p>
   </mat-card-content>
   <mat-card-actions>
-      <a mat-button [routerLink]="['standings', 'last-year']" >
-        SE MERE
-      </a>
+    <a mat-button [routerLink]="['standings', 'last-year']">
+      SE MERE
+    </a>
   </mat-card-actions>
 </mat-card>

@@ -41,34 +41,15 @@ export const initialState: State = racesAdapter.getInitialState(<State>{
 const racesReducer = createReducer(
   initialState,
   on(
-    RacesActions.loadYourBidFailure,
-    RacesActions.loadBidsFailure,
-    RacesActions.loadParticipantsFailure,
-    RacesActions.loadBidFailure,
     RacesActions.loadResultFailure,
     RacesActions.loadInterimResultFailure,
-    RacesActions.updateYourBidFailure,
     RacesActions.submitResultFailure,
     RacesActions.submitInterimResultFailure,
-    RacesActions.loadLastYearFailure,
-    RacesActions.updateYourBidFailure,
     (state, { type, error }) => {
       console.error(type, error);
       return { ...state, error: error['message'] ?? error, updating: false, loaded: false };
     },
   ),
-  on(RacesActions.selectRace, (state, { round }) => ({
-      ...state,
-      selectedId: round,
-      bids: null,
-      bid: null,
-      yourBid: null,
-    }),
-  ),
-  on(RacesActions.loadYourBidSuccess, (state, { bid }) => ({ ...state, yourBid: bid })),
-  on(RacesActions.loadBidsSuccess, (state, { bids }) => ({ ...state, bids })),
-  on(RacesActions.loadParticipantsSuccess, (state, { participants }) => ({ ...state, participants })),
-  on(RacesActions.loadBidSuccess, (state, { bid }) => ({ ...state, bid })),
   on(RacesActions.loadResult, (state) => ({ ...state, loaded: false })),
   on(RacesActions.loadResultSuccess, (state, { result }) => ({ ...state, result, loaded: true })),
   on(RacesActions.loadInterimResultSuccess, (state, { result }) => ({ ...state, interimResult: result, loaded: true })),
@@ -76,8 +57,6 @@ const racesReducer = createReducer(
   on(RacesActions.submitResultSuccess, (state) => ({ ...state, updating: false })),
   on(RacesActions.submitInterimResult, (state) => ({ ...state, updating: true })),
   on(RacesActions.submitInterimResultSuccess, (state) => ({ ...state, updating: false })),
-  on(RacesActions.loadLastYear, state => ({ ...state, lastYear: null })),
-  on(RacesActions.loadLastYearSuccess, (state, { result }) => ({ ...state, lastYear: result })),
 );
 
 export function reducer(state: State | undefined, action: Action) {

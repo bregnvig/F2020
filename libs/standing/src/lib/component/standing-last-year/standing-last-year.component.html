@@ -1,17 +1,19 @@
-<ng-container *ngIf="round$ | async as round; else loading">
+<ng-container *ngIf="round(); else loading">
   <mat-toolbar color="primary">
-    <img class="avatar" [src]="round.result.countryCode | flagURL" alt="Løbs flag">
-    <span class="text-ellipsis overflow-hidden">Sidste år - {{round.result.name}}</span>
+    <img class="avatar" [src]="round().result.countryCode | flagURL" alt="Løbs flag">
+    <span class="text-ellipsis overflow-hidden">Sidste år - {{ round().result.name }}</span>
   </mat-toolbar>
   <div class="max-w-3xl mx-auto">
     <mat-tab-group>
       <mat-tab label="Kvalifikation">
-        <f2020-last-year-qualify [qualifyResult]="round.qualify"></f2020-last-year-qualify>
+        <f2020-last-year-qualify [qualifyResult]="round().qualify"></f2020-last-year-qualify>
       </mat-tab>
       <mat-tab label="Resultat">
-        <f2020-last-year-result [raceResult]="round.result"></f2020-last-year-result>
+        <f2020-last-year-result [raceResult]="round().result"></f2020-last-year-result>
       </mat-tab>
     </mat-tab-group>
   </div>
 </ng-container>
-<ng-template #loading><sha-loading></sha-loading></ng-template>
+<ng-template #loading>
+  <sha-loading></sha-loading>
+</ng-template>
