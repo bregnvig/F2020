@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, of, switchMap } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import { buildResult } from '../service/result-builder';
+import { buildInterimResult, buildResult } from '../service/result-builder';
 import { DriversStore } from '../../drivers';
 import { TeamService } from '../../service';
 
@@ -17,6 +17,7 @@ interface RaceState {
   race?: IRace;
   bids?: Participant[] | Bid[];
   bid?: Bid;
+  interimResult?: Partial<Bid>;
   result?: Bid;
   loaded: boolean; // has the Races list been loaded
   error?: string | null; // last none error (if any)
@@ -116,6 +117,29 @@ export class RaceStore extends Store<RaceState> {
   }
 
   submitResult(result: Bid) {
+    return this.service.submitResult(this.#round(), result);
+  }
+
+  loadInterimResult() {
+    effect(() => {
+      const race = this.race();
+      if (race) {
+        const offset = this.racesStore.races().filter(r => r.round < race.round && r.state === 'cancelled').length;
+        combineLatest([
+          this.service.getQualify(race.season, race.round - offset),
+          of(race.selectedDriver),
+          of(race.selectedTeam),
+        ]).pipe(
+          map(([qualify, selectedDriver, selectedTeam]) => {
+            return buildInterimResult(qualify, selectedDriver, selectedTeam);
+          }),
+          first(),
+        ).subscribe(interimResult => this.setState(() => ({ interimResult })));
+      }
+    });
+  }
+
+  submitInterimResult(result: Bid) {
     return this.service.submitResult(this.#round(), result);
   }
 }

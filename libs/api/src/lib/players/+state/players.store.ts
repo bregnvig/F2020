@@ -20,7 +20,7 @@ export class PlayersStore extends Store<PlayersState> {
 
   players = this.state.players;
   loaded = this.state.loaded;
-  player: Signal<Player | undefined> = computed(() => this.state.players().find(p => p.uid === this.state.selectedId()));
+  player: Signal<Player | undefined> = computed(() => this.state.players()?.find(p => p.uid === this.state.selectedId()));
 
   constructor(private service: PlayersApiService) {
     super(initialState);

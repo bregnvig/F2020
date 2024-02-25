@@ -14,6 +14,8 @@ export abstract class Store<S extends object> {
         !target[prop] && (target[prop] = signal(undefined)); // Add new state if not already present
         return target[prop];
       },
+      apply(target: { [P in keyof S]: WritableSignal<S[P]> }, thisArg: any, argArray: any[]): any {
+      },
     });
     this.setState(() => initialState);
   }

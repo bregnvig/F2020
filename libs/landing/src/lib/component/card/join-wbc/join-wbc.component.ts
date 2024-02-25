@@ -49,7 +49,7 @@ export class JoinWbcComponent implements OnInit {
     const uid = this.playerStore.player().uid;
     this.canJoin$ = combineLatest([
       this.latestWBCJoinDate$,
-      this.seasonStore.season$,
+      this.seasonStore.season$.pipe(truthy()),
     ]).pipe(
       map(([lastestJoinDate, { wbc }]) => (wbc.participants || []).includes(uid) === false && lastestJoinDate > DateTime.local()),
       tap(canJoin => this.isHidden = !canJoin),
