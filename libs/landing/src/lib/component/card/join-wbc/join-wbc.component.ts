@@ -37,7 +37,7 @@ export class JoinWbcComponent {
     private seasonStore: SeasonStore,
     private snackBar: MatSnackBar) {
     this.loading = this.playerStore.updatingWBC;
-    this.latestWBCJoinDate = computed(() => this.seasonStore.season().wbc?.latestWBCJoinDate);
+    this.latestWBCJoinDate = computed(() => this.seasonStore.season()?.wbc?.latestWBCJoinDate);
 
     this.canJoin = computed(() => {
       const wbc = this.seasonStore.season()?.wbc;
