@@ -1,4 +1,4 @@
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { DisplayPlayerBidComponent, DisplayResultComponent } from './component/display-bid';
 import { EditRaceComponent } from './component/edit-race/edit-race.component';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
@@ -9,7 +9,7 @@ import { RacesComponent } from './component/races/races.component';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
 
-const routes: Routes = [
+export const RaceRouting: Routes = [
   {
     path: '',
     component: RacesComponent,
@@ -50,8 +50,6 @@ const routes: Routes = [
         path: 'drivers',
         component: RaceDriversComponent,
       },
-    ]
-  }
+    ],
+  },
 ];
-
-export const RaceRoutingModule = RouterModule.forChild(routes);

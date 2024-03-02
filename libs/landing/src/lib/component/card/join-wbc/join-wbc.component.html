@@ -1,5 +1,5 @@
-<ng-container *ngIf="canJoin$ | async">
-  <mat-card *ngIf="latestWBCJoinDate$ | async as latestWBCJoinDate">
+<ng-container *ngIf="canJoin()">
+  <mat-card *ngIf="latestWBCJoinDate">
     <mat-card-header>
       <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
       <mat-card-title>Deltage i WBC</mat-card-title>
@@ -7,7 +7,7 @@
     <mat-card-content>
       <p>Har du lyst til at deltag i det samlet mesterskab?</p>
       <p>Så tilmeld dig <strong>WBC!</strong> Det koster 100,00 kr</p>
-      <p>Tilmeldingen lukker om {{ latestWBCJoinDate | relativeToNow }}</p>
+      <p>Tilmeldingen lukker om {{ latestWBCJoinDate() | relativeToNow }}</p>
     </mat-card-content>
     <mat-card-actions>
       <button mat-button [disabled]="loading()" (click)="joinWBC()">Deltag</button>

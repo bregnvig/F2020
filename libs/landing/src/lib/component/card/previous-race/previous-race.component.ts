@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostBinding, Signal } from '@angular/core';
 import { PlayerStore, SeasonStore } from '@f2020/api';
 import { WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
-import { Observable } from 'rxjs';
-import { debounceTime, filter, map, tap } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -17,32 +15,24 @@ import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
   standalone: true,
   imports: [NgIf, MatCardModule, FontAwesomeModule, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
 })
-export class PreviousRaceComponent implements OnInit {
+export class PreviousRaceComponent {
 
   @HostBinding('hidden') isHidden = true;
-  wbcResult$: Observable<WBCResult>;
-  title$: Observable<string>;
+  wbcResult: Signal<WBCResult>;
+  title: Signal<string>;
   icon = icon.farTrophy;
 
   constructor(private store: SeasonStore, private playerStore: PlayerStore) {
-  }
+    this.wbcResult = computed(() => this.store.season()?.wbc?.results?.at(-1));
+    effect(() => this.isHidden = !this.wbcResult());
 
-  ngOnInit(): void {
-    this.wbcResult$ = this.store.season$.pipe(
-      filter(season => !!(season && season.wbc.results?.length)),
-      map(season => season.wbc.results[season.wbc.results.length - 1]),
-      filter(result => !!result.players?.length),
-      debounceTime(0),
-      tap(() => this.isHidden = false),
-    );
-    this.title$ = this.wbcResult$.pipe(
-      map((wbcResult => {
-          const index = wbcResult.players.findIndex(p => p.player.uid === this.playerStore.player().uid);
-          if (index >= 0 && index <= 2) {
-            return `Tillykke med din ${index + 1}. plads!`;
-          }
-          return `Resultat for ${wbcResult.raceName}`;
-        }),
-      ));
+    this.title = computed(() => {
+      const index = this.wbcResult()?.players.findIndex(p => p.player.uid === this.playerStore.player().uid);
+      if (index >= 0 && index <= 2) {
+        return `Tillykke med din ${index + 1}. plads!`;
+      }
+      return `Resultat for ${this.wbcResult()?.raceName}`;
+
+    });
   }
 }

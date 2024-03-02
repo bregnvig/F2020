@@ -42,7 +42,7 @@ export class TeamsListComponent {
         ...team,
         drivers: [...team.drivers, driver],
       }) as ITeam),
-      switchMap(team => this.service.updateTeam(team).pipe(map(() => team.drivers[team.drivers.length - 1]))),
+      switchMap(team => this.service.updateTeam(team).then(() => team.drivers[team.drivers.length - 1])),
       first(),
     ).subscribe(driver => this.snackBar.open(`${driver} tilføjet til ${team.name}`, undefined, { duration: 1000 }));
   }
@@ -52,9 +52,7 @@ export class TeamsListComponent {
       ...team,
       drivers: team.drivers.filter(existing => existing !== driver),
     };
-    this.service.updateTeam(payload).pipe(
-      first(),
-    ).subscribe(() => this.snackBar.open(`${driver} fjernet fra ${team.name}`, undefined, { duration: 1000 }));
+    this.service.updateTeam(payload).then(() => this.snackBar.open(`${driver} fjernet fra ${team.name}`, undefined, { duration: 1000 }));
 
   }
 }

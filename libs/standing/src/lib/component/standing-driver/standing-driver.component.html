@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-  <span>{{driverId$ | async | driverName}}</span>
+  <span>{{ driverId$ | async | driverName }}</span>
 </mat-toolbar>
 <sha-card-page>
   <ng-container *ngIf="currentSeasonResult$ | async as result; else loading">

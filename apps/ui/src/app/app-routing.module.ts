@@ -71,7 +71,7 @@ export const routes: Routes = [
       },
       {
         path: 'race',
-        loadChildren: () => import('@f2020/race').then(m => m.RaceModule),
+        loadChildren: () => import('@f2020/race').then(m => m.RaceRouting),
       },
       {
         path: 'wbc',

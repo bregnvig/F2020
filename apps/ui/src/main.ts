@@ -15,12 +15,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { RaceApiModule } from '@f2020/api';
 import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { initializeApp } from 'firebase/app';
 import 'firebase/auth';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
@@ -29,7 +25,6 @@ import { connectFirestoreEmulator } from 'firebase/firestore';
 import { Settings } from 'luxon';
 import { routes } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
-import { metaReducers, reducers } from './app/reducers';
 import { environment } from './environments/environment';
 import { HttpClientModule } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
@@ -76,16 +71,7 @@ bootstrapApplication(AppComponent, {
         }
         return functions;
       }),
-      provideMessaging(() => getMessaging()), StoreModule.forRoot(reducers, {
-        metaReducers,
-        runtimeChecks: {
-          strictStateImmutability: true,
-          strictActionImmutability: true,
-        },
-      }),
-      EffectsModule.forRoot([]),
-      RaceApiModule,
-      StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })),
+      provideMessaging(() => getMessaging())),
     {
       provide: LOCALE_ID,
       useValue: 'da',

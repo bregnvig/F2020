@@ -1,24 +1,24 @@
-<mat-card *ngIf="wbcResult$ | async as wbcResult">
+<mat-card *ngIf="wbcResult()">
   <mat-card-header>
     <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
-    <mat-card-title>{{title$ | async}}</mat-card-title>
+    <mat-card-title>{{ title() }}</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <p class="flex flex-row items-center">
-      <img height="40" width="40" [ngSrc]="wbcResult.players[0].player.photoURL" class="avatar" [alt]="wbcResult.players[0].player.displayName">
-      <span>Tillykke til {{wbcResult.players[0].player.displayName}}</span>
+      <img height="40" width="40" [ngSrc]="wbcResult().players[0].player.photoURL" class="avatar" [alt]="wbcResult().players[0].player.displayName">
+      <span>Tillykke til {{ wbcResult().players[0].player.displayName }}</span>
     </p>
-    <p *ngIf="wbcResult.players[1] as second" class="flex flex-row items-center">
+    <p *ngIf="wbcResult().players[1] as second" class="flex flex-row items-center">
       <img height="40" width="40" [ngSrc]="second.player.photoURL" class="avatar" [alt]="second.player.displayName">
-      <span>{{second.player.displayName}} kom på anden pladsen.</span>
+      <span>{{ second.player.displayName }} kom på anden pladsen.</span>
     </p>
-    <p *ngIf="wbcResult.players[2] as third" class="flex flex-row items-center">
+    <p *ngIf="wbcResult().players[2] as third" class="flex flex-row items-center">
       <img height="40" width="40" [ngSrc]="third.player.photoURL" class="avatar" [alt]="third.player.displayName">
-      <span>{{third.player.displayName}} fik sidste plads på podiet.</span>
+      <span>{{ third.player.displayName }} fik sidste plads på podiet.</span>
     </p>
   </mat-card-content>
   <mat-card-actions>
-    <a mat-button [routerLink]="['race', wbcResult.round]">
+    <a mat-button [routerLink]="['race', wbcResult().round]">
       SE MERE
     </a>
   </mat-card-actions>

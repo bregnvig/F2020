@@ -5,6 +5,7 @@ import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { first, map, shareReplay, switchMap } from 'rxjs/operators';
 import { SeasonStore } from '@f2020/api';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class TeamService {
   teams$: Observable<ITeam[]>;
 
   constructor(private store: SeasonStore, private afs: Firestore) {
-    this.teams$ = store.season$.pipe(
+    this.teams$ = toObservable(store.season).pipe(
       truthy(),
       first(),
       switchMap(season => collectionData(collection(afs, `seasons/${season.id}/teams`).withConverter(converter.timestamp<ITeam>()))),
@@ -28,9 +29,7 @@ export class TeamService {
     );
   }
 
-  updateTeam(team: ITeam): Observable<void> {
-    return this.store.season$.pipe(
-      switchMap(season => setDoc(doc(this.afs, `seasons/${season.id}/teams/${team.constructorId}`), team)),
-    );
+  updateTeam(team: ITeam): Promise<void> {
+    return setDoc(doc(this.afs, `seasons/${this.store.season().id}/teams/${team.constructorId}`), team);
   }
 }

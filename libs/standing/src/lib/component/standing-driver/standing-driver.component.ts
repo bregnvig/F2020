@@ -15,6 +15,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { NumberCardComponent } from './number-card/number-card.component';
 import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +58,7 @@ export class StandingDriverComponent implements OnInit {
 
   ngOnInit(): void {
     this.driverId$ = this.route.params.pipe(map(params => params.driverId));
-    const currentYear$ = this.store.season$.pipe(
+    const currentYear$ = toObservable(this.store.season).pipe(
       map(season => parseInt(season.id, 10)),
       shareLatest(),
       untilDestroyed(this),

@@ -2,8 +2,7 @@ import { Store } from '../../store';
 import { ISeason } from '@f2020/data';
 import { SeasonService } from '../service/season.service';
 import { Injectable } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 
 export interface SeasonState {
   season?: ISeason;
@@ -17,7 +16,6 @@ export interface SeasonState {
 export class SeasonStore extends Store<SeasonState> {
 
   readonly season = this.state.season;
-  readonly season$: Observable<ISeason> = toObservable(this.state.season);
   readonly error = this.state.error;
   readonly loaded = this.state.loaded;
 

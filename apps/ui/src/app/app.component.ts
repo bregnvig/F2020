@@ -1,4 +1,4 @@
-import { Component, effect, isDevMode, untracked } from '@angular/core';
+import { Component, effect, isDevMode } from '@angular/core';
 import { getToken } from '@angular/fire/messaging';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { DriversStore, PlayerStore, RacesFacade, RacesStore, VersionService } from '@f2020/api';
+import { DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, switchMap } from 'rxjs/operators';
@@ -36,7 +36,6 @@ export class AppComponent {
   constructor(
     private playerStore: PlayerStore,
     private driverStore: DriversStore,
-    private racesFacade: RacesFacade,
     private racesStore: RacesStore,
     private updates: SwUpdate,
     private versionService: VersionService,
@@ -55,7 +54,7 @@ export class AppComponent {
     this.checkForVersionUpdate();
     effect(() => {
       if (this.playerStore.authorized()) {
-        untracked(this.driverStore.loadDrivers.bind(this.driverStore));
+        this.driverStore.loadDrivers();
         this.checkForOutdatedVersion();
         const player = this.playerStore.player();
         if (player.roles && player.roles.includes('player')) {

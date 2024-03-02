@@ -1,15 +1,15 @@
 <mat-toolbar color="primary">
-  <ng-container *ngIf="result$ | async as result">
-    <img class="avatar" [src]="result.countryCode | flagURL" alt="Profil billede">
-    <span>{{result.raceName}}</span>
+  <ng-container *ngIf="result()">
+    <img class="avatar" [ngSrc]="result().countryCode | flagURL" height="44" width="44" alt="Flag">
+    <span>{{ result().raceName }}</span>
   </ng-container>
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
-  <mat-action-list *ngIf="result$ | async as result; else loading">
-    <mat-list-item *ngFor="let player of result.players" [routerLink]="['../..', 'player', player.player.uid]">
-      <img matListItemAvatar [src]="player.player.photoURL" [alt]="player.player.displayName">
-      <h3 matListItemTitle>{{player.player.displayName}}</h3>
-      <p matListItemLine>{{player.points}} points</p>
+  <mat-action-list *ngIf="result(); else loading">
+    <mat-list-item *ngFor="let player of result().players" [routerLink]="['../..', 'player', player.player.uid]">
+      <img matListItemAvatar [ngSrc]="player.player.photoURL" height="44" width="44" [alt]="player.player.displayName">
+      <h3 matListItemTitle>{{ player.player.displayName }}</h3>
+      <p matListItemLine>{{ player.points }} points</p>
     </mat-list-item>
   </mat-action-list>
 </div>

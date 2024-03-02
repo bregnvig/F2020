@@ -1,1 +1,1 @@
-export * from "./lib/race.module";
+export * from './lib/race.routing';

@@ -33,6 +33,7 @@ export class RaceStore extends Store<RaceState> {
   readonly loaded = computed(() => !!this.state.race());
   readonly error = this.state.error;
   readonly bid = computed(() => this.bids()?.find(bid => bid.player.uid === this.playerStore.player()?.uid));
+  readonly interimResult = this.state.interimResult;
 
   #round = signal<number | undefined>(undefined);
 
