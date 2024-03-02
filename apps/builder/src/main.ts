@@ -1,10 +1,8 @@
-import { buildDrivers } from "./app/drivers";
-import { buildPreviousRaceResult } from "./app/previous-year-race-result";
-import { buildNewSeason } from "./app/season";
-import { assignTeamsToSeason, getTeams, writeTeams } from "./app/teams";
-import { environment } from "./environments/environment";
-
-
+import { buildDrivers } from './app/drivers';
+import { buildPreviousRaceResult } from './app/previous-year-race-result';
+import { buildNewSeason } from './app/season';
+import { assignTeamsToSeason, getTeams, writeTeams } from './app/teams';
+import { environment } from './environment/environment';
 
 
 const seasonId = parseInt(environment.season);
@@ -22,7 +20,7 @@ getTeams(seasonId - 1)
 
 buildNewSeason(environment.season)
   .then(() => assignTeamsToSeason(seasonId))
-  .then(_ => console.log('Completed', _))
+  .then(_ => console.log('Completed'))
   .catch(error => console.error('Completed with errors', error));
 
 // Bare skriv de først ti ud

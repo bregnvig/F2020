@@ -65,3 +65,4 @@ saved-data-backup
 **/.firebase/*
 *.log
 
+/apps/builder/src/environment/*

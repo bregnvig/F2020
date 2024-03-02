@@ -11,7 +11,7 @@ const mustBeAuthorized = () => {
 
   return facade.unauthorized$.pipe(
     filter(unauthorized => !isNullish(unauthorized)),
-    map(unauthorized => unauthorized ? router.navigate(['login']).then(() => false) : true)
+    map(unauthorized => unauthorized ? router.navigate(['login']).then(() => false) : true),
   );
 
 };
@@ -22,12 +22,11 @@ const seasonLoader = (route: ActivatedRouteSnapshot) => {
 };
 
 
-
 const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '2023'
+    redirectTo: '2024',
   },
   {
     path: 'login',
@@ -80,9 +79,9 @@ const routes: Routes = [
       {
         path: 'standings',
         loadChildren: () => import('@f2020/standing').then(m => m.StandingModule),
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 export const AppRoutingModule = RouterModule.forRoot(routes);
