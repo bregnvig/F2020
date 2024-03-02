@@ -54,7 +54,6 @@ functions/src/lib/model
 
 .angular
 ui-debug.log
-ui-debug.log
 saved-data
 saved-data-backup
 
@@ -65,5 +64,6 @@ saved-data-backup
 **/.firebase/*
 *.log
 
+/apps/builder/src/environment/*
 
 .nx/cache
