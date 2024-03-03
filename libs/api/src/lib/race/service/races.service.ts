@@ -89,7 +89,7 @@ export class RacesService {
 
   getPitStops(seasonId: string | number, round: number, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     return this.ergastService.get<IPitStop[]>(`${seasonId}/${round}/pitstops.json`, ergastData => {
-      const pitStops = ergastData.MRData.RaceTable.Races[0].PitStops;
+      const pitStops = ergastData.MRData.RaceTable.Races[0]?.PitStops ?? [];
       return mapper.pitStops(pitStops, drivers, teams);
     });
   }
