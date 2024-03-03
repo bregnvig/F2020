@@ -6,25 +6,15 @@ export const environment = {
   production: false,
   useEmulator: false,
   firebaseConfig: {
-    apiKey: "AIzaSyCY1hzs-V5b4f4Zx3yBzBAiawiqr4JaSjQ",
-    authDomain: "f1-serverless.firebaseapp.com",
-    databaseURL: "https://f1-serverless.firebaseio.com",
-    projectId: "f1-serverless",
-    storageBucket: "f1-serverless.appspot.com",
-    messagingSenderId: "657968084413",
-    appId: "1:657968084413:web:9a4fa397037ae453df4ed4",
-    measurementId: "G-Q2XDV9KH10",
-    vapidKey: 'BOFITR58fWVZiIaO3a_3FKmy6hB-huDUlT7MHEU1j1GamNMzBEIhom6sSEYtji8lFoLBfDbKWT_cLpH4A2HNSEQ'
+    apiKey: 'AIzaSyCY1hzs-V5b4f4Zx3yBzBAiawiqr4JaSjQ',
+    authDomain: 'f1-serverless.firebaseapp.com',
+    databaseURL: 'https://f1-serverless.firebaseio.com',
+    projectId: 'f1-serverless',
+    storageBucket: 'f1-serverless.appspot.com',
+    messagingSenderId: '657968084413',
+    appId: '1:657968084413:web:9a4fa397037ae453df4ed4',
+    measurementId: 'G-Q2XDV9KH10',
+    vapidKey: 'BOFITR58fWVZiIaO3a_3FKmy6hB-huDUlT7MHEU1j1GamNMzBEIhom6sSEYtji8lFoLBfDbKWT_cLpH4A2HNSEQ',
   },
-  initialBid: {}
+  initialBid: {},
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-import 'zone.js/dist/zone-error'; // Included with Angular CLI.
-
