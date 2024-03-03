@@ -1,5 +1,5 @@
-<ng-container *ngIf="race(); else loading">
-  <ng-container *ngIf="teams(); else loading">
+@if (race()) {
+  @if (teams()) {
     <mat-toolbar color="primary">
       <span class="flex-auto">Bud - {{ race.name }}</span>
       <button mat-icon-button routerLink="../edit">
@@ -7,12 +7,15 @@
       </button>
     </mat-toolbar>
     <f2020-bid [formControl]="bidControl" [race]="race()" [teams]="teams()"></f2020-bid>
-    <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid" *ngIf="bidControl.enabled && isOpen()"
-            (click)="submitBid()">
-      <fa-icon [icon]="sendIcon" size="lg"></fa-icon>
-    </button>
-  </ng-container>
-</ng-container>
-<ng-template #loading>
+    @if (bidControl.enabled && isOpen()) {
+      <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid"
+        (click)="submitBid()">
+        <fa-icon [icon]="sendIcon" size="lg"></fa-icon>
+      </button>
+    }
+  } @else {
+    <sha-loading></sha-loading>
+  }
+} @else {
   <sha-loading></sha-loading>
-</ng-template>
+}

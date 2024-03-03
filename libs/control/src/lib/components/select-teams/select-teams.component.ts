@@ -5,7 +5,7 @@ import { TeamNamePipe } from '@f2020/shared';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { SelectTeamComponent } from '../select-team/select-team.component';
-import { NgFor } from '@angular/common';
+
 
 type LabelFn = (index: number) => string;
 
@@ -27,16 +27,18 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
   selector: 'f2020-select-teams',
   template: `
     <div [formGroup]="fg" class="flex flex-col">
-      <ng-container formArrayName="teams" *ngFor="let _ of teamsArray.controls; index as i">
-        <f2020-select-team
-          [teams]="teams"
-          [label]="labelFn(i + 1)"
-          [error]="errorMessage(i)"
-          [formControlName]="i">
-        </f2020-select-team>
-      </ng-container>
+      @for (_ of teamsArray.controls; track _; let i = $index) {
+        <ng-container formArrayName="teams">
+          <f2020-select-team
+            [teams]="teams"
+            [label]="labelFn(i + 1)"
+            [error]="errorMessage(i)"
+            [formControlName]="i">
+          </f2020-select-team>
+        </ng-container>
+      }
     </div>
-  `,
+    `,
   styleUrls: ['./select-teams.component.scss'],
   providers: [
     TeamNamePipe,
@@ -54,9 +56,8 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgFor,
-    SelectTeamComponent,
-  ],
+    SelectTeamComponent
+],
 })
 export class SelectTeamsComponent extends AbstractControlComponent<string[]> implements OnInit {
 

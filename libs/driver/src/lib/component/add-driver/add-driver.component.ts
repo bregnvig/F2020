@@ -5,7 +5,7 @@ import { map, startWith } from 'rxjs/operators';
 import { DriverNamePipe } from '../../pipe/driver-name.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,7 +16,7 @@ import { DriversStore } from '@f2020/api';
   templateUrl: './add-driver.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, NgFor, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe],
 })
 export class AddDriverComponent implements OnInit {
 

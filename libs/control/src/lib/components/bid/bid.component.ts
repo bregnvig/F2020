@@ -13,7 +13,7 @@ import { SelectedTeamComponent } from '../selected-team/selected-team.component'
 import { SelectedDriverComponent } from '../selected-driver/selected-driver.component';
 import { SelectDriversComponent } from '../select-drivers/select-drivers.component';
 import { DriverCodesComponent } from '../driver-codes/driver-codes.component';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CardPageComponent } from '@f2020/shared';
 
@@ -34,7 +34,7 @@ import { CardPageComponent } from '@f2020/shared';
     },
   ],
   standalone: true,
-  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, NgIf, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, NgFor, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
+  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
 })
 export class BidComponent extends AbstractControlComponent<Bid> implements OnInit {
 

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -19,7 +19,7 @@ import { first, map, switchMap } from 'rxjs';
   styleUrls: ['./teams-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, CardPageComponent, NgIf, MatListModule, NgFor, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
+  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
   providers: [DriversStore],
 })
 export class TeamsListComponent {

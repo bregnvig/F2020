@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { RaceStore, TeamService } from '@f2020/api';
 import { Bid, IRace, ITeam } from '@f2020/data';
 
-import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -22,7 +22,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './submit-result.component.html',
   styleUrls: ['./submit-result.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, NgIf, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
+  imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
 })
 export class SubmitResultComponent {
 

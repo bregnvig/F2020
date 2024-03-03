@@ -3,28 +3,33 @@
 </mat-toolbar>
 <sha-card-page>
 
-  <mat-list *ngIf="teams$ | async as teams; else loading">
-    <ng-container *ngFor="let team of teams; index as i; last as last">
-      <h2 matSubheader>{{team.name}}</h2>
-      <mat-list-item *ngFor="let driverId of team.drivers">
-        <p matListItemTitle>{{driverId | driverName}}</p>
-        <p matListItemMeta>
-          <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
-            <fa-icon [icon]="icon.farTrash"></fa-icon>
-          </button>
-        </p>
-      </mat-list-item>
-      <mat-list-item *shaHasRole="'admin'">
-        <p matListItemMeta>
-          <button mat-icon-button (click)="addDriver(team)">
-            <fa-icon [icon]="icon.farPlus"></fa-icon>
-          </button>
-        </p>
-      </mat-list-item>
-      <mat-divider *ngIf="!last"></mat-divider>
-    </ng-container>
-  </mat-list>
+  @if (teams$ | async; as teams) {
+    <mat-list>
+      @for (team of teams; track team; let i = $index; let last = $last) {
+        <h2 matSubheader>{{ team.name }}</h2>
+        @for (driverId of team.drivers; track driverId) {
+          <mat-list-item>
+            <p matListItemTitle>{{ driverId | driverName }}</p>
+            <p matListItemMeta>
+              <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
+                <fa-icon [icon]="icon.farTrash"></fa-icon>
+              </button>
+            </p>
+          </mat-list-item>
+        }
+        <mat-list-item *shaHasRole="'admin'">
+          <p matListItemMeta>
+            <button mat-icon-button (click)="addDriver(team)">
+              <fa-icon [icon]="icon.farPlus"></fa-icon>
+            </button>
+          </p>
+        </mat-list-item>
+        @if (!last) {
+          <mat-divider></mat-divider>
+        }
+      }
+    </mat-list>
+  } @else {
+    <sha-loading></sha-loading>
+  }
 </sha-card-page>
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>

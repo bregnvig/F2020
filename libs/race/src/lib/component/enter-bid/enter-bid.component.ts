@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,7 +20,7 @@ import { filterEquals } from '@f2020/tools';
   templateUrl: './enter-bid.component.html',
   styleUrls: ['./enter-bid.component.scss'],
   standalone: true,
-  imports: [NgIf, MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe],
+  imports: [MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe],
 })
 export class EnterBidComponent {
 

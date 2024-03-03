@@ -1,7 +1,9 @@
 <mat-list>
-  <mat-list-item *ngFor="let result of qualifyResults">
-    <h3 matListItemTitle>{{result.name}}</h3>
-    <span matListItemLine><f2020-qualifying-times [qualifying]="result.results[0]"></f2020-qualifying-times></span>
-    <span class="focus-meta" matListItemMeta>{{result.results[0].position}}</span>
-  </mat-list-item>
+  @for (result of qualifyResults; track result) {
+    <mat-list-item>
+      <h3 matListItemTitle>{{result.name}}</h3>
+      <span matListItemLine><f2020-qualifying-times [qualifying]="result.results[0]"></f2020-qualifying-times></span>
+      <span class="focus-meta" matListItemMeta>{{result.results[0].position}}</span>
+    </mat-list-item>
+  }
 </mat-list>

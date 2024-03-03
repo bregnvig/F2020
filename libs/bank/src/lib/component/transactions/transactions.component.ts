@@ -6,7 +6,7 @@ import { AccountService } from '../../service';
 import { DateTimePipe } from '@f2020/shared';
 import { MatListModule } from '@angular/material/list';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { NgIf, NgFor, AsyncPipe, CurrencyPipe } from '@angular/common';
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { LoadingComponent } from '@f2020/shared';
 
 @Component({
@@ -14,7 +14,7 @@ import { LoadingComponent } from '@f2020/shared';
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss'],
   standalone: true,
-  imports: [NgIf, InfiniteScrollModule, MatListModule, NgFor, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
+  imports: [InfiniteScrollModule, MatListModule, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
 })
 export class TransactionsComponent {
 

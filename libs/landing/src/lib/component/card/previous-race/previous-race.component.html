@@ -1,25 +1,31 @@
-<mat-card *ngIf="wbcResult()">
-  <mat-card-header>
-    <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
-    <mat-card-title>{{ title() }}</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <p class="flex flex-row items-center">
-      <img height="40" width="40" [ngSrc]="wbcResult().players[0].player.photoURL" class="avatar" [alt]="wbcResult().players[0].player.displayName">
-      <span>Tillykke til {{ wbcResult().players[0].player.displayName }}</span>
-    </p>
-    <p *ngIf="wbcResult().players[1] as second" class="flex flex-row items-center">
-      <img height="40" width="40" [ngSrc]="second.player.photoURL" class="avatar" [alt]="second.player.displayName">
-      <span>{{ second.player.displayName }} kom på anden pladsen.</span>
-    </p>
-    <p *ngIf="wbcResult().players[2] as third" class="flex flex-row items-center">
-      <img height="40" width="40" [ngSrc]="third.player.photoURL" class="avatar" [alt]="third.player.displayName">
-      <span>{{ third.player.displayName }} fik sidste plads på podiet.</span>
-    </p>
-  </mat-card-content>
-  <mat-card-actions>
-    <a mat-button [routerLink]="['race', wbcResult().round]">
-      SE MERE
-    </a>
-  </mat-card-actions>
-</mat-card>
+@if (wbcResult()) {
+  <mat-card>
+    <mat-card-header>
+      <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
+      <mat-card-title>{{ title() }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="flex flex-row items-center">
+        <img height="40" width="40" [ngSrc]="wbcResult().players[0].player.photoURL" class="avatar" [alt]="wbcResult().players[0].player.displayName">
+        <span>Tillykke til {{ wbcResult().players[0].player.displayName }}</span>
+      </p>
+      @if (wbcResult().players[1]; as second) {
+        <p class="flex flex-row items-center">
+          <img height="40" width="40" [ngSrc]="second.player.photoURL" class="avatar" [alt]="second.player.displayName">
+          <span>{{ second.player.displayName }} kom på anden pladsen.</span>
+        </p>
+      }
+      @if (wbcResult().players[2]; as third) {
+        <p class="flex flex-row items-center">
+          <img height="40" width="40" [ngSrc]="third.player.photoURL" class="avatar" [alt]="third.player.displayName">
+          <span>{{ third.player.displayName }} fik sidste plads på podiet.</span>
+        </p>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-button [routerLink]="['race', wbcResult().round]">
+        SE MERE
+      </a>
+    </mat-card-actions>
+  </mat-card>
+}

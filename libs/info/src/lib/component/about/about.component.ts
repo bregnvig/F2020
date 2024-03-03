@@ -2,7 +2,7 @@ import { GithubService } from './../../service/github.service';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { angularLogo, cloudMessagingLogo, firebaseLogo, firestoreLogo, functionsLogo, githubLogo, tailwindCSS } from './assets';
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -12,7 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrls: ['./about.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, MatGridListModule, NgFor, AsyncPipe],
+  imports: [MatToolbarModule, MatGridListModule, AsyncPipe],
 })
 export class AboutComponent {
 

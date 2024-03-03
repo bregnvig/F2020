@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
@@ -15,7 +15,7 @@ import { DisplayTeamsComponent } from './teams/display-teams.component';
   styleUrls: ['./display-bid.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CardPageComponent, MatExpansionModule, NgIf, DriverCodesComponent, DisplayDriversComponent, MatListModule, NgFor, DisplayTeamsComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
+  imports: [CardPageComponent, MatExpansionModule, DriverCodesComponent, DisplayDriversComponent, MatListModule, DisplayTeamsComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
 })
 export class DisplayBidComponent {
 

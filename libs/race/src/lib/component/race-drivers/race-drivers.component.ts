@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,7 +34,7 @@ const message = (driverName: string, operation: Operation) => {
   templateUrl: './race-drivers.component.html',
   styleUrls: ['./race-drivers.component.scss'],
   standalone: true,
-  imports: [MatToolbarModule, NgIf, MatListModule, CdkDropList, NgFor, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe],
+  imports: [MatToolbarModule, MatListModule, CdkDropList, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe],
 })
 export class RaceDriversComponent implements OnInit {
 

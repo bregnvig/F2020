@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -26,7 +26,7 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
   styleUrls: ['./wbc-standings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, MatListModule, NgFor, RouterLink, NgIf, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe],
+  imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe],
 })
 export class WbcStandingsComponent {
 

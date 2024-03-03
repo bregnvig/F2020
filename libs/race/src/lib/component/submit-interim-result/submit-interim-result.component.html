@@ -2,17 +2,21 @@
   <span>Mellem resultat - {{ race()?.name }}</span>
 </mat-toolbar>
 <div class="max-width">
-  <ng-container *ngIf="loaded(); else loading">
+  @if (loaded()) {
     <ng-container>
       <f2020-bid [formControl]="resultControl" [race]="race()" [isResult]="true"></f2020-bid>
     </ng-container>
-    <button *ngIf="resultDownloaded()" mat-fab aria-label="Indsend delresultat" [disabled]="updating" (click)="submitResult()">
-      <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
-    </button>
-  </ng-container>
-  <ng-container *ngIf="updating">
+    @if (resultDownloaded()) {
+      <button mat-fab aria-label="Indsend delresultat" [disabled]="updating" (click)="submitResult()">
+        <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
+      </button>
+    }
+  } @else {
+    <sha-loading></sha-loading>
+  }
+  @if (updating) {
     <ng-container *ngTemplateOutlet="loading"></ng-container>
-  </ng-container>
+  }
   <ng-template #loading>
     <sha-loading></sha-loading>
   </ng-template>

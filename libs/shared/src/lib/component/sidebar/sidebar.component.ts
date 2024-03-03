@@ -7,7 +7,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatDividerModule } from '@angular/material/divider';
 import { SidenavButtonComponent } from './sidenav-button/sidenav-button.component';
 import { HasRoleDirective } from '../has-role.directive';
-import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -17,7 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, MatListModule, NgIf, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FontAwesomeModule, AsyncPipe, NgOptimizedImage],
+  imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FontAwesomeModule, AsyncPipe, NgOptimizedImage],
 })
 export class SidebarComponent implements OnInit {
 

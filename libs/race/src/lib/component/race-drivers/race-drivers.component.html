@@ -1,24 +1,29 @@
 <mat-toolbar color="primary">
   <span class="flex-auto">{{ race()?.name }}</span>
-  <span *ngIf="race()?.drivers?.length">{{ race()?.drivers.length }} kørere</span>
+  @if (race()?.drivers?.length) {
+    <span>{{ race()?.drivers.length }} kørere</span>
+  }
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
-  <mat-list cdkDropList cdkDropListLockAxis="y" *ngIf="race()?.drivers?.length; else loading" (cdkDropListDropped)="drop($event)">
-    <mat-list-item *ngFor="let driverId of race().drivers; index as i" cdkDrag>
-      <p matListItemLine>{{ driverId | driverName }}</p>
-      <div matListItemMeta>
-        <button mat-button (click)="removeDriver(i)">
-          <fa-icon [icon]="removeIcon" size="lg"></fa-icon>
-        </button>
-      </div>
-    </mat-list-item>
-  </mat-list>
+  @if (race()?.drivers?.length) {
+    <mat-list cdkDropList cdkDropListLockAxis="y" (cdkDropListDropped)="drop($event)">
+      @for (driverId of race().drivers; track driverId; let i = $index) {
+        <mat-list-item cdkDrag>
+          <p matListItemLine>{{ driverId | driverName }}</p>
+          <div matListItemMeta>
+            <button mat-button (click)="removeDriver(i)">
+              <fa-icon [icon]="removeIcon" size="lg"></fa-icon>
+            </button>
+          </div>
+        </mat-list-item>
+      }
+    </mat-list>
+  } @else {
+    <sha-loading></sha-loading>
+  }
 </div>
 <button mat-fab color="primary" aria-label="Tilføj kører" (click)="addDriver()">
   <mat-icon>
     <fa-icon [icon]="addIcon" size="lg"></fa-icon>
   </mat-icon>
 </button>
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>

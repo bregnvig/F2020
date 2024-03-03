@@ -2,14 +2,17 @@
   Spillere
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
-  <mat-action-list *ngIf="players(); else loading">
-    <mat-list-item *ngFor="let player of players()" [routerLink]="[player.uid]">
-      <img matListItemAvatar width="40" height="40" [ngSrc]="player.photoURL" [alt]="player.displayName">
-      <p matListItemTitle>{{ player.displayName }}</p>
-      <p class="!text-white !text-base" matListItemMeta>{{ player.balance | currency: 'DKK' }}</p>
-    </mat-list-item>
-  </mat-action-list>
+  @if (players()) {
+    <mat-action-list>
+      @for (player of players(); track player) {
+        <mat-list-item [routerLink]="[player.uid]">
+          <img matListItemAvatar width="40" height="40" [ngSrc]="player.photoURL" [alt]="player.displayName">
+          <p matListItemTitle>{{ player.displayName }}</p>
+          <p class="!text-white !text-base" matListItemMeta>{{ player.balance | currency: 'DKK' }}</p>
+        </mat-list-item>
+      }
+    </mat-action-list>
+  } @else {
+    <sha-loading></sha-loading>
+  }
 </div>
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>

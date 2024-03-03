@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveForms
 import { IRace, SelectedDriverValue } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
-import { NgFor } from '@angular/common';
+
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,9 +28,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatOptionModule,
-    NgFor,
-  ],
+    MatOptionModule
+],
 })
 export class SelectedDriverComponent extends AbstractControlComponent<SelectedDriverValue> implements OnInit {
 

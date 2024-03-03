@@ -1,49 +1,52 @@
-<sha-card-page *ngIf="race()">
-  <mat-card>
-    <mat-card-header>
-      <img mat-card-avatar [src]="race() | flagURL">
-      <mat-card-title>{{ race().name }}</mat-card-title>
-      <mat-card-subtitle>{{ race().location.nationality }}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Desværre har der et par gange været en udvalgt kører der ikke deltager i sæsonen. Tidspunktet spillet lukker har heller ikke altid været korrekt😕</p>
-      <p>Derfor kan du nu gå ind og rette disse ting, hvis mine opdateringer ikke er korrekte!</p>
-      <p>Der kommer til at stå at du rettede informationen, så du kommer til at stå til ansvar for dine rettelser😇</p>
-    </mat-card-content>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Information</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div [formGroup]="fg" class="grid grid-cols-1 gap-3 pt-3">
-        <div>
-          <mat-form-field class="w-full">
-            <mat-label>Spillet lukkes</mat-label>
-            <input matInput
-                   formControlName="close"
-                   [format]="24"
-                   [ngxMatTimepicker]="raceClose"
-                   readonly/>
-            <mat-icon matSuffix
-                      (click)="raceClose.open()">
-              <fa-icon [icon]="clockIcon" size="lg"></fa-icon>
-            </mat-icon>
-          </mat-form-field>
-          <ngx-mat-timepicker #raceClose></ngx-mat-timepicker>
-        </div>
-        <div>
-          <f2020-select-driver
-              *ngIf="selectedDriver$ | async as selectedDriver"
-              formControlName="selectedDriver"
-              label="Udvalgte kører"
-              [driverIds]="selectedDriver.drivers"
+@if (race()) {
+  <sha-card-page>
+    <mat-card>
+      <mat-card-header>
+        <img mat-card-avatar [src]="race() | flagURL">
+        <mat-card-title>{{ race().name }}</mat-card-title>
+        <mat-card-subtitle>{{ race().location.nationality }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Desværre har der et par gange været en udvalgt kører der ikke deltager i sæsonen. Tidspunktet spillet lukker har heller ikke altid været korrekt😕</p>
+        <p>Derfor kan du nu gå ind og rette disse ting, hvis mine opdateringer ikke er korrekte!</p>
+        <p>Der kommer til at stå at du rettede informationen, så du kommer til at stå til ansvar for dine rettelser😇</p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div [formGroup]="fg" class="grid grid-cols-1 gap-3 pt-3">
+          <div>
+            <mat-form-field class="w-full">
+              <mat-label>Spillet lukkes</mat-label>
+              <input matInput
+                formControlName="close"
+                [format]="24"
+                [ngxMatTimepicker]="raceClose"
+                readonly/>
+              <mat-icon matSuffix
+                (click)="raceClose.open()">
+                <fa-icon [icon]="clockIcon" size="lg"></fa-icon>
+              </mat-icon>
+            </mat-form-field>
+            <ngx-mat-timepicker #raceClose></ngx-mat-timepicker>
+          </div>
+          <div>
+            @if (selectedDriver$ | async; as selectedDriver) {
+              <f2020-select-driver
+                formControlName="selectedDriver"
+                label="Udvalgte kører"
+                [driverIds]="selectedDriver.drivers"
               [teams]="selectedDriver.teams"></f2020-select-driver>
+            }
+          </div>
         </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button (click)="save()">OK</button>
-    </mat-card-actions>
-  </mat-card>
-</sha-card-page>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button (click)="save()">OK</button>
+      </mat-card-actions>
+    </mat-card>
+  </sha-card-page>
+}

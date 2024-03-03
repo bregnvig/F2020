@@ -13,7 +13,7 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @UntilDestroy()
@@ -22,7 +22,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   templateUrl: './edit-race.component.html',
   standalone: true,
   imports: [
-    NgIf,
     CardPageComponent,
     MatCardModule,
     ReactiveFormsModule,
@@ -34,8 +33,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatButtonModule,
     AsyncPipe,
     FlagURLPipe,
-    FontAwesomeModule,
-  ],
+    FontAwesomeModule
+],
 })
 export class EditRaceComponent {
 

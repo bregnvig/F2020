@@ -1,12 +1,18 @@
 <mat-action-list>
-  <button *ngIf="result" mat-list-item (click)="gotoResult()">
-    <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x"></fa-icon>
-    <span matListItemTitle>Resultat</span>
-  </button>
-  <button mat-list-item *ngFor="let bid of bids" [disabled]="!clickable">
-    <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" (click)="gotoBid(bid.player.uid)">
-    <span (click)="clickable && gotoBid(bid.player.uid)" matListItemTitle>{{bid.player.displayName}} </span>
-    <f2020-partial-bid-warning matListItemMeta [bid]="bid"></f2020-partial-bid-warning>
-    <p matListItemLine *ngIf="isBid(bid) && bid.points">{{bid.points}} point</p>
-  </button>
+  @if (result) {
+    <button mat-list-item (click)="gotoResult()">
+      <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x"></fa-icon>
+      <span matListItemTitle>Resultat</span>
+    </button>
+  }
+  @for (bid of bids; track bid) {
+    <button mat-list-item [disabled]="!clickable">
+      <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" (click)="gotoBid(bid.player.uid)">
+      <span (click)="clickable && gotoBid(bid.player.uid)" matListItemTitle>{{bid.player.displayName}} </span>
+      <f2020-partial-bid-warning matListItemMeta [bid]="bid"></f2020-partial-bid-warning>
+      @if (isBid(bid) && bid.points) {
+        <p matListItemLine>{{bid.points}} point</p>
+      }
+    </button>
+  }
 </mat-action-list>

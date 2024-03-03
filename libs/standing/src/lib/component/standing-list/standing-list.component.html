@@ -2,12 +2,15 @@
   <span>Stilling</span>
 </mat-toolbar>
 <div class="max-w-3xl mx-auto">
-  <mat-action-list *ngIf="standings(); else loading">
-    <button mat-list-item *ngFor="let standing of standings()" [routerLink]="[standing.driver.driverId | lowercase]">
-      <f2020-standing-list-item [standing]="standing"></f2020-standing-list-item>
-    </button>
-  </mat-action-list>
+  @if (standings()) {
+    <mat-action-list>
+      @for (standing of standings(); track standing) {
+        <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
+          <f2020-standing-list-item [standing]="standing"></f2020-standing-list-item>
+        </button>
+      }
+    </mat-action-list>
+  } @else {
+    <sha-loading></sha-loading>
+  }
 </div>
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>

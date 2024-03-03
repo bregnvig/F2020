@@ -12,9 +12,11 @@
     Giv besked når der spilles
   </mat-toolbar>
   <mat-selection-list (selectionChange)="selectionChanged($event)">
-    <mat-list-option *ngFor="let player of players()" [selected]="player[1]" [value]="player[0].uid">
-      <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName">
-      <h3 matListItemTitle>{{ player[0].displayName }}</h3>
-    </mat-list-option>
+    @for (player of players(); track player) {
+      <mat-list-option [selected]="player[1]" [value]="player[0].uid">
+        <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName">
+        <h3 matListItemTitle>{{ player[0].displayName }}</h3>
+      </mat-list-option>
+    }
   </mat-selection-list>
 </div>

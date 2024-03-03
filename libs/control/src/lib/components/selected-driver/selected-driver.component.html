@@ -3,14 +3,18 @@
     <mat-label>Startposition</mat-label>
     <mat-select formControlName="grid">
       <mat-option [value]="null">Vælg</mat-option>
-      <mat-option *ngFor="let no of possiblePositions" [value]="no" >{{no}}</mat-option>
+      @for (no of possiblePositions; track no) {
+        <mat-option [value]="no" >{{no}}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field class="flex-auto" subscriptSizing="dynamic">
     <mat-label>Slutposition</mat-label>
     <mat-select formControlName="finish">
       <mat-option [value]="null">Vælg</mat-option>
-      <mat-option *ngFor="let no of possiblePositions" [value]="no" >{{no}}</mat-option>
+      @for (no of possiblePositions; track no) {
+        <mat-option [value]="no" >{{no}}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </div>

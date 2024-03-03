@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, HostBinding, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -14,7 +14,7 @@ import { RacesStore } from '@f2020/api';
   styleUrls: ['./remember-to-play.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, MatCardModule, MatButtonModule, RouterLink, AsyncPipe, RelativeToNowPipe, FlagURLPipe, NgOptimizedImage],
+  imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe, RelativeToNowPipe, FlagURLPipe, NgOptimizedImage],
 })
 export class RememberToPlayComponent {
 

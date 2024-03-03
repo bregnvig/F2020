@@ -2,17 +2,21 @@
   <span>Result - {{ race()?.name }}</span>
 </mat-toolbar>
 <div class="max-width">
-  <ng-container *ngIf="loaded(); else loading">
-    <ng-container *ngIf="race()">
+  @if (loaded()) {
+    @if (race()) {
       <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" [isResult]="true"></f2020-bid>
-    </ng-container>
-    <button *ngIf="resultDownloaded()" mat-fab color="primary" aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
-      <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
-    </button>
-  </ng-container>
-  <ng-container *ngIf="updating$ | async">
+    }
+    @if (resultDownloaded()) {
+      <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
+        <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
+      </button>
+    }
+  } @else {
+    <sha-loading></sha-loading>
+  }
+  @if (updating$ | async) {
     <ng-container *ngTemplateOutlet="loading"></ng-container>
-  </ng-container>
+  }
 </div>
 <ng-template #loading>
   <sha-loading></sha-loading>

@@ -6,14 +6,14 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'f2020-previous-race',
   templateUrl: './previous-race.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, MatCardModule, FontAwesomeModule, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
+  imports: [MatCardModule, FontAwesomeModule, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
 })
 export class PreviousRaceComponent {
 

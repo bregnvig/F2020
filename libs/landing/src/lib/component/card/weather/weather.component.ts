@@ -4,7 +4,7 @@ import { icon } from '@f2020/shared';
 import { WeatherDayComponent } from './weather-day/weather-day.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'f2020-weather',
@@ -12,7 +12,7 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
   styleUrls: ['./weather.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, MatCardModule, FontAwesomeModule, NgFor, WeatherDayComponent, AsyncPipe],
+  imports: [MatCardModule, FontAwesomeModule, WeatherDayComponent, AsyncPipe],
 })
 export class WeatherComponent {
 

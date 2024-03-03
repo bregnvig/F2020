@@ -5,7 +5,7 @@ import { RaceStatusPipe } from './race-status.pipe';
 import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { AsyncPipe, NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RacesStore } from '@f2020/api';
 
@@ -16,16 +16,14 @@ import { RacesStore } from '@f2020/api';
   standalone: true,
   imports: [
     MatToolbarModule,
-    NgIf,
     MatListModule,
-    NgFor,
     RouterLink,
     LoadingComponent,
     AsyncPipe,
     FlagURLPipe,
     RaceStatusPipe,
-    NgOptimizedImage,
-  ],
+    NgOptimizedImage
+],
 })
 export class RacesComponent {
 

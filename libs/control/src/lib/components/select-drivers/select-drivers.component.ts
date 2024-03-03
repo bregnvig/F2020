@@ -1,4 +1,4 @@
-import { NgFor } from '@angular/common';
+
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
@@ -43,9 +43,8 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgFor,
-    SelectDriverComponent,
-  ],
+    SelectDriverComponent
+],
 })
 export class SelectDriversComponent extends AbstractControlComponent<string[]> implements OnInit {
 

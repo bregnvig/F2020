@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'f2020-last-year',
@@ -14,7 +14,7 @@ import { AsyncPipe, NgIf } from '@angular/common';
   styleUrls: ['./last-year.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, AsyncPipe, PolePositionTimePipe],
+  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, AsyncPipe, PolePositionTimePipe],
 })
 export class LastYearComponent {
 

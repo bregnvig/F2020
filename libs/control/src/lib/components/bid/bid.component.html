@@ -4,9 +4,11 @@
       <mat-expansion-panel [expanded]="true" #qualifyPanel>
         <mat-expansion-panel-header>
           <mat-panel-title>Kvalifikation</mat-panel-title>
-          <mat-panel-description *ngIf="!qualifyPanel.expanded">
-            <f2020-driver-codes [driverIds]="fg.get('qualify').value"></f2020-driver-codes>
-          </mat-panel-description>
+          @if (!qualifyPanel.expanded) {
+            <mat-panel-description>
+              <f2020-driver-codes [driverIds]="fg.get('qualify').value"></f2020-driver-codes>
+            </mat-panel-description>
+          }
         </mat-expansion-panel-header>
         <div>
           <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (isResult ? 1 : 0)" [race]="race" [teams]="teams"></f2020-select-drivers>
@@ -15,9 +17,11 @@
       <mat-expansion-panel [expanded]="true" #fastestDriver>
         <mat-expansion-panel-header>
           <mat-panel-title>Hurtigste kører</mat-panel-title>
-          <mat-panel-description *ngIf="!fastestDriver.expanded">
-            <f2020-driver-codes [driverIds]="fg.get('fastestDriver').value"></f2020-driver-codes>
-          </mat-panel-description>
+          @if (!fastestDriver.expanded) {
+            <mat-panel-description>
+              <f2020-driver-codes [driverIds]="fg.get('fastestDriver').value"></f2020-driver-codes>
+            </mat-panel-description>
+          }
         </mat-expansion-panel-header>
         <div>
           <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (isResult ? 1 : 0)" [race]="race" [teams]="teams" [labelFn]="fastestLapLabelFn"></f2020-select-drivers>
@@ -26,9 +30,11 @@
       <mat-expansion-panel [expanded]="true" #podium>
         <mat-expansion-panel-header>
           <mat-panel-title>Podium</mat-panel-title>
-          <mat-panel-description *ngIf="!podium.expanded">
-            <f2020-driver-codes [driverIds]="fg.get('podium').value"></f2020-driver-codes>
-          </mat-panel-description>
+          @if (!podium.expanded) {
+            <mat-panel-description>
+              <f2020-driver-codes [driverIds]="fg.get('podium').value"></f2020-driver-codes>
+            </mat-panel-description>
+          }
         </mat-expansion-panel-header>
         <div>
           <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult ? 1 : 0)" [race]="race" [teams]="teams" [labelFn]="podiumLabelFn"></f2020-select-drivers>
@@ -37,62 +43,76 @@
       <mat-expansion-panel [expanded]="true" #selectedDriver>
         <mat-expansion-panel-header>
           <mat-panel-title>{{race.selectedDriver | driverName }}</mat-panel-title>
-          <mat-panel-description *ngIf="!selectedDriver.expanded">
-            Start: {{fg.get('selectedDriver').value?.grid}}
-            Slut: {{fg.get('selectedDriver').value?.finish}}
-          </mat-panel-description>
+          @if (!selectedDriver.expanded) {
+            <mat-panel-description>
+              Start: {{fg.get('selectedDriver').value?.grid}}
+              Slut: {{fg.get('selectedDriver').value?.finish}}
+            </mat-panel-description>
+          }
         </mat-expansion-panel-header>
         <div>
           <f2020-selected-driver formControlName="selectedDriver" [race]="race"></f2020-selected-driver>
         </div>
       </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="true" #selectedTeam *ngIf="race.selectedTeam as team">
-        <mat-expansion-panel-header>
-          <mat-panel-title>Hvem er bedst for {{team.name}}</mat-panel-title>
-          <mat-panel-description *ngIf="!selectedTeam.expanded">
-            <f2020-driver-codes [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]"></f2020-driver-codes>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div>
-          <f2020-selected-team formControlName="selectedTeam" [team]="team"></f2020-selected-team>
-        </div>
-      </mat-expansion-panel>
+      @if (race.selectedTeam; as team) {
+        <mat-expansion-panel [expanded]="true" #selectedTeam>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Hvem er bedst for {{team.name}}</mat-panel-title>
+            @if (!selectedTeam.expanded) {
+              <mat-panel-description>
+                <f2020-driver-codes [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]"></f2020-driver-codes>
+              </mat-panel-description>
+            }
+          </mat-expansion-panel-header>
+          <div>
+            <f2020-selected-team formControlName="selectedTeam" [team]="team"></f2020-selected-team>
+          </div>
+        </mat-expansion-panel>
+      }
       <mat-expansion-panel [expanded]="true" #slowestPitStop>
         <mat-expansion-panel-header>
           <mat-panel-title>Langsomste pitstop</mat-panel-title>
-          <mat-panel-description *ngIf="!slowestPitStop.expanded">
-            <ng-container *ngFor="let team of fg.get('slowestPitStop').value; first as first">
-              <span *ngIf="!first">, </span>{{team | teamName}}
-            </ng-container>
-            <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value"></f2020-driver-codes>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div>
-          <f2020-select-teams formControlName="slowestPitStop" [teams]="teams" label="Vælg hold" [noOfTeams]="1 + (isResult ? 1 : 0)"></f2020-select-teams>
-        </div>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="true" #firstCrash>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Første udgået</mat-panel-title>
-          <mat-panel-description *ngIf="!firstCrash.expanded">
-            <f2020-driver-codes [driverIds]="fg.get('firstCrash').value"></f2020-driver-codes>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div>
-          <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult ? 2 : 0)" [race]="race" [teams]="teams" [labelFn]="firstCrashLabelFn"></f2020-select-drivers>
-        </div>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="true" #time>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Pole position tid</mat-panel-title>
-          <mat-panel-description *ngIf="!time.expanded">
-            {{fg.get('polePositionTime').value | polePositionTime}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div>
-          <f2020-pole-position-time formControlName="polePositionTime"></f2020-pole-position-time>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-</sha-card-page>
+          @if (!slowestPitStop.expanded) {
+            <mat-panel-description>
+              @for (team of fg.get('slowestPitStop').value; track team; let first = $first) {
+                @if (!first) {
+                  <span>, </span>
+                  }{{team | teamName}}
+                }
+                <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value"></f2020-driver-codes>
+              </mat-panel-description>
+            }
+          </mat-expansion-panel-header>
+          <div>
+            <f2020-select-teams formControlName="slowestPitStop" [teams]="teams" label="Vælg hold" [noOfTeams]="1 + (isResult ? 1 : 0)"></f2020-select-teams>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="true" #firstCrash>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Første udgået</mat-panel-title>
+            @if (!firstCrash.expanded) {
+              <mat-panel-description>
+                <f2020-driver-codes [driverIds]="fg.get('firstCrash').value"></f2020-driver-codes>
+              </mat-panel-description>
+            }
+          </mat-expansion-panel-header>
+          <div>
+            <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult ? 2 : 0)" [race]="race" [teams]="teams" [labelFn]="firstCrashLabelFn"></f2020-select-drivers>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="true" #time>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Pole position tid</mat-panel-title>
+            @if (!time.expanded) {
+              <mat-panel-description>
+                {{fg.get('polePositionTime').value | polePositionTime}}
+              </mat-panel-description>
+            }
+          </mat-expansion-panel-header>
+          <div>
+            <f2020-pole-position-time formControlName="polePositionTime"></f2020-pole-position-time>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </sha-card-page>

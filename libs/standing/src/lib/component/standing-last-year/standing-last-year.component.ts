@@ -6,7 +6,7 @@ import { LastYearResultComponent } from './last-year-result.component';
 import { LastYearQualifyComponent } from './last-year-qualify.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'f2020-standing-last-year',
@@ -14,7 +14,7 @@ import { AsyncPipe, NgIf } from '@angular/common';
   styleUrls: ['./standing-last-year.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, MatToolbarModule, MatTabsModule, LastYearQualifyComponent, LastYearResultComponent, LoadingComponent, AsyncPipe, FlagURLPipe],
+  imports: [MatToolbarModule, MatTabsModule, LastYearQualifyComponent, LastYearResultComponent, LoadingComponent, AsyncPipe, FlagURLPipe],
 })
 export class StandingLastYearComponent {
 

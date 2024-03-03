@@ -1,4 +1,4 @@
-import { AsyncPipe, LowerCasePipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, LowerCasePipe } from '@angular/common';
 import { Component, computed, effect, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -15,15 +15,13 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
   standalone: true,
   imports: [
     MatToolbarModule,
-    NgIf,
     MatListModule,
-    NgFor,
     RouterLink,
     StandingListItemComponent,
     LoadingComponent,
     AsyncPipe,
-    LowerCasePipe,
-  ],
+    LowerCasePipe
+],
   providers: [
     StandingStore,
   ],

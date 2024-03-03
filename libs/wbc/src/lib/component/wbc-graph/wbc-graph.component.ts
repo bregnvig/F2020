@@ -4,7 +4,7 @@ import { Player } from '@f2020/data';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { WBCGraph, WBCGraphPlayerEntry } from '../../model/wbc-graph.model';
 import { WBCGraphEntry } from './../../model/wbc-graph.model';
-import { NgFor, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { LineChartModule } from '@swimlane/ngx-charts';
 
@@ -19,7 +19,7 @@ interface GraphEntry {
   templateUrl: './wbc-graph.component.html',
   styleUrls: ['./wbc-graph.component.scss'],
   standalone: true,
-  imports: [LineChartModule, MatListModule, NgFor, NgOptimizedImage],
+  imports: [LineChartModule, MatListModule, NgOptimizedImage],
 })
 export class WbcGraphComponent {
 

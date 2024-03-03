@@ -2,7 +2,7 @@ import { Component, computed, effect, OnInit, Signal } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { PlayersStore, PlayerStore } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { AsyncPipe, NgFor, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -10,7 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   selector: 'f2020-profile',
   templateUrl: './profile.component.html',
   standalone: true,
-  imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, NgFor, AsyncPipe, NgOptimizedImage],
+  imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, AsyncPipe, NgOptimizedImage],
   providers: [PlayersStore],
 })
 export class ProfileComponent implements OnInit {

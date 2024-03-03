@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { Component, computed, Signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
@@ -15,7 +15,7 @@ import { DisplayBidComponent } from '../display-bid.component';
   templateUrl: './display-player-bid.component.html',
   styleUrls: ['./display-player-bid.component.scss'],
   standalone: true,
-  imports: [NgIf, MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, AsyncPipe, NgOptimizedImage],
+  imports: [MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, AsyncPipe, NgOptimizedImage],
 })
 export class DisplayPlayerBidComponent {
 

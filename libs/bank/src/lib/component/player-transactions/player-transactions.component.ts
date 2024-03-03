@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, NgIf } from '@angular/common';
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { Component, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -16,18 +16,22 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
 @Component({
   selector: 'f2020-player-transactions',
   template: `
-    <mat-toolbar color="primary" *ngIf="player()">
-      <span class="flex-auto">{{ player().displayName }}</span><span>{{ player().balance | currency: 'DKK' }}</span>
-    </mat-toolbar>
+    @if (player()) {
+      <mat-toolbar color="primary">
+        <span class="flex-auto">{{ player().displayName }}</span><span>{{ player().balance | currency: 'DKK' }}</span>
+      </mat-toolbar>
+    }
     <f2020-transactions [player]="player()"></f2020-transactions>
-    <mat-toolbar class="fixed bottom-0 flex flex-row" *ngIf="player()">
-      <button class="my-auto flex-auto" mat-button (click)="openDeposit(player())">Indsæt</button>
-      <button class="my-auto flex-auto" mat-button (click)="openWithdraw(player())">Hæv</button>
-      <button class="my-auto flex-auto" mat-button (click)="openTransfer(player())">Overfør</button>
-    </mat-toolbar>
-  `,
+    @if (player()) {
+      <mat-toolbar class="fixed bottom-0 flex flex-row">
+        <button class="my-auto flex-auto" mat-button (click)="openDeposit(player())">Indsæt</button>
+        <button class="my-auto flex-auto" mat-button (click)="openWithdraw(player())">Hæv</button>
+        <button class="my-auto flex-auto" mat-button (click)="openTransfer(player())">Overfør</button>
+      </mat-toolbar>
+    }
+    `,
   standalone: true,
-  imports: [NgIf, MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, AsyncPipe, CurrencyPipe],
+  imports: [MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, AsyncPipe, CurrencyPipe],
 })
 export class PlayerTransactionsComponent implements OnInit {
 

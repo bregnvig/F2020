@@ -1,4 +1,4 @@
-import { NgFor } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IDriverStanding } from '@f2020/data';
 import { icon } from '@f2020/shared';
@@ -11,14 +11,16 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       <span class="flex flex-col">
         <span>{{standing.driver.name}}</span>
         <span class="text-xs flex flex-row">
-          <fa-icon *ngFor="let _ of wins" class="mr-1" [icon]="trophyIcon" size="xs"></fa-icon>
+          @for (_ of wins; track _) {
+            <fa-icon class="mr-1" [icon]="trophyIcon" size="xs"></fa-icon>
+          }
         </span>
       </span>
       <span>{{standing.points}} point</span>
     </span>
-  `,
+    `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgFor, FontAwesomeModule],
+  imports: [FontAwesomeModule],
   standalone: true,
 })
 export class StandingListItemComponent {

@@ -2,26 +2,27 @@
   <span>{{ driverId$ | async | driverName }}</span>
 </mat-toolbar>
 <sha-card-page>
-  <ng-container *ngIf="currentSeasonResult$ | async as result; else loading">
+  @if (currentSeasonResult$ | async; as result) {
     <f2020-number-card title="Start gennemsnit" [number]="result.averageGridPosition | number: '1.2-2'" [icon]="icon.fasFlagCheckered"></f2020-number-card>
     <f2020-number-card title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" [icon]="icon.farTrophy"></f2020-number-card>
     <f2020-number-card title="Udgået" [number]="result.retired" [icon]="icon.farCarCrash"></f2020-number-card>
-  </ng-container>
-  <mat-tab-group *ngIf="currentSeasonResult$ | async as result" selectedIndex="1">
-    <mat-tab [label]="'Kvalifikation ' + currentYear">
-      <f2020-driver-qualifying [qualifyResults]="(currentSeasonResult$ | async)?.qualify"></f2020-driver-qualifying>
-    </mat-tab>
-    <mat-tab [label]="'Resultat ' + currentYear">
-      <f2020-driver-result [driverResult]="result"></f2020-driver-result>
-    </mat-tab>
-    <mat-tab [label]="'Kvalifikation ' + previousYear">
-      <f2020-driver-qualifying [qualifyResults]="(previousSeasonResult$ | async)?.qualify"></f2020-driver-qualifying>
-    </mat-tab>
-    <mat-tab [label]="'Resultat ' + previousYear">
-      <f2020-driver-result [driverResult]="previousSeasonResult$ | async"></f2020-driver-result>
-    </mat-tab>
-  </mat-tab-group>
+  } @else {
+    <sha-loading></sha-loading>
+  }
+  @if (currentSeasonResult$ | async; as result) {
+    <mat-tab-group selectedIndex="1">
+      <mat-tab [label]="'Kvalifikation ' + currentYear">
+        <f2020-driver-qualifying [qualifyResults]="(currentSeasonResult$ | async)?.qualify"></f2020-driver-qualifying>
+      </mat-tab>
+      <mat-tab [label]="'Resultat ' + currentYear">
+        <f2020-driver-result [driverResult]="result"></f2020-driver-result>
+      </mat-tab>
+      <mat-tab [label]="'Kvalifikation ' + previousYear">
+        <f2020-driver-qualifying [qualifyResults]="(previousSeasonResult$ | async)?.qualify"></f2020-driver-qualifying>
+      </mat-tab>
+      <mat-tab [label]="'Resultat ' + previousYear">
+        <f2020-driver-result [driverResult]="previousSeasonResult$ | async"></f2020-driver-result>
+      </mat-tab>
+    </mat-tab-group>
+  }
 </sha-card-page>
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>

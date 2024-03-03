@@ -5,7 +5,7 @@ import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { DriverNamePipe } from '@f2020/driver';
 import { MatOptionModule } from '@angular/material/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -25,11 +25,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
-    NgIf,
-    NgFor,
     MatOptionModule,
-    DriverNamePipe,
-  ],
+    DriverNamePipe
+],
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {
 

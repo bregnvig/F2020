@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { IRace, RaceUpdatedBy } from '@f2020/data';
@@ -11,7 +11,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   templateUrl: `./race-updated-warning.component.html`,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, NgFor, NgIf, DateTimePipe],
+  imports: [MatCardModule, FontAwesomeModule, DateTimePipe],
   providers: [DriverNamePipe],
 })
 export class RaceUpdatedWarningComponent {

@@ -5,9 +5,11 @@
   <mat-form-field>
     <mat-label>Modtager</mat-label>
     <mat-select formControlName="to" cdkFocusInitial>
-      <mat-option *ngFor="let player of players()" [value]=player>
-        {{ player.displayName }}
-      </mat-option>
+      @for (player of players(); track player) {
+        <mat-option [value]=player>
+          {{ player.displayName }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <mat-form-field>

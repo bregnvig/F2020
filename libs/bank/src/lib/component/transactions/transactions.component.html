@@ -1,12 +1,15 @@
-<div *ngIf="transactions$ | async as transactions else loading" class="max-w-3xl mx-auto" infiniteScroll (scrolled)="loadMore(transactions.at(-1))">
-  <mat-list >
-    <mat-list-item *ngFor="let transaction of transactions; trackby: ">
-      <h4 matListItemTitle>{{transaction.message}}</h4>
-      <div matListItemLine><small>{{transaction.date | dateTime: 'short'}}</small></div>
-      <div class="!text-white !text-base" matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
-    </mat-list-item>
-  </mat-list>
-</div>
-<ng-template #loading>
+@if (transactions$ | async; as transactions) {
+  <div class="max-w-3xl mx-auto" infiniteScroll (scrolled)="loadMore(transactions.at(-1))">
+    <mat-list >
+      @for (transaction of transactions; track transaction) {
+        <mat-list-item>
+          <h4 matListItemTitle>{{transaction.message}}</h4>
+          <div matListItemLine><small>{{transaction.date | dateTime: 'short'}}</small></div>
+          <div class="!text-white !text-base" matListItemMeta>{{amount(transaction) | currency: 'DKK'}}</div>
+        </mat-list-item>
+      }
+    </mat-list>
+  </div>
+} @else {
   <sha-loading></sha-loading>
-</ng-template>
+}

@@ -4,7 +4,7 @@ import { ITeam } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { MatOptionModule } from '@angular/material/core';
-import { NgFor } from '@angular/common';
+
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -24,9 +24,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
-    NgFor,
-    MatOptionModule,
-  ],
+    MatOptionModule
+],
 })
 export class SelectTeamComponent extends AbstractControlComponent<string> implements OnInit {
 

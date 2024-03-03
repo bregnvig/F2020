@@ -1,4 +1,4 @@
-<ng-container *ngIf="round(); else loading">
+@if (round()) {
   <mat-toolbar color="primary">
     <img class="avatar" [src]="round().result.countryCode | flagURL" alt="Løbs flag">
     <span class="text-ellipsis overflow-hidden">Sidste år - {{ round().result.name }}</span>
@@ -13,7 +13,6 @@
       </mat-tab>
     </mat-tab-group>
   </div>
-</ng-container>
-<ng-template #loading>
+} @else {
   <sha-loading></sha-loading>
-</ng-template>
+}

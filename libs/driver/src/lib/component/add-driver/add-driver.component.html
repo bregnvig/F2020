@@ -3,16 +3,18 @@
   <mat-form-field>
     <mat-label>kører</mat-label>
     <input
-        type="text"
-        placeholder="Find kører"
-        aria-label="Find kører"
-        matInput
-        [formControl]="driverControl"
-        [matAutocomplete]="auto">
+      type="text"
+      placeholder="Find kører"
+      aria-label="Find kører"
+      matInput
+      [formControl]="driverControl"
+      [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let driver of filteredDrivers()" [value]="driver">
-        {{ driver | driverName }}
-      </mat-option>
+      @for (driver of filteredDrivers(); track driver) {
+        <mat-option [value]="driver">
+          {{ driver | driverName }}
+        </mat-option>
+      }
     </mat-autocomplete>
   </mat-form-field>
 </div>

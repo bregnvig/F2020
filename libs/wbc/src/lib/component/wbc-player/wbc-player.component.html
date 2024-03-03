@@ -1,15 +1,17 @@
 <mat-toolbar color="primary">
-  <ng-container *ngIf="player()">
+  @if (player()) {
     <img class="avatar" [ngSrc]="player().photoURL" height="44" width="44" alt="Profil billede">
     <span>{{ player().displayName }}</span>
-  </ng-container>
+  }
 </mat-toolbar>
 <sha-card-page>
   <mat-action-list>
-    <mat-list-item *ngFor="let race of races()" [routerLink]="['../..', 'race', race.round]">
-      <img matListItemAvatar [ngSrc]="race.countryCode | flagURL" height="44" width="44" [alt]="race.countryCode">
-      <h3 matListItemTitle>{{ race.raceName }}</h3>
-      <p matListItemLine>{{ race.points }} points</p>
-    </mat-list-item>
+    @for (race of races(); track race) {
+      <mat-list-item [routerLink]="['../..', 'race', race.round]">
+        <img matListItemAvatar [ngSrc]="race.countryCode | flagURL" height="44" width="44" [alt]="race.countryCode">
+        <h3 matListItemTitle>{{ race.raceName }}</h3>
+        <p matListItemLine>{{ race.points }} points</p>
+      </mat-list-item>
+    }
   </mat-action-list>
 </sha-card-page>

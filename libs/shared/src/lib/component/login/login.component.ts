@@ -6,7 +6,7 @@ import { icon } from '../../font-awesome';
 import { LoadingComponent } from '../loading/loading.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatButtonModule } from '@angular/material/button';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'sha-login',
@@ -14,12 +14,11 @@ import { AsyncPipe, NgIf } from '@angular/common';
   styleUrls: ['./login.component.scss'],
   standalone: true,
   imports: [
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     LoadingComponent,
-    AsyncPipe,
-  ],
+    AsyncPipe
+],
 })
 export class LoginComponent {
 

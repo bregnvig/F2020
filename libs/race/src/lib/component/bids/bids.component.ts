@@ -1,4 +1,4 @@
-import { NgFor, NgIf, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +15,7 @@ const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number =>
   styleUrls: ['./bids.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatListModule, NgIf, FontAwesomeModule, NgFor, PartialBidWarningComponent, NgOptimizedImage],
+  imports: [MatListModule, FontAwesomeModule, PartialBidWarningComponent, NgOptimizedImage],
 })
 export class BidsComponent {
 

@@ -5,7 +5,7 @@ import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
@@ -13,7 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrls: ['./players-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatToolbarModule, NgIf, MatListModule, NgFor, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe],
+  imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe],
 })
 export class PlayersListComponent implements OnInit {
 

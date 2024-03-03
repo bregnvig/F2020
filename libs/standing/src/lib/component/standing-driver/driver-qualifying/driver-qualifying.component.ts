@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IQualifyResult } from '@f2020/data';
 import { QualifyingTimesComponent } from './qualifying-times/qualifying-times.component';
-import { NgFor } from '@angular/common';
+
 import { MatListModule } from '@angular/material/list';
 
 @Component({
@@ -10,7 +10,7 @@ import { MatListModule } from '@angular/material/list';
     styleUrls: ['./driver-qualifying.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [MatListModule, NgFor, QualifyingTimesComponent]
+    imports: [MatListModule, QualifyingTimesComponent]
 })
 export class DriverQualifyingComponent {
   @Input() qualifyResults: IQualifyResult[];

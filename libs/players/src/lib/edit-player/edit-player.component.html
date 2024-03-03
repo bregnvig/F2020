@@ -1,4 +1,4 @@
-<ng-container *ngIf="player(); else loading">
+@if (player()) {
   <mat-toolbar color="primary">
     <img class="avatar" height="40" width="40" [ngSrc]="player().photoURL" alt="Profil billede">
     <span>{{ player().displayName }}</span>
@@ -20,7 +20,6 @@
       </mat-card-actions>
     </mat-card>
   </sha-card-page>
-</ng-container>
-<ng-template #loading>
+} @else {
   <sha-loading></sha-loading>
-</ng-template>
+}

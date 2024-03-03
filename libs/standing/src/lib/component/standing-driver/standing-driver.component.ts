@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SeasonStore } from '@f2020/api';
 import { IDriverResult } from '@f2020/data';
@@ -13,7 +13,7 @@ import { DriverResultComponent } from './driver-result/driver-result.component';
 import { DriverQualifyingComponent } from './driver-qualifying/driver-qualifying.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NumberCardComponent } from './number-card/number-card.component';
-import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -27,7 +27,6 @@ import { toObservable } from '@angular/core/rxjs-interop';
   imports: [
     MatToolbarModule,
     CardPageComponent,
-    NgIf,
     NumberCardComponent,
     MatTabsModule,
     DriverQualifyingComponent,
@@ -38,7 +37,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
     DriverNamePipe,
   ],
 })
-export class StandingDriverComponent implements OnInit {
+export class StandingDriverComponent {
 
   currentSeasonResult$: Observable<IDriverResult>;
   previousSeasonResult$: Observable<IDriverResult>;
@@ -54,9 +53,6 @@ export class StandingDriverComponent implements OnInit {
     private route: ActivatedRoute,
     private service: StandingService,
     private store: SeasonStore) {
-  }
-
-  ngOnInit(): void {
     this.driverId$ = this.route.params.pipe(map(params => params.driverId));
     const currentYear$ = toObservable(this.store.season).pipe(
       map(season => parseInt(season.id, 10)),

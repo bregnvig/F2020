@@ -1,4 +1,4 @@
-<ng-container *ngIf="player(); else loading">
+@if (player()) {
   <sha-card-page>
     <f2020-what-else></f2020-what-else>
     <f2020-remember-to-play></f2020-remember-to-play>
@@ -7,7 +7,6 @@
     <f2020-last-year></f2020-last-year>
     <f2020-weather></f2020-weather>
   </sha-card-page>
-</ng-container>
-<ng-template #loading>
+} @else {
   <sha-loading></sha-loading>
-</ng-template>
+}

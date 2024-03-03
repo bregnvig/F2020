@@ -4,12 +4,14 @@
     <mat-card-title>Løbet er blevet opdateret</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <p *ngFor="let updatedBy of race.updatedBy; index as i" class="flex flex-row items-center">
-      <img [src]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName">
-      <span class="ml-2 flex flex-col">
-        <span>{{messages[i]}}</span>
-        <small class="text-slate-400">{{updatedBy.updatedAt | dateTime: 'short'}}</small>
-      </span>
-    </p>
+    @for (updatedBy of race.updatedBy; track updatedBy; let i = $index) {
+      <p class="flex flex-row items-center">
+        <img [src]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName">
+        <span class="ml-2 flex flex-col">
+          <span>{{messages[i]}}</span>
+          <small class="text-slate-400">{{updatedBy.updatedAt | dateTime: 'short'}}</small>
+        </span>
+      </p>
+    }
   </mat-card-content>
 </mat-card>

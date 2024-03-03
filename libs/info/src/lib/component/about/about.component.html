@@ -2,11 +2,13 @@
   Om spillet
 </mat-toolbar>
 <mat-grid-list cols="2">
-  <mat-grid-tile *ngFor="let contributor of service.contributors$ | async">
-    <a [href]="contributor.url">
-      <img class="circle w-4/5" [title]="contributor.login" [src]="contributor.avatarURL">
-    </a>
-  </mat-grid-tile>
+  @for (contributor of service.contributors$ | async; track contributor) {
+    <mat-grid-tile>
+      <a [href]="contributor.url">
+        <img class="circle w-4/5" [title]="contributor.login" [src]="contributor.avatarURL">
+      </a>
+    </mat-grid-tile>
+  }
   <mat-grid-tile><a href="https://github.com/bregnvig/F2020"><img class="w-4/5" [src]="github"></a></mat-grid-tile>
   <mat-grid-tile>
     <a href="https://angular.io">
