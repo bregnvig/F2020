@@ -8,8 +8,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/player/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/player/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/player"]
     }

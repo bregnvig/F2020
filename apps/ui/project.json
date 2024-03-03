@@ -87,17 +87,17 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "ui:build"
+        "buildTarget": "ui:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "ui:build:production"
+          "buildTarget": "ui:build:production"
         },
         "development": {
-          "browserTarget": "ui:build:development"
+          "buildTarget": "ui:build:development"
         },
         "test": {
-          "browserTarget": "ui:build:test"
+          "buildTarget": "ui:build:test"
         }
       },
       "defaultConfiguration": "development"
@@ -105,13 +105,14 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "ui:build"
+        "buildTarget": "ui:build"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/ui/jest.config.ts"
+        "jestConfig": "apps/ui/jest.config.ts",
+        "passWithNoTests": false
       },
       "outputs": ["{workspaceRoot}/coverage/apps/ui"]
     },

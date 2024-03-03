@@ -89,15 +89,15 @@ export class PlayerApiService {
   }
 
   private updateBaseInformation(player: Player): Promise<void> {
-    const _player: Player = {
+    const _player = {
       uid: player.uid,
       displayName: player.displayName,
       email: player.email,
       photoURL: player.photoURL,
-    };
+    } as Player;
     const docRef = doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
     return getDoc(docRef).then(
-      snapshot => snapshot.exists() ? updateDoc(docRef, _player) : setDoc(docRef, _player),
+      snapshot => snapshot.exists() ? updateDoc(docRef, { ..._player }) : setDoc(docRef, _player),
     );
   }
 }

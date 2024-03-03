@@ -8,8 +8,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/driver/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/driver/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/driver"]
     }

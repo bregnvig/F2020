@@ -6,15 +6,15 @@ export const environment = {
   production: false,
   useEmulator: true,
   firebaseConfig: {
-    apiKey: "AIzaSyCY1hzs-V5b4f4Zx3yBzBAiawiqr4JaSjQ",
-    authDomain: "f1-serverless.firebaseapp.com",
-    databaseURL: "https://f1-serverless.firebaseio.com",
-    projectId: "f1-serverless",
-    storageBucket: "f1-serverless.appspot.com",
-    messagingSenderId: "657968084413",
-    appId: "1:657968084413:web:9a4fa397037ae453df4ed4",
-    measurementId: "G-Q2XDV9KH10",
-    vapidKey: 'BOFITR58fWVZiIaO3a_3FKmy6hB-huDUlT7MHEU1j1GamNMzBEIhom6sSEYtji8lFoLBfDbKWT_cLpH4A2HNSEQ'
+    apiKey: 'AIzaSyCY1hzs-V5b4f4Zx3yBzBAiawiqr4JaSjQ',
+    authDomain: 'f1-serverless.firebaseapp.com',
+    databaseURL: 'https://f1-serverless.firebaseio.com',
+    projectId: 'f1-serverless',
+    storageBucket: 'f1-serverless.appspot.com',
+    messagingSenderId: '657968084413',
+    appId: '1:657968084413:web:9a4fa397037ae453df4ed4',
+    measurementId: 'G-Q2XDV9KH10',
+    vapidKey: 'BOFITR58fWVZiIaO3a_3FKmy6hB-huDUlT7MHEU1j1GamNMzBEIhom6sSEYtji8lFoLBfDbKWT_cLpH4A2HNSEQ',
   },
   initialBid: {
     qualify: ['hamilton', 'bottas', 'leclerc', 'vettel', 'max_verstappen', 'albon'],
@@ -22,11 +22,11 @@ export const environment = {
     podium: ['hamilton', 'bottas', 'leclerc'],
     selectedDriver: {
       grid: 10,
-      finish: 20
+      finish: 20,
     },
     firstCrash: ['hamilton'],
-    polePositionTime: 72332
-  } as Bid
+    polePositionTime: 72332,
+  } as Bid,
 };
 
 /*
@@ -37,5 +37,3 @@ export const environment = {
  * on performance if an error is thrown.
  */
 import { Bid } from '@f2020/data';
-import 'zone.js/dist/zone-error'; // Included with Angular CLI.
-

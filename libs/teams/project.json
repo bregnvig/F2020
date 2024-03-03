@@ -9,15 +9,11 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/teams"],
       "options": {
-        "jestConfig": "libs/teams/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/teams/jest.config.ts"
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["libs/teams/src/**/*.ts", "libs/teams/src/**/*.html"]
-      }
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": []

@@ -8,8 +8,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/landing/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/landing/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/landing"]
     }

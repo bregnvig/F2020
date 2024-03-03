@@ -8,8 +8,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/wbc/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/wbc/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/wbc"]
     }
