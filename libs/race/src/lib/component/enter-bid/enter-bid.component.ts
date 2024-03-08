@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
-import { RaceStore, TeamService } from '@f2020/api';
+import { RacesStore, RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
@@ -33,13 +33,14 @@ export class EnterBidComponent {
 
   constructor(
     private store: RaceStore,
+    { yourBid }: RacesStore,
     private teamsService: TeamService,
     private router: Router) {
     this.race = this.store.race;
     this.teams = toSignal(this.teamsService.teams$);
     this.isOpen = computed(() => store.race()?.close >= DateTime.local());
     effect(() => {
-      this.bidControl.patchValue(store.bid() ?? {}, { emitEvent: false });
+      this.bidControl.patchValue(yourBid() ?? {}, { emitEvent: false });
       store.bid()?.submitted && this.bidControl.disable({ emitEvent: false });
     });
     effect(() => store.error() && this.bidControl.enable({ emitEvent: false }));

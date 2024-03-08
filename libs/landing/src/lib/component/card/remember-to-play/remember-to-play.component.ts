@@ -23,7 +23,7 @@ export class RememberToPlayComponent {
 
   constructor(private store: RacesStore) {
     this.race = computed(() => {
-      if (store.currentRace()?.close > DateTime.local() && store.yourCurrentBid() && !store.yourCurrentBid().submitted) {
+      if (store.currentRace()?.close > DateTime.local() && store.yourBid() && !store.yourBid().submitted) {
         return store.currentRace();
       }
     });

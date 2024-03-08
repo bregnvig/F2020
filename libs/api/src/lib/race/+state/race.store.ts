@@ -51,7 +51,7 @@ export class RaceStore extends Store<RaceState> {
       const unauthorized = this.playerStore.unauthorized();
       const race = this.racesStore.races()?.find(r => r.round === this.#round());
       if (!unauthorized && race) {
-        const hasPlayedCurrentRace = racesStore.yourCurrentBid()?.submitted;
+        const hasPlayedCurrentRace = racesStore.yourBid()?.submitted;
         const closed = race.close < DateTime.now();
         const season = this.seasonStore.season();
         ((closed || hasPlayedCurrentRace)

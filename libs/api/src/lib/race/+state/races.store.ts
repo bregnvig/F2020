@@ -31,7 +31,7 @@ export class RacesStore extends Store<RacesState> {
 
   races: Signal<IRace[]> = this.state.races;
   currentRace: Signal<IRace> = computed(() => this.races()?.find(r => r.state === 'open' || r.state === 'closed'));
-  yourCurrentBid = this.state.yourBid;
+  yourBid = this.state.yourBid;
   lastYear = this.state.lastYear;
 
   constructor(private seasonStore: SeasonStore, private service: RacesService, private playerStore: PlayerStore) {
@@ -53,10 +53,10 @@ export class RacesStore extends Store<RacesState> {
     effect(() => {
       s?.unsubscribe();
       const player = this.playerStore.player();
-      const unauthorized = this.playerStore.unauthorized();
+      const authorized = this.playerStore.authorized();
       const race = this.currentRace();
       const season = this.seasonStore.season();
-      !unauthorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
+      authorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
         map(bid => bid || {}),
         filterEquals(),
       ).subscribe({
