@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Bid, Participant } from '@f2020/data';
-import { icon } from '@f2020/shared';
+import { icon, RelativeToNowPipe } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PartialBidWarningComponent } from '../partial-bid-warning/partial-bid-warning.component';
 
@@ -15,7 +15,7 @@ const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number =>
   styleUrls: ['./bids.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatListModule, FontAwesomeModule, PartialBidWarningComponent, NgOptimizedImage],
+  imports: [MatListModule, FontAwesomeModule, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
 })
 export class BidsComponent {
 

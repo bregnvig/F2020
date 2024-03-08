@@ -1,4 +1,5 @@
 import { Player } from './player.model';
+import { DateTime } from 'luxon';
 
 
 export interface SelectedDriverValue {
@@ -30,9 +31,10 @@ export interface Bid {
   slowestPitStopPoints?: [number];
   polePositionTime: number;
   polePositionTimeDiff?: number;
-  submitted?: boolean;
   points?: number;
   player?: Player;
+  submitted?: boolean;
+  submittedAt?: DateTime;
 }
 
-export type Participant = Pick<Bid, 'player' | 'submitted'>; 
+export type Participant = Pick<Bid, 'player' | 'submitted' | 'submittedAt'>;

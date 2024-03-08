@@ -23,6 +23,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';
 import { SeasonService } from './../../season/service/season.service';
+import { DateTime } from 'luxon';
 
 const bidConverter = converter.timestamp<Bid>();
 
@@ -69,6 +70,7 @@ export class RacesService {
         displayName: player.displayName,
         photoURL: player.photoURL,
         email: player.email,
+        submittedAt: DateTime.local(),
       },
     });
   }
