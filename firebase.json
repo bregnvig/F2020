@@ -1,52 +1,54 @@
 {
-  "database": {
-    "rules": "apps/cloud/database.rules.json"
+  "database" : {
+    "rules" : "apps/cloud/database.rules.json"
   },
-  "firestore": {
-    "rules": "apps/cloud/firestore.rules",
-    "indexes": "apps/cloud/firestore.indexes.json"
+  "firestore" : {
+    "rules" : "apps/cloud/firestore.rules",
+    "indexes" : "apps/cloud/firestore.indexes.json"
   },
-  "hosting": [
+  "hosting" : [
     {
-      "target": "ui",
-      "public": "dist/apps/ui",
-      "ignore": [
+      "target" : "ui",
+      "public" : "dist/apps/ui",
+      "ignore" : [
         "firebase.json",
         "**/.*",
         "**/node_modules/**"
       ],
-      "rewrites": [
+      "rewrites" : [
         {
-          "source": "**",
-          "destination": "/index.html"
+          "source" : "**",
+          "destination" : "/index.html"
         }
       ]
     }
   ],
-  "storage": {
-    "rules": "apps/cloud/storage.rules"
+  "storage" : {
+    "rules" : "apps/cloud/storage.rules"
   },
-  "functions": {
-    "codebase": "cloud",
-    "predeploy": ["npx nx build cloud"],
-    "runtime": "nodejs16",
-    "source": "dist/apps/cloud"
+  "functions" : {
+    "codebase" : "cloud",
+    "predeploy" : [
+      "npx nx build cloud"
+    ],
+    "runtime" : "nodejs20",
+    "source" : "dist/apps/cloud"
   },
-  "emulators": {
-    "auth": {
-      "port": 9099
+  "emulators" : {
+    "auth" : {
+      "port" : 9099
     },
-    "functions": {
-      "port": 5001
+    "functions" : {
+      "port" : 5001
     },
-    "firestore": {
-      "port": 8080
+    "firestore" : {
+      "port" : 8080
     },
-    "pubsub": {
-      "port": 8085
+    "pubsub" : {
+      "port" : 8085
     },
-    "ui": {
-      "enabled": true
+    "ui" : {
+      "enabled" : true
     }
   }
 }
