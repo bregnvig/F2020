@@ -44,7 +44,7 @@ service cloud.firestore {
     }
 
     match /seasons/{Seasons}/races/{Races}/bids/{Bids} {
-     // allow to create bid if race is open and a bid does not already exsist 
+     // allow to create bid if race is open and a bid does not already exists
      allow create: if getUserData().roles.hasAny(['player']) 
                     && get(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)).data.state == 'open' 
                     && !exists(/databases/$(database)/documents/seasons/$(Seasons)/races/$(Races)/bids/$(request.auth.uid));
