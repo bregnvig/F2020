@@ -6,9 +6,9 @@
     </button>
   }
   @for (bid of bids; track bid.player.uid) {
-    <button mat-list-item [disabled]="!clickable">
+    <button mat-list-item [disabled]="!clickable" (click)="clickable && gotoBid(bid.player.uid)">
       <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" (click)="gotoBid(bid.player.uid)">
-      <span (click)="clickable && gotoBid(bid.player.uid)" matListItemTitle>{{ bid.player.displayName }} </span>
+      <span matListItemTitle>{{ bid.player.displayName }} </span>
       <f2020-partial-bid-warning matListItemMeta [bid]="bid"></f2020-partial-bid-warning>
       @if (isBid(bid) && bid.points) {
         <p matListItemLine>{{ bid.points }} point</p>
