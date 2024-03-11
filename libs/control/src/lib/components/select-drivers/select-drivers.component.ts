@@ -1,5 +1,5 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { untilDestroyed } from '@ngneat/until-destroy';
@@ -61,7 +61,7 @@ export class SelectDriversComponent extends AbstractControlComponent<string[]> i
   }
 
   ngOnInit(): void {
-    this.drivers = this.fb.array(Array.from({ length: this.noOfDrivers }, () => this.fb.control<string>(null, Validators.required)), [uniqueDrivers]);
+    this.drivers = this.fb.array(Array.from({ length: this.noOfDrivers }, () => this.fb.control<string>(null)), [uniqueDrivers]);
     this.fg = this.fb.group({
       drivers: this.drivers,
     });
