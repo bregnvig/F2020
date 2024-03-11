@@ -13,7 +13,20 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { debounceTime, filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filterEquals } from '@f2020/tools';
+import { filterEquals, isNullish } from '@f2020/tools';
+
+
+const noNullsInArray = (control: FormControl<Bid>) => {
+
+  return Object.values(control.value ?? {})
+    .filter(value => Array.isArray(value))
+    .flat()
+    .some(value => isNullish(value))
+    ? { noNullsInArray: true }
+    : null;
+
+};
+
 
 @Component({
   selector: 'f2020-enter-bid',
@@ -24,7 +37,7 @@ import { filterEquals } from '@f2020/tools';
 })
 export class EnterBidComponent {
 
-  bidControl: FormControl = new FormControl<Bid>(null);
+  bidControl: FormControl = new FormControl<Bid>(null, noNullsInArray);
   isOpen: Signal<boolean>;
   race: Signal<IRace>;
   teams: Signal<ITeam[]>;
