@@ -1,5 +1,5 @@
 import { AsyncPipe, NgOptimizedImage, UpperCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, Signal } from '@angular/core';
+import { Component, computed, Signal } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -20,7 +20,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: 'f2020-race',
   styleUrls: ['./race.component.scss'],
   templateUrl: './race.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, AsyncPipe, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule],
 })
