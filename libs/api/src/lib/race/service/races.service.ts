@@ -64,13 +64,14 @@ export class RacesService {
   }
 
   updateBid(seasonId: string, round: number, player: Player, bid: Bid): Promise<void> {
-    return setDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`), {
-      ...bid, player: {
+    return setDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`).withConverter(bidConverter), {
+      ...bid,
+      submittedAt: DateTime.local(),
+      player: {
         uid: player.uid,
         displayName: player.displayName,
         photoURL: player.photoURL,
         email: player.email,
-        submittedAt: DateTime.local(),
       },
     });
   }
