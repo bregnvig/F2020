@@ -1,56 +1,63 @@
 {
-  "name": "builder",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/builder/src",
-  "projectType": "application",
-  "prefix": "builder",
-  "generators": {},
-  "targets": {
-    "build": {
-      "executor": "@nrwl/webpack:webpack",
-      "options": {
-        "outputPath": "dist/apps/builder",
-        "main": "apps/builder/src/main.ts",
-        "tsConfig": "apps/builder/tsconfig.app.json",
-        "assets": ["apps/builder/src/assets"],
-        "buildLibsFromSource": true,
-        "target": "node",
-        "compiler": "tsc"
+  "name" : "builder",
+  "$schema" : "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot" : "apps/builder/src",
+  "projectType" : "application",
+  "prefix" : "builder",
+  "generators" : {},
+  "targets" : {
+    "build" : {
+      "executor" : "@nrwl/webpack:webpack",
+      "options" : {
+        "webpackConfig" : "apps/builder/webpack.config.js",
+        "outputPath" : "dist/apps/builder",
+        "main" : "apps/builder/src/main.ts",
+        "tsConfig" : "apps/builder/tsconfig.app.json",
+        "assets" : [
+          "apps/builder/src/assets"
+        ],
+        "buildLibsFromSource" : true,
+        "target" : "node",
+        "compiler" : "tsc"
       },
-      "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
+      "configurations" : {
+        "production" : {
+          "optimization" : true,
+          "extractLicenses" : true,
+          "inspect" : false,
+          "fileReplacements" : [
             {
-              "replace": "apps/builder/src/environments/environment.ts",
-              "with": "apps/builder/src/environments/environment.prod.ts"
+              "replace" : "apps/builder/src/environments/environment.ts",
+              "with" : "apps/builder/src/environments/environment.prod.ts"
             }
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs" : [
+        "{options.outputPath}"
+      ]
     },
-    "serve": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "builder:build"
+    "serve" : {
+      "executor" : "@nx/js:node",
+      "options" : {
+        "buildTarget" : "builder:build"
       },
-      "configurations": {
-        "production": {
-          "buildTarget": "builder:build:production"
+      "configurations" : {
+        "production" : {
+          "buildTarget" : "builder:build:production"
         }
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "apps/builder/jest.config.ts",
-        "passWithNoTests": false
+    "test" : {
+      "executor" : "@nx/jest:jest",
+      "options" : {
+        "jestConfig" : "apps/builder/jest.config.ts",
+        "passWithNoTests" : false
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/builder"]
+      "outputs" : [
+        "{workspaceRoot}/coverage/apps/builder"
+      ]
     }
   },
-  "tags": []
+  "tags" : []
 }

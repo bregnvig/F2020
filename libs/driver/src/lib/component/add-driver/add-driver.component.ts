@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Inject, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { map, startWith } from 'rxjs/operators';
@@ -18,7 +18,7 @@ import { DriversStore } from '@f2020/api';
   standalone: true,
   imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe],
 })
-export class AddDriverComponent implements OnInit {
+export class AddDriverComponent {
 
   filteredDrivers: Signal<string[]>;
   driverControl = new FormControl(null, Validators.required);
@@ -32,9 +32,6 @@ export class AddDriverComponent implements OnInit {
       startWith(''),
       map<string, string>(term => term.toLocaleLowerCase()),
     ));
-  }
-
-  ngOnInit() {
     this.filteredDrivers = computed(() => {
       const drivers = (this.store.drivers() ?? []).filter(driver => !this.currentDrivers.some(currentDriver => currentDriver === driver.driverId));
       return drivers.filter(driver => driver.name.toLocaleLowerCase().includes(this.#term())).map(d => d.driverId);

@@ -141,6 +141,6 @@ export class RaceStore extends Store<RaceState> {
   }
 
   submitInterimResult(result: Bid) {
-    return this.service.submitResult(this.#round(), result);
+    return this.service.submitInterimResult(result);
   }
 }
