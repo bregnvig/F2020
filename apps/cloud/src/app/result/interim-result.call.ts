@@ -62,10 +62,10 @@ const buildResult = async (result: Partial<Bid>) => {
     const players = calculatedResults.map(cr => cr.player!);
     return Promise.all(players.map(player => {
       log(`Should mail to ${player.displayName}`);
-      const results = [sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults))];
+      sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults));
       if (player.tokens && player.tokens.length) {
         log(`Should send message to ${player.displayName}`);
-        results.push(sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK'));
+        sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK');
       }
     }));
   });

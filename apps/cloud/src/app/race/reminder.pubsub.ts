@@ -5,8 +5,6 @@ import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendNotification } from './../../lib';
 
-;
-
 const timespan = (days: number, date: DateTime): boolean => {
   const reminderDate = date.minus({ days });
   return Math.floor(reminderDate.diff(DateTime.local(), 'day').days) === 0;
@@ -22,7 +20,7 @@ const dayNames = new Map<string, string>([
   ['7', 'søndag'],
 ]);
 
-const mailBody = (player: Player, race: IRace, closeDay: any, closeTime: any) =>
+const mailBody = (player: Player, race: IRace, closeDay: string, closeTime: string) =>
   `<h3>Hej ${player.displayName}</h3>
      <div> 
      <p> ${race.name} - lukker snart og du har ikke spillet endnu! Du kan heldigvis stadig nå det, men skynd dig for

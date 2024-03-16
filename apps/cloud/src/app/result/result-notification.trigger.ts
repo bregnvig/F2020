@@ -4,9 +4,7 @@ import { Change, EventContext, region } from 'firebase-functions/v1';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail, sendNotification } from '../../lib';
 
-;
-
-const mailbody = (playerName: any, wbcPoints: number, raceName: any) =>
+const mailBody = (playerName: string, wbcPoints: number, raceName: string) =>
   `<h3>Hej ${playerName}</h3>
      <div> 
       <p> ${raceName} er nu afgjort - du har fået ${wbcPoints} WBC points</p>
@@ -27,7 +25,7 @@ export const resultNotificationTrigger = region('europe-west1').firestore.docume
       return Promise.all(result.players.map(element => {
         const sendWBCResult = (place: string) => {
           const notifications = [
-            sendMail(element.player.email, place, mailbody(element.player.displayName, element.points, result.raceName)).then((msg) => {
+            sendMail(element.player.email, place, mailBody(element.player.displayName, element.points, result.raceName)).then((msg) => {
               log(`Mail result :(${msg})`);
             }),
           ];
