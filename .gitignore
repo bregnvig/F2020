@@ -67,3 +67,7 @@ saved-data-backup
 /apps/builder/src/environment/*
 
 .nx/cache
+database-debug.log
+pubsub-debug.log
+firebase-export*
+.secret.local
