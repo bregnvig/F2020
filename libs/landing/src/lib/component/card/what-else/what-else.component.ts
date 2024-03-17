@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '11';
+const versionNo = '12';
 
 @Component({
   selector: 'f2020-what-else',
