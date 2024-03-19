@@ -1,12 +1,12 @@
-import { pubsub } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getCurrentRace, logAndCreateError, updateRace } from '../../lib';
 import { log } from 'firebase-functions/logger';
+import { region } from 'firebase-functions';
 
 ;
 
 // This will be run every friday at 10.00 Europe/Copenhagen!
-export const closeRaceCrontab = pubsub.schedule('0 11 * * *')
+export const closeRaceCrontab = region('europe-west1').pubsub.schedule('0 11 * * *')
   .timeZone('Europe/Copenhagen')
   .onRun(async () => getCurrentRace('open')
     .then(async race => {
