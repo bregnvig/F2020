@@ -1,7 +1,7 @@
 @if (race()) {
   @if (teams()) {
     <mat-toolbar color="primary">
-      <span class="flex-auto">Bud - {{ race.name }}</span>
+      <span class="flex-auto">Bud - {{ race().name }}</span>
       <button mat-icon-button routerLink="../edit">
         <fa-icon [icon]="editIcon"></fa-icon>
       </button>
@@ -9,7 +9,7 @@
     <f2020-bid [formControl]="bidControl" [race]="race()" [teams]="teams()"></f2020-bid>
     @if (bidControl.enabled && isOpen()) {
       <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid"
-        (click)="submitBid()">
+              (click)="submitBid()">
         <fa-icon [icon]="sendIcon" size="lg"></fa-icon>
       </button>
     }
