@@ -1,10 +1,10 @@
 {
   "database" : {
-    "rules" : "apps/cloud/database.rules.json"
+    "rules" : "apps/firebase/database.rules.json"
   },
   "firestore" : {
-    "rules" : "apps/cloud/firestore.rules",
-    "indexes" : "apps/cloud/firestore.indexes.json"
+    "rules" : "apps/firebase/firestore.rules",
+    "indexes" : "apps/firebase/firestore.indexes.json"
   },
   "hosting" : [
     {
@@ -24,16 +24,18 @@
     }
   ],
   "storage" : {
-    "rules" : "apps/cloud/storage.rules"
+    "rules" : "apps/firebase/storage.rules"
   },
-  "functions" : {
-    "codebase" : "cloud",
-    "predeploy" : [
-      "npx nx build cloud"
-    ],
-    "runtime" : "nodejs20",
-    "source" : "dist/apps/cloud"
-  },
+  "functions" : [
+    {
+      "codebase" : "functions",
+      "source" : "dist/apps/functions",
+      "runtime" : "nodejs20",
+      "ignore" : [
+        "*.local"
+      ]
+    }
+  ],
   "emulators" : {
     "auth" : {
       "port" : 9099

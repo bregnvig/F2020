@@ -30,11 +30,11 @@
     "firebase" : {
       "executor" : "nx:run-commands",
       "options" : {
-        "command" : "firebase --config=firebase.firebase.json"
+        "command" : "firebase --config=firebase.json"
       },
       "configurations" : {
         "production" : {
-          "command" : "firebase --config=firebase.firebase.json"
+          "command" : "firebase --config=firebase.json"
         }
       }
     },
@@ -54,8 +54,7 @@
       "executor" : "nx:run-commands",
       "options" : {
         "commands" : [
-          "nx run firebase:killports",
-          "nx run firebase:firebase emulators:start --import=apps/firebase/.emulators --export-on-exit"
+          "nx run firebase:firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json  --import=./saved-data --export-on-exit=./saved-data"
         ],
         "parallel" : false
       }
