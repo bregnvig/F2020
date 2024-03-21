@@ -1,10 +1,12 @@
 import { Change, EventContext, region } from 'firebase-functions';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { getFirestore } from 'firebase-admin/lib/firestore';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { Bid } from '@f2020/data';
 import { documentPaths } from '../../lib';
-import { Timestamp } from 'firebase-admin/firestore';
 
+/**
+ * Updates the updatedAt property for the bid and the participant
+ */
 export const updatedAtTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
   .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
     const db = getFirestore();

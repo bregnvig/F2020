@@ -1,8 +1,5 @@
-import pkg from 'firebase-admin';
 import { initializeApp } from 'firebase-admin/app';
 import { config } from 'firebase-functions/v1';
-
-const { firestore } = pkg;
 
 initializeApp(config().firebase);
 
