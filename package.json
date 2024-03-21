@@ -5,6 +5,8 @@
   "scripts" : {
     "ng" : "nx",
     "nx" : "nx",
+    "serve:ui" : "nx serve ui",
+    "serve:firebase" : "nx run firebase:watch",
     "start" : "ng serve ui --liveReload false",
     "build" : "nx build",
     "build-with-stats" : "nx build --stats-json",
