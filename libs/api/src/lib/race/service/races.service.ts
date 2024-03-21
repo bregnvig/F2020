@@ -23,7 +23,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ErgastService } from '../../service/ergast.service';
 import { SeasonService } from './../../season/service/season.service';
-import { DateTime } from 'luxon';
 
 const bidConverter = converter.timestamp<Bid>();
 
@@ -66,7 +65,6 @@ export class RacesService {
   updateBid(seasonId: string, round: number, player: Player, bid: Bid): Promise<void> {
     return setDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`).withConverter(bidConverter), {
       ...bid,
-      submittedAt: DateTime.local(),
       player: {
         uid: player.uid,
         displayName: player.displayName,

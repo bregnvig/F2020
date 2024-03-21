@@ -12,8 +12,8 @@
       <f2020-partial-bid-warning matListItemMeta [bid]="bid"></f2020-partial-bid-warning>
       @if (isBid(bid) && bid.points) {
         <p matListItemLine>{{ bid.points }} point</p>
-      } @else if (bid.submittedAt) {
-        <p matListItemLine>{{ bid.submittedAt | relativeToNow }}</p>
+      } @else if (bid.updatedAt) {
+        <p matListItemLine>{{ bid.updatedAt | relativeToNow }}</p>
       }
     </button>
   }

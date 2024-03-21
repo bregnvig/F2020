@@ -1,12 +1,11 @@
 import { Bid, Participant } from '@f2020/data';
-import { DocumentReference } from 'firebase-admin/firestore';
+import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
 import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, firestoreUtils, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from '../../lib';
 import { documentPaths } from '../../lib/paths';
 import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
-import { getFirestore } from 'firebase-admin/firestore';
 
 const validateBalance = (player: PlayerImpl): void => {
   if ((player.balance || 0) - 20 < -100) {
@@ -47,9 +46,8 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   const bidDoc = db.doc(documentPaths.bid(season.id, race.round, player.uid)) as DocumentReference<Bid>;
   const participantDoc = db.doc(documentPaths.participant(season.id, race.round, player.uid)) as DocumentReference<Participant>;
   return db.runTransaction(transaction => {
-    const submittedAt = DateTime.local();
-    transaction.set(bidDoc, firestoreUtils.convertDateTimes({ ...bid, submitted: true, submittedAt }), { merge: true });
-    transaction.set(participantDoc, firestoreUtils.convertDateTimes({ submitted: true, submittedAt }), { merge: true });
+    transaction.set(bidDoc, firestoreUtils.convertDateTimes({ ...bid, submitted: true }), { merge: true });
+    transaction.set(participantDoc, firestoreUtils.convertDateTimes({ submitted: true }), { merge: true });
     transferInTransaction({
       date: DateTime.local(),
       amount: 20,

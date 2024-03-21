@@ -34,7 +34,7 @@ export interface Bid {
   points?: number;
   player?: Player;
   submitted?: boolean;
-  submittedAt?: DateTime;
+  updatedAt?: DateTime;
 }
 
-export type Participant = Pick<Bid, 'player' | 'submitted' | 'submittedAt'>;
+export type Participant = Pick<Bid, 'player' | 'submitted' | 'updatedAt'>;
