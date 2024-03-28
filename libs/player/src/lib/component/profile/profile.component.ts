@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit, Signal } from '@angular/core';
+import { Component, computed, OnInit, Signal } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { PlayersStore, PlayerStore } from '@f2020/api';
 import { Player } from '@f2020/data';
@@ -22,7 +22,6 @@ export class ProfileComponent implements OnInit {
   constructor(private store: PlayerStore, private playersStore: PlayersStore) {
     this.playersStore.loadPlayers();
     this.player = store.player;
-    effect(() => console.log(this.playersStore.players()));
   }
 
   ngOnInit(): void {
