@@ -1,22 +1,34 @@
 import { Change, EventContext, region } from 'firebase-functions';
 import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { Bid } from '@f2020/data';
+import { deepCompareFn } from '@f2020/tools';
+import { log } from 'firebase-functions/logger';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { documentPaths } from '../../lib';
 
 /**
- * Updates the updatedAt property for the bid and the participant
+ * Updates the updatedAt property for the bid and the participant.
+ * Make sure the bid is different from the previous bid.
+ * And that a minimum of 10 seconds has passed since the last update.
  */
 export const updatedAtTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{raceId}/bids/{userId}')
   .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
+    const before = change.before.data() as Bid;
+    const after = change.after.data() as Bid;
+    const compare = deepCompareFn(new Set<string>(['updatedAt']));
+    const equal = compare(before, after);
+    const resentlyUpdated = (change.after.updateTime.toMillis() - change.before.updateTime.toMillis()) < 10000;
+    log('Update at trigger', { equal, resentlyUpdated });
+    if (equal || resentlyUpdated) {
+      return Promise.resolve('No reason to update timestamp');
+    }
+
     const db = getFirestore();
-    const bid = change.after.data() as Bid;
     const participant = db.doc(documentPaths.participant(
       context.params['seasonId'],
       context.params['raceId'],
-      bid.player.uid,
+      after.player.uid,
     ));
-
     return db.runTransaction(transaction => {
       const payload = { updatedAt: Timestamp.now() };
       transaction
@@ -25,5 +37,4 @@ export const updatedAtTrigger = region('europe-west1').firestore.document('seaso
       ;
       return Promise.resolve('Updated timestamp');
     });
-
   });
