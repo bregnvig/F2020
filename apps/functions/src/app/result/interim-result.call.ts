@@ -66,6 +66,8 @@ const buildResult = async (result: Partial<Bid>) => {
       if (player.tokens && player.tokens.length) {
         log(`Should send message to ${player.displayName}`);
         sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK');
+      } else {
+        log('No tokens to send notifications to');
       }
     }));
   });

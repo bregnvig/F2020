@@ -18,8 +18,10 @@ export const updatedAtTrigger = region('europe-west1').firestore.document('seaso
     const compare = deepCompareFn(new Set<string>(['updatedAt']));
     const equal = compare(before, after);
     const resentlyUpdated = (change.after.updateTime.toMillis() - change.before.updateTime.toMillis()) < 10000;
-    log('Update at trigger', { equal, resentlyUpdated });
-    if (equal || resentlyUpdated) {
+    const alreadySubmitted = before.submitted && after.submitted;
+    log('Update at trigger', { equal, resentlyUpdated, alreadySubmitted });
+
+    if (equal || resentlyUpdated || alreadySubmitted) {
       return Promise.resolve('No reason to update timestamp');
     }
 
