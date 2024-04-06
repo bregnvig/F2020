@@ -5,7 +5,7 @@ import { mapper } from '@f2020/data';
 import { firebaseApp } from './firebase';
 
 export const buildDrivers = async (): Promise<number> => {
-  const db = firebaseApp.datebase;
+  const db = firebaseApp.database;
   const drivers = (await getDrivers())
     .filter(driver => !!driver.code)
     .map(mapper.driver);

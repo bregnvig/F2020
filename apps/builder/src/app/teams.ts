@@ -18,7 +18,7 @@ export const getTeams = async (seasonId: number): Promise<Map<string, ITeam>> =>
 };
 
 export const writeTeams = (seasonId: number, teams: Map<string, ITeam>): Promise<number> => {
-  const db = firebaseApp.datebase;
+  const db = firebaseApp.database;
   const teamsCollection = db.collection(`seasons/${seasonId}/teams`);
 
   return db.runTransaction(transaction => {
@@ -33,13 +33,13 @@ export const writeTeams = (seasonId: number, teams: Map<string, ITeam>): Promise
 
 export const assignTeamsToSeason = async (seasonId: number): Promise<WriteResult[]> => {
 
-  const teams: ITeam[] = await firebaseApp.datebase.collection(`seasons/${seasonId}/teams`)
+  const teams: ITeam[] = await firebaseApp.database.collection(`seasons/${seasonId}/teams`)
     .get()
     .then(s => s.docs.map(doc => doc.data() as ITeam));
 
-  const startingIndex = await firebaseApp.datebase.collection('seasons/${seasonId}/races').get().then(snap => snap.docs.filter(d => (d.data() as IRace).selectedTeam).length);
+  const startingIndex = await firebaseApp.database.collection('seasons/${seasonId}/races').get().then(snap => snap.docs.filter(d => (d.data() as IRace).selectedTeam).length);
 
-  return firebaseApp.datebase.collection(`seasons/${seasonId}/races`)
+  return firebaseApp.database.collection(`seasons/${seasonId}/races`)
     .where('state', '==', 'waiting')
     .get()
     .then(snapshot => {

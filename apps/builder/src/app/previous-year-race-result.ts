@@ -11,9 +11,9 @@ export const buildPreviousRaceResult = async (seasonId: number) => {
   Promise.all(results.map((result, index) => {
     const concat = {
       result,
-      qualify: qualification[index]
+      qualify: qualification[index],
     };
-    return firebaseApp.datebase.doc(`seasons/${seasonId + 1}/lastYear/${result.countryCode}`).set(firestoreUtils.convertDateTimes(concat));
+    return firebaseApp.database.doc(`seasons/${seasonId + 1}/lastYear/${result.countryCode}`).set(firestoreUtils.convertDateTimes(concat));
   }));
 
 };

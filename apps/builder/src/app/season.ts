@@ -33,12 +33,12 @@ export const buildNewSeason = async (seasonId: string) => {
 
 export const appendRaces = async (seasonId: string): Promise<any> => {
   const ergastRaces: IRace[] = await buildRaces(seasonId);
-  const firestoreRaces = await firebaseApp.datebase.collection(`${seasonsURL}/${seasonId}/races`).withConverter(converter.race)
+  const firestoreRaces = await firebaseApp.database.collection(`${seasonsURL}/${seasonId}/races`).withConverter(converter.race)
     .get()
     .then(snapshot => snapshot.docs.map(doc => doc.data() as IRace));
 
   ergastRaces.filter(er => firestoreRaces.every(fr => fr.round !== er.round))
-    .forEach(async r => await firebaseApp.datebase.doc(`${seasonsURL}/${seasonId}/races/${r.round}`).withConverter(converter.race).set(r));
+    .forEach(async r => await firebaseApp.database.doc(`${seasonsURL}/${seasonId}/races/${r.round}`).withConverter(converter.race).set(r));
 };
 
 export const buildPreviousSeason = async (seasonId: string) => {
@@ -66,9 +66,9 @@ const seasonsURL = 'seasons';
 const racesURL = seasonId => `${seasonsURL}/${seasonId}/races`;
 
 const writeSeason = (season: ISeason, races: IRace[]): Promise<WriteResult[]> => {
-  return firebaseApp.datebase.collection(seasonsURL).doc(season.id).withConverter(converter.season).set(season)
+  return firebaseApp.database.collection(seasonsURL).doc(season.id).withConverter(converter.season).set(season)
     .then(() => {
-      const ref = firebaseApp.datebase.collection(racesURL(season.id));
+      const ref = firebaseApp.database.collection(racesURL(season.id));
       const racesWrite = races.map(race => ref.doc(race.round.toString(10)).withConverter(converter.race).set(race));
       return Promise.all(racesWrite);
     });

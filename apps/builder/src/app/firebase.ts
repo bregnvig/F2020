@@ -12,7 +12,7 @@ const app: admin.app.App = (function() {
 const db = app.firestore();
 db.settings({ ignoreUndefinedProperties: true });
 export const firebaseApp = {
-  get datebase(): admin.firestore.Firestore {
+  get database(): admin.firestore.Firestore {
     return db;
   },
 };
