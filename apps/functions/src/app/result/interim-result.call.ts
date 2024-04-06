@@ -14,7 +14,7 @@ const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string 
      <p>
         Indtil videre ser det ca. sådan her ud
         <ul>
-          ${lis}
+          ${lis.join()}
         </ul>
      </p>
      </div>     
