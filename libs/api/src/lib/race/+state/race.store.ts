@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { combineLatest, of, switchMap } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import { buildInterimResult, buildResult } from '../service/result-builder';
+import { buildResult } from '../service/result-builder';
 import { DriversStore } from '../../drivers';
 import { TeamService } from '../../service';
 
@@ -33,7 +33,6 @@ export class RaceStore extends Store<RaceState> {
   readonly loaded = computed(() => !!this.state.race());
   readonly error = this.state.error;
   readonly bid = computed(() => this.bids()?.find(bid => bid.player.uid === this.playerStore.player()?.uid));
-  readonly interimResult = this.state.interimResult;
 
   #round = signal<number | undefined>(undefined);
 
@@ -119,25 +118,6 @@ export class RaceStore extends Store<RaceState> {
 
   submitResult(result: Bid) {
     return this.service.submitResult(this.#round(), result);
-  }
-
-  loadInterimResult() {
-    effect(() => {
-      const race = this.race();
-      if (race) {
-        const offset = this.racesStore.races().filter(r => r.round < race.round && r.state === 'cancelled').length;
-        combineLatest([
-          this.service.getQualify(race.season, race.round - offset),
-          of(race.selectedDriver),
-          of(race.selectedTeam),
-        ]).pipe(
-          map(([qualify, selectedDriver, selectedTeam]) => {
-            return buildInterimResult(qualify, selectedDriver, selectedTeam);
-          }),
-          first(),
-        ).subscribe(interimResult => this.setState(() => ({ interimResult })));
-      }
-    });
   }
 
   submitInterimResult(result: Bid) {

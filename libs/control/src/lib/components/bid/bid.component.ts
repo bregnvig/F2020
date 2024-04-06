@@ -1,12 +1,11 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Bid, IRace, ITeam } from '@f2020/data';
+import { Component, computed, forwardRef, input, OnInit, Signal } from '@angular/core';
+import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { Bid, IRace, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { DriverNamePipe } from '@f2020/driver';
-import { TeamNamePipe } from '@f2020/shared';
-import { PolePositionTimePipe } from '@f2020/shared';
+import { CardPageComponent, PolePositionTimePipe, TeamNamePipe } from '@f2020/shared';
 import { PolePositionTimeComponent } from '../pole-position-time/pole-position-time.component';
 import { SelectTeamsComponent } from '../select-teams/select-teams.component';
 import { SelectedTeamComponent } from '../selected-team/selected-team.component';
@@ -15,7 +14,6 @@ import { SelectDriversComponent } from '../select-drivers/select-drivers.compone
 import { DriverCodesComponent } from '../driver-codes/driver-codes.component';
 
 import { MatExpansionModule } from '@angular/material/expansion';
-import { CardPageComponent } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-bid',
@@ -34,14 +32,27 @@ import { CardPageComponent } from '@f2020/shared';
     },
   ],
   standalone: true,
-  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
+  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe],
 })
 export class BidComponent extends AbstractControlComponent<Bid> implements OnInit {
 
-  @Input() race: IRace;
-  @Input() teams: ITeam[];
-  @Input() isResult = false;
-  fg: FormGroup;
+  race = input.required<IRace>();
+  teams = input.required<ITeam[]>();
+  type = input.required<'bid' | 'result' | 'interim'>();
+  isInterim: Signal<boolean>;
+  isResult: Signal<boolean>;
+  notBid: Signal<boolean>;
+
+  fg = this.fb.group({
+    qualify: this.fb.control<string[]>(null, Validators.required),
+    fastestDriver: this.fb.control<string[]>(null, Validators.required),
+    podium: this.fb.control<string[]>(null, Validators.required),
+    selectedDriver: this.fb.control<SelectedDriverValue>(null),
+    selectedTeam: this.fb.control<SelectedTeamValue>({ value: null, disabled: true }),
+    slowestPitStop: this.fb.control<string[]>(null, Validators.required),
+    firstCrash: this.fb.control<string[]>(null, Validators.required),
+    polePositionTime: this.fb.control<number>(null, Validators.required),
+  });
 
   fastestLapLabelFn = () => 'Hurtigste kører';
   firstCrashLabelFn = () => 'Første udgået';
@@ -53,16 +64,9 @@ export class BidComponent extends AbstractControlComponent<Bid> implements OnIni
   }
 
   ngOnInit(): void {
-    this.fg = this.fb.group({
-      qualify: [{ value: null, disabled: this.isResult }, Validators.required],
-      fastestDriver: [{ value: null, disabled: this.isResult }, Validators.required],
-      podium: [{ value: null, disabled: this.isResult }, Validators.required],
-      selectedDriver: [{ value: null, disabled: this.isResult }],
-      selectedTeam: [{ value: null, disabled: this.isResult || !this.race.selectedTeam }],
-      slowestPitStop: [{ value: null, disabled: this.isResult }, Validators.required],
-      firstCrash: [{ value: null, disabled: this.isResult }, Validators.required],
-      polePositionTime: [{ value: null, disabled: this.isResult }, Validators.required],
-    });
+    this.isInterim = computed(() => this.type() === 'interim');
+    this.isResult = computed(() => this.type() === 'result');
+    this.notBid = computed(() => this.type() !== 'bid');
     this.fg.valueChanges.pipe(
       debounceTime(300),
       untilDestroyed(this),
@@ -80,7 +84,7 @@ export class BidComponent extends AbstractControlComponent<Bid> implements OnIni
         firstCrash: null,
         slowestPitStop: null,
         polePositionTime: null,
-        ...value
+        ...value,
       }, { emitEvent: false });
     } else {
       this.fg.reset({}, { emitEvent: false });
@@ -88,7 +92,7 @@ export class BidComponent extends AbstractControlComponent<Bid> implements OnIni
   }
 
   markAllTouched(): void {
-    this.markAllTouched();
+    this.fg.markAllAsTouched();
   }
 
   validate(): ValidationErrors | null {
@@ -97,6 +101,14 @@ export class BidComponent extends AbstractControlComponent<Bid> implements OnIni
 
   setDisabledState(isDisabled: boolean) {
     isDisabled ? this.fg.disable() : this.fg.enable();
+    this.disableByType();
+  }
+
+  private disableByType() {
+    this.race().selectedTeam && this.fg.controls.selectedTeam.enable();
+    if (this.isInterim()) {
+      ['slowestPitStop', 'firstCrash', 'fastestDriver', 'podium'].forEach(name => this.fg.controls[name].disable());
+    }
   }
 
 }
