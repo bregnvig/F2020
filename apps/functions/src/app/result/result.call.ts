@@ -1,6 +1,5 @@
 import { Bid } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import {
   calculateResult,
@@ -15,10 +14,11 @@ import {
   validateAccess,
 } from '../../lib';
 import { validateResult } from './../../lib/validate.service';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
-export const submitResult = region('europe-west1').https.onCall(async (data: { round: number, result: Bid; }, context) => {
-  return validateAccess(context.auth?.uid, 'admin')
-    .then(() => buildResult(data.round, data.result))
+export const submitResult = onCall(async (request: CallableRequest<{ round: number, result: Bid; }>) => {
+  return validateAccess(request.auth?.uid, 'admin')
+    .then(() => buildResult(request.data.round, request.data.result))
     .then(() => true)
     .catch(internalError);
 });

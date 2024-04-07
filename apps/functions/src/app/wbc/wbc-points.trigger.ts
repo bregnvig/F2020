@@ -1,31 +1,29 @@
 import { Bid, IRace, ISeason, Player, WBCResult } from '@f2020/data';
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
-import { Change, EventContext, region } from 'firebase-functions/v1';
-import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { collectionPaths, documentPaths, internalError } from '../../lib';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 const wbcPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 /**
  * The structure for the WBC is:
  * seasons/{seasonId} wbc[] - {round}: {race, players[]}
  */
-export const wbcPointsTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
-  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
-    const db = getFirestore();
-    const before: IRace = change.before.data() as IRace;
-    const after: IRace = change.after.data() as IRace;
-    if (before.state === 'closed' && after.state === 'completed') {
-      const bids: Bid[] = await db.collection(collectionPaths.bids(context.params.seasonId, context.params.round))
-        .where('submitted', '==', true)
-        .orderBy('points', 'desc')
-        .orderBy('polePositionTimeDiff', 'asc')
-        .get()
-        .then(snapshot => snapshot.docs.map(s => s.data() as Bid));
-      await createWBCRace(after, bids, db.doc(documentPaths.season(context.params.seasonId)));
-    }
-    return Promise.resolve(true);
-  });
+export const wbcPointsTrigger = onDocumentUpdated('seasons/{seasonId}/races/{round}', async event => {
+  const db = getFirestore();
+  const before: IRace = event.data.before.data() as IRace;
+  const after: IRace = event.data.after.data() as IRace;
+  if (before.state === 'closed' && after.state === 'completed') {
+    const bids: Bid[] = await db.collection(collectionPaths.bids(event.params.seasonId, event.params.round))
+      .where('submitted', '==', true)
+      .orderBy('points', 'desc')
+      .orderBy('polePositionTimeDiff', 'asc')
+      .get()
+      .then(snapshot => snapshot.docs.map(s => s.data() as Bid));
+    await createWBCRace(after, bids, db.doc(documentPaths.season(event.params.seasonId)));
+  }
+  return Promise.resolve(true);
+});
 
 const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) => {
   const result: WBCResult = {

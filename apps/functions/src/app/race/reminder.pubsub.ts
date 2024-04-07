@@ -1,9 +1,9 @@
 import { IRace, Player } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendNotification } from './../../lib';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 const timespan = (days: number, date: DateTime): boolean => {
   const reminderDate = date.minus({ days });
@@ -34,32 +34,28 @@ const notificationMessage = (race: IRace, closeDay: string, closeTime: string): 
   `${race.name} lukker ${closeDay} kl.${closeTime}, og du har endnu ikke spillet!`;
 
 // This will be run every day at 9:11 Europe/Copenhagen!
-export const mailReminderCrontab = region('europe-west1').pubsub.schedule('11 9 * * *')
-  .timeZone('Europe/Copenhagen')
-  .onRun(async () => getCurrentRace('open')
+export const mailReminderCrontab = onSchedule({
+    timeZone: 'Europe/Europe',
+    schedule: '11 9 * * *',
+  }, async () => getCurrentRace('open')
     .then(async race => {
-      if (timespan(3, race!.close) || timespan(1, race!.close)) {
+      if (race && timespan(3, race.close) || timespan(1, race.close)) {
         const players = await playerWithoutBid();
-        const closeDay = dayNames.get(race!.close.setLocale('da').toFormat('E'))!;
-        const closeTime = race!.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
-        return Promise.all(players.map(player => {
+        const closeDay = dayNames.get(race.close.setLocale('da').toFormat('E'))!;
+        const closeTime = race.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
+        await Promise.all(players.map(player => {
           log(`Should mail to ${player.displayName}`);
-          const results = [
-            sendMail(player.email, `Tid til at spille på det ${race!.name} `, mailBody(player, race!, closeDay, closeTime)).then((msg) => {
-              log(`sendMail result :(${msg})`);
-            }),
-          ];
+          sendMail(player.email, `Tid til at spille på det ${race.name} `, mailBody(player, race, closeDay, closeTime)).then((msg) => {
+            log(`sendMail result :(${msg})`);
+          });
           if (player.tokens && player.tokens.length) {
             log(`Should send message to ${player.displayName}`);
-            results.push(sendNotification(player.tokens, `Husk at spille`, notificationMessage(race!, closeDay, closeTime)));
+            sendNotification(player.tokens, `Husk at spille`, notificationMessage(race, closeDay, closeTime));
           }
-          return Promise.all(results);
         }));
+      } else if (!race) {
+        log('No open race');
       }
-      return Promise.resolve(true);
-    })
-    .catch(() => {
-      log('No open race');
-      return Promise.resolve(true);
     }),
-  );
+);
+

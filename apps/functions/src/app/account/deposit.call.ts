@@ -1,7 +1,13 @@
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { internalError, logAndCreateError, validateAccess } from '../../lib';
 import { transfer } from '../../lib/transactions.service';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
+import { setGlobalOptions } from 'firebase-functions/v2';
+
+// TODO Move to main.ts when error is fixed
+setGlobalOptions({
+  region: 'europe-west1',
+});
 
 interface DepositData {
   amount: number;
@@ -9,9 +15,9 @@ interface DepositData {
   uid: string;
 }
 
-export const deposit = region('europe-west1').https.onCall(async (data: DepositData, context) => {
-  return validateAccess(context.auth?.uid, 'bank-admin')
-    .then(() => buildDeposit(data))
+export const deposit = onCall((request: CallableRequest<DepositData>) => {
+  return validateAccess(request.auth?.uid, 'bank-admin')
+    .then(() => buildDeposit(request.data))
     .then(() => true)
     .catch(internalError);
 });

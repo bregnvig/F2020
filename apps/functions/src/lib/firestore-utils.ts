@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { error } from 'firebase-functions/logger';
-import { HttpsError } from 'firebase-functions/v1/https';
+import { HttpsError } from 'firebase-functions/v2/https';
 import { FunctionsErrorCodeCore } from 'firebase/functions';
 import { DateTime } from 'luxon';
 

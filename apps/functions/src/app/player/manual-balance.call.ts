@@ -1,17 +1,17 @@
-import { region } from 'firebase-functions/v1';
 import { internalError, validateAccess } from '../../lib';
 import { documentPaths } from '../../lib/paths';
 import { getFirestore } from 'firebase-admin/firestore';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 interface BalanceData {
   uid: string;
   balance: number;
 }
 
-export const manualBalance = region('europe-west1').https.onCall(async (data: BalanceData, context) => {
+export const manualBalance = onCall(async (request: CallableRequest<BalanceData>) => {
 
-  return validateAccess(context.auth?.uid, 'bank-admin')
-    .then(() => updateBalance(data))
+  return validateAccess(request.auth?.uid, 'bank-admin')
+    .then(() => updateBalance(request.data))
     .then(() => true)
     .catch(internalError);
 });

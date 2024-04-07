@@ -1,10 +1,10 @@
 import { Bid, IRace, Player } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
-import { region } from 'firebase-functions/v1';
 import { collectionPaths, currentSeason, documentPaths, getCurrentRace, internalError, logAndCreateError, sendMail, sendNotification, validateAccess } from '../../lib';
 import { calculateInterimResult } from './../../lib/result.service';
 import { validateInterimResult } from './../../lib/validate.service';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -28,9 +28,9 @@ const messageBody = (player: Player, results: Partial<Bid>[]): string => {
   return `Og du ligger på en foreløbig ${index + 1}. plads!`;
 };
 
-export const submitInterimResult = region('europe-west1').https.onCall(async (data: Partial<Bid>, context) => {
-  return validateAccess(context.auth?.uid, 'admin')
-    .then(player => buildResult(data))
+export const submitInterimResult = onCall(async (request: CallableRequest<Bid>) => {
+  return validateAccess(request.auth?.uid, 'admin')
+    .then(() => buildResult(request.data))
     .then(() => true)
     .catch(internalError);
 });

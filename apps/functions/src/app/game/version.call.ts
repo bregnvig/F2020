@@ -1,10 +1,8 @@
-import { region } from 'firebase-functions/v1';
 import { validateAccess } from '../../lib';
+import { onCall } from 'firebase-functions/v2/https';
 
-;
-
-export const version = region('europe-west1').https.onCall(async (data: any, context) => {
-  return validateAccess(context.auth?.uid, 'player')
+export const version = onCall(async request => {
+  return validateAccess(request.auth?.uid, 'player')
     .then(() => ({
       api: 2,
       ui: 2,

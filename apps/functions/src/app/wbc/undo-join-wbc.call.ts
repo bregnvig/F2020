@@ -1,12 +1,11 @@
 import { ISeason } from '@f2020/data';
-import { getFirestore } from 'firebase-admin/firestore';
-import { FieldValue } from 'firebase-admin/firestore';
-import { region } from 'firebase-functions/v1';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
 import { currentSeason, documentPaths, getBookie, internalError, logAndCreateError, PlayerImpl, transferInTransaction, validateAccess } from '../../lib';
+import { onCall } from 'firebase-functions/v2/https';
 
-export const undoWBC = region('europe-west1').https.onCall(async (data: any, context) => {
-  return validateAccess(context.auth?.uid, 'player')
+export const undoWBC = onCall(async request => {
+  return validateAccess(request.auth?.uid, 'player')
     .then(player => undo(player))
     .then(() => true)
     .catch(internalError);

@@ -1,23 +1,21 @@
 import { IRace, ISeason } from '@f2020/data';
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
-import { Change, EventContext, region } from 'firebase-functions/v1';
-import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { documentPaths } from '../../lib';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 /**
  * The structure for the WBC is:
  * seasons/{seasonId} wbc[] - {round}: {race, players[]}
  */
-export const rollbackWBCTrigger = region('europe-west1').firestore.document('seasons/{seasonId}/races/{round}')
-  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
-    const db = getFirestore();
-    const before: IRace = change.before.data() as IRace;
-    const after: IRace = change.after.data() as IRace;
-    if (before.state === 'completed' && after.state === 'closed') {
-      await rollbackWBCRace(after, db.doc(documentPaths.season(context.params.seasonId)));
-    }
-    return Promise.resolve(true);
-  });
+export const rollbackWBCTrigger = onDocumentUpdated('seasons/{seasonId}/races/{round}', async event => {
+  const db = getFirestore();
+  const before: IRace = event.data.before.data() as IRace;
+  const after: IRace = event.data.after.data() as IRace;
+  if (before.state === 'completed' && after.state === 'closed') {
+    await rollbackWBCRace(after, db.doc(documentPaths.season(event.params.seasonId)));
+  }
+  return Promise.resolve(true);
+});
 
 const rollbackWBCRace = async (race: IRace, ref: DocumentReference) => {
 

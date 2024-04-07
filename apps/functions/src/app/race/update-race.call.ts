@@ -1,13 +1,13 @@
 import { IRace, Player, RaceUpdatedBy } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, documentPaths, firestoreUtils, getRaceByRound, getUser, internalError, logAndCreateError, PlayerImpl, sendNotification, validateAccess } from '../../lib';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
-export const updateRace = region('europe-west1').https.onCall(async (data: IRace, context) => {
-  return validateAccess(context.auth?.uid, 'admin', 'player')
-    .then(() => getUser(context.auth.uid))
-    .then(user => update(firestoreUtils.convertJSONDates(data), user))
+export const updateRace = onCall(async (request: CallableRequest<IRace>) => {
+  return validateAccess(request.auth?.uid, 'admin', 'player')
+    .then(() => getUser(request.auth.uid))
+    .then(user => update(firestoreUtils.convertJSONDates(request.data), user))
     .catch(internalError);
 });
 

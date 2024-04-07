@@ -1,18 +1,18 @@
 import { Transaction } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
-import { region } from 'firebase-functions/v1';
 import { internalError, validateAccess } from '../../lib';
 import { log } from 'firebase-functions/logger';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 interface MigrationData {
   uid: string;
   playerName: string;
 }
 
-export const migrateAccount = region('europe-west1').https.onCall(async (data: MigrationData, context) => {
+export const migrateAccount = onCall(async (request: CallableRequest<MigrationData>) => {
 
-  return validateAccess(context.auth?.uid, 'bank-admin')
-    .then(() => migrate(data))
+  return validateAccess(request.auth?.uid, 'bank-admin')
+    .then(() => migrate(request.data))
     .then(() => true)
     .catch(internalError);
 });

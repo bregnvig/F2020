@@ -1,11 +1,7 @@
 import { Player } from '@f2020/data';
-import { Change, EventContext, region } from 'firebase-functions/v1';
-import { DocumentSnapshot } from 'firebase-functions/v1/firestore';
 import { sendMail } from '../../lib';
 import { log } from 'firebase-functions/logger';
-
-;
-
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 const mailbody = (player: Player) =>
   `<h3>Hej ${player.displayName}</h3>
@@ -17,15 +13,14 @@ const mailbody = (player: Player) =>
     Wroouumm,<br/>
     F1emming`;
 
-export const WelcomeMailTrigger = region('europe-west1').firestore.document('players/{userId}')
-  .onUpdate(async (change: Change<DocumentSnapshot>, context: EventContext) => {
-    const before: Player = change.before.data() as Player;
-    const after: Player = change.after.data() as Player;
-    if (before.roles?.includes('anonymous') && after.roles?.includes('player')) {
-      log('player', after.displayName, 'Is now approved - lets send a welcome mail');
-      return sendMail(after.email, 'Velkommen til F1 2020 Betting', mailbody(after)).then((msg) => {
-        log(`sendMail result :(${msg})`);
-      });
-    }
-    return null;
-  });    
+export const WelcomeMailTrigger = onDocumentUpdated('players/{userId}', async event => {
+  const before: Player = event.data.before.data() as Player;
+  const after: Player = event.data.after.data() as Player;
+  if (before.roles?.includes('anonymous') && after.roles?.includes('player')) {
+    log('player', after.displayName, 'Is now approved - lets send a welcome mail');
+    return sendMail(after.email, 'Velkommen til F1 2020 Betting', mailbody(after)).then((msg) => {
+      log(`sendMail result :(${msg})`);
+    });
+  }
+  return null;
+});

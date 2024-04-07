@@ -1,7 +1,6 @@
 import { Bid, IRace, Player } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import {
   collectionPaths,
@@ -15,10 +14,11 @@ import {
   transferInTransaction,
   validateAccess,
 } from '../../lib';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
-export const cancelRace = region('europe-west1').https.onCall(async (round: string, context) => {
-  return validateAccess(context.auth?.uid, 'admin')
-    .then(() => doCancel(round))
+export const cancelRace = onCall(async (request: CallableRequest<string>) => {
+  return validateAccess(request.auth?.uid, 'admin')
+    .then(() => doCancel(request.data))
     .catch(internalError);
 });
 

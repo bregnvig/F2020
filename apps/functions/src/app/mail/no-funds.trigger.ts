@@ -1,7 +1,7 @@
 import { Player } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
-import { region } from 'firebase-functions/v1';
 import { sendMail } from '../../lib';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 
 const mailbody = (player: Player) =>
   `<h3>Hej ${player.displayName}</h3>
@@ -13,14 +13,13 @@ const mailbody = (player: Player) =>
     Wroouumm,<br/>
     F1emming`;
 
-export const nofundsTrigger = region('europe-west1').firestore.document('players/{userId}')
-  .onUpdate(async (change, context) => {
-    const player: Player = change.after.data() as Player;
-    if ((player.balance || 0) - 20 < -100) {
-      log('player', player.displayName, 'has insufficient founds for next race');
-      return sendMail(player.email, 'Du kan ikke spille mere', mailbody(player)).then((msg) => {
-        log(`sendMail result :(${msg})`);
-      });
-    }
-    return null;
-  });    
+export const nofundsTrigger = onDocumentUpdated('players/{userId}', async event => {
+  const player: Player = event.data.after.data() as Player;
+  if ((player.balance || 0) - 20 < -100) {
+    log('player', player.displayName, 'has insufficient founds for next race');
+    return sendMail(player.email, 'Du kan ikke spille mere', mailbody(player)).then((msg) => {
+      log(`sendMail result :(${msg})`);
+    });
+  }
+  return null;
+});

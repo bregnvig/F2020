@@ -1,9 +1,7 @@
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { getUser, internalError, logAndCreateError, PlayerImpl, validateAccess } from '../../lib';
 import { transfer } from '../../lib/transactions.service';
-
-;
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 const validateBalance = (player: PlayerImpl, amount: number): void => {
   if ((player.balance || 0) - amount < 0) {
@@ -17,9 +15,9 @@ interface WithdrawData {
   uid: string;
 }
 
-export const withdraw = region('europe-west1').https.onCall(async (data: WithdrawData, context) => {
-  return validateAccess(context.auth?.uid, 'bank-admin')
-    .then(() => buildWithdraw(data))
+export const withdraw = onCall(async (request: CallableRequest<WithdrawData>) => {
+  return validateAccess(request.auth?.uid, 'bank-admin')
+    .then(() => buildWithdraw(request.data))
     .then(() => true)
     .catch(internalError);
 });

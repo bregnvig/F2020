@@ -1,11 +1,11 @@
 import { Bid, Participant } from '@f2020/data';
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
-import { region } from 'firebase-functions/v1';
 import { DateTime } from 'luxon';
 import { currentSeason, firestoreUtils, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from '../../lib';
 import { documentPaths } from '../../lib/paths';
 import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 const validateBalance = (player: PlayerImpl): void => {
   if ((player.balance || 0) - 20 < -100) {
@@ -13,9 +13,9 @@ const validateBalance = (player: PlayerImpl): void => {
   }
 };
 
-export const submitBid = region('europe-west1').https.onCall(async (data: Bid, context) => {
-  return validateAccess(context.auth?.uid, 'player')
-    .then(player => buildBid(player, data))
+export const submitBid = onCall((request: CallableRequest<Bid>) => {
+  return validateAccess(request.auth?.uid, 'player')
+    .then(player => buildBid(player, request.data))
     .then(() => true)
     .catch(internalError);
 });
