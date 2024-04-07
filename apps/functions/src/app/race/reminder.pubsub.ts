@@ -35,7 +35,7 @@ const notificationMessage = (race: IRace, closeDay: string, closeTime: string): 
 
 // This will be run every day at 9:11 Europe/Copenhagen!
 export const mailReminderCrontab = onSchedule({
-    timeZone: 'Europe/Europe',
+    timeZone: 'Europe/Copenhagen',
     schedule: '11 9 * * *',
   }, async () => getCurrentRace('open')
     .then(async race => {
