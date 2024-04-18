@@ -4,7 +4,7 @@ import { log } from 'firebase-functions/logger';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 
-// This will be run every friday at 10.00 Europe/Copenhagen!
+// This will be run every friday at 11.00 Europe/Copenhagen!
 export const closeRaceCrontab = onSchedule({
     timeZone: 'Europe/Copenhagen',
     schedule: '0 11 * * *',
