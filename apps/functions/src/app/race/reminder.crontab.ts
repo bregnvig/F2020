@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendNotification } from './../../lib';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { requiredValue } from '@f2020/tools';
 
 const timespan = (days: number, date: DateTime): boolean => {
   const reminderDate = date.minus({ days });
@@ -41,7 +42,7 @@ export const mailReminderCrontab = onSchedule({
     .then(async race => {
       if (race && timespan(3, race.close) || timespan(1, race.close)) {
         const players = await playerWithoutBid();
-        const closeDay = dayNames.get(race.close.setLocale('da').toFormat('E'))!;
+        const closeDay = requiredValue(dayNames.get(race.close.setLocale('da').toFormat('E')), 'Weekday');
         const closeTime = race.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
         await Promise.all(players.map(player => {
           log(`Should mail to ${player.displayName}`);
