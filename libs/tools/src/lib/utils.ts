@@ -17,3 +17,8 @@ export const TypedObject = {
   entries: Object.entries as <T extends object>(obj: T) => Array<[keyof T, T[keyof T]]>,
   fromEntries: Object.fromEntries as <K, V>(entries: [keyof K, V][]) => Record<keyof K, V>,
 };
+
+export const requiredValue = <T>(value: T | null | undefined, type: string): T | never => {
+  if (!value) throw new Error(`Required ${type} not found`);
+  return value;
+};
