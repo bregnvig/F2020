@@ -1,10 +1,10 @@
 import { IRace, Player } from '@f2020/data';
+import { requiredValue } from '@f2020/tools';
 import { log } from 'firebase-functions/logger';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendNotification } from './../../lib';
-import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { requiredValue } from '@f2020/tools';
 
 const timespan = (days: number, date: DateTime): boolean => {
   const reminderDate = date.minus({ days });
@@ -33,14 +33,18 @@ const mailBody = (player: Player, race: IRace, closeDay: string, closeTime: stri
      F1emming`;
 const notificationMessage = (race: IRace, closeDay: string, closeTime: string): string =>
   `${race.name} lukker ${closeDay} kl.${closeTime}, og du har endnu ikke spillet!`;
+const finalNotificationMessage = (race: IRace): string =>
+  `${race.name} lukker lige om lidt, og du har endnu ikke spillet😲`;
 
-// This will be run every day at 9:11 Europe/Copenhagen!
+// This will be run every day every hours at 11 minutes past the hour Europe/Copenhagen!
 export const mailReminderCrontab = onSchedule({
-    timeZone: 'Europe/Copenhagen',
-    schedule: '11 6 * * *',
-  }, async () => getCurrentRace('open')
-    .then(async race => {
-      if (race && timespan(3, race.close) || timespan(1, race.close)) {
+  timeZone: 'Europe/Copenhagen',
+  schedule: '11 * * * *',
+}, async () => getCurrentRace('open')
+  .then(async race => {
+    if (race) {
+      const diff = race.close.diffNow(['days', 'hours', 'minutes']);
+      if (diff.days === 1 && DateTime.local().hour === 11) {
         const players = await playerWithoutBid();
         const closeDay = requiredValue(dayNames.get(race.close.setLocale('da').toFormat('E')), 'Weekday');
         const closeTime = race.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
@@ -54,9 +58,18 @@ export const mailReminderCrontab = onSchedule({
             sendNotification(player.tokens, `Husk at spille`, notificationMessage(race, closeDay, closeTime));
           }
         }));
-      } else if (!race) {
-        log('No open race');
+      } else if (diff.days === 0 && diff.hours === 0) {
+        const players = await playerWithoutBid();
+        await Promise.all(players.map(player => {
+          if (player.tokens && player.tokens.length) {
+            log(`Should send message to ${player.displayName}`);
+            sendNotification(player.tokens, `Tik tok tiden går`, finalNotificationMessage(race));
+          }
+        }));
       }
-    }),
+    } else if (!race) {
+      log('No open race');
+    }
+  }),
 );
 
