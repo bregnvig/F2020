@@ -65,6 +65,7 @@ saved-data-backup
 *.log
 
 /apps/builder/src/environment/*
+/libs/shared-temp
 
 .nx/cache
 database-debug.log

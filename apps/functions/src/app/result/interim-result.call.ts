@@ -1,10 +1,10 @@
 import { Bid, IRace, Player } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 import { collectionPaths, currentSeason, documentPaths, getCurrentRace, internalError, logAndCreateError, sendMail, sendNotification, validateAccess } from '../../lib';
 import { calculateInterimResult } from './../../lib/result.service';
 import { validateInterimResult } from './../../lib/validate.service';
-import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -60,12 +60,12 @@ const buildResult = async (result: Partial<Bid>) => {
     return Promise.resolve(`Interim result submitted`);
   }).then(() => {
     const players = calculatedResults.map(cr => cr.player!);
-    return Promise.all(players.map(player => {
+    return Promise.all(players.map(async player => {
       log(`Should mail to ${player.displayName}`);
-      sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults));
+      await sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults));
       if (player.tokens && player.tokens.length) {
-        log(`Should send message to ${player.displayName}`);
-        sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults)).then(() => 'OK');
+        log(`Should send notification to ${player.displayName}`);
+        await sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults));
       } else {
         log('No tokens to send notifications to');
       }
