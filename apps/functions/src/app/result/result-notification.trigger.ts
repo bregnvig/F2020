@@ -1,7 +1,7 @@
 import { WBC, WBCResult } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
-import { sendMail, sendNotification } from '../../lib';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { sendMail, sendNotification } from '../../lib';
 
 const mailBody = (playerName: string, wbcPoints: number, raceName: string) =>
   `<h3>Hej ${playerName}</h3>
@@ -21,7 +21,7 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
     const result: WBCResult = after.results.find(r => !before.results.some(({ round }) => round === r.round));
     log('Race', result.raceName, 'Is now completed - lets send notifications');
     return Promise.all(result.players.map(element => {
-      const sendWBCResult = (place: string) => {
+      const sendWBCResult = (place: string, badge?: string) => {
         const notifications = [
           sendMail(element.player.email, place, mailBody(element.player.displayName, element.points, result.raceName)).then((msg) => {
             log(`Mail result :(${msg})`);
@@ -38,13 +38,13 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
         return sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
       }
       if (element.points === 25) {
-        return sendWBCResult('🥇 Tillykke med din første plads :-)');
+        return sendWBCResult('🥇 Tillykke med din første plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
       }
       if (element.points === 18) {
-        return sendWBCResult('🥈 Tillykke med din anden plads :-)');
+        return sendWBCResult('🥈 Tillykke med din anden plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
       }
       if (element.points === 15) {
-        return sendWBCResult('🥉 Tillykke med din tredje plads :-)');
+        return sendWBCResult('🥉 Tillykke med din tredje plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
       }
       return sendWBCResult('🫣 Æv du fik ingen points  :-(');
     }));

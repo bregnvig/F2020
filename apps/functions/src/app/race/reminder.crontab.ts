@@ -54,7 +54,7 @@ export const mailReminderCrontab = onSchedule({
             log(`sendMail result :(${msg})`);
           });
           if (player.tokens && player.tokens.length) {
-            log(`Should send message to ${player.displayName}`);
+            log(`Should send notification to ${player.displayName}`);
             sendNotification(player.tokens, `Husk at spille`, notificationMessage(race, closeDay, closeTime));
           }
         }));
@@ -62,14 +62,16 @@ export const mailReminderCrontab = onSchedule({
         const players = await playerWithoutBid();
         await Promise.all(players.map(player => {
           if (player.tokens && player.tokens.length) {
-            log(`Should send message to ${player.displayName}`);
+            log(`Should send final reminder notification to ${player.displayName}`);
             sendNotification(player.tokens, `Tik tok tiden går`, finalNotificationMessage(race));
           }
         }));
+      } else {
+        log(`No reminder needs to sent at this time`);
       }
     } else if (!race) {
       log('No open race');
     }
   }),
 );
-
+;

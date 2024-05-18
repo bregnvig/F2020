@@ -1,10 +1,10 @@
 import { log } from 'firebase-functions/logger';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { DateTime } from 'luxon';
-import { getCurrentRace, logAndCreateError, updateRace } from '../../lib';
+import { getCurrentRace, updateRace } from '../../lib';
 
 
-// This will be run every friday at 11.00 Europe/Copenhagen!
+// This will be run every hour!
 export const closeRaceCrontab = onSchedule({
   timeZone: 'Europe/Copenhagen',
   schedule: '0 * * * *',
@@ -16,7 +16,8 @@ export const closeRaceCrontab = onSchedule({
         return updateRace(race.season, race.round, { state: 'closed' });
       }
       return Promise.resolve(undefined);
+    } else {
+      log('No open race found');
     }
-    throw logAndCreateError('not-found', 'No race');
   }),
 );
