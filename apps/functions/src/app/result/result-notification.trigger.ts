@@ -20,33 +20,28 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
   if ((after.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {
     const result: WBCResult = after.results.find(r => !before.results.some(({ round }) => round === r.round));
     log('Race', result.raceName, 'Is now completed - lets send notifications');
-    return Promise.all(result.players.map(element => {
-      const sendWBCResult = (place: string, badge?: string) => {
-        const notifications = [
-          sendMail(element.player.email, place, mailBody(element.player.displayName, element.points, result.raceName)).then((msg) => {
-            log(`Mail result :(${msg})`);
-          }),
-        ];
+    return Promise.all(result.players.map(async element => {
+      const sendWBCResult = async (place: string, badge?: string) => {
+        await sendMail(element.player.email, place, mailBody(element.player.displayName, element.points, result.raceName)).then((msg) => {
+          log(`Mail result :(${msg})`);
+        });
         if (element.player.tokens?.length) {
-          notifications.push(sendNotification(element.player.tokens, place, messageBody(result.raceName, element.points)).then((msg) => {
-            log(`Message result :(${msg})`);
-          }));
+          await sendNotification(element.player.tokens, place, messageBody(result.raceName, element.points), badge);
         }
-        return Promise.all(notifications);
       };
       if ([12, 10, 8, 6, 4, 2, 1].indexOf(element.points) > -1) {
-        return sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
+        await sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
       }
       if (element.points === 25) {
-        return sendWBCResult('🥇 Tillykke med din første plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
+        await sendWBCResult('🥇 Tillykke med din første plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
       }
       if (element.points === 18) {
-        return sendWBCResult('🥈 Tillykke med din anden plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
+        await sendWBCResult('🥈 Tillykke med din anden plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
       }
       if (element.points === 15) {
-        return sendWBCResult('🥉 Tillykke med din tredje plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
+        await sendWBCResult('🥉 Tillykke med din tredje plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
       }
-      return sendWBCResult('🫣 Æv du fik ingen points  :-(');
+      await sendWBCResult('🫣 Æv du fik ingen points  :-(');
     }));
   }
   return Promise.resolve();
