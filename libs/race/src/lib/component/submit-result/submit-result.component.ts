@@ -5,6 +5,7 @@ import { RaceStore, TeamService } from '@f2020/api';
 import { Bid, IRace, ITeam } from '@f2020/data';
 
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -12,21 +13,18 @@ import { BidComponent } from '@f2020/control';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
   selector: 'f2020-submit-result',
   templateUrl: './submit-result.component.html',
-  styleUrls: ['./submit-result.component.scss'],
   standalone: true,
   imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
 })
 export class SubmitResultComponent {
-
-  uploadIcon = icon.farCloudArrowUp;
 
   resultControl = new FormControl<Bid | null>(null);
   race: Signal<IRace>;
@@ -55,7 +53,11 @@ export class SubmitResultComponent {
     }
   }
 
-  resultDownloaded(): boolean {
+  get submitIcon(): [IconPrefix, IconName] {
+    return this.resultDownloaded() ? icon.farCloudArrowUp : icon.falTireFlat;
+  }
+
+  private resultDownloaded(): boolean {
     return !!(this.result()?.qualify?.length === 7
       && this.result()?.fastestDriver?.length === 2
       && this.result()?.podium?.length === 4
