@@ -3,19 +3,13 @@
 </mat-toolbar>
 <div class="max-width">
   @if (loaded()) {
-  @if (race()) {
-  <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result"></f2020-bid>
-  }
-  <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="(updating$ | async)" (click)="submitResult()">
-      <fa-icon [icon]="submitIcon" size="lg"></fa-icon>
-  </button>
+    @if (race()) {
+      <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result"></f2020-bid>
+    }
+    <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="!validResult()" (click)="submitResult()">
+      <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
+    </button>
   } @else {
-  <sha-loading></sha-loading>
-  }
-  @if (updating$ | async) {
-  <ng-container *ngTemplateOutlet="loading"></ng-container>
+    <sha-loading></sha-loading>
   }
 </div>
-<ng-template #loading>
-  <sha-loading></sha-loading>
-</ng-template>

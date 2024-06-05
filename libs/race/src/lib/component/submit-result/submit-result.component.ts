@@ -13,9 +13,7 @@ import { BidComponent } from '@f2020/control';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -28,9 +26,10 @@ export class SubmitResultComponent {
 
   resultControl = new FormControl<Bid | null>(null);
   race: Signal<IRace>;
-  updating$: Observable<boolean>;
   loaded: Signal<boolean>;
   teams: Signal<ITeam[]> = toSignal(this.teamsService.teams$);
+  uploadIcon = icon.farCloudArrowUp;
+  validResult: Signal<boolean>;
   private result: Signal<Bid>;
 
   constructor(
@@ -40,6 +39,13 @@ export class SubmitResultComponent {
     this.loaded = computed(() => store.loaded() && !!store.result());
     this.race = store.race;
     this.result = store.result;
+    this.validResult = computed(() => !!(this.result()?.qualify?.length === 7
+      && this.result()?.fastestDriver?.length === 2
+      && this.result()?.podium?.length === 4
+      && this.result()?.selectedDriver && this.result()?.selectedDriver.grid && this.result()?.selectedDriver.finish
+      && this.result()?.slowestPitStop?.length === 2
+      && this.result()?.polePositionTime),
+    );
     store.loadResult();
     effect(() => store.result() && this.resultControl.patchValue(store.result(), { emitEvent: false }));
   }
@@ -52,18 +58,4 @@ export class SubmitResultComponent {
       this.store.submitResult(result).then(() => this.router.navigate(['/']));
     }
   }
-
-  get submitIcon(): [IconPrefix, IconName] {
-    return this.resultDownloaded() ? icon.farCloudArrowUp : icon.falTireFlat;
-  }
-
-  private resultDownloaded(): boolean {
-    return !!(this.result()?.qualify?.length === 7
-      && this.result()?.fastestDriver?.length === 2
-      && this.result()?.podium?.length === 4
-      && this.result()?.selectedDriver && this.result()?.selectedDriver.grid && this.result()?.selectedDriver.finish
-      && this.result()?.slowestPitStop?.length === 2
-      && this.result()?.polePositionTime);
-  }
-
 }
