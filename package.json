@@ -43,6 +43,7 @@
   },
   "private": true,
   "dependencies": {
+    "@alexfriesen/ngx-mat-timepicker": "^18.0.2",
     "@angular/animations": "18.0.3",
     "@angular/cdk": "18.0.3",
     "@angular/common": "18.0.3",
@@ -78,7 +79,6 @@
     "firebase-functions": "^5.0.1",
     "luxon": "^3.4.4",
     "ngx-infinite-scroll": "^18.0.0",
-    "ngx-mat-timepicker": "^17.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "0.14.4"
