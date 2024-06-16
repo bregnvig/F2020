@@ -1,20 +1,20 @@
+import { NgxMatTimepickerComponent, NgxMatTimepickerDirective } from '@alexfriesen/ngx-mat-timepicker';
+import { AsyncPipe } from '@angular/common';
 import { Component, effect, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RaceStore, TeamService } from '@f2020/api';
+import { SelectDriverComponent } from '@f2020/control';
 import { IRace, ITeam } from '@f2020/data';
+import { CardPageComponent, FlagURLPipe, icon } from '@f2020/shared';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { combineLatest, map, Observable } from 'rxjs';
-import { CardPageComponent, FlagURLPipe, icon } from '@f2020/shared';
-import { MatButtonModule } from '@angular/material/button';
-import { SelectDriverComponent } from '@f2020/control';
-import { MatIconModule } from '@angular/material/icon';
-import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @UntilDestroy()
 @Component({
@@ -27,14 +27,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    NgxMatTimepickerModule,
     MatIconModule,
     SelectDriverComponent,
     MatButtonModule,
     AsyncPipe,
     FlagURLPipe,
-    FontAwesomeModule
-],
+    FontAwesomeModule,
+    NgxMatTimepickerComponent,
+    NgxMatTimepickerDirective,
+  ],
 })
 export class EditRaceComponent {
 

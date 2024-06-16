@@ -1,7 +1,9 @@
 import localeDa from '@angular/common/locales/da';
 import { APP_INITIALIZER, enableProdMode, importProvidersFrom, LOCALE_ID } from '@angular/core';
 
+import { NgxMatTimepickerModule } from '@alexfriesen/ngx-mat-timepicker';
 import { DatePipe, registerLocaleData } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { connectFunctionsEmulator, getFunctions, provideFunctions } from '@angular/fire/functions';
@@ -14,6 +16,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -26,8 +29,6 @@ import { Settings } from 'luxon';
 import { routes } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
-import { HttpClientModule } from '@angular/common/http';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 const materialModule = [
   MatSidenavModule,
@@ -44,34 +45,36 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
+    provideHttpClient(),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideFirestore(() => {
+      const db = getFirestore();
+      if (environment.useEmulator) {
+        connectFirestoreEmulator(db, 'localhost', 8080);
+        console.warn('Using firestore emulator');
+        connectAuthEmulator(getAuth(), 'http://localhost:9099');
+        console.warn('Using auth emulator');
+      }
+      return db;
+    }),
+    provideFunctions(() => {
+      const functions = getFunctions(undefined, 'europe-west1');
+      if (environment.useEmulator) {
+        connectFunctionsEmulator(functions, 'localhost', 5001);
+        console.warn('Using functions emulator');
+      }
+      return functions;
+    }),
+    provideMessaging(() => getMessaging()),
     importProvidersFrom(
       BrowserModule,
       ServiceWorkerModule,
       GoogleMapsModule,
       materialModule,
       FontAwesomeModule,
-      HttpClientModule,
-      provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
       ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-      provideFirestore(() => {
-        const db = getFirestore();
-        if (environment.useEmulator) {
-          connectFirestoreEmulator(db, 'localhost', 8080);
-          console.warn('Using firestore emulator');
-          connectAuthEmulator(getAuth(), 'http://localhost:9099');
-          console.warn('Using auth emulator');
-        }
-        return db;
-      }),
-      provideFunctions(() => {
-        const functions = getFunctions(undefined, 'europe-west1');
-        if (environment.useEmulator) {
-          connectFunctionsEmulator(functions, 'localhost', 5001);
-          console.warn('Using functions emulator');
-        }
-        return functions;
-      }),
-      provideMessaging(() => getMessaging())),
+      NgxMatTimepickerModule.setLocale('da-DK')
+    ),
     {
       provide: LOCALE_ID,
       useValue: 'da',

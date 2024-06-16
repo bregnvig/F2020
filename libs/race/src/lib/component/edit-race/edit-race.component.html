@@ -21,17 +21,13 @@
           <div>
             <mat-form-field class="w-full">
               <mat-label>Spillet lukkes</mat-label>
-              <input matInput
-                formControlName="close"
-                [format]="24"
-                [ngxMatTimepicker]="raceClose"
-                readonly/>
+              <input matInput formControlName="close" [format]="24" [ngxMatTimepicker]="raceClose" />
+              <ngx-mat-timepicker  #raceClose />
               <mat-icon matSuffix
                 (click)="raceClose.open()">
                 <fa-icon [icon]="clockIcon" size="lg"></fa-icon>
               </mat-icon>
             </mat-form-field>
-            <ngx-mat-timepicker #raceClose></ngx-mat-timepicker>
           </div>
           <div>
             @if (selectedDriver$ | async; as selectedDriver) {
