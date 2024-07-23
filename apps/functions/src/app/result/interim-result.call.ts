@@ -14,7 +14,7 @@ const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string 
      <p>
         Indtil videre ser det ca. sådan her ud
         <ul>
-          ${lis.join()}
+          ${lis.join('')}
         </ul>
      </p>
      </div>     
@@ -52,7 +52,7 @@ const buildResult = async (result: Partial<Bid>) => {
     .then(bids => bids.map(bid => calculateInterimResult(bid as Bid, result)))
     .then(bids => bids.sort((a, b) => b.points! - a.points!));
 
-  return db.runTransaction(transaction => {
+  await db.runTransaction(transaction => {
     calculatedResults.forEach(cr => {
       transaction.set(db.doc(documentPaths.bid(race.season, race.round, cr.player.uid)), cr);
     });
