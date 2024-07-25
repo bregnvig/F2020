@@ -52,10 +52,8 @@ export class EnterBidComponent {
     this.race = this.store.race;
     this.teams = toSignal(this.teamsService.teams$);
     this.isOpen = computed(() => store.race()?.close >= DateTime.local());
-    effect(() => {
-      this.bidControl.patchValue(yourBid() ?? {}, { emitEvent: false });
-      store.bid()?.submitted && this.bidControl.disable({ emitEvent: false });
-    });
+    this.bidControl.patchValue(yourBid() ?? {}, { emitEvent: false });
+    effect(() => store.bid()?.submitted && this.bidControl.disable({ emitEvent: false }));
     effect(() => store.error() && this.bidControl.enable({ emitEvent: false }));
     const updatedBid = toSignal(this.bidControl.valueChanges.pipe(
       debounceTime(3000),
