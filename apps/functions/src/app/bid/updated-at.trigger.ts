@@ -14,12 +14,13 @@ export const updatedAtTrigger = onDocumentUpdated('seasons/{seasonId}/races/{rac
   const before = event.data.before.data() as Bid;
   const after = event.data.after.data() as Bid;
   const compare = deepCompareFn(new Set<string>(['updatedAt']));
+  const updatedAtHasPreviouslyBeenSet = !!before.updatedAt;
   const equal = compare(before, after);
   const resentlyUpdated = (event.data.after.updateTime.toMillis() - event.data.before.updateTime.toMillis()) < 10000;
   const alreadySubmitted = before.submitted && after.submitted;
-  log('Update at trigger', { equal, resentlyUpdated, alreadySubmitted });
+  log('Update at trigger', { equal, resentlyUpdated, alreadySubmitted, updatedAtHasPreviouslyBeenSet });
 
-  if (equal || resentlyUpdated || alreadySubmitted) {
+  if ((equal || resentlyUpdated || alreadySubmitted) && updatedAtHasPreviouslyBeenSet) {
     return Promise.resolve('No reason to update timestamp');
   }
 
