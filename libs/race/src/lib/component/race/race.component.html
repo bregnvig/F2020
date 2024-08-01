@@ -8,10 +8,10 @@
       </mat-card-header>
       <mat-card-content style="height: 33vh">
         <google-map
-          width="100%"
-          height="100%"
-          [center]="center()"
-          [options]="options">
+            width="100%"
+            height="100%"
+            [center]="center()"
+            [options]="options">
         </google-map>
       </mat-card-content>
       <mat-card-actions>
@@ -22,15 +22,15 @@
         <div *shaHasRole="'admin'" class="flex-1 flex justify-between items-center">
           @if (race().state === 'waiting' || race().state === 'open') {
             <a
-              mat-button
-              routerLink="drivers">
+                mat-button
+                routerLink="drivers">
               DRIVERS
             </a>
           }
           @if (race().state === 'closed') {
             <a
-              mat-button
-              routerLink="qualify">
+                mat-button
+                routerLink="qualify">
               {{ 'Kvalifikation' | uppercase }}
             </a>
           }
@@ -84,5 +84,5 @@
     }
   </ng-container>
 } @else {
-  <sha-loading></sha-loading>
+  <sha-loading/>
 }

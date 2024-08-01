@@ -1,5 +1,5 @@
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
 import { RaceStore } from '@f2020/api';
@@ -23,8 +23,9 @@ export class DisplayPlayerBidComponent {
   race: Signal<IRace | undefined>;
 
   constructor(
-    store: RaceStore,
     route: ActivatedRoute) {
+    const store = inject(RaceStore);
+
     this.race = store.race;
     this.bid = computed(() => store.bids()?.find(bid => bid.player.uid === route.snapshot.params.uid));
   }

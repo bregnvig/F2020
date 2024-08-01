@@ -1,4 +1,4 @@
-import { Component, effect, isDevMode } from '@angular/core';
+import { Component, effect, inject, isDevMode } from '@angular/core';
 import { getToken } from '@angular/fire/messaging';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,9 +32,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 export class AppComponent {
 
   bars = icon.fasBars;
+  readonly playerStore = inject(PlayerStore);
 
   constructor(
-    private playerStore: PlayerStore,
     private driverStore: DriversStore,
     private racesStore: RacesStore,
     private updates: SwUpdate,

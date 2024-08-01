@@ -44,23 +44,25 @@ export class RacesService {
     );
   }
 
-  getBids(seasonId: string, race: IRace, uid: string): Observable<Bid[]> {
-    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/bids`).withConverter(bidConverter));
+  getBids(seasonId: string, race: IRace | string, uid: string): Observable<Bid[]> {
+    const round = typeof race === 'string' ? race : race.round;
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).withConverter(bidConverter));
   }
 
-  getParticipants(seasonId: string, race: IRace): Observable<Participant[]> {
-    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${race.round}/participants`).withConverter(bidConverter));
+  getParticipants(seasonId: string, race: IRace | string): Observable<Participant[]> {
+    const round = typeof race === 'string' ? race : race.round;
+    return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/participants`).withConverter(bidConverter));
   }
 
   getBid(seasonId: string, round: number, uid: string): Observable<Bid> {
     return docData(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter));
   }
 
-  updateRace(seasonId: string, round: number, race: Partial<IRace>): Promise<void> {
+  updateRace(seasonId: string, round: number | string, race: Partial<IRace>): Promise<void> {
     return updateDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}`), race);
   }
 
-  updateBid(seasonId: string, round: number, player: Player, bid: Bid): Promise<void> {
+  updateBid(seasonId: string, round: number | string, player: Player, bid: Bid): Promise<void> {
     return setDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${player.uid}`).withConverter(bidConverter), {
       ...bid,
       player: {

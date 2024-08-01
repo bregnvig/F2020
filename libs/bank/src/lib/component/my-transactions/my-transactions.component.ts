@@ -1,10 +1,9 @@
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerStore } from '@f2020/api';
-import { Player } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -27,21 +26,17 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
         <fa-icon [icon]="icon" size="lg"></fa-icon>
       </button>
     </div>
-    `,
+  `,
   styleUrls: ['./my-transactions.component.scss'],
   standalone: true,
   imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, AsyncPipe, CurrencyPipe],
 })
-export class MyTransactionsComponent implements OnInit {
+export class MyTransactionsComponent {
 
-  player: Signal<Player>;
+  player = inject(PlayerStore).player;
   icon = icon.farPiggyBank;
 
-  constructor(private store: PlayerStore, private dialog: MatDialog) {
-  }
-
-  ngOnInit(): void {
-    this.player = this.store.player;
+  constructor(private dialog: MatDialog) {
   }
 
   showInfo() {

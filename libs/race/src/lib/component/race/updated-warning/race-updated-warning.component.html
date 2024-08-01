@@ -4,12 +4,12 @@
     <mat-card-title>Løbet er blevet opdateret</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    @for (updatedBy of race.updatedBy; track updatedBy; let i = $index) {
+    @for (updatedBy of race.updatedBy; track $index) {
       <p class="flex flex-row items-center">
-        <img [src]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName">
+        <img [ngSrc]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName" height="40" width="40">
         <span class="ml-2 flex flex-col">
-          <span>{{messages[i]}}</span>
-          <small class="text-slate-400">{{updatedBy.updatedAt | dateTime: 'short'}}</small>
+          <span>{{ messages[$index] }}</span>
+          <small class="text-slate-400">{{ updatedBy.updatedAt | dateTime: 'short' }}</small>
         </span>
       </p>
     }

@@ -1,5 +1,5 @@
 import { NgIfContext } from '@angular/common';
-import { Directive, effect, EmbeddedViewRef, Input, signal, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, effect, EmbeddedViewRef, inject, Input, signal, TemplateRef, ViewContainerRef } from '@angular/core';
 import { PlayerStore } from '@f2020/api';
 
 @Directive({
@@ -15,9 +15,9 @@ export class HasRoleDirective {
   private roles = signal<string[]>([]);
 
   constructor(
-    { player }: PlayerStore,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef) {
+    const { player } = inject(PlayerStore);
     effect(() => {
       this.condition = (player()?.roles || []).some(r => this.roles().some(role => role === r));
       this.updateView();

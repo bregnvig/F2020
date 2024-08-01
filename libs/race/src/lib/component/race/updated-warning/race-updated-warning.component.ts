@@ -1,17 +1,17 @@
-
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { IRace, RaceUpdatedBy } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { DateTimePipe, icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'f2020-race-updated-warning',
   templateUrl: `./race-updated-warning.component.html`,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, DateTimePipe],
+  imports: [MatCardModule, FontAwesomeModule, DateTimePipe, NgOptimizedImage],
   providers: [DriverNamePipe],
 })
 export class RaceUpdatedWarningComponent {
@@ -19,18 +19,19 @@ export class RaceUpdatedWarningComponent {
   infoIcon = icon.farInfo;
   messages: string[] = [];
 
-  constructor(private driverName: DriverNamePipe) { }
+  constructor(private driverName: DriverNamePipe) {
+  }
 
   #race: IRace;
   @Input() set race(value: IRace) {
     this.#race = value;
 
     this.messages = (value?.updatedBy ?? []).map(u => [
-      `${u.player.displayName} har ændret`,
-      u.close ? this.getCloseChange(u) : '',
-      u.close && u.selectedDriver ? ' og ' : '',
-      u.selectedDriver ? this.getDriverChange(u) : ''
-    ].join(' ')
+        `${u.player.displayName} har ændret`,
+        u.close ? this.getCloseChange(u) : '',
+        u.close && u.selectedDriver ? ' og ' : '',
+        u.selectedDriver ? this.getDriverChange(u) : '',
+      ].join(' '),
     );
   }
 

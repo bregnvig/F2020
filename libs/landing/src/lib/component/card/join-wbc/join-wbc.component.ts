@@ -1,4 +1,4 @@
-import { Component, computed, effect, HostBinding, Signal } from '@angular/core';
+import { Component, computed, effect, HostBinding, inject, Signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerStore, SeasonStore } from '@f2020/api';
 import { icon, RelativeToNowPipe } from '@f2020/shared';
@@ -20,8 +20,8 @@ import { AsyncPipe } from '@angular/common';
     MatButtonModule,
     RouterLink,
     AsyncPipe,
-    RelativeToNowPipe
-],
+    RelativeToNowPipe,
+  ],
 })
 export class JoinWbcComponent {
 
@@ -30,9 +30,9 @@ export class JoinWbcComponent {
   canJoin: Signal<boolean>;
   loading: Signal<boolean>;
   icon = icon.fasTrophy;
+  readonly playerStore = inject(PlayerStore);
 
   constructor(
-    private playerStore: PlayerStore,
     private seasonStore: SeasonStore,
     private snackBar: MatSnackBar) {
     this.loading = this.playerStore.updatingWBC;

@@ -1,5 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, Signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,18 +43,18 @@ export class EnterBidComponent {
   teams: Signal<ITeam[]>;
   editIcon = icon.farPen;
   sendIcon = icon.fasPaperPlane;
+  private store = inject(RaceStore);
 
   constructor(
-    private store: RaceStore,
     { yourBid }: RacesStore,
     private teamsService: TeamService,
     private router: Router) {
     this.race = this.store.race;
     this.teams = toSignal(this.teamsService.teams$);
-    this.isOpen = computed(() => store.race()?.close >= DateTime.local());
+    this.isOpen = computed(() => this.store.race()?.close >= DateTime.local());
     this.bidControl.patchValue(yourBid() ?? {}, { emitEvent: false });
-    effect(() => store.bid()?.submitted && this.bidControl.disable({ emitEvent: false }));
-    effect(() => store.error() && this.bidControl.enable({ emitEvent: false }));
+    effect(() => this.store.bid()?.submitted && this.bidControl.disable({ emitEvent: false }));
+    effect(() => this.store.error() && this.bidControl.enable({ emitEvent: false }));
     const updatedBid = toSignal(this.bidControl.valueChanges.pipe(
       debounceTime(3000),
       filter(bid => !bid?.submitted),

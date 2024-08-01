@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,15 +43,15 @@ export class RaceDriversComponent implements OnInit {
   addIcon = icon.farPlus;
   private operation: Operation;
   private previousDrivers: string[];
+  private store = inject(RaceStore);
 
   constructor(
-    private raceStore: RaceStore,
     private dialog: MatDialog,
     private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
-    this.race = this.raceStore.race;
+    this.race = this.store.race;
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -82,7 +82,7 @@ export class RaceDriversComponent implements OnInit {
   private updateDrivers(operation: Operation, drivers: string[], driverId?: string, previousDrivers?: string[]) {
     this.operation = operation;
     this.previousDrivers = previousDrivers;
-    this.raceStore.updateDrivers(drivers).then(() => {
+    this.store.updateDrivers(drivers).then(() => {
       operation !== 'undo' && this.snackBar.open(message(driverId, this.operation), 'UNDO', { duration: 5000 }).onAction().pipe(
         first(),
       ).subscribe(() => this.updateDrivers('undo', this.previousDrivers, driverId));

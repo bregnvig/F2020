@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { LoadingComponent } from '../loading/loading.component';
 import { CardPageComponent } from '../card-page/card-page.component';
 import { PlayerStore } from '@f2020/api';
@@ -15,8 +15,8 @@ import { PlayerStore } from '@f2020/api';
 })
 export class LogoutComponent {
 
-  constructor(store: PlayerStore) {
-    store.logout().then(() => window.location.href = '/login');
+  constructor() {
+    inject(PlayerStore).logout().then(() => window.location.href = '/login');
   }
 
 }

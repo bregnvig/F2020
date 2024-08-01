@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, Signal } from '@angular/core';
+import { Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { PlayersStore, PlayerStore } from '@f2020/api';
 import { Player } from '@f2020/data';
@@ -16,12 +16,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 export class ProfileComponent implements OnInit {
 
   receiveReminders: Signal<boolean>;
-  player: Signal<Player>;
+  readonly store = inject(PlayerStore);
+  player = this.store.player;
   players: Signal<[Player, boolean][]>;
 
-  constructor(private store: PlayerStore, private playersStore: PlayersStore) {
+  constructor(private playersStore: PlayersStore) {
     this.playersStore.loadPlayers();
-    this.player = store.player;
   }
 
   ngOnInit(): void {

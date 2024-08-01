@@ -1,5 +1,5 @@
 import { AsyncPipe, NgOptimizedImage, UpperCasePipe } from '@angular/common';
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -28,6 +28,8 @@ export class RaceComponent {
   downloadIcon = icon.farCloudArrowDown;
   plusIcon = icon.farPlus;
 
+  private store = inject(RaceStore);
+
   center: Signal<google.maps.LatLng | undefined>;
   race: Signal<IRace | undefined>;
   play: Signal<boolean>;
@@ -44,11 +46,11 @@ export class RaceComponent {
     mapTypeId: 'roadmap',
   };
 
-  constructor(private store: RaceStore, playerStore: PlayerStore) {
-    this.race = store.race;
+  constructor() {
+    const playerStore = inject(PlayerStore);
+    this.race = this.store.race;
     this.center = computed(() => this.race() && new google.maps.LatLng(this.race().location.lat, this.race().location.lng));
-    const closed = computed(() => DateTime.local() > this.race()?.close);
-    this.bids = store.bids;
+    this.bids = this.store.bids;
     this.play = computed(() => {
       return this.race()?.close > DateTime.local()
         && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);

@@ -1,4 +1,4 @@
-import { Component, computed, effect, Signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PlayerApiService, PlayerStore } from '@f2020/api';
 import { isNullish } from '@f2020/tools';
@@ -17,8 +17,8 @@ import { AsyncPipe } from '@angular/common';
     MatButtonModule,
     FontAwesomeModule,
     LoadingComponent,
-    AsyncPipe
-],
+    AsyncPipe,
+  ],
 })
 export class LoginComponent {
 
@@ -27,7 +27,8 @@ export class LoginComponent {
   isAuthorizationKnown: Signal<boolean>;
   isUnauthorized: Signal<boolean>;
 
-  constructor(private service: PlayerApiService, store: PlayerStore, private router: Router) {
+  constructor(private service: PlayerApiService, private router: Router) {
+    const store = inject(PlayerStore);
     effect(() => store.authorized() && this.router.navigate(['']));
     this.isUnauthorized = store.unauthorized;
     this.isAuthorizationKnown = computed(() => !isNullish(store.authorized()));

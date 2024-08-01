@@ -67,7 +67,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        loadChildren: () => import('@f2020/landing').then(m => m.LandingModule),
+        loadChildren: () => import('@f2020/landing').then(m => m.LandingRoutes),
       },
       {
         path: 'race',
@@ -75,7 +75,7 @@ export const routes: Routes = [
       },
       {
         path: 'wbc',
-        loadChildren: () => import('@f2020/wbc').then(m => m.WbcModule),
+        loadChildren: () => import('@f2020/wbc').then(m => m.WbcRoutes),
       },
       {
         path: 'standings',

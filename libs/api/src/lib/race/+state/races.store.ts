@@ -1,5 +1,5 @@
 import { Bid, IRace, Participant, RoundResult } from '@f2020/data';
-import { computed, effect, Injectable, Signal } from '@angular/core';
+import { computed, effect, inject, Injectable, Signal } from '@angular/core';
 import { Store } from '../../store';
 import { SeasonStore } from '../../season/+state';
 import { RacesService } from '../service/races.service';
@@ -34,14 +34,16 @@ export class RacesStore extends Store<RacesState> {
   yourBid = this.state.yourBid;
   lastYear = this.state.lastYear;
 
-  constructor(private seasonStore: SeasonStore, private service: RacesService, private playerStore: PlayerStore) {
+  readonly #playerStore = inject(PlayerStore);
+
+  constructor(private seasonStore: SeasonStore, private service: RacesService) {
     super({ loaded: false, updating: false });
   }
 
   loadRaces() {
     let s: Subscription;
     effect(() => {
-      const isUnauthorized = this.playerStore.unauthorized();
+      const isUnauthorized = this.#playerStore.unauthorized();
       s?.unsubscribe();
       const seasonId = this.seasonStore.season()?.id;
       !isUnauthorized && seasonId && (s = this.service.getRaces(seasonId).subscribe(races => this.setState(() => ({ races, loaded: true }))));
@@ -52,8 +54,8 @@ export class RacesStore extends Store<RacesState> {
     let s: Subscription;
     effect(() => {
       s?.unsubscribe();
-      const player = this.playerStore.player();
-      const authorized = this.playerStore.authorized();
+      const player = this.#playerStore.player();
+      const authorized = this.#playerStore.authorized();
       const race = this.currentRace();
       const season = this.seasonStore.season();
       authorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
@@ -68,7 +70,7 @@ export class RacesStore extends Store<RacesState> {
 
   loadLastYear() {
     effect(() => {
-      if (!this.playerStore.unauthorized() && this.races()?.length && !this.lastYear()) {
+      if (!this.#playerStore.unauthorized() && this.races()?.length && !this.lastYear()) {
         const race = this.races()?.find(r => r.state === 'open' || r.state === 'closed');
         race && this.service.getLastYearResult(race.season, race.countryCode).then(
           lastYear => this.setState(() => ({ lastYear })),

@@ -1,6 +1,5 @@
 import { PlayerStore } from '@f2020/api';
-import { Player } from '@f2020/data';
-import { Component, Signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { WeatherComponent } from '../card/weather/weather.component';
 import { LastYearComponent } from '../card/last-year/last-year.component';
 import { JoinWbcComponent } from '../card/join-wbc/join-wbc.component';
@@ -18,10 +17,6 @@ import { AsyncPipe } from '@angular/common';
 })
 export class LandingComponent {
 
-  player: Signal<Player>;
-
-  constructor(store: PlayerStore) {
-    this.player = store.player;
-  }
+  player = inject(PlayerStore).player;
 
 }

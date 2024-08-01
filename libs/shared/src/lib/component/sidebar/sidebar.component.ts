@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, OnInit, Output, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, OnInit, Output, Signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { PlayerStore, SeasonStore } from '@f2020/api';
-import { Player } from '@f2020/data';
 import { icon } from '../../font-awesome';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatDividerModule } from '@angular/material/divider';
@@ -22,12 +21,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 export class SidebarComponent implements OnInit {
 
   @Output() closing = new EventEmitter<void>();
-  player: Signal<Player>;
+  player = inject(PlayerStore).player;
   seasonId: Signal<string>;
   icon = icon;
 
-  constructor(store: PlayerStore, private seasonStore: SeasonStore, private router: Router) {
-    this.player = store.player;
+  constructor(private seasonStore: SeasonStore, private router: Router) {
     this.seasonId = computed(() => this.seasonStore.season()?.id);
   }
 

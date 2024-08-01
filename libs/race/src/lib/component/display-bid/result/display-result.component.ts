@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { DisplayBidComponent } from '../display-bid.component';
 import { MatListModule } from '@angular/material/list';
@@ -17,10 +17,8 @@ import { RaceStore } from '@f2020/api';
 })
 export class DisplayResultComponent {
 
-  race = this.store.race;
+  race = inject(RaceStore).race;
   icon = icon.fasFlagCheckered;
 
-  constructor(private store: RaceStore) {
-  }
 
 }

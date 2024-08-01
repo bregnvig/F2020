@@ -1,4 +1,4 @@
-import { Component, computed, effect, Signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RaceStore, TeamService } from '@f2020/api';
@@ -31,14 +31,14 @@ export class SubmitResultComponent {
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
   private result: Signal<Bid>;
+  private store = inject(RaceStore);
 
   constructor(
-    private store: RaceStore,
     private teamsService: TeamService,
     private router: Router) {
-    this.loaded = computed(() => store.loaded() && !!store.result());
-    this.race = store.race;
-    this.result = store.result;
+    this.loaded = computed(() => this.store.loaded() && !!this.store.result());
+    this.race = this.store.race;
+    this.result = this.store.result;
     this.validResult = computed(() => !!(this.result()?.qualify?.length === 7
       && this.result()?.fastestDriver?.length === 2
       && this.result()?.podium?.length === 4
@@ -46,8 +46,8 @@ export class SubmitResultComponent {
       && this.result()?.slowestPitStop?.length === 2
       && this.result()?.polePositionTime),
     );
-    store.loadResult();
-    effect(() => store.result() && this.resultControl.patchValue(store.result(), { emitEvent: false }));
+    this.store.loadResult();
+    effect(() => this.store.result() && this.resultControl.patchValue(this.store.result(), { emitEvent: false }));
   }
 
   submitResult() {

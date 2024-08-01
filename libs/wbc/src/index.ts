@@ -1,1 +1,1 @@
-export * from "./lib/wbc.module";
+export * from './lib/wbc.routes';

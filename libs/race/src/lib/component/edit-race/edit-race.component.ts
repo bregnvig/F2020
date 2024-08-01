@@ -1,6 +1,6 @@
 import { NgxMatTimepickerComponent, NgxMatTimepickerDirective } from '@alexfriesen/ngx-mat-timepicker';
 import { AsyncPipe } from '@angular/common';
-import { Component, effect, Signal } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RaceStore, TeamService } from '@f2020/api';
 import { SelectDriverComponent } from '@f2020/control';
-import { IRace, ITeam } from '@f2020/data';
+import { ITeam } from '@f2020/data';
 import { CardPageComponent, FlagURLPipe, icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -40,7 +40,10 @@ import { combineLatest, map, Observable } from 'rxjs';
 export class EditRaceComponent {
 
   clockIcon = icon.farClock;
-  race: Signal<IRace>;
+
+  private store = inject(RaceStore);
+
+  race = this.store.race;
   selectedDriver$: Observable<{ teams: ITeam[], drivers: string[]; }>;
   fg = this.fb.group({
     close: this.fb.control<string>(null),
@@ -49,10 +52,8 @@ export class EditRaceComponent {
 
   constructor(
     private fb: FormBuilder,
-    private store: RaceStore,
     private snackBar: MatSnackBar,
     teamService: TeamService) {
-    this.race = store.race;
 
     this.selectedDriver$ = combineLatest({
       teams: teamService.teams$,
