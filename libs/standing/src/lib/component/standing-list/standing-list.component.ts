@@ -1,5 +1,5 @@
 import { AsyncPipe, LowerCasePipe } from '@angular/common';
-import { Component, computed, effect, Signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -20,8 +20,8 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
     StandingListItemComponent,
     LoadingComponent,
     AsyncPipe,
-    LowerCasePipe
-],
+    LowerCasePipe,
+  ],
   providers: [
     StandingStore,
   ],
@@ -30,7 +30,8 @@ export class StandingListComponent {
 
   standings: Signal<IDriverStanding[]>;
 
-  constructor(store: StandingStore, snackBar: MatSnackBar) {
+  constructor(snackBar: MatSnackBar) {
+    const store = inject(StandingStore);
     store.loadStandings();
     this.standings = computed(() => [...(store.standings() ?? [])].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));
 
