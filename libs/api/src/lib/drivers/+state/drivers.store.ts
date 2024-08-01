@@ -1,34 +1,37 @@
-import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import { IDriver } from '@f2020/data';
 import { DriverService } from '../service/driver.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '../../store';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe, switchMap, tap } from 'rxjs';
+import { tapResponse } from '@ngrx/operators';
 
 export interface DriversState {
-  drivers?: IDriver[],
+  drivers: IDriver[] | undefined,
   loaded: boolean; // has the Driver list been loaded
-  error?: string | null; // last none error (if any)
+  error: string | undefined; // last none error (if any)
 }
 
-@UntilDestroy()
-@Injectable({
-  providedIn: 'root',
-})
-export class DriversStore extends Store<DriversState> {
+const initialState: DriversState = {
+  loaded: false,
+  drivers: undefined,
+  error: undefined,
+};
 
-  drivers = this.state.drivers;
-  loaded = this.state.loaded;
-
-  constructor(private service: DriverService) {
-    super({ loaded: false });
-  }
-
-  loadDrivers() {
-    if (!this.loaded()) {
-      this.service.drivers$.pipe(
-        untilDestroyed(this),
-      ).subscribe(drivers => this.setState(() => ({ drivers, loaded: true })));
-    }
-  }
-
-}
+export const DriversStore = signalStore(
+  { providedIn: 'root' },
+  withState(initialState),
+  withMethods((store, service = inject(DriverService)) => ({
+    loadDrivers: rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, initialState)),
+        switchMap(() => service.drivers$.pipe(
+          tapResponse({
+            next: drivers => patchState(store, { drivers, loaded: true }),
+            error: error => patchState(store, { error: error?.toString() }),
+          })),
+        ),
+      ),
+    ),
+  })),
+);

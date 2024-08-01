@@ -63,7 +63,7 @@ export const routes: Routes = [
       {
         path: 'teams',
         canActivate: [mustBeAuthorized],
-        loadChildren: () => import('@f2020/teams').then(m => m.TeamsModule),
+        loadChildren: () => import('@f2020/teams').then(m => m.TeamsRoutes),
       },
       {
         path: '',

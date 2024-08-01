@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -27,13 +27,14 @@ export class TeamsListComponent {
   teams$ = this.service.teams$;
   icon = icon;
 
+  readonly store = inject(DriversStore);
+
   constructor(
     private dialog: MatDialog,
-    private store: DriversStore,
     private service: TeamService,
     private snackBar: MatSnackBar,
   ) {
-    store.loadDrivers();
+    this.store.loadDrivers();
   }
 
   addDriver(team: ITeam) {

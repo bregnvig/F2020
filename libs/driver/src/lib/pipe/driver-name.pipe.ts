@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, effect, Pipe, PipeTransform } from '@angular/core';
+import { ChangeDetectorRef, effect, inject, Pipe, PipeTransform } from '@angular/core';
 import { IDriver } from '@f2020/data';
 import { DriversStore } from '@f2020/api';
 
@@ -13,9 +13,10 @@ export class DriverNamePipe implements PipeTransform {
   private name: string;
   private drivers: IDriver[];
 
-  constructor(facade: DriversStore, changeDetectorRef: ChangeDetectorRef) {
+  constructor(changeDetectorRef: ChangeDetectorRef) {
+    const store = inject(DriversStore);
     effect(() => {
-      this.drivers = facade.drivers();
+      this.drivers = store.drivers();
       changeDetectorRef.markForCheck();
     });
   }

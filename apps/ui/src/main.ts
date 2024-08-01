@@ -26,7 +26,7 @@ import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import 'firebase/firestore';
 import { connectFirestoreEmulator } from 'firebase/firestore';
 import { Settings } from 'luxon';
-import { routes } from './app/app-routing.module';
+import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 
@@ -73,7 +73,7 @@ bootstrapApplication(AppComponent, {
       materialModule,
       FontAwesomeModule,
       ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-      NgxMatTimepickerModule.setLocale('da-DK')
+      NgxMatTimepickerModule.setLocale('da-DK'),
     ),
     {
       provide: LOCALE_ID,

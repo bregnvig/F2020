@@ -32,10 +32,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 export class AppComponent {
 
   bars = icon.fasBars;
-  readonly playerStore = inject(PlayerStore);
+  readonly #playerStore = inject(PlayerStore);
+  readonly #driverStore = inject(DriversStore);
 
   constructor(
-    private driverStore: DriversStore,
     private racesStore: RacesStore,
     private updates: SwUpdate,
     private versionService: VersionService,
@@ -53,10 +53,10 @@ export class AppComponent {
     });
     this.checkForVersionUpdate();
     effect(() => {
-      if (this.playerStore.authorized()) {
-        this.driverStore.loadDrivers();
+      if (this.#playerStore.authorized()) {
+        this.#driverStore.loadDrivers();
         this.checkForOutdatedVersion();
-        const player = this.playerStore.player();
+        const player = this.#playerStore.player();
         if (player.roles && player.roles.includes('player')) {
           if (this.router.url === '/info/roles') {
             this.router.navigate(['/']);
@@ -98,13 +98,13 @@ export class AppComponent {
 
   private setupMessaging() {
     if (Notification.permission === 'granted') {
-      this.playerStore.loadMessaging();
+      this.#playerStore.loadMessaging();
     } else if (Notification.permission === 'denied') {
       console.log('Messaging denied');
     } else {
       setTimeout(() => {
         this.snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction()
-          .subscribe(() => this.playerStore.loadMessaging());
+          .subscribe(() => this.#playerStore.loadMessaging());
       });
     }
   }
