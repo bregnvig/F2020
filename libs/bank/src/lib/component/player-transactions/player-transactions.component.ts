@@ -1,5 +1,5 @@
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -29,16 +29,16 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
         <button class="my-auto flex-auto" mat-button (click)="openTransfer(player())">Overfør</button>
       </mat-toolbar>
     }
-    `,
+  `,
   standalone: true,
   imports: [MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, AsyncPipe, CurrencyPipe],
 })
 export class PlayerTransactionsComponent implements OnInit {
 
   player: Signal<Player>;
+  #store = inject(PlayersStore);
 
   constructor(
-    private store: PlayersStore,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute) {
@@ -47,8 +47,8 @@ export class PlayerTransactionsComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.pipe(
       map<Params, string>(params => params.uid),
-    ).subscribe(uid => this.store.setPlayer(uid));
-    this.player = this.store.player;
+    ).subscribe(uid => this.#store.setPlayer(uid));
+    this.player = this.#store.player;
   }
 
   openDeposit(player: Player) {

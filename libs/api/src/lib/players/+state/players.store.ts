@@ -1,46 +1,43 @@
-import { computed, Injectable, Signal } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { Player } from '@f2020/data';
 import { PlayersApiService } from '../service/players-api.service';
-import { Store } from '../../store';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe, switchMap, tap } from 'rxjs';
+import { tapResponse } from '@ngrx/operators';
 
 export interface PlayersState {
-  players?: Player[];
-  selectedId?: string | number; // which Players record has been selected
+  players: Player[] | undefined;
+  selectedId: string | number | undefined; // which Players record has been selected
   loaded: boolean; // has the Players list been loaded
-  error?: string | null; // last none error (if any)
+  error: string | undefined; // last none error (if any)
 }
 
 const initialState: PlayersState = {
   // set initial required properties
   loaded: false,
+  players: undefined,
+  selectedId: undefined,
+  error: undefined,
 };
 
-@Injectable()
-export class PlayersStore extends Store<PlayersState> {
-
-  players = this.state.players;
-  loaded = this.state.loaded;
-  player: Signal<Player | undefined> = computed(() => this.state.players()?.find(p => p.uid === this.state.selectedId()));
-
-  constructor(private service: PlayersApiService) {
-    super(initialState);
-  }
-
-  loadPlayers() {
-    if (!this.loaded()) {
-      this.service.getPlayers().subscribe({
-        next: players => {
-          this.setState(() => ({ players, loaded: true }));
-        },
-        error: error => {
-          console.error(error);
-          this.setState(() => ({ error: error['message'] ?? error, loaded: false }));
-        },
-      });
-    }
-  }
-
-  setPlayer(uid: string) {
-    this.setState(() => ({ selectedId: uid }));
-  }
-}
+export const PlayersStore = signalStore(
+  withState(initialState),
+  withMethods((store, service = inject(PlayersApiService)) => ({
+    setPlayer: (uid: string) => patchState(store, { selectedId: uid }),
+    loadPlayers: rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, ({ loaded: false }))),
+        switchMap(() => service.getPlayers().pipe(
+          tapResponse({
+            next: players => patchState(store, { players, loaded: true }),
+            error: error => patchState(store, { error: error['message'] ?? error, loaded: false }),
+          }),
+        )),
+      ),
+    ),
+  })),
+  withComputed(({ players, selectedId }) => ({
+    player: computed(() => players()?.find(p => p.uid === selectedId())),
+  })),
+);

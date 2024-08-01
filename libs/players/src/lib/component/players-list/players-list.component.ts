@@ -1,5 +1,5 @@
 import { PlayersStore } from '@f2020/api';
-import { ChangeDetectionStrategy, Component, computed, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { Player } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -20,11 +20,12 @@ export class PlayersListComponent implements OnInit {
   players: Signal<Player[]>;
   icon = icon;
 
-  constructor(private store: PlayersStore) {
+  constructor() {
+    const store = inject(PlayersStore);
+    this.players = computed(() => (store.players() ?? []).filter(p => !p.roles.includes('bookie')));
   }
 
   ngOnInit(): void {
-    this.players = computed(() => (this.store.players() ?? []).filter(p => !p.roles.includes('bookie')));
   }
 
   isAnonymous(player: Player): boolean {

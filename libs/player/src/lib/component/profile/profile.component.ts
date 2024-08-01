@@ -19,15 +19,16 @@ export class ProfileComponent implements OnInit {
   readonly store = inject(PlayerStore);
   player = this.store.player;
   players: Signal<[Player, boolean][]>;
+  #store = inject(PlayersStore);
 
-  constructor(private playersStore: PlayersStore) {
-    this.playersStore.loadPlayers();
+  constructor() {
+    this.#store.loadPlayers();
   }
 
   ngOnInit(): void {
     this.players = computed(() => {
       const player = this.player();
-      return (this.playersStore.players() ?? []).filter(p => p.uid !== player.uid).map(p => [p, !player.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)]);
+      return (this.#store.players() ?? []).filter(p => p.uid !== player.uid).map(p => [p, !player.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)]);
     });
     this.receiveReminders = computed(() => this.player().receiveReminders ?? true);
   }

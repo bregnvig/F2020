@@ -1,9 +1,9 @@
-import { Component, effect, OnInit, Signal } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { PlayersApiService, PlayersStore } from '@f2020/api';
-import { Player, Role } from '@f2020/data';
+import { Role } from '@f2020/data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { MatOptionModule } from '@angular/material/core';
@@ -26,7 +26,8 @@ import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 })
 export class EditPlayerComponent implements OnInit {
 
-  player: Signal<Player>;
+  #store = inject(PlayersStore);
+  player = this.#store.player;
   fg = this.fb.group({
     player: this.fb.nonNullable.control<boolean>(false),
     admin: this.fb.nonNullable.control<boolean>(false),
@@ -34,12 +35,10 @@ export class EditPlayerComponent implements OnInit {
   });
 
   constructor(
-    private store: PlayersStore,
     private route: ActivatedRoute,
     private service: PlayersApiService,
     private snackBar: MatSnackBar,
     private fb: FormBuilder) {
-    this.player = this.store.player;
     effect(() => {
 
       this.fg.reset({
@@ -54,7 +53,7 @@ export class EditPlayerComponent implements OnInit {
     this.route.params.pipe(
       map(params => params['id']),
       untilDestroyed(this),
-    ).subscribe(uid => this.store.setPlayer(uid));
+    ).subscribe(uid => this.#store.setPlayer(uid));
   }
 
   updateRoles() {

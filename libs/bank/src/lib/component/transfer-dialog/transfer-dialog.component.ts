@@ -1,4 +1,4 @@
-import { Component, computed, Inject, OnInit, Signal } from '@angular/core';
+import { Component, computed, inject, Inject, OnInit, Signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Player } from '@f2020/data';
 import { AccountService } from '../../service';
@@ -21,11 +21,11 @@ import { PlayersStore } from '@f2020/api';
 export class TransferDialogComponent implements OnInit {
   fg: FormGroup;
   players: Signal<Player[]>;
+  readonly #store = inject(PlayersStore);
 
   constructor(
     private dialogRef: MatDialogRef<DepositDialogComponent>,
     private service: AccountService,
-    private store: PlayersStore,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { player: Player; }) {
   }
@@ -36,7 +36,7 @@ export class TransferDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.players = computed(() => this.store.players().filter(p => p.uid !== this.data.player.uid));
+    this.players = computed(() => this.#store.players().filter(p => p.uid !== this.data.player.uid));
     this.fg = this.fb.group({
       to: [null, Validators.required],
       amount: [null, [Validators.required, Validators.min(0), Validators.max(Math.max(0, this.data.player.balance))]],
