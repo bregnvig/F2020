@@ -1,5 +1,5 @@
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -29,21 +29,16 @@ const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
   standalone: true,
   imports: [MatToolbarModule, CardPageComponent, MatListModule, RouterLink, AsyncPipe, FlagURLPipe, NgOptimizedImage],
 })
-export class WbcPlayerComponent implements OnInit {
+export class WbcPlayerComponent {
 
   races: Signal<WBCRacePlayer[]>;
   player: Signal<Player>;
 
-  constructor(private route: ActivatedRoute, private store: SeasonStore) {
-  }
-
-  ngOnInit(): void {
-    const wbc = computed(() => this.store.season()?.wbc?.results);
+  constructor(private route: ActivatedRoute) {
+    const store = inject(SeasonStore);
+    const wbc = computed(() => store.season()?.wbc?.results);
     this.races = computed(() => wbc()?.map(racePlayer(this.route.snapshot.params.uid)));
     this.player = computed(() => wbc()?.map(w => w.players).flat().find(player => player.player.uid === this.route.snapshot.params.uid)?.player);
   }
 
-  flagURL(countryCode: string) {
-    return `https://www.countryflags.io/${countryCode.toLocaleLowerCase()}/flat/64.png`;
-  }
 }

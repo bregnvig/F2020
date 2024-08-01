@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { collection, collectionData, doc, Firestore, setDoc } from '@angular/fire/firestore';
 import { converter, ITeam } from '@f2020/data';
 import { truthy } from '@f2020/tools';
@@ -13,9 +13,10 @@ import { toObservable } from '@angular/core/rxjs-interop';
 export class TeamService {
 
   teams$: Observable<ITeam[]>;
+  readonly #store = inject(SeasonStore);
 
-  constructor(private store: SeasonStore, private afs: Firestore) {
-    this.teams$ = toObservable(store.season).pipe(
+  constructor(private afs: Firestore) {
+    this.teams$ = toObservable(this.#store.season).pipe(
       truthy(),
       first(),
       switchMap(season => collectionData(collection(afs, `seasons/${season.id}/teams`).withConverter(converter.timestamp<ITeam>()))),
@@ -30,6 +31,6 @@ export class TeamService {
   }
 
   updateTeam(team: ITeam): Promise<void> {
-    return setDoc(doc(this.afs, `seasons/${this.store.season().id}/teams/${team.constructorId}`), team);
+    return setDoc(doc(this.afs, `seasons/${this.#store.season().id}/teams/${team.constructorId}`), team);
   }
 }

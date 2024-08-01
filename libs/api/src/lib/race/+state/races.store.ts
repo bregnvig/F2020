@@ -35,8 +35,9 @@ export class RacesStore extends Store<RacesState> {
   lastYear = this.state.lastYear;
 
   readonly #playerStore = inject(PlayerStore);
+  readonly #seasonStore = inject(SeasonStore);
 
-  constructor(private seasonStore: SeasonStore, private service: RacesService) {
+  constructor(private service: RacesService) {
     super({ loaded: false, updating: false });
   }
 
@@ -45,7 +46,7 @@ export class RacesStore extends Store<RacesState> {
     effect(() => {
       const isUnauthorized = this.#playerStore.unauthorized();
       s?.unsubscribe();
-      const seasonId = this.seasonStore.season()?.id;
+      const seasonId = this.#seasonStore.season()?.id;
       !isUnauthorized && seasonId && (s = this.service.getRaces(seasonId).subscribe(races => this.setState(() => ({ races, loaded: true }))));
     }, { allowSignalWrites: true });
   }
@@ -57,7 +58,7 @@ export class RacesStore extends Store<RacesState> {
       const player = this.#playerStore.player();
       const authorized = this.#playerStore.authorized();
       const race = this.currentRace();
-      const season = this.seasonStore.season();
+      const season = this.#seasonStore.season();
       authorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
         map(bid => bid || {}),
         filterEquals(),

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { SeasonStore } from '@f2020/api';
 import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import { WBCResult } from '@f2020/data';
@@ -20,7 +20,8 @@ export class WbcRaceComponent {
 
   result: Signal<WBCResult>;
 
-  constructor(store: SeasonStore, route: ActivatedRoute) {
+  constructor(route: ActivatedRoute) {
+    const store = inject(SeasonStore);
     const round = toSignal(route.params.pipe(map<Params, string>(params => params.round)));
     this.result = computed(() => store.season().wbc?.results.find(result => result.round === parseInt(round(), 10)));
   }

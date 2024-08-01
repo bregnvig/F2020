@@ -1,8 +1,10 @@
-import { Store } from '../../store';
 import { ISeason } from '@f2020/data';
 import { SeasonService } from '../service/season.service';
-import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { inject } from '@angular/core';
+import { distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { tapResponse } from '@ngrx/operators';
 
 export interface SeasonState {
   season?: ISeason;
@@ -10,24 +12,25 @@ export interface SeasonState {
   error?: string | null; // last none error (if any)
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class SeasonStore extends Store<SeasonState> {
-
-  readonly season = this.state.season;
-  readonly error = this.state.error;
-  readonly loaded = this.state.loaded;
-
-  #s: Subscription;
-
-  constructor(private service: SeasonService) {
-    super({ loaded: false });
-  }
-
-  loadSeason(seasonId: string) {
-    this.#s?.unsubscribe();
-    this.season()?.id !== seasonId && (this.#s = this.service.loadSeason(seasonId).subscribe(season => this.setState(() => ({ season, loaded: true }))));
-  }
-
-}
+export const SeasonStore = signalStore(
+  { providedIn: 'root' },
+  withState<SeasonState>({
+    season: undefined,
+    loaded: false,
+    error: undefined,
+  }),
+  withMethods((store, service = inject(SeasonService)) => ({
+      loadSeason: rxMethod<string>(
+        pipe(
+          distinctUntilChanged(),
+          tap(() => patchState(store, { loaded: false, season: undefined, error: undefined })),
+          switchMap((seasonId: string) => service.loadSeason(seasonId).pipe(
+              tapResponse({
+                next: season => patchState(store, { season, loaded: true }),
+                error: error => patchState(store, { error: error?.toString() }),
+              }),
+            ),
+          ),
+        )),
+    }),
+  ));

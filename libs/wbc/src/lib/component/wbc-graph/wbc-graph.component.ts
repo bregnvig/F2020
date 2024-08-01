@@ -1,4 +1,4 @@
-import { Component, computed, effect, signal, Signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { SeasonStore } from '@f2020/api';
 import { Player } from '@f2020/data';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -29,7 +29,8 @@ export class WbcGraphComponent {
 
   private selected = signal<string[]>(JSON.parse(localStorage.getItem('selectedWBCPlayers')) ?? []);
 
-  constructor(private store: SeasonStore) {
+  constructor() {
+    const store = inject(SeasonStore);
     const graph = computed(() => new WBCGraph(store.season().wbc));
     this.data = computed(() => graph()?.entries.map(e => ({
       name: e.player.displayName,

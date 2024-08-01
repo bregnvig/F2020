@@ -33,13 +33,13 @@ export class JoinWbcComponent {
   readonly playerStore = inject(PlayerStore);
 
   constructor(
-    private seasonStore: SeasonStore,
     private snackBar: MatSnackBar) {
     this.loading = this.playerStore.updatingWBC;
-    this.latestWBCJoinDate = computed(() => this.seasonStore.season()?.wbc?.latestWBCJoinDate);
+    const seasonStore = inject(SeasonStore);
+    this.latestWBCJoinDate = computed(() => seasonStore.season()?.wbc?.latestWBCJoinDate);
 
     this.canJoin = computed(() => {
-      const wbc = this.seasonStore.season()?.wbc;
+      const wbc = seasonStore.season()?.wbc;
       const uid = this.playerStore.player().uid;
       return (wbc?.participants || []).includes(uid) === false && this.latestWBCJoinDate() > DateTime.local();
     });

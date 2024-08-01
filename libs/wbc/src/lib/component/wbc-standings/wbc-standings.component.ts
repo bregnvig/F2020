@@ -1,5 +1,5 @@
 import { shareLatest } from '@f2020/tools';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SeasonStore } from '@f2020/api';
 import { WBCPlayer } from '@f2020/data';
 import { Observable } from 'rxjs';
@@ -35,14 +35,14 @@ export class WbcStandingsComponent {
   icon = icon.fasStar;
   chartIcon = icon.farChartLineUpDown;
 
-  constructor(private store: SeasonStore) {
-
-    this.standings$ = toObservable(this.store.season).pipe(
+  constructor() {
+    const store = inject(SeasonStore);
+    this.standings$ = toObservable(store.season).pipe(
       map(season => season?.wbc?.results || []),
       map(results => Array.from<WBCPlayer>(results.map(r => r.players).flat().reduce(sum, new Map<string, WBCPlayer>()).values())),
       map(players => players.sort((a, b) => b.points - a.points)),
     );
-    this.participants$ = toObservable(this.store.season).pipe(
+    this.participants$ = toObservable(store.season).pipe(
       map(season => season?.wbc?.participants || []),
       shareLatest(),
     );

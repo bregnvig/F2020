@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SeasonStore } from '@f2020/api';
 import { IDriverResult } from '@f2020/data';
@@ -52,9 +52,10 @@ export class StandingDriverComponent {
   constructor(
     private route: ActivatedRoute,
     private service: StandingService,
-    private store: SeasonStore) {
+  ) {
+    const store = inject(SeasonStore);
     this.driverId$ = this.route.params.pipe(map(params => params.driverId));
-    const currentYear$ = toObservable(this.store.season).pipe(
+    const currentYear$ = toObservable(store.season).pipe(
       map(season => parseInt(season.id, 10)),
       shareLatest(),
       untilDestroyed(this),

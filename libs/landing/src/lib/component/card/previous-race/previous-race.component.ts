@@ -4,7 +4,7 @@ import { WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 
@@ -13,7 +13,7 @@ import { AsyncPipe, NgOptimizedImage } from '@angular/common';
   templateUrl: './previous-race.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
+  imports: [MatCardModule, FaIconComponent, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
 })
 export class PreviousRaceComponent {
 
@@ -22,9 +22,10 @@ export class PreviousRaceComponent {
   title: Signal<string>;
   icon = icon.farTrophy;
 
-  constructor(private store: SeasonStore) {
+  constructor() {
     const playerStore = inject(PlayerStore);
-    this.wbcResult = computed(() => this.store.season()?.wbc?.results?.at(-1));
+    const season = inject(SeasonStore).season;
+    this.wbcResult = computed(() => season()?.wbc?.results?.at(-1));
     effect(() => this.isHidden = !this.wbcResult());
 
     this.title = computed(() => {

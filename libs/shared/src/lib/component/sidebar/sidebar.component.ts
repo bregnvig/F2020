@@ -25,8 +25,9 @@ export class SidebarComponent implements OnInit {
   seasonId: Signal<string>;
   icon = icon;
 
-  constructor(private seasonStore: SeasonStore, private router: Router) {
-    this.seasonId = computed(() => this.seasonStore.season()?.id);
+  constructor(private router: Router) {
+    const season = inject(SeasonStore).season;
+    this.seasonId = computed(() => season()?.id);
   }
 
   ngOnInit(): void {
