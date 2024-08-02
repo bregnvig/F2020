@@ -18,13 +18,13 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { truthy } from '@f2020/tools';
 
 export interface RaceState {
-  race?: IRace;
-  bids?: Participant[] | Bid[];
+  race: IRace | undefined;
+  bids: Participant[] | Bid[] | undefined;
   bid?: Bid;
-  interimResult?: Partial<Bid>;
-  result?: Bid;
+  interimResult: Partial<Bid> | undefined;
+  result: Bid | undefined;
   loaded: boolean; // has the Races list been loaded
-  error?: string | null; // last none error (if any)
+  error?: string | undefined; // last none error (if any)
 }
 
 const initialState: RaceState = {
