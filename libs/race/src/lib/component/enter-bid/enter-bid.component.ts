@@ -5,15 +5,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
-import { RacesStore, RaceStore, TeamService } from '@f2020/api';
+import { PlayerStore, RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime, filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filterEquals, isNullish } from '@f2020/tools';
+import { firstValueFrom } from 'rxjs';
+import { RacesService } from '../../../../../api/src/lib/race/service/races.service';
 
 
 const noNullsInArray = (control: FormControl<Bid>) => {
@@ -46,13 +48,16 @@ export class EnterBidComponent {
   private store = inject(RaceStore);
 
   constructor(
-    { yourBid }: RacesStore,
     private teamsService: TeamService,
+    racesService: RacesService,
     private router: Router) {
+    const playerId = inject(PlayerStore).player().uid;
     this.race = this.store.race;
     this.teams = toSignal(this.teamsService.teams$);
     this.isOpen = computed(() => this.store.race()?.close >= DateTime.local());
-    this.bidControl.patchValue(yourBid() ?? {}, { emitEvent: false });
+    firstValueFrom(racesService.getBid(this.race().season, this.race().round, playerId).pipe(
+      map(bid => bid || {}),
+    )).then(yourBid => this.bidControl.patchValue(yourBid, { emitEvent: false }));
     effect(() => this.store.bid()?.submitted && this.bidControl.disable({ emitEvent: false }));
     effect(() => this.store.error() && this.bidControl.enable({ emitEvent: false }));
     const updatedBid = toSignal(this.bidControl.valueChanges.pipe(

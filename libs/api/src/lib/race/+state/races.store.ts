@@ -1,84 +1,81 @@
-import { Bid, IRace, Participant, RoundResult } from '@f2020/data';
-import { computed, effect, inject, Injectable, Signal } from '@angular/core';
-import { Store } from '../../store';
+import { Bid, IRace, RoundResult } from '@f2020/data';
+import { computed, inject } from '@angular/core';
 import { SeasonStore } from '../../season/+state';
 import { RacesService } from '../service/races.service';
 import { PlayerStore } from '../../player';
-import { Subscription } from 'rxjs';
+import { combineLatest, distinctUntilChanged, from, of, pipe, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { filterEquals } from '@f2020/tools';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { tapResponse } from '@ngrx/operators';
 
 interface RacesState {
-  races?: IRace[];
+  races: IRace[] | undefined;
   currentRace?: IRace;
-  previousRace?: IRace;
-  bid?: Partial<Bid>;
-  participants?: Participant[];
-  result?: Bid;
   loaded: boolean; // has the Races list been loaded
-  error?: string | null; // last none error (if any)
-  selectedId?: string; // which Races record has been selected
-  yourBid?: Partial<Bid>;
-  bids?: Bid[];
-  currentBids?: Bid[];
-  interimResult?: Partial<Bid>;
-  lastYear?: RoundResult,
-  updating: boolean; // Is something updating
+  error: string | undefined; // last none error (if any)
+  yourBid: Partial<Bid> | undefined;
+  lastYear: RoundResult | undefined,
 }
 
-@Injectable({ providedIn: 'root' })
-export class RacesStore extends Store<RacesState> {
+const initialState: RacesState = {
+  // set initial required properties
+  races: undefined,
+  loaded: false,
+  error: undefined,
+  yourBid: undefined,
+  lastYear: undefined,
+};
 
-  races: Signal<IRace[]> = this.state.races;
-  currentRace: Signal<IRace> = computed(() => this.races()?.find(r => r.state === 'open' || r.state === 'closed'));
-  yourBid = this.state.yourBid;
-  lastYear = this.state.lastYear;
-
-  readonly #playerStore = inject(PlayerStore);
-  readonly #seasonStore = inject(SeasonStore);
-
-  constructor(private service: RacesService) {
-    super({ loaded: false, updating: false });
-  }
-
-  loadRaces() {
-    let s: Subscription;
-    effect(() => {
-      const isUnauthorized = this.#playerStore.unauthorized();
-      s?.unsubscribe();
-      const seasonId = this.#seasonStore.season()?.id;
-      !isUnauthorized && seasonId && (s = this.service.getRaces(seasonId).subscribe(races => this.setState(() => ({ races, loaded: true }))));
-    }, { allowSignalWrites: true });
-  }
-
-  loadYourBid() {
-    let s: Subscription;
-    effect(() => {
-      s?.unsubscribe();
-      const player = this.#playerStore.player();
-      const authorized = this.#playerStore.authorized();
-      const race = this.currentRace();
-      const season = this.#seasonStore.season();
-      authorized && race && (s = this.service.getBid(season.id, race.round, player.uid).pipe(
-        map(bid => bid || {}),
-        filterEquals(),
-      ).subscribe({
-        next: yourBid => this.setState(() => ({ yourBid })),
-        error: error => this.setState(() => ({ error })),
-      }));
-    }, { allowSignalWrites: true });
-  }
-
-  loadLastYear() {
-    effect(() => {
-      if (!this.#playerStore.unauthorized() && this.races()?.length && !this.lastYear()) {
-        const race = this.races()?.find(r => r.state === 'open' || r.state === 'closed');
-        race && this.service.getLastYearResult(race.season, race.countryCode).then(
-          lastYear => this.setState(() => ({ lastYear })),
-          error => this.setState(() => ({ error })),
-        );
-      }
-    }, { allowSignalWrites: true });
-  }
-
-}
+export const RacesStore = signalStore(
+  { providedIn: 'root' },
+  withState(initialState),
+  withComputed(({ races }) => ({
+    currentRace: computed(() => races()?.find(r => r.state === 'open' || r.state === 'closed')),
+  })),
+  withMethods((
+    store,
+    service = inject(RacesService),
+    playerStore = inject(PlayerStore),
+    authorized$ = toObservable(inject(PlayerStore).authorized).pipe(
+      distinctUntilChanged(),
+    ),
+    seasonId$ = toObservable(inject(SeasonStore).season).pipe(
+      map(season => season?.id),
+      distinctUntilChanged(),
+    ),
+  ) => ({
+    loadRaces: rxMethod<void>(
+      pipe(
+        switchMap(() => combineLatest([authorized$, seasonId$])),
+        switchMap(([authorized, seasonId]) => {
+          return authorized && seasonId
+            ? service.getRaces(seasonId).pipe(
+              tapResponse({
+                next: races => patchState(store, { races, loaded: true, error: undefined }),
+                error: error => patchState(store, { error: error?.toString() }),
+              }))
+            : of();
+        }),
+      ),
+    ),
+    loadLastYear: rxMethod<void>(
+      pipe(
+        switchMap(() => authorized$),
+        switchMap(authorized => {
+          if (store.lastYear()) return of();
+          const race = store.currentRace();
+          return (authorized && race
+              ? from(service.getLastYearResult(race.season, race.countryCode))
+              : of(undefined)
+          ).pipe(
+            tapResponse({
+              next: lastYear => patchState(store, { lastYear }),
+              error: error => patchState(store, { error: error?.toString() }),
+            }),
+          );
+        }),
+      )),
+  })),
+);

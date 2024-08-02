@@ -8,13 +8,13 @@ import { firstValueFrom } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface PlayerState {
-  player?: Player;
-  unauthorized?: boolean;
-  authorized?: boolean;
+  player: Player | undefined;
+  unauthorized: boolean | undefined;
+  authorized: boolean | undefined;
   loading: boolean;
   loaded: boolean;
   updatingWBC: boolean;
-  error?: any;
+  error: any | undefined;
 }
 
 export const PlayerStore = signalStore(

@@ -36,13 +36,12 @@ export class AppComponent {
   readonly #driverStore = inject(DriversStore);
 
   constructor(
-    private racesStore: RacesStore,
     private updates: SwUpdate,
     private versionService: VersionService,
     private snackBar: MatSnackBar,
     private router: Router) {
-    this.racesStore.loadRaces();
-    this.racesStore.loadYourBid();
+    const racesStore = inject(RacesStore);
+    racesStore.loadRaces();
     const messaging = getMessaging();
     getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
       currentToken => isDevMode() && console.log(currentToken),

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, HostBinding, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, HostBinding, inject, Signal } from '@angular/core';
 import { RacesStore } from '@f2020/api';
 import { RoundResult } from '@f2020/data';
 import { icon, PolePositionTimePipe } from '@f2020/shared';
@@ -22,7 +22,8 @@ export class LastYearComponent {
   lastYear: Signal<RoundResult>;
   icon = icon.farCalendar;
 
-  constructor(store: RacesStore) {
+  constructor() {
+    const store = inject(RacesStore);
     this.lastYear = store.lastYear;
     store.loadLastYear();
     effect(() => this.isHidden = !this.lastYear());

@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { Component, Signal } from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { IRace } from '@f2020/data';
 import { RaceStatusPipe } from './race-status.pipe';
 import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
@@ -22,16 +22,16 @@ import { RacesStore } from '@f2020/api';
     AsyncPipe,
     FlagURLPipe,
     RaceStatusPipe,
-    NgOptimizedImage
-],
+    NgOptimizedImage,
+  ],
 })
 export class RacesComponent {
 
   races: Signal<IRace[]>;
   now = DateTime.local();
 
-  constructor(store: RacesStore) {
-    this.races = store.races;
+  constructor() {
+    this.races = inject(RacesStore).races;
   }
 
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { RacesStore } from '@f2020/api';
 import { RoundResult } from '@f2020/data';
 import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
@@ -20,7 +20,8 @@ export class StandingLastYearComponent {
 
   round: Signal<RoundResult>;
 
-  constructor(store: RacesStore) {
+  constructor() {
+    const store = inject(RacesStore);
     store.loadLastYear();
     this.round = store.lastYear;
   }

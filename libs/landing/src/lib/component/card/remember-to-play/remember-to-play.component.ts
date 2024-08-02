@@ -1,5 +1,5 @@
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, HostBinding, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostBinding, inject, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
@@ -21,7 +21,8 @@ export class RememberToPlayComponent {
   @HostBinding('hidden') isHidden = true;
   race: Signal<IRace | undefined>;
 
-  constructor(private store: RacesStore) {
+  constructor() {
+    const store = inject(RacesStore);
     this.race = computed(() => {
       if (store.currentRace()?.close > DateTime.local() && store.yourBid() && !store.yourBid().submitted) {
         return store.currentRace();

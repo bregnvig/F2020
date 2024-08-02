@@ -7,9 +7,9 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 
 export interface SeasonState {
-  season?: ISeason;
+  season: ISeason | undefined;
   loaded: boolean; // has the Season list been loaded
-  error?: string | null; // last none error (if any)
+  error: string | undefined; // last none error (if any)
 }
 
 export const SeasonStore = signalStore(

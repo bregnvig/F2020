@@ -6,5 +6,4 @@ export * from './lib/race/+state';
 export * from './lib/season/+state';
 export * from './lib/drivers';
 export * from './lib/service';
-export * from './lib/store';
 

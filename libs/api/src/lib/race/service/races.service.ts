@@ -54,7 +54,7 @@ export class RacesService {
     return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/participants`).withConverter(bidConverter));
   }
 
-  getBid(seasonId: string, round: number, uid: string): Observable<Bid> {
+  getBid(seasonId: string | number, round: number, uid: string): Observable<Bid> {
     return docData(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter));
   }
 

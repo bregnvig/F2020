@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { effect, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { effect, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { CoordinateModel } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { map } from 'rxjs/operators';
@@ -32,7 +32,8 @@ export class WeatherService {
 
   #weather: WritableSignal<WeatherDay[]> = signal([]);
 
-  constructor(private store: RacesStore, http: HttpClient) {
+  constructor(http: HttpClient) {
+    const store = inject(RacesStore);
     effect(() => {
       const race = store.currentRace();
       if (race) {
