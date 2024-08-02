@@ -110,11 +110,10 @@ export const RaceStore = signalStore(
     }),
   ),
   withComputed((
-    state,
-    racesStore = inject(RacesStore),
+    { bids },
     playerStore = inject(PlayerStore),
   ) => ({
-    bid: computed(() => state.bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)),
+    bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)),
   })),
 );
 
