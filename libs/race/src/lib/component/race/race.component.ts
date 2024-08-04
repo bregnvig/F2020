@@ -15,6 +15,16 @@ import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
+const BaseGoogleMapOptions: google.maps.MapOptions = {
+  zoomControl: false,
+  scrollwheel: false,
+  fullscreenControl: false,
+  streetViewControl: true,
+  mapTypeControl: false,
+  zoom: 15,
+  mapTypeId: 'roadmap',
+};
+
 @UntilDestroy()
 @Component({
   selector: 'f2020-race',
@@ -30,26 +40,18 @@ export class RaceComponent {
 
   private store = inject(RaceStore);
 
-  center: Signal<google.maps.LatLng | undefined>;
+  // center: Signal<google.maps.LatLng | undefined>;
   race: Signal<IRace | undefined>;
   play: Signal<boolean>;
   clickable: Signal<boolean>;
   bids: Signal<Bid[] | Participant[] | undefined>;
 
-  options: google.maps.MapOptions = {
-    zoomControl: false,
-    scrollwheel: false,
-    fullscreenControl: false,
-    streetViewControl: true,
-    mapTypeControl: false,
-    zoom: 15,
-    mapTypeId: 'roadmap',
-  };
+  options: Signal<google.maps.MapOptions>;
 
   constructor() {
     const playerStore = inject(PlayerStore);
     this.race = this.store.race;
-    this.center = computed(() => this.race() && new google.maps.LatLng(this.race().location.lat, this.race().location.lng));
+    this.options = computed(() => ({ ...BaseGoogleMapOptions, lat: this.race()?.location.lat, lng: this.race()?.location.lng }));
     this.bids = this.store.bids;
     this.play = computed(() => {
       return this.race()?.close > DateTime.local()
