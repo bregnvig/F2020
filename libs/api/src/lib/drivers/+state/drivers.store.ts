@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { IDriver } from '@f2020/data';
-import { DriverService } from '../service/driver.service';
+import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap } from 'rxjs';
-import { tapResponse } from '@ngrx/operators';
+import { pipe, switchMap } from 'rxjs';
+import { DriverService } from '../service/driver.service';
 
 export interface DriversState {
   drivers: IDriver[] | undefined,
@@ -24,7 +24,6 @@ export const DriversStore = signalStore(
   withMethods((store, service = inject(DriverService)) => ({
     loadDrivers: rxMethod<void>(
       pipe(
-        tap(() => patchState(store, initialState)),
         switchMap(() => service.drivers$.pipe(
           tapResponse({
             next: drivers => patchState(store, { drivers, loaded: true }),

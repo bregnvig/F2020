@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '19';
+const versionNo = '20';
 
 @Component({
   selector: 'f2020-what-else',
@@ -20,6 +20,7 @@ export class WhatElseComponent {
   icon = icon.falRocketLaunch;
   facebook = icon.fabFacebookF;
   google = icon.fabGoogle;
+  marker = icon.farLocationDot;
 
   dismissMessage() {
     localStorage.setItem('what-else', versionNo);

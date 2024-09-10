@@ -5,7 +5,7 @@
 
   @if (teams$ | async; as teams) {
     <mat-list>
-      @for (team of teams; track team; let i = $index; let last = $last) {
+      @for (team of teams; track team.constructorId; ) {
         <h2 matSubheader>{{ team.name }}</h2>
         @for (driverId of team.drivers; track driverId) {
           <mat-list-item>
@@ -19,12 +19,12 @@
         }
         <mat-list-item *shaHasRole="'admin'">
           <p matListItemMeta>
-            <button mat-icon-button (click)="addDriver(team)">
+            <button mat-icon-button [disabled]="noDrivers()" (click)="addDriver(team)">
               <fa-icon [icon]="icon.farPlus"></fa-icon>
             </button>
           </p>
         </mat-list-item>
-        @if (!last) {
+        @if (!$last) {
           <mat-divider></mat-divider>
         }
       }

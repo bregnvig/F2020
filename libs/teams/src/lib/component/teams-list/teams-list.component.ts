@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -20,7 +20,6 @@ import { first, map, switchMap } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
-  providers: [DriversStore],
 })
 export class TeamsListComponent {
 
@@ -28,6 +27,7 @@ export class TeamsListComponent {
   icon = icon;
 
   readonly store = inject(DriversStore);
+  noDrivers = computed(() => !this.store.drivers()?.length);
 
   constructor(
     private dialog: MatDialog,

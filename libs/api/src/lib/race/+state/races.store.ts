@@ -1,14 +1,14 @@
-import { Bid, IRace, RoundResult } from '@f2020/data';
 import { computed, inject } from '@angular/core';
-import { SeasonStore } from '../../season/+state';
-import { RacesService } from '../service/races.service';
-import { PlayerStore } from '../../player';
-import { combineLatest, distinctUntilChanged, from, of, pipe, switchMap } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Bid, IRace, RoundResult } from '@f2020/data';
+import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { tapResponse } from '@ngrx/operators';
+import { combineLatest, distinctUntilChanged, from, of, pipe, switchMap } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { PlayerStore } from '../../player';
+import { SeasonStore } from '../../season/+state';
+import { RacesService } from '../service/races.service';
 
 interface RacesState {
   races: IRace[] | undefined;
@@ -32,7 +32,7 @@ export const RacesStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(({ races }) => ({
-    currentRace: computed(() => races()?.find(r => r.state === 'open' || r.state === 'closed')),
+    currentRace: computed(() => races()?.find(r => r.state === 'open' || r.state === 'closed')) as any,
   })),
   withMethods((
     store,
@@ -67,8 +67,8 @@ export const RacesStore = signalStore(
           if (store.lastYear()) return of();
           const race = store.currentRace();
           return (authorized && race
-              ? from(service.getLastYearResult(race.season, race.countryCode))
-              : of(undefined)
+            ? from(service.getLastYearResult(race.season, race.countryCode))
+            : of(undefined)
           ).pipe(
             tapResponse({
               next: lastYear => patchState(store, { lastYear }),

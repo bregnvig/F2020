@@ -11,14 +11,15 @@ import {
   faFaceSadCry,
   faGavel,
   faInfo,
+  faLocationDot,
   faPen,
   faPiggyBank,
   faPlus,
+  faTrophyAlt as farTrophyAlt,
   faSignInAlt,
   faSignOutAlt,
   faSunCloud,
   faTrash,
-  faTrophyAlt as farTrophyAlt,
   faUniversity,
   faUser,
   faUserFriends,
@@ -62,6 +63,7 @@ const farIcons = [
   faPen,
   faChartLineUpDown,
   faClock,
+  faLocationDot,
 ];
 
 const fasIcons = [

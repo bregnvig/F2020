@@ -41,6 +41,7 @@ type Icon =
   | 'farCloudArrowDown'
   | 'farCloudArrowUp'
   | 'fasRotateRight'
+  | 'farLocationDot'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -84,4 +85,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farCloudArrowUp: ['fas', 'cloud-arrow-up'],
   fasPaperPlane: ['fas', 'paper-plane'],
   farClock: ['far', 'clock'],
+  farLocationDot: ['far', 'location-dot'],
 };
