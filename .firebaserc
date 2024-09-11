@@ -1,13 +1,13 @@
 {
   "projects": {
-    "default": "f1-serverless",
+    "default": "f1-playground-e1f23",
     "production": "f1-2020-9dec0"
   },
   "targets": {
-    "f1-serverless": {
+    "f1-playground-e1f23": {
       "hosting": {
         "ui": [
-          "f1-serverless"
+          "f1-playground-e1f23"
         ]
       }
     },

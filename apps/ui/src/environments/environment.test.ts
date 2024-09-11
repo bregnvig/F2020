@@ -6,15 +6,13 @@ export const environment = {
   production: false,
   useEmulator: false,
   firebaseConfig: {
-    apiKey: 'AIzaSyCY1hzs-V5b4f4Zx3yBzBAiawiqr4JaSjQ',
-    authDomain: 'f1-serverless.firebaseapp.com',
-    databaseURL: 'https://f1-serverless.firebaseio.com',
-    projectId: 'f1-serverless',
-    storageBucket: 'f1-serverless.appspot.com',
-    messagingSenderId: '657968084413',
-    appId: '1:657968084413:web:9a4fa397037ae453df4ed4',
-    measurementId: 'G-Q2XDV9KH10',
-    vapidKey: 'BOFITR58fWVZiIaO3a_3FKmy6hB-huDUlT7MHEU1j1GamNMzBEIhom6sSEYtji8lFoLBfDbKWT_cLpH4A2HNSEQ',
+    apiKey: "AIzaSyAZhIDMYcYt01mE3ApPkNBiJqYWpZXqPFQ",
+    authDomain: "f1-playground-e1f23.firebaseapp.com",
+    projectId: "f1-playground-e1f23",
+    storageBucket: "f1-playground-e1f23.appspot.com",
+    messagingSenderId: "212314334893",
+    appId: "1:212314334893:web:547033c359f88d07e4c824",
+    vapidKey: "BGp23_rQ4NemIAk3-w2rQGcBnKY7GGtsbwfoyH6xnrB3W5FTWOXY195rAnzJwmutHadvZVxzBy4Xc-5yrgbkRe0"
   },
   initialBid: {},
 };
