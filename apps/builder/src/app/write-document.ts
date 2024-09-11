@@ -1,16 +1,16 @@
 import { firebaseApp } from './firebase';
 
-export const writeDocument = async (path: string): Promise<any> => {
+export const readDocument = async (path: string): Promise<any> => {
   const db = firebaseApp.database;
 
   return db.doc(path).get()
     .then(ref => ref.data());
 };
 
-export const writeCollection = async (path: string): Promise<any[]> => {
+export const readCollection = async (path: string): Promise<any[]> => {
   const db = firebaseApp.database;
 
-  return db.collection(path).limit(50).get()
+  return db.collection(path).get()
     .then(ref => ref.docs)
-    .then(snapshot => snapshot.map(s => s.data()));
+    .then(snapshot => snapshot.map(s => ({ id: s.id, data: s.data() })));
 };
