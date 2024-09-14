@@ -74,3 +74,6 @@ pubsub-debug.log
 firebase-export*
 .secret.local
 migrations.json
+
+firestore-backup
+firestore-production
