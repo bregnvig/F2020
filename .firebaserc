@@ -1,20 +1,20 @@
 {
   "projects": {
-    "default": "f1-serverless",
-    "production": "f1-2020-9dec0"
+    "old": "f1-2020-9dec0",
+    "production": "f1-2024-8ab8e"
   },
   "targets": {
-    "f1-serverless": {
-      "hosting": {
-        "ui": [
-          "f1-serverless"
-        ]
-      }
-    },
     "f1-2020-9dec0": {
       "hosting": {
         "ui": [
           "f1-2020-9dec0"
+        ]
+      }
+    },
+    "f1-2024-8ab8e": {
+      "hosting": {
+        "ui": [
+          "f1-2024-8ab8e"
         ]
       }
     }
