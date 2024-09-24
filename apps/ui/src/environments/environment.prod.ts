@@ -3,7 +3,7 @@ export const environment = {
   useEmulator: false,
   firebaseConfig: {
     apiKey: 'AIzaSyAK9_kQTf7Lm7TdbYqDP_nFo7fwWvuHfLg',
-    authDomain: 'f1-2024-8ab8e.firebaseapp.com',
+    authDomain: 'f1.bregnvig.dk',
     projectId: 'f1-2024-8ab8e',
     storageBucket: 'f1-2024-8ab8e.appspot.com',
     messagingSenderId: '651727325900',
