@@ -1,3 +1,9 @@
-mat-toolbar {
-  margin-top: 56px;
+.mat-toolbar {
+  margin-top: 64px;
+}
+
+@media (max-width: 598px) {
+  .mat-toolbar {
+    margin-top: 56px;
+  }
 }
