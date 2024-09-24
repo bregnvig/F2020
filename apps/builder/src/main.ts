@@ -1,5 +1,4 @@
 import { environment } from './environment/environment';
-import { writeFirestore } from './app/move-firebase-repo';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -40,7 +39,7 @@ const seasonId = parseInt(environment.season);
 //  assignTeamsToSeason(2023);
 // buildPreviousRaceResult(seasonId - 1).then(() => console.log(`Build previous season`));
 
-(async () => {
-  // await backupFirestore().then(() => console.log('Backed up'));
-  await writeFirestore().then(() => console.log('Copied'));
-})();
+// (async () => {
+// await backupFirestore().then(() => console.log('Backed up'));
+// await writeFirestore().then(() => console.log('Copied'));
+// })();
