@@ -51,4 +51,10 @@ You can create it using `firebase functions:config:get > .runtimeconfig.json`
 2. Run emulators
    use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions`
    Delete `export`, `import` and/or `--inspect-functions` if not wanted
-3. If ports are already taken, run `npm run kill-ports` 
+3. If ports are already taken, run `npm run kill-ports`
+
+# Google Cloud Console
+
+## API & Services
+
+Under credentials, Web client, add any new URL that you wish to use for authentication and serving
