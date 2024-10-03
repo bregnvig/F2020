@@ -3,7 +3,7 @@ import { getByNationality } from './countries';
 
 export const driver = (d: ErgastDriver): IDriver => {
   return {
-    driverId: d.driverId,
+    driverId: d.driverId.trim(),
     code: d.code,
     nationality: d.nationality,
     countryCode: getByNationality(d.nationality),

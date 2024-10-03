@@ -2,8 +2,8 @@ import { ErgastPitStop, IDriver, IPitStop, ITeam, toMilliseconds } from '../mode
 
 const pitStop = (result: ErgastPitStop, drivers: IDriver[], teams: ITeam[]): IPitStop => {
   return {
-    driver: drivers.find(d => d.driverId === result.driverId)!,
-    team: teams.find(t => t.drivers.includes(result.driverId))!,
+    driver: drivers.find(d => d.driverId === result.driverId.trim())!,
+    team: teams.find(t => t.drivers.includes(result.driverId.trim()))!,
     stop: parseInt(result.stop, 10),
     lap: parseInt(result.lap, 10),
     duration: toMilliseconds(result.duration)!,
