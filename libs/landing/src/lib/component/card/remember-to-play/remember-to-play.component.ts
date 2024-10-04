@@ -24,7 +24,7 @@ export class RememberToPlayComponent {
   constructor() {
     const store = inject(RacesStore);
     this.race = computed(() => {
-      if (store.currentRace()?.close > DateTime.local() && store.yourBid() && !store.yourBid().submitted) {
+      if (store.currentRace()?.close > DateTime.local() && (!store.yourBid() || !store.yourBid().submitted)) {
         return store.currentRace();
       }
     });
