@@ -24,8 +24,9 @@ export class LastYearComponent {
 
   constructor() {
     const store = inject(RacesStore);
+    effect(() => store.currentRace() && store.loadLastYear());
     this.lastYear = store.lastYear;
     store.loadLastYear();
-    effect(() => this.isHidden = !this.lastYear());
+    effect(() => this.isHidden = !store.lastYear());
   }
 }

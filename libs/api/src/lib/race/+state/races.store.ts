@@ -37,7 +37,6 @@ export const RacesStore = signalStore(
   withMethods((
     store,
     service = inject(RacesService),
-    playerStore = inject(PlayerStore),
     authorized$ = toObservable(inject(PlayerStore).authorized).pipe(
       distinctUntilChanged(),
     ),
@@ -67,8 +66,8 @@ export const RacesStore = signalStore(
           if (store.lastYear()) return of();
           const race = store.currentRace();
           return (authorized && race
-            ? from(service.getLastYearResult(race.season, race.countryCode))
-            : of(undefined)
+              ? from(service.getLastYearResult(race.season, race.countryCode))
+              : of(undefined)
           ).pipe(
             tapResponse({
               next: lastYear => patchState(store, { lastYear }),
