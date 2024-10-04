@@ -7,7 +7,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { connectFunctionsEmulator, getFunctions, provideFunctions } from '@angular/fire/functions';
-import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,6 +28,7 @@ import { Settings } from 'luxon';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 
 const materialModule = [
   MatSidenavModule,
@@ -89,10 +89,9 @@ bootstrapApplication(AppComponent, {
     },
     provideAnimations(),
   ],
-}).then(() => {
+}).then(async () => {
   if ('serviceWorker' in navigator && environment.production) {
-    navigator.serviceWorker.register('ngsw-worker.js');
-    navigator.serviceWorker.register('firebase-messaging-sw.js');
+    await navigator.serviceWorker.register('ngsw-worker.js');
   }
   Settings.defaultLocale = 'da';
   registerLocaleData(localeDa);

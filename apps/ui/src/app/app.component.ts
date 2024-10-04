@@ -1,5 +1,4 @@
-import { Component, effect, inject, isDevMode } from '@angular/core';
-import { getToken } from '@angular/fire/messaging';
+import { Component, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -9,9 +8,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
-import { getMessaging, onMessage } from 'firebase/messaging';
 import { filter, first, switchMap } from 'rxjs/operators';
-import { environment } from '../environments/environment';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
@@ -42,14 +39,6 @@ export class AppComponent {
     private router: Router) {
     const racesStore = inject(RacesStore);
     racesStore.loadRaces();
-    const messaging = getMessaging();
-    getToken(messaging, { vapidKey: environment.firebaseConfig.vapidKey }).then(
-      currentToken => isDevMode() && console.log(currentToken),
-      error => console.error('An error occurred while retrieving token', error.message),
-    );
-    onMessage(messaging, (payload) => {
-      console.log('Message received. ', payload);
-    });
     this.checkForVersionUpdate();
     effect(() => {
       if (this.#playerStore.authorized()) {
@@ -60,7 +49,6 @@ export class AppComponent {
           if (this.router.url === '/info/roles') {
             this.router.navigate(['/']);
           }
-          this.setupMessaging();
         } else {
           this.router.navigate(['info', 'roles']);
         }
@@ -95,16 +83,4 @@ export class AppComponent {
     });
   }
 
-  private setupMessaging() {
-    if (Notification.permission === 'granted') {
-      this.#playerStore.loadMessaging();
-    } else if (Notification.permission === 'denied') {
-      console.log('Messaging denied');
-    } else {
-      setTimeout(() => {
-        this.snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction()
-          .subscribe(() => this.#playerStore.loadMessaging());
-      });
-    }
-  }
 }

@@ -32,11 +32,11 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
       if ([12, 10, 8, 6, 4, 2, 1].indexOf(element.points) > -1) {
         await sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
       } else if (element.points === 25) {
-        await sendWBCResult('🥇 Tillykke med din første plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
+        await sendWBCResult('🥇 Tillykke med din første plads :-)', 'https://f1.bregnvig.dk/assets/messaging/trophy.png');
       } else if (element.points === 18) {
-        await sendWBCResult('🥈 Tillykke med din anden plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
+        await sendWBCResult('🥈 Tillykke med din anden plads :-)', 'https://f1.bregnvig.dk/assets/messaging/trophy.png');
       } else if (element.points === 15) {
-        await sendWBCResult('🥉 Tillykke med din tredje plads :-)', 'https://f2020.bregnvig.dk/assets/messaging/trophy.png');
+        await sendWBCResult('🥉 Tillykke med din tredje plads :-)', 'https://f1.bregnvig.dk/assets/messaging/trophy.png');
       } else {
         await sendWBCResult('🫣 Æv du fik ingen points  :-(');
       }

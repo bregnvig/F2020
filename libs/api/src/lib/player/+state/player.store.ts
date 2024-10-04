@@ -1,5 +1,4 @@
 import { Player } from '@f2020/data';
-import { getMessaging, getToken } from 'firebase/messaging';
 import { inject } from '@angular/core';
 import { PlayerApiService } from '../service/player-api.service';
 import { filterEquals } from '@f2020/tools';
@@ -41,14 +40,9 @@ export const PlayerStore = signalStore(
           error => patchState(store, { error }),
         );
       },
-      async loadMessaging() {
-        return getToken(getMessaging())
-          .then(token => !store.player().tokens?.some(t => t === token) && this.updatePlayer({ tokens: [token] }))
-          .catch(error => this.setState(() => ({ error })));
-      },
       async joinWBC() {
         patchState(store, { updatingWBC: true });
-        await this.service.joinWBC();
+        await service.joinWBC();
         patchState(store, { updatingWBC: false });
       },
       async undoWBC() {

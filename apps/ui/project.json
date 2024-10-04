@@ -22,7 +22,6 @@
         "assets" : [
           "apps/ui/src/favicon.ico",
           "apps/ui/src/assets",
-          "apps/ui/src/firebase-messaging-sw.js",
           "apps/ui/src/manifest.webmanifest"
         ],
         "styles" : [
@@ -37,10 +36,6 @@
             {
               "replace" : "apps/ui/src/environments/environment.ts",
               "with" : "apps/ui/src/environments/environment.prod.ts"
-            },
-            {
-              "replace" : "apps/ui/src/firebase-messaging-sw.js",
-              "with" : "apps/ui/src/environments/firebase-messaging-sw.prod.js"
             }
           ],
           "optimization" : true,

@@ -4,8 +4,9 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 import { converter, Player } from '@f2020/data';
 import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from 'firebase/auth';
 import { arrayUnion } from 'firebase/firestore';
-import { merge, Observable, ReplaySubject } from 'rxjs';
+import { firstValueFrom, merge, Observable, ReplaySubject } from 'rxjs';
 import { filter, first, switchMap } from 'rxjs/operators';
+import { FCMService } from './fcm.service';
 
 const playerConverter = converter.timestamp<Player>();
 
@@ -20,7 +21,7 @@ export class PlayerApiService {
   private currentUser$ = new ReplaySubject<UserInfo | null>(1);
   private auth = getAuth();
 
-  constructor(private afs: Firestore, private functions: Functions) {
+  constructor(private afs: Firestore, private functions: Functions, fcm: FCMService) {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
@@ -35,10 +36,16 @@ export class PlayerApiService {
         this.updateBaseInformation(result.user).then(() => console.log('Base information updated'));
       }
     });
-    onAuthStateChanged(this.auth, user => {
+    onAuthStateChanged(this.auth, async user => {
       this.currentUser$.next(user ? ({ ...user }) : undefined);
       if (user) {
-        this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
+        await this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
+        await fcm.setupMessaging().then(
+          async token => token && await firstValueFrom(this.updatePlayer({ tokens: [token] })).then(
+            () => console.log('Token added', token),
+          ),
+          error => Notification.permission !== 'denied' && console.error('Unable to setup messaging', error),
+        );
       }
       isDevMode() && console.log(user);
     });
@@ -78,17 +85,17 @@ export class PlayerApiService {
     );
   }
 
-  joinWBC(): Promise<true> {
-    return httpsCallable(this.functions, 'joinWBC')()
-      .then(() => true);
+  async joinWBC(): Promise<true> {
+    await httpsCallable(this.functions, 'joinWBC')();
+    return true;
   }
 
-  undoWBC(): Promise<true> {
-    return httpsCallable(this.functions, 'undoWBC')()
-      .then(() => true);
+  async undoWBC(): Promise<true> {
+    await httpsCallable(this.functions, 'undoWBC')();
+    return true;
   }
 
-  private updateBaseInformation(player: Player): Promise<void> {
+  private async updateBaseInformation(player: Player): Promise<void> {
     const _player = {
       uid: player.uid,
       displayName: player.displayName,
@@ -96,8 +103,7 @@ export class PlayerApiService {
       photoURL: player.photoURL,
     } as Player;
     const docRef = doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
-    return getDoc(docRef).then(
-      snapshot => snapshot.exists() ? updateDoc(docRef, { ..._player }) : setDoc(docRef, _player),
-    );
+    const snapshot = await getDoc(docRef);
+    return snapshot.exists() ? updateDoc(docRef, { ..._player }) : setDoc(docRef, _player);
   }
 }
