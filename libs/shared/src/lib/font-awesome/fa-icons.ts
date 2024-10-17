@@ -1,4 +1,4 @@
-import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
+import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 type Icon =
   | 'farWeather'
@@ -42,6 +42,7 @@ type Icon =
   | 'farCloudArrowUp'
   | 'fasRotateRight'
   | 'farLocationDot'
+  | 'fabFirefoxBrowser'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -86,4 +87,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fasPaperPlane: ['fas', 'paper-plane'],
   farClock: ['far', 'clock'],
   farLocationDot: ['far', 'location-dot'],
+  fabFirefoxBrowser: ['fab', 'firefox-browser'],
 };

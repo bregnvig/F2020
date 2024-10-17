@@ -20,7 +20,7 @@ export class WhatElseComponent {
   icon = icon.falRocketLaunch;
   facebook = icon.fabFacebookF;
   google = icon.fabGoogle;
-  marker = icon.farLocationDot;
+  firefox = icon.fabFirefoxBrowser;
 
   dismissMessage() {
     localStorage.setItem('what-else', versionNo);

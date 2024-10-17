@@ -1,5 +1,5 @@
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { faApple, faCss3, faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { faApple, faCss3, faFacebookF, faFirefoxBrowser, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
 import {
   faBookAlt,
@@ -15,11 +15,11 @@ import {
   faPen,
   faPiggyBank,
   faPlus,
-  faTrophyAlt as farTrophyAlt,
   faSignInAlt,
   faSignOutAlt,
   faSunCloud,
   faTrash,
+  faTrophyAlt as farTrophyAlt,
   faUniversity,
   faUser,
   faUserFriends,
@@ -92,6 +92,7 @@ const fabIcons = [
   faFacebookF,
   faApple,
   faCss3,
+  faFirefoxBrowser,
 ];
 
 export function initializeFontAwesomeFactory(faIconLibrary: FaIconLibrary) {
