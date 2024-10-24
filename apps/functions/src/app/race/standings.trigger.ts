@@ -14,7 +14,7 @@ export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{roun
   const before: IRace = event.data.before.data() as IRace;
   const after: IRace = event.data.after.data() as IRace;
 
-  if (before.state !== 'completed' || after.state === 'completed') {
+  if (before.state !== 'completed' && after.state === 'completed') {
     const season = await currentSeason();
     await setStandings(season.id);
     await setDriver(season.id);
