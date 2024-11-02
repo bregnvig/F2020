@@ -37,6 +37,7 @@ export class PlayerTransactionsComponent implements OnInit {
 
   player: Signal<Player>;
   #store = inject(PlayersStore);
+  injector = inject(Injector);
 
   constructor(
     private injector: Injector,
@@ -76,6 +77,7 @@ export class PlayerTransactionsComponent implements OnInit {
 
   openTransfer(player: Player) {
     this.dialog.open(TransferDialogComponent, {
+      injector: this.injector,
       data: { player },
       injector: this.injector,
     }).afterClosed().pipe(

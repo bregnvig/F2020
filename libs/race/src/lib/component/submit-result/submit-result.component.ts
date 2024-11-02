@@ -39,15 +39,16 @@ export class SubmitResultComponent {
     this.loaded = computed(() => this.store.loaded() && !!this.store.result());
     this.race = this.store.race;
     this.result = this.store.result;
-    this.validResult = computed(() => !!(this.result()?.qualify?.length === 7
-      && this.result()?.fastestDriver?.length === 2
-      && this.result()?.podium?.length === 4
-      && this.result()?.selectedDriver && this.result()?.selectedDriver.grid && this.result()?.selectedDriver.finish
-      && this.result()?.slowestPitStop?.length === 2
-      && this.result()?.polePositionTime),
+    const result = toSignal(this.resultControl.valueChanges);
+    this.validResult = computed(() => !!(result()?.qualify?.length === 7
+      && (result()?.fastestDriver ?? []).filter(Boolean).length === 2
+      && (result()?.podium ?? []).filter(Boolean).length === 4
+      && result()?.selectedDriver && result()?.selectedDriver.grid && result()?.selectedDriver.finish
+      && (result()?.slowestPitStop ?? []).filter(Boolean).length === 2
+      && result()?.polePositionTime),
     );
     this.store.loadResult();
-    effect(() => this.store.result() && this.resultControl.patchValue(this.store.result(), { emitEvent: false }));
+    effect(() => this.store.result() && this.resultControl.patchValue(this.store.result()));
   }
 
   submitResult() {

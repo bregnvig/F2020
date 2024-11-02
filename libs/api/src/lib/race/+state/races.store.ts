@@ -2,7 +2,7 @@ import { computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Bid, IRace, RoundResult } from '@f2020/data';
 import { tapResponse } from '@ngrx/operators';
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, watchState, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { combineLatest, distinctUntilChanged, from, of, pipe, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -28,15 +28,18 @@ const initialState: RacesState = {
   lastYear: undefined,
 };
 
+const findCurrentRace = (races: IRace[] | undefined): IRace | undefined => races?.find(r => r.state === 'open' || r.state === 'closed');
+
 export const RacesStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed(({ races }) => ({
-    currentRace: computed(() => races()?.find(r => r.state === 'open' || r.state === 'closed')) as any,
+    currentRace: computed(() => findCurrentRace(races())) as any,
   })),
   withMethods((
     store,
     service = inject(RacesService),
+    playerStore = inject(PlayerStore),
     authorized$ = toObservable(inject(PlayerStore).authorized).pipe(
       distinctUntilChanged(),
     ),
@@ -49,13 +52,25 @@ export const RacesStore = signalStore(
       pipe(
         switchMap(() => combineLatest([authorized$, seasonId$])),
         switchMap(([authorized, seasonId]) => {
-          return authorized && seasonId
-            ? service.getRaces(seasonId).pipe(
+          if (authorized && seasonId) {
+
+            return service.getRaces(seasonId).pipe(
               tapResponse({
                 next: races => patchState(store, { races, loaded: true, error: undefined }),
                 error: error => patchState(store, { error: error?.toString() }),
-              }))
-            : of();
+              }),
+              map(races => findCurrentRace(races)),
+              switchMap(currentRace => currentRace
+                ? service.getBid(seasonId, currentRace.round, playerStore.player().uid)
+                : of(undefined),
+              ),
+              tapResponse({
+                next: bid => patchState(store, { yourBid: bid }),
+                error: error => patchState(store, { error: error?.toString() }),
+              }),
+            );
+          }
+          return of();
         }),
       ),
     ),
@@ -77,4 +92,9 @@ export const RacesStore = signalStore(
         }),
       )),
   })),
+  withHooks({
+    onInit(store) {
+      watchState(store, state => console.log(state, state.currentRace));
+    },
+  }),
 );

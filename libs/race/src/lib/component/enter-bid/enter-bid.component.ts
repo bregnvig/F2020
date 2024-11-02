@@ -5,17 +5,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
-import { PlayerStore, RaceStore, TeamService } from '@f2020/api';
+import { PlayerStore, RacesService, RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
-import { debounceTime, filter, map } from 'rxjs/operators';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { filterEquals, isNullish } from '@f2020/tools';
+import { debounceTime, filter, map, switchMap } from 'rxjs/operators';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { filterEquals, isNullish, truthy } from '@f2020/tools';
 import { firstValueFrom } from 'rxjs';
-import { RacesService } from '../../../../../api/src/lib/race/service/races.service';
 
 
 const noNullsInArray = (control: FormControl<Bid>) => {
@@ -55,7 +54,9 @@ export class EnterBidComponent {
     this.race = this.store.race;
     this.teams = toSignal(this.teamsService.teams$);
     this.isOpen = computed(() => this.store.race()?.close >= DateTime.local());
-    firstValueFrom(racesService.getBid(this.race().season, this.race().round, playerId).pipe(
+    firstValueFrom(toObservable(this.race).pipe(
+      truthy(),
+      switchMap(race => racesService.getBid(race.season, race.round, playerId)),
       map(bid => bid || {}),
     )).then(yourBid => this.bidControl.patchValue(yourBid, { emitEvent: false }));
     effect(() => this.store.bid()?.submitted && this.bidControl.disable({ emitEvent: false }));
