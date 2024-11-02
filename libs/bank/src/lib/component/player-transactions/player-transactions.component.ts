@@ -1,5 +1,5 @@
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
-import { Component, inject, OnInit, Signal } from '@angular/core';
+import { Component, inject, Injector, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -37,6 +37,7 @@ export class PlayerTransactionsComponent implements OnInit {
 
   player: Signal<Player>;
   #store = inject(PlayersStore);
+  injector = inject(Injector);
 
   constructor(
     private dialog: MatDialog,
@@ -73,6 +74,7 @@ export class PlayerTransactionsComponent implements OnInit {
 
   openTransfer(player: Player) {
     this.dialog.open(TransferDialogComponent, {
+      injector: this.injector,
       data: { player },
     }).afterClosed().pipe(
       switchMap(result => result),
