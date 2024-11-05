@@ -41,9 +41,14 @@ export class PlayerApiService {
       if (user) {
         await this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
         await fcm.setupMessaging().then(
-          async token => token && await firstValueFrom(this.updatePlayer({ tokens: [token] })).then(
-            () => console.log('Token added', token),
-          ),
+          async token => {
+            const player = await firstValueFrom(this.player$);
+            if (token && !player.tokens?.includes(token)) {
+              await firstValueFrom(this.updatePlayer({ tokens: [token] })).then(
+                () => console.log('Token added', token),
+              );
+            }
+          },
           error => Notification.permission !== 'denied' && console.error('Unable to setup messaging', error),
         );
       }
