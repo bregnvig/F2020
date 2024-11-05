@@ -2,7 +2,7 @@ import { computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Bid, IRace, RoundResult } from '@f2020/data';
 import { tapResponse } from '@ngrx/operators';
-import { patchState, signalStore, watchState, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { combineLatest, distinctUntilChanged, from, of, pipe, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -92,9 +92,4 @@ export const RacesStore = signalStore(
         }),
       )),
   })),
-  withHooks({
-    onInit(store) {
-      watchState(store, state => console.log(state, state.currentRace));
-    },
-  }),
 );
