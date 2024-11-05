@@ -37,10 +37,9 @@ export class PlayerTransactionsComponent implements OnInit {
 
   player: Signal<Player>;
   #store = inject(PlayersStore);
-  injector = inject(Injector);
+  #injector = inject(Injector);
 
   constructor(
-    private injector: Injector,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute) {
@@ -57,7 +56,7 @@ export class PlayerTransactionsComponent implements OnInit {
     this.dialog.open(DepositDialogComponent, {
       width: '250px',
       data: { player },
-      injector: this.injector,
+      injector: this.#injector,
     }).afterClosed().pipe(
       switchMap(result => result),
       first(),
@@ -68,7 +67,7 @@ export class PlayerTransactionsComponent implements OnInit {
     this.dialog.open(WithdrawDialogComponent, {
       width: '250px',
       data: { player },
-      injector: this.injector,
+      injector: this.#injector,
     }).afterClosed().pipe(
       switchMap(result => result),
       first(),
@@ -77,9 +76,8 @@ export class PlayerTransactionsComponent implements OnInit {
 
   openTransfer(player: Player) {
     this.dialog.open(TransferDialogComponent, {
-      injector: this.injector,
       data: { player },
-      injector: this.injector,
+      injector: this.#injector,
     }).afterClosed().pipe(
       switchMap(result => result),
       first(),
