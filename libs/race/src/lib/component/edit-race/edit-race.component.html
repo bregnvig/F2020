@@ -4,7 +4,7 @@
       <mat-card-header>
         <img mat-card-avatar [src]="race() | flagURL">
         <mat-card-title>{{ race().name }}</mat-card-title>
-        <mat-card-subtitle>{{ race().location.nationality }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ race().name }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <p>Desværre har der et par gange været en udvalgt kører der ikke deltager i sæsonen. Tidspunktet spillet lukker har heller ikke altid været korrekt😕</p>
@@ -21,10 +21,10 @@
           <div>
             <mat-form-field class="w-full">
               <mat-label>Spillet lukkes</mat-label>
-              <input matInput formControlName="close" [format]="24" [ngxMatTimepicker]="raceClose" />
-              <ngx-mat-timepicker  #raceClose />
+              <input matInput formControlName="close" [format]="24" [ngxMatTimepicker]="raceClose"/>
+              <ngx-mat-timepicker #raceClose/>
               <mat-icon matSuffix
-                (click)="raceClose.open()">
+                        (click)="raceClose.open()">
                 <fa-icon [icon]="clockIcon" size="lg"></fa-icon>
               </mat-icon>
             </mat-form-field>
@@ -32,10 +32,10 @@
           <div>
             @if (selectedDriver$ | async; as selectedDriver) {
               <f2020-select-driver
-                formControlName="selectedDriver"
-                label="Udvalgte kører"
-                [driverIds]="selectedDriver.drivers"
-              [teams]="selectedDriver.teams"></f2020-select-driver>
+                  formControlName="selectedDriver"
+                  label="Udvalgte kører"
+                  [driverIds]="selectedDriver.drivers"
+                  [teams]="selectedDriver.teams"></f2020-select-driver>
             }
           </div>
         </div>

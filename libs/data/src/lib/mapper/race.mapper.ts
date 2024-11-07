@@ -16,8 +16,6 @@ export const basisMap = (source: ErgastRace): IRaceBasis => {
     location: {
       lat: parseFloat(source.Circuit.Location.lat),
       lng: parseFloat(source.Circuit.Location.long),
-      nationality: source.Circuit.Location.locality,
-      country: source.Circuit.Location.country,
     },
     url: source.url,
     season: parseInt(source.season, 10),

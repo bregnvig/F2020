@@ -1,6 +1,4 @@
-export interface CoordinateModel {
+export interface Coordinate {
   lat: number;
   lng: number;
-  nationality: string;
-  country: string;
 }
