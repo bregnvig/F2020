@@ -57,15 +57,15 @@ export const buildPreviousSeason = async (seasonId: string) => {
     return Promise.resolve(acc);
   }, Promise.resolve(<IRace[]>[]));
 
-  const season: ISeason = mapper.season(ergastSeason, races[3].open);
+  const season: ISeason = mapper.season(ergastSeason.season, races[3].open);
   return writeSeason(season, races);
   //   .catch(error => console.error(error));
 };
 
 const seasonsURL = 'seasons';
-const racesURL = seasonId => `${seasonsURL}/${seasonId}/races`;
+export const racesURL = seasonId => `${seasonsURL}/${seasonId}/races`;
 
-const writeSeason = (season: ISeason, races: IRace[]): Promise<WriteResult[]> => {
+export const writeSeason = async (season: ISeason, races: IRace[]): Promise<WriteResult[]> => {
   return firebaseApp.database.collection(seasonsURL).doc(season.id).withConverter(converter.season).set(season)
     .then(() => {
       const ref = firebaseApp.database.collection(racesURL(season.id));

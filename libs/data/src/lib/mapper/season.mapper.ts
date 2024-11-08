@@ -1,12 +1,12 @@
-import { ErgastSeason, ISeason } from '../model';
+import { ISeason } from '../model';
 import { DateTime } from 'luxon';
 
-export const map = (season: ErgastSeason, latestWBCJoinDate: DateTime): ISeason => {
+export const map = (seasonId: number, latestWBCJoinDate: DateTime): ISeason => {
   return {
-    name: `F${season.season}`,
-    id: season.season,
+    name: `F${seasonId}`,
+    id: seasonId.toString(10),
     wbc: {
-      latestWBCJoinDate
-    }
-  }
+      latestWBCJoinDate,
+    },
+  };
 };

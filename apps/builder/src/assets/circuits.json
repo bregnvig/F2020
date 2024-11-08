@@ -262,5 +262,16 @@
       "lat" : 25.49,
       "lng" : 51.4542
     }
+  },
+  {
+    "circuitId" : 65,
+    "circuitName" : "Autódromo Hermanos Rodríguez",
+    "name" : "Mexico City Grand Prix",
+    "countryCode2" : "MX",
+    "countryCode3" : "MEX",
+    "location" : {
+      "lat" : 19.4061,
+      "lng" : -99.0925
+    }
   }
 ]

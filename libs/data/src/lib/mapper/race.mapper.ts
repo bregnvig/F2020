@@ -1,5 +1,5 @@
 import { countries } from './countries';
-import { ErgastRace, IDriver, IRace, IRaceBasis } from '../model';
+import { Circuit, ErgastRace, IDriver, IRace, IRaceBasis } from '../model';
 import { DateTime } from 'luxon';
 
 
@@ -11,7 +11,6 @@ export const basisMap = (source: ErgastRace): IRaceBasis => {
   }
   return {
     name: source.raceName,
-    raceStart,
     countryCode: countries[source.Circuit.Location.country],
     location: {
       lat: parseFloat(source.Circuit.Location.lat),
@@ -32,6 +31,28 @@ export const map = (source: ErgastRace, selectedDriver: IDriver, previousRace?: 
     selectedDriver: selectedDriver.driverId,
     drivers: (drivers || []).map(d => d.driverId),
     open: previousRace?.close.startOf('day').plus({ day: 3 }) ?? closeTime.minus({ day: 7 }),
+  };
+};
+
+export const basisMapICS = (source: Circuit, round: number, season: number): IRaceBasis => {
+  return {
+    name: source.name,
+    countryCode: source.countryCode2,
+    location: source.location,
+    season: season,
+    round: round,
+  };
+};
+
+
+export const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
+  return {
+    ...basisMapICS(circuit, params.round, params.season),
+    state: 'waiting',
+    close: params.close,
+    selectedDriver: selectedDriver.driverId,
+    drivers: (drivers || []).map(d => d.driverId),
+    open: previousRace?.close.startOf('day').plus({ day: 3 }) ?? DateTime.local(),
   };
 };
 

@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { effect, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { CoordinateModel } from '@f2020/data';
+import { Coordinate } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { map } from 'rxjs/operators';
 import { RacesStore } from '../race/+state';
 
-const weatherURL = (coordinate: CoordinateModel) => `https://api.openweathermap.org/data/2.5/forecast/daily?cnt=16&mode=json&units=metric&lang=da&APPID=89ad11753c4d9dfd5d597ca8829cb331&lat=${coordinate.lat}&lon=${coordinate.lng}`;
+const weatherURL = (coordinate: Coordinate) => `https://api.openweathermap.org/data/2.5/forecast/daily?cnt=16&mode=json&units=metric&lang=da&APPID=89ad11753c4d9dfd5d597ca8829cb331&lat=${coordinate.lat}&lon=${coordinate.lng}`;
 
 interface OpenWeatherDay {
   dt: number;

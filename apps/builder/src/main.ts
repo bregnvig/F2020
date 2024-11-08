@@ -1,4 +1,6 @@
 import { environment } from './environment/environment';
+import { buildCircuits } from './app/circuits';
+import { buildNewSeason } from './app/season-ics';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -43,3 +45,5 @@ const seasonId = parseInt(environment.season);
 // await backupFirestore().then(() => console.log('Backed up'));
 // await writeFirestore().then(() => console.log('Copied'));
 // })();
+buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits));
+buildNewSeason(seasonId).then(() => console.log('Season built'));

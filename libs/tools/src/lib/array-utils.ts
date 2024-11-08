@@ -17,3 +17,9 @@ export const arrayContainsAll = <T extends number | string | boolean | DateTime>
   const compareValueFn = (a: T): number | string | boolean => a instanceof DateTime ? +a : a as number | string | boolean;
   return a.length === b.length && a.every(a => b.some(element => compareValueFn(element) === compareValueFn(a)));
 };
+
+export function toRecord<T>(array: T[], property: keyof T): Record<string, T>
+export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty: K): Record<string, T[K]>
+export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty?: K): Record<string, T | T[K]> {
+  return Object.fromEntries(array.map(element => [element[property], valueProperty ? element[valueProperty] : element]));
+}
