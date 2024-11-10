@@ -1,0 +1,15 @@
+meta {
+  name: Drivers
+  type: http
+  seq: 6
+}
+
+get {
+  url: https://api.openf1.org/v1/drivers?session_key=latest
+  body: none
+  auth: none
+}
+
+params:query {
+  session_key: latest
+}

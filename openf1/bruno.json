@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "OpenF1",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

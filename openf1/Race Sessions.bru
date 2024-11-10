@@ -1,0 +1,15 @@
+meta {
+  name: Race Sessions
+  type: http
+  seq: 3
+}
+
+get {
+  url: https://api.openf1.org/v1/sessions?meeting_key=1249
+  body: none
+  auth: none
+}
+
+params:query {
+  meeting_key: 1249
+}

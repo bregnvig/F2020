@@ -1,0 +1,16 @@
+meta {
+  name: Team radio
+  type: http
+  seq: 7
+}
+
+get {
+  url: https://api.openf1.org/v1/team_radio?session_key=latest&driver_number=1
+  body: none
+  auth: none
+}
+
+params:query {
+  session_key: latest
+  driver_number: 1
+}
