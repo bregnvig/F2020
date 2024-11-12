@@ -1,6 +1,8 @@
 import { ErgastDriver, IDriver } from '../model';
 import { Driver as OpenF1Driver } from '@f2020/openf1';
-import { getByNationality } from './countries';
+import { countryCode3ToCountryCode2, getByNationality } from './countries';
+import { StringUtils } from '@f2020/tools';
+
 
 export function driver(d: OpenF1Driver): IDriver;
 export function driver(d: ErgastDriver): IDriver;
@@ -18,9 +20,9 @@ export function driver(d: ErgastDriver | OpenF1Driver): IDriver {
     : {
       driverId: d.name_acronym.toLocaleLowerCase(),
       code: d.name_acronym,
-      countryCode: d.country_code,
+      countryCode: countryCode3ToCountryCode2[d.country_code] ?? d.country_code,
       headshotUrl: d.headshot_url,
-      name: d.full_name,
+      name: StringUtils.titleCase(d.full_name),
       permanentNumber: d.driver_number,
       teamColor: d.team_colour,
     };
