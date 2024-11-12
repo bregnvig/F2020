@@ -25,7 +25,7 @@ export const buildNewSeason = async (seasonId: string) => {
 
   const races: IRace[] = await buildRaces(seasonId);
   console.log(races.filter(r => !r.open.isValid || !r.close.isValid));
-  const season = mapper.season(ergastSeason, races[3].open);
+  const season = mapper.season(ergastSeason.season, races[3].open);
   season['current'] = true;
 
   return writeSeason(season, races);

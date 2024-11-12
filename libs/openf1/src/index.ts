@@ -1,1 +1,1 @@
-export * from './lib/openf1-api';
+export * from './lib/model';

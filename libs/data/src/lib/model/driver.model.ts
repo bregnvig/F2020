@@ -5,10 +5,12 @@ export interface IDriver {
   readonly name: string;
   readonly driverId: string;
   readonly code: string;
-  readonly nationality: string;
+  readonly nationality?: string;
   readonly countryCode?: string;
   readonly permanentNumber: number;
-  readonly url: string;
+  readonly url?: string;
+  readonly headshotUrl?: string;
+  readonly teamColor?: string;
 }
 
 export class DriverModel implements IDriver {
