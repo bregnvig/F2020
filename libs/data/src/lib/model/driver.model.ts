@@ -11,6 +11,7 @@ export interface IDriver {
   readonly url?: string;
   readonly headshotUrl?: string;
   readonly teamColor?: string;
+  readonly teamName?: string;
 }
 
 export class DriverModel implements IDriver {

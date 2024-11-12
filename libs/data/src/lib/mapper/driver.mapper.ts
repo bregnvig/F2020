@@ -25,6 +25,7 @@ export function driver(d: ErgastDriver | OpenF1Driver): IDriver {
       name: StringUtils.titleCase(d.full_name),
       permanentNumber: d.driver_number,
       teamColor: d.team_colour,
+      teamName: d.team_name,
     };
 }
 

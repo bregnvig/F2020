@@ -1,4 +1,6 @@
 import { environment } from './environment/environment';
+import { buildNewSeason } from './app/season-ics';
+import { buildCircuits } from './app/circuits';
 import { buildDrivers } from './app/drivers-openf1';
 
 /**
@@ -45,8 +47,10 @@ const seasonId = parseInt(environment.season);
 // await writeFirestore().then(() => console.log('Copied'));
 // })();
 /*
-buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits));
-buildNewSeason(seasonId).then(() => console.log('Season built'));
 */
+buildDrivers()
+  .then(count => console.log(`Wrote ${count} drivers`))
+  .then(() => buildCircuits())
+  .then(numberOfCircuits => console.log('Circuits built', numberOfCircuits))
+  .then(() => buildNewSeason(seasonId).then(() => console.log('Season built')));
 
-buildDrivers().then(count => console.log(`Wrote ${count} drivers`));

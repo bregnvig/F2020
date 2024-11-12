@@ -26,7 +26,7 @@ export const buildDrivers = async (): Promise<number> => {
       .forEach(driver => {
         const ergastDriver = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
         const driverId = ergastDriver?.driverId ?? driver.driverId;
-        console.log('Updating driver', driver.code, driverId, ergastDriver?.name, driver.headshotUrl);
+        console.log('Updating driver', driver.code, driverId, driver.teamName, driver.headshotUrl);
         transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...ergastDriver, ...driver, driverId })));
       });
     return Promise.resolve(drivers.length);
