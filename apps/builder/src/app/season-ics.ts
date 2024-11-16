@@ -28,7 +28,6 @@ const buildLastYear = async (seasonId: number) => {
   const buildRace = async (transaction: Transaction, meeting: Meeting, index: number) => {
     const sessions: Session[] = await fetch(`https://api.openf1.org/v1/sessions?meeting_key=${meeting.meeting_key}`).then(r => r.json());
 
-
     const qualifySession = requiredValue(sessions.find(s => s.session_name === 'Qualifying'), `Qualify session for meeting ${meeting.meeting_key}`);
     console.log('Qualify', qualifySession.circuit_short_name, qualifySession.circuit_key, qualifySession.meeting_key, qualifySession.session_key);
     const qualifyLaps = await fetch(`https://api.openf1.org/v1/laps?session_key=${qualifySession.session_key}`).then(r => r.json());
@@ -58,7 +57,7 @@ const buildLastYear = async (seasonId: number) => {
 
   return db.runTransaction(async transaction => {
 
-    const raceMeetings = meetings.filter(m => !m.meeting_name.toLocaleLowerCase().includes('testing')).slice(0, 3);
+    const raceMeetings = meetings.filter(m => !m.meeting_name.toLocaleLowerCase().includes('testing'));
 
     let round = 0;
     while (raceMeetings.length) {
@@ -100,7 +99,7 @@ const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
 };
 
 export const buildNewSeason = async (seasonId: number) => {
-  const icsCalendarString = readFileSync('apps/builder/src/assets/f1-fake-2023.ics', 'utf8');
+  const icsCalendarString = readFileSync('apps/builder/src/assets/f2024.ics', 'utf8');
   const calendarParsed: VCalendar = parseIcsCalendar(icsCalendarString);
 
   const practiceOne = /.*Practice ?1$/;
@@ -135,7 +134,7 @@ export const buildNewSeason = async (seasonId: number) => {
 
   const season = mapper.season(seasonId, races[3].close);
   return writeSeason(season, races)
-    .then(() => buildTeams(seasonId.toString(), drivers))
-    .then(() => buildLastYear(seasonId))
-    .then(() => buildStandings(seasonId));
+    // .then(() => buildTeams(seasonId.toString(), drivers))
+    // .then(() => buildLastYear(seasonId))
+    .then(() => buildStandings(seasonId, seasonId - 1));
 };

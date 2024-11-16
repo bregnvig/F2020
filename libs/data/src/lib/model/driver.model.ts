@@ -7,7 +7,7 @@ export interface IDriver {
   readonly code: string;
   readonly nationality?: string;
   readonly countryCode?: string;
-  readonly permanentNumber: number;
+  readonly permanentNumber: number[];
   readonly url?: string;
   readonly headshotUrl?: string;
   readonly teamColor?: string;

@@ -28,7 +28,10 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   const rankedTimes = Object.fromEntries([...bestTimes.entries()]
     .toSorted(([, a], [, b]) => a.time - b.time).map(([driverNumber, lap], index) => [driverNumber, ({ ...lap, rank: index + 1 }) as IFastestLap]),
   );
-  const drivers = source.drivers.reduce(toMap<IDriver, number>('permanentNumber'), new Map<number, IDriver>());
+  const drivers = source.drivers.reduce((acc, driver) => {
+    driver.permanentNumber.forEach(number => acc.set(number, driver));
+    return acc;
+  }, new Map<number, IDriver>());
   const results = [
     ...finalPositions.map((position, index) => ({
       driver: drivers.get(position.driver_number)!,

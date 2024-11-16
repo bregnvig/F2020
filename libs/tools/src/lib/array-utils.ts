@@ -24,6 +24,11 @@ export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, va
   return Object.fromEntries(array.map(element => [element[property], valueProperty ? element[valueProperty] : element]));
 }
 
+export const toMapArray = <T, K = string>(propertyOrFn: keyof T | ((item: T) => K)) => (acc: Map<K, T[]>, item: T): Map<K, T[]> => {
+  const key = (typeof propertyOrFn === 'function' ? propertyOrFn(item) : `${item[propertyOrFn]}`) as K;
+  return acc.set(key, [...(acc.get(key) || []), item]);
+};
+
 export type SortDirection = 'asc' | 'desc';
 export type KeyOrGetFn<T> = keyof T | ((obj: T) => T[keyof T] | any);
 export type GetFn<T, V = void> = ((obj: T) => V extends void ? (T[keyof T] | string | number) : V);

@@ -27,12 +27,15 @@ const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
     (typeof lap.lap_duration === 'number' && (lap.lap_duration * 1000) < previous) && acc.set(lap.driver_number, lap.lap_duration * 1000);
     return acc;
   }, new Map<number, number>());
-  const drivers = source.drivers.reduce(toMap<IDriver, number>('permanentNumber'), new Map<number, IDriver>());
+  const drivers = source.drivers.reduce((acc, driver) => {
+    driver.permanentNumber.forEach(number => acc.set(number, driver));
+    return acc;
+  }, new Map<number, IDriver>());
 
   return {
     ...source.race,
     results: finalPositions.map(position => {
-      const driver = requiredValue(drivers.get(position.driver_number), 'Driver');
+      const driver = requiredValue(drivers.get(position.driver_number), 'Driver ' + position.driver_number);
       return {
         driver,
         position: position.position,

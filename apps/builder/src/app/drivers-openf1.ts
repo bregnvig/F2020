@@ -3,20 +3,30 @@ import { firestoreUtils } from './converter/firestore-utils';
 import { IDriver, mapper } from '@f2020/data';
 import { firebaseApp } from './firebase';
 import { Driver } from '@f2020/openf1';
-import { filterNullish, StringUtils, toMap } from '@f2020/tools';
+import { filterNullish, StringUtils } from '@f2020/tools';
 
 export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
   const filter = sessionKey ? `?session_key=${sessionKey}` : '';
   return fetch(`https://api.openf1.org/v1/drivers${filter}`)
     .then(response => response.json())
     .then((response: Driver[]) => response.map(mapper.driver))
-    .then(drivers => [...drivers.reduce(toMap('name'), new Map<string, IDriver>()).values()]);
+    .then(drivers => drivers.filter(driver => !!driver.code && !!driver.countryCode))
+    .then(drivers => [...drivers.reduce((acc, driver) => {
+      const existing = acc.get(driver.code);
+      if (existing) {
+        const permanentNumber = driver.permanentNumber[0];
+        !existing.permanentNumber.includes(permanentNumber) && existing.permanentNumber.push(driver.permanentNumber[0]);
+      } else {
+        acc.set(driver.code, driver);
+      }
+      return acc;
+    }, new Map<string, IDriver>()).values()]);
 };
 
 export const buildDrivers = async (): Promise<number> => {
   const db = firebaseApp.database;
   const drivers = (await getDrivers())
-    .filter(driver => !!driver.code && !!driver.countryCode);
+  ;
   const driverCollection = db.collection('drivers');
   const existingDrivers = await driverCollection.get().then(snapshot => snapshot.docs.map(doc => doc.data()) as IDriver[]);
   const existingDriver = existingDrivers.reduce((acc, d) => ({ ...acc, [StringUtils.normalize(d.name)]: d }), {});

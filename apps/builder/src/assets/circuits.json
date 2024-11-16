@@ -284,5 +284,16 @@
       "lat" : -37.8497,
       "lng" : 144.968
     }
+  },
+  {
+    "circuitId" : 49,
+    "circuitName" : "Shanghai International Circuit",
+    "name" : "Chinese Grand Prix",
+    "countryCode2" : "CN",
+    "countryCode3" : "CHN",
+    "location" : {
+      "lat" : 31.3389,
+      "lng" : 121.22
+    }
   }
 ]
