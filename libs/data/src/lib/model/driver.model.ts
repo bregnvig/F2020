@@ -14,31 +14,11 @@ export interface IDriver {
   readonly teamName?: string;
 }
 
-export class DriverModel implements IDriver {
-  readonly name: string;
-  readonly driverId: string;
-  readonly code: string;
-  readonly nationality: string;
-  readonly countryCode?: string;
-  readonly permanentNumber: number;
-  readonly url: string;
-
-  constructor({ name, driverId, code, nationality, permanentNumber, url, countryCode }: IDriver) {
-    this.name = name;
-    this.driverId = driverId;
-    this.code = code;
-    this.nationality = nationality;
-    this.countryCode = countryCode;
-    this.permanentNumber = permanentNumber;
-    this.url = url;
-  }
-}
-
 export interface IFastestLap {
   rank: number;
   lap: number;
   time: number;
-  averageSpeed: number;
+  averageSpeed?: number;
 }
 
 export interface IDriverStanding {
@@ -69,9 +49,10 @@ export interface IDriverRaceResult {
 export interface IDriverQualifying {
   driver: IDriver;
   position: number;
-  q1: number;
+  q1?: number;
   q2?: number;
   q3?: number;
+  duration?: number;
 }
 
 export interface IPitStop {

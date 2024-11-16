@@ -27,7 +27,7 @@ export const filterUndefined = <T>(o: Partial<Record<string, T>>): Record<string
 export const filterNullish = <T>(o: T): Partial<T> => Object.fromEntries(Object.entries(o as any).filter(([, _value]) => !isNullish(_value))) as Partial<T>;
 export const filterNullishEmptyArray = <T>(o: T): Partial<T> => Object.fromEntries(Object.entries(filterNullish(o) as any).filter(([, _value]) => !Array.isArray(_value) || _value.length)) as Partial<T>;
 
-export const toMap = <T>(propertyOrFn: keyof T | ((item: T) => string)) => (acc: Map<string, T>, item: T): Map<string, T> => {
-  const key = typeof propertyOrFn === 'function' ? propertyOrFn(item) : `${item[propertyOrFn]}`;
+export const toMap = <T, K extends (string | number) = string>(propertyOrFn: keyof T | ((item: T) => K)) => (acc: Map<K, T>, item: T): Map<K, T> => {
+  const key = typeof propertyOrFn === 'function' ? propertyOrFn(item) : item[propertyOrFn] as K;
   return acc.set(key, item);
 };

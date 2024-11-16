@@ -1,0 +1,17 @@
+meta {
+  name: Laps
+  type: http
+  seq: 8
+}
+
+get {
+  url: https://api.openf1.org/v1/laps?session_key=9636&session_key=9468&driver_number=43
+  body: none
+  auth: none
+}
+
+params:query {
+  session_key: 9636
+  session_key: 9468
+  driver_number: 43
+}

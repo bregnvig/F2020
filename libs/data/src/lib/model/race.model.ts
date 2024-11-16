@@ -13,6 +13,7 @@ export interface IRaceBasis {
   readonly name: string;
   readonly countryCode: string;
   readonly location: Coordinate;
+  readonly circuitId?: number;
   readonly url?: string;
 }
 

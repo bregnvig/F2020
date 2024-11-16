@@ -1,7 +1,7 @@
 import { ErgastDriver, IDriver } from '../model';
 import { Driver as OpenF1Driver } from '@f2020/openf1';
 import { countryCode3ToCountryCode2, getByNationality } from './countries';
-import { StringUtils } from '@f2020/tools';
+import { requiredValue, StringUtils } from '@f2020/tools';
 
 
 export function driver(d: OpenF1Driver): IDriver;
@@ -30,3 +30,7 @@ export function driver(d: ErgastDriver | OpenF1Driver): IDriver {
 }
 
 export const drivers = (_drivers: ErgastDriver[] | OpenF1Driver[]) => _drivers.map(driver);
+
+export const joinDrivers = (openF1: IDriver[], drivers: IDriver[]) => {
+  return openF1.map(d => requiredValue(drivers.find(({ code, permanentNumber }) => d.code === code && d.permanentNumber === permanentNumber), 'Firestore Driver'));
+};

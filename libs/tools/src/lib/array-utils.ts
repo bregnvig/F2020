@@ -23,3 +23,29 @@ export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, va
 export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty?: K): Record<string, T | T[K]> {
   return Object.fromEntries(array.map(element => [element[property], valueProperty ? element[valueProperty] : element]));
 }
+
+export type SortDirection = 'asc' | 'desc';
+export type KeyOrGetFn<T> = keyof T | ((obj: T) => T[keyof T] | any);
+export type GetFn<T, V = void> = ((obj: T) => V extends void ? (T[keyof T] | string | number) : V);
+
+const getSortValue: <T>(a: T, b: T, getFn: GetFn<T>) => number = <T>(a: T, b: T, getFn: GetFn<T>) => {
+  const aValue = getFn(a);
+  const bValue = getFn(b);
+
+  const isBothNumbers = !isNaN(+aValue) && !isNaN(+bValue);
+  if (isBothNumbers) {
+    return +aValue - +bValue;
+  }
+
+  const isAOrBNumber = !isNaN(+aValue) || !isNaN(+bValue);
+  if (isAOrBNumber) {
+    return !isNaN(+aValue) ? -1 : 1;
+  }
+
+  return `${aValue}`.toLocaleLowerCase().localeCompare(`${bValue}`.toLocaleLowerCase());
+};
+
+export const propertySort = <T>(keyOrGetFn: KeyOrGetFn<T>, direction: SortDirection = 'asc') => {
+  const getFn = typeof keyOrGetFn === 'function' ? keyOrGetFn : (obj: T) => obj[keyOrGetFn];
+  return (a: T, b: T) => getSortValue(a, b, getFn) * (direction === 'desc' ? -1 : 1);
+};

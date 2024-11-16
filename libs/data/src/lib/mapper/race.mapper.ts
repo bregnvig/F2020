@@ -3,7 +3,7 @@ import { Circuit, ErgastRace, IDriver, IRace, IRaceBasis } from '../model';
 import { DateTime } from 'luxon';
 
 
-export const basisMap = (source: ErgastRace): IRaceBasis => {
+const basisMapErgast = (source: ErgastRace): IRaceBasis => {
   const cc = countries[source.Circuit.Location.country];
   const raceStart = DateTime.fromISO(`${source.date}T${source.time || '00:00:00Z'}`);
   if (!cc) {
@@ -21,7 +21,25 @@ export const basisMap = (source: ErgastRace): IRaceBasis => {
     round: parseInt(source.round, 10),
   };
 };
-export const map = (source: ErgastRace, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
+
+const basisMapICS = (source: Circuit, round: number, season: number): IRaceBasis => {
+  return {
+    name: source.name,
+    countryCode: source.countryCode2,
+    location: source.location,
+    season: season,
+    round: round,
+    circuitId: source.circuitId,
+  };
+};
+
+export function basisMap(source: ErgastRace): IRaceBasis;
+export function basisMap(source: Circuit, round: number, season: number): IRaceBasis;
+export function basisMap(source: ErgastRace | Circuit, round?: number, season?: number): IRaceBasis {
+  return 'Circuit' in source ? basisMapErgast(source) : basisMapICS(source, round!, season!);
+}
+
+const mapEragst = (source: ErgastRace, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
   const raceTime = DateTime.fromISO(`${source.date}T${source.time || '00:00:00Z'}`);
   const closeTime = raceTime.minus({ minutes: 10, hour: 4, day: 2 });
   return {
@@ -34,18 +52,7 @@ export const map = (source: ErgastRace, selectedDriver: IDriver, previousRace?: 
   };
 };
 
-export const basisMapICS = (source: Circuit, round: number, season: number): IRaceBasis => {
-  return {
-    name: source.name,
-    countryCode: source.countryCode2,
-    location: source.location,
-    season: season,
-    round: round,
-  };
-};
-
-
-export const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
+const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
   return {
     ...basisMapICS(circuit, params.round, params.season),
     state: 'waiting',
@@ -56,3 +63,11 @@ export const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' |
   };
 };
 
+export function map(source: ErgastRace, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace;
+export function map(circuit: Circuit, selectedDriver: IDriver, params: Pick<IRace, 'close' | 'round' | 'season'>, previousRace?: IRace, drivers?: IDriver[]): IRace;
+export function map(sourceOrCircuit: ErgastRace | Circuit, selectedDriver: IDriver, paramsOrPreviousRace?: Pick<IRace, 'close' | 'round' | 'season'> | IRace, previousRaceOrDrivers?: IRace | IDriver[], drivers?: IDriver[]): IRace {
+  if ('circuitId' in sourceOrCircuit) {
+    return mapICS(sourceOrCircuit, paramsOrPreviousRace as Pick<IRace, 'close' | 'round' | 'season'>, selectedDriver, previousRaceOrDrivers as IRace, drivers);
+  }
+  return mapEragst(sourceOrCircuit, selectedDriver, previousRaceOrDrivers as IRace, drivers);
+}
