@@ -46,17 +46,19 @@ const mapEragst = (source: ErgastRace, selectedDriver: IDriver, previousRace?: I
     ...basisMap(source),
     state: 'waiting',
     close: closeTime,
+    raceStart: raceTime,
     selectedDriver: selectedDriver.driverId,
     drivers: (drivers || []).map(d => d.driverId),
     open: previousRace?.close.startOf('day').plus({ day: 3 }) ?? closeTime.minus({ day: 7 }),
   };
 };
 
-const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
+const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
   return {
     ...basisMapICS(circuit, params.round, params.season),
     state: 'waiting',
     close: params.close,
+    raceStart: params.raceStart,
     selectedDriver: selectedDriver.driverId,
     drivers: (drivers || []).map(d => d.driverId),
     open: previousRace?.close.startOf('day').plus({ day: 3 }) ?? DateTime.local(),
@@ -64,10 +66,10 @@ const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'seaso
 };
 
 export function map(source: ErgastRace, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace;
-export function map(circuit: Circuit, selectedDriver: IDriver, params: Pick<IRace, 'close' | 'round' | 'season'>, previousRace?: IRace, drivers?: IDriver[]): IRace;
+export function map(circuit: Circuit, selectedDriver: IDriver, params: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart'>, previousRace?: IRace, drivers?: IDriver[]): IRace;
 export function map(sourceOrCircuit: ErgastRace | Circuit, selectedDriver: IDriver, paramsOrPreviousRace?: Pick<IRace, 'close' | 'round' | 'season'> | IRace, previousRaceOrDrivers?: IRace | IDriver[], drivers?: IDriver[]): IRace {
   if ('circuitId' in sourceOrCircuit) {
-    return mapICS(sourceOrCircuit, paramsOrPreviousRace as Pick<IRace, 'close' | 'round' | 'season'>, selectedDriver, previousRaceOrDrivers as IRace, drivers);
+    return mapICS(sourceOrCircuit, paramsOrPreviousRace as Pick<IRace, 'close' | 'round' | 'season' | 'raceStart'>, selectedDriver, previousRaceOrDrivers as IRace, drivers);
   }
   return mapEragst(sourceOrCircuit, selectedDriver, previousRaceOrDrivers as IRace, drivers);
 }

@@ -27,6 +27,7 @@ export interface IRace extends IRaceBasis {
   state: State;
   readonly open: DateTime;
   readonly close: DateTime;
+  readonly raceStart: DateTime;
   drivers?: string[];
   selectedDriver: string;
   selectedTeam?: ITeam;

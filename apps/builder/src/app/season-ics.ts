@@ -70,6 +70,7 @@ const buildLastYear = async (seasonId: number) => {
 interface SeasonRace {
   circuit: Circuit,
   close: DateTime,
+  raceStart: DateTime,
 }
 
 const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
@@ -102,7 +103,9 @@ export const buildNewSeason = async (seasonId: number) => {
   const icsCalendarString = readFileSync('apps/builder/src/assets/f2024.ics', 'utf8');
   const calendarParsed: VCalendar = parseIcsCalendar(icsCalendarString);
 
-  const practiceOne = /.*Practice ?1$/;
+  const isPracticeOne = /.*Practice ?1$/;
+  const isRace = /.*- Race$/i;
+
 
   const circuits = await firebaseApp.database.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
   const drivers = await getDrivers('latest').then(async latest => {
@@ -116,25 +119,35 @@ export const buildNewSeason = async (seasonId: number) => {
   };
 
   const calenderRaces = calendarParsed.events
-    .filter(e => practiceOne.test(e.summary))
-    .map(event => ({
-      circuit: requiredValue(circuits.find(c => {
-        const circuitName = (nameToF1[c.name.toLocaleLowerCase()] ?? c.name).toLocaleLowerCase();
-        return event.location.toLowerCase().includes(circuitName) || event.summary.toLocaleLowerCase().includes(circuitName);
-      }), `Circuit not found for ${event.summary}`),
-      close: DateTime.fromJSDate(event.start.date),
-    }) as SeasonRace);
+    .filter(e => isPracticeOne.test(e.summary))
+    .map(event => {
+      const raceName = /FORMULA 1(.*) -/.exec(event.summary)?.[1];
+      const race = requiredValue(calendarParsed.events.find(e => isRace.test(e.summary) && /FORMULA 1(.*) - /.exec(e.summary)?.[1] === raceName), raceName);
+      return {
+        circuit: requiredValue(circuits.find(c => {
+          const circuitName = (nameToF1[c.name.toLocaleLowerCase()] ?? c.name).toLocaleLowerCase();
+          return event.location.toLowerCase().includes(circuitName) || event.summary.toLocaleLowerCase().includes(circuitName);
+        }), `Circuit not found for ${event.summary}`),
+        close: DateTime.fromJSDate(event.start.date),
+        raceStart: DateTime.fromJSDate(race.start.date),
+      } as SeasonRace;
+    });
 
   let previous: IRace | undefined;
   const races = calenderRaces.map((cr, round) => {
-    const race = mapper.race(cr.circuit, getSelectedDriver(cr.circuit.countryCode2), { close: cr.close, round: round + 1, season: seasonId }, previous, !round ? drivers : []);
+    const race = mapper.race(cr.circuit, getSelectedDriver(cr.circuit.countryCode2), {
+      raceStart: cr.raceStart,
+      close: cr.close,
+      round: round + 1,
+      season: seasonId,
+    }, previous, !round ? drivers : []);
     previous = race;
     return race;
   });
 
   const season = mapper.season(seasonId, races[3].close);
   return writeSeason(season, races)
-    // .then(() => buildTeams(seasonId.toString(), drivers))
-    // .then(() => buildLastYear(seasonId))
+    .then(() => buildTeams(seasonId.toString(), drivers))
+    .then(() => buildLastYear(seasonId))
     .then(() => buildStandings(seasonId, seasonId - 1));
 };

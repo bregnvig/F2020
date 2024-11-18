@@ -22,7 +22,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   const finalPositions = [...source.positions.filter(p => !dnfs.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
   const bestTimes = source.laps.filter(({ lap_duration }) => typeof lap_duration === 'number').reduce((acc, lap) => {
     const previous = acc.get(lap.driver_number)?.time ?? Number.MAX_SAFE_INTEGER;
-    (lap.lap_duration * 1000) < previous && acc.set(lap.driver_number, { time: lap.lap_duration * 1000, lap: lap.lap_number });
+    (lap.lap_duration! * 1000) < previous && acc.set(lap.driver_number, { time: lap.lap_duration! * 1000, lap: lap.lap_number });
     return acc;
   }, new Map<number, Omit<IFastestLap, 'rank'>>());
   const rankedTimes = Object.fromEntries([...bestTimes.entries()]
