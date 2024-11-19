@@ -120,6 +120,7 @@ export const buildNewSeason = async (seasonId: number) => {
 
   const calenderRaces = calendarParsed.events
     .filter(e => isPracticeOne.test(e.summary))
+    .toSorted((a, b) => a.start.date.getTime() - b.start.date.getTime())
     .map(event => {
       const raceName = /FORMULA 1(.*) -/.exec(event.summary)?.[1];
       const race = requiredValue(calendarParsed.events.find(e => isRace.test(e.summary) && /FORMULA 1(.*) - /.exec(e.summary)?.[1] === raceName), raceName);
@@ -137,6 +138,7 @@ export const buildNewSeason = async (seasonId: number) => {
   const races = calenderRaces.map((cr, round) => {
     const race = mapper.race(cr.circuit, getSelectedDriver(cr.circuit.countryCode2), {
       raceStart: cr.raceStart,
+      state: round === 0 ? 'open' : 'waiting',
       close: cr.close,
       round: round + 1,
       season: seasonId,

@@ -53,10 +53,10 @@ const mapEragst = (source: ErgastRace, selectedDriver: IDriver, previousRace?: I
   };
 };
 
-const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
+const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season' | 'state' | 'raceStart'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {
   return {
     ...basisMapICS(circuit, params.round, params.season),
-    state: 'waiting',
+    state: params.state ?? 'waiting',
     close: params.close,
     raceStart: params.raceStart,
     selectedDriver: selectedDriver.driverId,
@@ -66,10 +66,10 @@ const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'seaso
 };
 
 export function map(source: ErgastRace, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace;
-export function map(circuit: Circuit, selectedDriver: IDriver, params: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart'>, previousRace?: IRace, drivers?: IDriver[]): IRace;
+export function map(circuit: Circuit, selectedDriver: IDriver, params: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart' | 'state'>, previousRace?: IRace, drivers?: IDriver[]): IRace;
 export function map(sourceOrCircuit: ErgastRace | Circuit, selectedDriver: IDriver, paramsOrPreviousRace?: Pick<IRace, 'close' | 'round' | 'season'> | IRace, previousRaceOrDrivers?: IRace | IDriver[], drivers?: IDriver[]): IRace {
   if ('circuitId' in sourceOrCircuit) {
-    return mapICS(sourceOrCircuit, paramsOrPreviousRace as Pick<IRace, 'close' | 'round' | 'season' | 'raceStart'>, selectedDriver, previousRaceOrDrivers as IRace, drivers);
+    return mapICS(sourceOrCircuit, paramsOrPreviousRace as Pick<IRace, 'close' | 'round' | 'season' | 'raceStart' | 'state'>, selectedDriver, previousRaceOrDrivers as IRace, drivers);
   }
   return mapEragst(sourceOrCircuit, selectedDriver, previousRaceOrDrivers as IRace, drivers);
 }
