@@ -83,12 +83,11 @@ export const RaceStore = signalStore(
       loadResult: async (): Promise<void> => {
         const race = store.race();
         if (race) {
-          const offset = racesStore.races().filter(r => r.round < race.round && r.state === 'cancelled').length;
           const result = await firstValueFrom(teamsService.teams$.pipe(
             switchMap(teams => combineLatest([
-              service.getResult(race.season, race.round - offset),
-              service.getQualify(race.season, race.round - offset),
-              service.getPitStops(race.season, race.round - offset, driversStore.drivers(), teams),
+              service.getResult(race, driversStore.drivers()),
+              service.getQualify(race.season, race.circuitId),
+              service.getPitStops(race.season, race.circuitId, driversStore.drivers(), teams),
             ])),
             map(([raceResult, qualify, pitStops]) => {
               return buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);

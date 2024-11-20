@@ -17,12 +17,13 @@ import {
   Player,
   RoundResult,
 } from '@f2020/data';
-import { unfreeze } from '@f2020/tools';
+import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ErgastService } from '../../service/ergast.service';
 import { SeasonService } from './../../season/service/season.service';
+import { HttpClient } from '@angular/common/http';
+import { Lap, openF1, Position, Session } from '@f2020/openf1';
 
 const bidConverter = converter.timestamp<Bid>();
 
@@ -33,7 +34,7 @@ export class RacesService {
 
   constructor(
     private afs: Firestore,
-    private ergastService: ErgastService,
+    private http: HttpClient,
     private functions: Functions) {
 
   }
@@ -74,11 +75,15 @@ export class RacesService {
     });
   }
 
-  getResult(seasonId: string | number, round: number): Observable<IRaceResult | null> {
-    return this.ergastService.get<IRaceResult>(`${seasonId}/${round}/results.json`, ergastData => {
-      const race = ergastData.MRData.RaceTable.Races[0];
-      return race ? mapper.raceResult(race) : null;
-    });
+  getResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
+    return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
+      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
+      switchMap(sessionKey => combineLatest([
+        this.http.get<Position[]>(openF1.url.positions(sessionKey)),
+        this.http.get<Lap[]>(openF1.url.labs(sessionKey)),
+      ])),
+      map(([positions, laps]) => mapper.raceResult({ positions, laps, race, drivers })),
+    );
   }
 
   getQualify(seasonId: string | number, round: number): Observable<IQualifyResult | undefined> {

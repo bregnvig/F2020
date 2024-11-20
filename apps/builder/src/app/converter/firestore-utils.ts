@@ -1,6 +1,5 @@
-import { IDriver } from '@f2020/data';
 import { DateTime } from 'luxon';
-import * as firebase from 'firebase-admin'
+import * as firebase from 'firebase-admin';
 
 export const regexISODate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 
@@ -71,10 +70,10 @@ export const firestoreUtils = {
       const value = input[key];
       if (value instanceof DateTime) {
         input[key] = this.convertDateTime(value);
-      } else if (typeof value === 'object' && value ) {
+      } else if (typeof value === 'object' && value) {
         this.convertDateTimes(value);
       }
     });
     return input;
-  }
+  },
 };

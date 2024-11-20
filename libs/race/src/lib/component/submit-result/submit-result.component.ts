@@ -1,10 +1,8 @@
 import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RaceStore, TeamService } from '@f2020/api';
+import { DriversStore, RaceStore, TeamService } from '@f2020/api';
 import { Bid, IRace, ITeam } from '@f2020/data';
-
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +18,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: 'f2020-submit-result',
   templateUrl: './submit-result.component.html',
   standalone: true,
-  imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
+  imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FontAwesomeModule],
 })
 export class SubmitResultComponent {
 
@@ -30,15 +28,14 @@ export class SubmitResultComponent {
   teams: Signal<ITeam[]> = toSignal(this.teamsService.teams$);
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
-  private result: Signal<Bid>;
   private store = inject(RaceStore);
+  #driversStore = inject(DriversStore);
 
   constructor(
     private teamsService: TeamService,
     private router: Router) {
     this.loaded = computed(() => this.store.loaded() && !!this.store.result());
     this.race = this.store.race;
-    this.result = this.store.result;
     const result = toSignal(this.resultControl.valueChanges);
     this.validResult = computed(() => !!(result()?.qualify?.length === 7
       && (result()?.fastestDriver ?? []).filter(Boolean).length === 2
