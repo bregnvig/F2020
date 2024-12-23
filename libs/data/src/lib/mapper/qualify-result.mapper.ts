@@ -21,7 +21,9 @@ interface OpenF1QualifyParams {
 
 const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
 
-  const finalPositions = [...source.positions.reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()];
+  const finalPositions = [...source.positions
+    .reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values(),
+  ].toSorted((a, b) => a.position - b.position);
   const bestTimes = source.laps.reduce((acc, lap) => {
     const previous = acc.get(lap.driver_number) ?? Number.MAX_SAFE_INTEGER;
     (typeof lap.lap_duration === 'number' && (lap.lap_duration * 1000) < previous) && acc.set(lap.driver_number, lap.lap_duration * 1000);

@@ -1,29 +1,14 @@
 import { Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import {
-  Bid,
-  converter,
-  ErgastDriversQualifying,
-  firestoreWebUtils,
-  IDriver,
-  IPitStop,
-  IQualifyResult,
-  IRace,
-  IRaceResult,
-  ITeam,
-  mapper,
-  Participant,
-  Player,
-  RoundResult,
-} from '@f2020/data';
+import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from './../../season/service/season.service';
 import { HttpClient } from '@angular/common/http';
-import { Lap, openF1, Position, Session } from '@f2020/openf1';
+import { Lap, openF1, PitStop, Position, Session } from '@f2020/openf1';
 
 const bidConverter = converter.timestamp<Bid>();
 
@@ -76,28 +61,23 @@ export class RacesService {
   }
 
   getResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
-    return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
-      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
-      switchMap(sessionKey => combineLatest([
-        this.http.get<Position[]>(openF1.url.positions(sessionKey)),
-        this.http.get<Lap[]>(openF1.url.labs(sessionKey)),
-      ])),
+    return this.#getPositionAndLabs(race, 'Race').pipe(
       map(([positions, laps]) => mapper.raceResult({ positions, laps, race, drivers })),
     );
   }
 
-  getQualify(seasonId: string | number, round: number): Observable<IQualifyResult | undefined> {
-    return this.ergastService.get<IQualifyResult>(`${seasonId}/${round}/qualifying.json`, ergastData => {
-      const race: ErgastDriversQualifying | undefined = ergastData.MRData.RaceTable.Races[0];
-      return race && mapper.qualifyResult(race);
-    });
+  getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
+    return this.#getPositionAndLabs(race, 'Qualifying').pipe(
+      map(([positions, laps]) => mapper.qualifyResult({ positions, laps, race, drivers })),
+    );
   }
 
-  getPitStops(seasonId: string | number, round: number, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
-    return this.ergastService.get<IPitStop[]>(`${seasonId}/${round}/pitstops.json`, ergastData => {
-      const pitStops = ergastData.MRData.RaceTable.Races[0]?.PitStops ?? [];
-      return mapper.pitStops(pitStops, drivers, teams);
-    });
+  getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
+    return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
+      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
+      switchMap(session => this.http.get<PitStop[]>(openF1.url.pistops(session))),
+      map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
+    );
   }
 
   getLastYearResult(seasonId: number, countryCode: string): Promise<RoundResult> {
@@ -143,4 +123,13 @@ export class RacesService {
     return httpsCallable(this.functions, 'cancelRace')(round).then(() => true);
   }
 
+  #getPositionAndLabs(race: IRace, sessionName: 'Race' | 'Qualifying') {
+    return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, sessionName)).pipe(
+      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
+      switchMap(sessionKey => combineLatest([
+        this.http.get<Position[]>(openF1.url.positions(sessionKey)),
+        this.http.get<Lap[]>(openF1.url.labs(sessionKey)),
+      ])),
+    );
+  }
 }

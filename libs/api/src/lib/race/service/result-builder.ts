@@ -16,11 +16,11 @@ export const buildResult = (race: IRaceResult, qualify: IQualifyResult, pitStops
   const driver = race.results.find(r => r.driver.driverId === selectedDriver);
   const selectedDriverResult: SelectedDriverValue = {
     grid: driver?.grid || race.results.length,
-    finish: race.results.indexOf(driver) !== -1 ? race.results.indexOf(driver) + 1 : 1
+    finish: race.results.indexOf(driver) !== -1 ? race.results.indexOf(driver) + 1 : 1,
   };
   const selectedTeamResult: SelectedTeamValue = {
     qualify: selectedTeam ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
-    result: selectedTeam ? race.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined
+    result: selectedTeam ? race.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
   };
   const firstCrashResult = [...race.results].reverse().filter(r => !finished(r.status)).slice(0, 3).map(getDriverId);
   return <Bid>{
@@ -31,7 +31,7 @@ export const buildResult = (race: IRaceResult, qualify: IQualifyResult, pitStops
     selectedTeam: selectedTeamResult,
     firstCrash: firstCrashResult,
     slowestPitStop: pitStopResult,
-    polePositionTime: qualify.results[0].q3
+    polePositionTime: qualify.results[0].duration,
   };
 };
 
@@ -42,12 +42,12 @@ export const buildInterimResult = (qualify: IQualifyResult, selectedDriver: stri
     grid: driver.position,
   };
   const selectedTeamResult: Partial<SelectedTeamValue> = {
-    qualify: qualify.results.find(r => team?.drivers.some(d => d === r.driver.driverId))?.driver.driverId
+    qualify: qualify.results.find(r => team?.drivers.some(d => d === r.driver.driverId))?.driver.driverId,
   };
   return <Partial<Bid>>{
     qualify: qualifyResult,
     selectedDriver: selectedDriverResult,
     selectedTeam: selectedTeamResult,
-    polePositionTime: qualify.results[0].q3
+    polePositionTime: qualify.results[0].q3,
   };
 };

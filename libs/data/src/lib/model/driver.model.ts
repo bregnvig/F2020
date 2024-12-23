@@ -58,7 +58,7 @@ export interface IDriverQualifying {
 export interface IPitStop {
   driver: IDriver;
   team: ITeam;
-  stop: number;
+  stop?: number;
   lap: number;
   duration: number;
 }

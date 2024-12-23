@@ -86,8 +86,8 @@ export const RaceStore = signalStore(
           const result = await firstValueFrom(teamsService.teams$.pipe(
             switchMap(teams => combineLatest([
               service.getResult(race, driversStore.drivers()),
-              service.getQualify(race.season, race.circuitId),
-              service.getPitStops(race.season, race.circuitId, driversStore.drivers(), teams),
+              service.getQualify(race, driversStore.drivers()),
+              service.getPitStops(race, driversStore.drivers(), teams),
             ])),
             map(([raceResult, qualify, pitStops]) => {
               return buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
