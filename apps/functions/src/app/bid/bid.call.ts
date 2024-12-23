@@ -1,9 +1,8 @@
-import { Bid, Participant } from '@f2020/data';
+import { Bid, Participant, validateBid } from '@f2020/data';
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
 import { currentSeason, firestoreUtils, getBookie, getCurrentRace, internalError, logAndCreateError, PlayerImpl, validateAccess } from '../../lib';
 import { documentPaths } from '../../lib/paths';
-import { validateBid } from '../../lib/validate.service';
 import { transferInTransaction } from './../../lib/transactions.service';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
@@ -40,7 +39,11 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   }
 
   const db = getFirestore();
-  validateBid(bid, race);
+  try {
+    validateBid(bid, race);
+  } catch (error) {
+    throw logAndCreateError('failed-precondition', error.message);
+  }
   validateBalance(player);
 
   const bidDoc = db.doc(documentPaths.bid(season.id, race.round, player.uid)) as DocumentReference<Bid>;

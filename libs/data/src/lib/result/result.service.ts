@@ -1,4 +1,4 @@
-import { Bid, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
+import { Bid, SelectedDriverValue, SelectedTeamValue } from '../model';
 
 // tslint:disable:next-line
 const sumPoints = (acc: number, points: number): number => acc + points;
@@ -40,8 +40,8 @@ export const calculateResult = (bid: Bid, result: Bid): Bid => {
   calculatedResult.points = calculatedResult.qualifyPoints.reduce(sumPoints, 0)
     + calculatedResult.fastestDriverPoints.reduce(sumPoints, 0)
     + calculatedResult.podiumPoints.reduce(sumPoints, 0)
-    + calculatedResult.selectedDriver.gridPoints
-    + calculatedResult.selectedDriver.finishPoints
+    + (calculatedResult.selectedDriver.gridPoints ?? 0)
+    + (calculatedResult.selectedDriver.finishPoints ?? 0)
     + calculatedResult.firstCrashPoints.reduce(sumPoints, 0)
     + calculatedResult.slowestPitStopPoints.reduce(sumPoints, 0)
     + (calculatedResult.selectedTeam?.qualifyPoints ?? 0)
@@ -59,7 +59,7 @@ export const calculateInterimResult = (bid: Partial<Bid>, result: Partial<Bid>):
   calculatedResult.selectedTeam = { ...bid.selectedTeam, qualifyPoints } as SelectedTeamValue;
 
   calculatedResult.points = calculatedResult.qualifyPoints.reduce(sumPoints, 0)
-    + calculatedResult.selectedDriver.gridPoints!
+    + (calculatedResult.selectedDriver?.gridPoints ?? 0)
     + (calculatedResult.selectedTeam?.qualifyPoints ?? 0);
 
   return calculatedResult;

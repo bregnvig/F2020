@@ -7,7 +7,6 @@ export * from './firestore-utils';
 export * from './user.service';
 export * from './paths';
 export * from './transactions.service';
-export * from './result.service';
 export * from './mail.service';
 export * from './message.service';
 export * from './reminder.service';

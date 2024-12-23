@@ -1,10 +1,8 @@
-import { Bid, IRace, Player } from '@f2020/data';
+import { Bid, calculateInterimResult, IRace, Player, validateInterimResult } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 import { collectionPaths, currentSeason, documentPaths, getCurrentRace, internalError, logAndCreateError, sendMail, sendNotification, validateAccess } from '../../lib';
-import { calculateInterimResult } from './../../lib/result.service';
-import { validateInterimResult } from './../../lib/validate.service';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -43,7 +41,11 @@ const buildResult = async (result: Partial<Bid>) => {
     throw logAndCreateError('not-found', 'Season or race', season?.name, race?.name);
   }
 
-  validateInterimResult(result, race);
+  try {
+    validateInterimResult(result, race);
+  } catch (error) {
+    throw logAndCreateError('failed-precondition', error.message);
+  }
 
   const db = getFirestore();
   const calculatedResults: Partial<Bid>[] = await db.collection(collectionPaths.bids(race.season, race.round)).where('submitted', '==', true).get()

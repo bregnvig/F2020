@@ -1,19 +1,7 @@
-import { Bid } from '@f2020/data';
+import { Bid, calculateResult, validateResult } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
-import {
-  calculateResult,
-  collectionPaths,
-  currentSeason,
-  documentPaths,
-  getBookie,
-  getRaceByRound,
-  internalError,
-  logAndCreateError,
-  transferInTransaction,
-  validateAccess,
-} from '../../lib';
-import { validateResult } from './../../lib/validate.service';
+import { collectionPaths, currentSeason, documentPaths, getBookie, getRaceByRound, internalError, logAndCreateError, transferInTransaction, validateAccess } from '../../lib';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 export const submitResult = onCall(async (request: CallableRequest<{ round: number, result: Bid; }>) => {
@@ -36,7 +24,11 @@ const buildResult = async (round: number, result: Bid) => {
     throw logAndCreateError('failed-precondition', 'Race must be closed before submitting result', race?.name);
   }
 
-  validateResult(result, race);
+  try {
+    validateResult(result, race);
+  } catch (error) {
+    throw logAndCreateError('failed-precondition', error.message);
+  }
 
   const db = getFirestore();
   const calculatedResults: Bid[] = await db.collection(collectionPaths.bids(race.season, race.round)).where('submitted', '==', true).get()
