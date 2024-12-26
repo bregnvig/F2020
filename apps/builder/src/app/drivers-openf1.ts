@@ -25,8 +25,7 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
 
 export const buildDrivers = async (): Promise<number> => {
   const db = firebaseApp.database;
-  const drivers = (await getDrivers())
-  ;
+  const drivers = (await getDrivers());
   const driverCollection = db.collection('drivers');
   const existingDrivers = await driverCollection.get().then(snapshot => snapshot.docs.map(doc => doc.data()) as IDriver[]);
   const existingDriver = existingDrivers.reduce((acc, d) => ({ ...acc, [StringUtils.normalize(d.name)]: d }), {});

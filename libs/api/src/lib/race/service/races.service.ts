@@ -4,7 +4,7 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { deepCompare, requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
-import { combineLatest, Observable, scan, switchMap, tap, timer } from 'rxjs';
+import { combineLatest, Observable, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from './../../season/service/season.service';
 import { HttpClient } from '@angular/common/http';
@@ -77,11 +77,14 @@ export class RacesService {
   }
 
   getLiveResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
-    let positionLatestDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
-    let lapsLatestDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
+    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+    const isLiveLive = DateTime.now().toUTC() < latestEndTime;
+    let positionLatestDate: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
+    let lapsLatestDate: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
     let positionStep = 10;
     let lapsStep = 10;
     return timer(0, 5000).pipe(
+      takeWhile(() => positionLatestDate.plus({ minute: positionStep }) < lapsLatestDate && lapsLatestDate.plus({ minute: lapsStep }) < latestEndTime),
       switchMap(() => this.#getPositionAndLabs(
         race,
         'Race',
@@ -94,6 +97,7 @@ export class RacesService {
         positionLatestDate = (getLatestDate(current.positions.map(p => p.date)) ?? positionLatestDate).plus({ second: 1 });
         lapsLatestDate = (getLatestDate(current.laps.map(p => p.date_start)) ?? lapsLatestDate).plus({ second: 1 });
       }),
+
       scan((old, current) => {
         const positions: Position[] = [...old.positions, ...(current.positions.filter(p => !old.positions.some(op => deepCompare(op, p))))];
         const laps: Lap[] = [...old.laps, ...(current.laps.filter(p => !old.laps.some(ol => deepCompare(ol, p))))];
@@ -119,12 +123,17 @@ export class RacesService {
 
   getLivePitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
 
-    let pitStep = 10;
     return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
       map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
       switchMap(sessionKey => {
-        let latest: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
+        const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+        const isLiveLive = DateTime.now().toUTC() < latestEndTime;
+
+        let pitStep = 10;
+        let latest: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
+        
         return timer(0, 5000).pipe(
+          takeWhile(() => latest.plus({ minute: pitStep }) < latestEndTime),
           switchMap(() => this.http.get<PitStop[]>(
             openF1.url.pistops(sessionKey) + `&date>=${latest.toISO(toISOOptions)}&date<=${latest.plus({ minute: pitStep }).toISO(toISOOptions)}`),
           ),

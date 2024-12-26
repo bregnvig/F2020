@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, Input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Bid, Participant } from '@f2020/data';
@@ -12,7 +12,6 @@ const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number =>
 @Component({
   selector: 'f2020-bids',
   templateUrl: './bids.component.html',
-  styleUrls: ['./bids.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [MatListModule, FontAwesomeModule, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
@@ -21,9 +20,11 @@ export class BidsComponent {
 
   private _bids: Bid[] | Participant[] = [];
   icon = icon.fasFlagCheckered;
-  @Input() clickable = false;
+  disabled = input(false);
+  clickable = input(true);
   isBid = (bid: Bid | Participant): bid is Bid => (bid as Bid).points !== undefined;
 
+  isClickable = computed(() => this.clickable() && !this.disabled());
 
   @Input() result: Partial<Bid>;
 
