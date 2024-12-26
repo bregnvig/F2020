@@ -1,6 +1,6 @@
 <mat-action-list>
   @if (result) {
-    <button mat-list-item (click)="gotoResult()">
+    <button mat-list-item [disabled]="!clickable" (click)="clickable && gotoResult()">
       <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x"></fa-icon>
       <span matListItemTitle>Resultat</span>
     </button>

@@ -38,3 +38,7 @@ export interface Bid {
 }
 
 export type Participant = Pick<Bid, 'player' | 'submitted' | 'updatedAt'>;
+
+export const isBid = (bid: any): bid is Bid => {
+  return bid.qualify && bid.fastestDriver && bid.podium && bid.selectedDriver && bid.polePositionTime;
+};

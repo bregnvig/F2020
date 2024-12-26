@@ -1,4 +1,4 @@
-import { AsyncPipe, NgOptimizedImage, UpperCasePipe } from '@angular/common';
+import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, Signal } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,13 +7,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { PlayerStore, RaceStore } from '@f2020/api';
-import { Bid, IRace, Participant } from '@f2020/data';
+import { Bid, IRace, isBid, Participant } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { LiveRaceComponent } from './live-race.component';
 
 const BaseGoogleMapOptions: google.maps.MapOptions = {
   zoomControl: false,
@@ -31,7 +32,7 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
   styleUrls: ['./race.component.scss'],
   templateUrl: './race.component.html',
   standalone: true,
-  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, AsyncPipe, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule],
+  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule, LiveRaceComponent],
 })
 export class RaceComponent {
 
@@ -46,6 +47,11 @@ export class RaceComponent {
   clickable: Signal<boolean>;
   bids: Signal<Bid[] | Participant[] | undefined>;
 
+  submittedBids = computed(() => {
+    const bids = this.bids();
+    return (bids?.filter(bid => isBid(bid)) ?? []) as Bid[];
+  });
+
   options: Signal<google.maps.MapOptions>;
 
   constructor() {
@@ -59,6 +65,7 @@ export class RaceComponent {
     });
     this.clickable = computed(() => !this.play());
   }
+
 
   rollbackResult() {
     this.store.rollback();

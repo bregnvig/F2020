@@ -61,12 +61,15 @@
             <mat-card-title>Bud</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <f2020-bids [bids]="bids()" [clickable]="clickable()" [result]="race().result"></f2020-bids>
+            <f2020-bids [bids]="bids()" [clickable]="clickable()" [result]="race().result"/>
           </mat-card-content>
         </mat-card>
+        @if (submittedBids()?.length) {
+          <f2020-live-race [race]="race()" [bids]="submittedBids()"/>
+        }
       }
       @if (race().updatedBy?.length) {
-        <f2020-race-updated-warning [race]="race()"></f2020-race-updated-warning>
+        <f2020-race-updated-warning [race]="race()"/>
       }
     }
   </sha-card-page>

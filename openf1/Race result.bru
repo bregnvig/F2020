@@ -5,11 +5,15 @@ meta {
 }
 
 get {
-  url: https://api.openf1.org/v1/position?session_key=9636
+  url: https://api.openf1.org/v1/position?driver_number=63&session_key=9655
   body: none
   auth: none
 }
 
 params:query {
-  session_key: 9636
+  driver_number: 63
+  session_key: 9655
+  ~session_key: 9636
+  ~date>: 2024-12-01T16:00:00+00:00
+  ~date<: 2024-11-03T16:35:00.000
 }

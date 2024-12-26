@@ -1,4 +1,4 @@
-import { toMap } from '@f2020/tools';
+import { requiredValue, toMap } from '@f2020/tools';
 import { ErgastRaceResult, IDriver, IDriverRaceResult, IFastestLap, IRaceBasis } from '../model';
 import { IRaceResult } from './../model/race.model';
 import { driverResult } from './driver-result.mapper';
@@ -44,7 +44,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
     ...dnfs.map((driverNumber, index) => ({
       driver: drivers.get(driverNumber)!,
       position: finalPositions.length + index + 1,
-      grid: gridPositions.get(driverNumber)!.position,
+      grid: requiredValue(gridPositions.get(driverNumber), 'Grid position').position,
       status: 'DNF',
       fastestLap: rankedTimes[driverNumber],
     }) as IDriverRaceResult),

@@ -2,15 +2,25 @@ import { Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
-import { requiredValue, unfreeze } from '@f2020/tools';
+import { deepCompare, requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
-import { combineLatest, Observable, switchMap } from 'rxjs';
+import { combineLatest, Observable, scan, switchMap, tap, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from './../../season/service/season.service';
 import { HttpClient } from '@angular/common/http';
 import { Lap, openF1, PitStop, Position, Session } from '@f2020/openf1';
+import { DateTime } from 'luxon';
 
 const bidConverter = converter.timestamp<Bid>();
+const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
+
+const getLatestDate = (dates: string[]): DateTime | undefined => {
+  return dates.length
+    ? dates
+      .map(date => DateTime.fromISO(date, { zone: 'utc' }))
+      .reduce((acc, date) => date > acc ? date : acc, DateTime.fromISO(dates[0], { zone: 'utc' }))
+    : undefined;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -62,13 +72,40 @@ export class RacesService {
 
   getResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
     return this.#getPositionAndLabs(race, 'Race').pipe(
-      map(([positions, laps]) => mapper.raceResult({ positions, laps, race, drivers })),
+      map(({ positions, laps }) => mapper.raceResult({ positions, laps, race, drivers })),
+    );
+  }
+
+  getLiveResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
+    let positionLatestDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
+    let lapsLatestDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
+    let positionStep = 10;
+    let lapsStep = 10;
+    return timer(0, 5000).pipe(
+      switchMap(() => this.#getPositionAndLabs(
+        race,
+        'Race',
+        `&date>=${positionLatestDate.toISO(toISOOptions)}&date<=${positionLatestDate.plus({ minute: positionStep }).toISO(toISOOptions)}`,
+        `&date_start>=${lapsLatestDate.toISO(toISOOptions)}&date_start<=${lapsLatestDate.plus(({ minute: lapsStep })).toISO(toISOOptions)}`),
+      ),
+      tap(current => {
+        positionStep = current.positions.length ? 5 : positionStep + 10;
+        lapsStep = current.laps.length ? 5 : lapsStep + 10;
+        positionLatestDate = (getLatestDate(current.positions.map(p => p.date)) ?? positionLatestDate).plus({ second: 1 });
+        lapsLatestDate = (getLatestDate(current.laps.map(p => p.date_start)) ?? lapsLatestDate).plus({ second: 1 });
+      }),
+      scan((old, current) => {
+        const positions: Position[] = [...old.positions, ...(current.positions.filter(p => !old.positions.some(op => deepCompare(op, p))))];
+        const laps: Lap[] = [...old.laps, ...(current.laps.filter(p => !old.laps.some(ol => deepCompare(ol, p))))];
+        return { positions, laps };
+      }),
+      map(({ positions, laps }) => mapper.raceResult({ positions, laps, race, drivers })),
     );
   }
 
   getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
     return this.#getPositionAndLabs(race, 'Qualifying').pipe(
-      map(([positions, laps]) => mapper.qualifyResult({ positions, laps, race, drivers })),
+      map(({ positions, laps }) => mapper.qualifyResult({ positions, laps, race, drivers })),
     );
   }
 
@@ -76,6 +113,28 @@ export class RacesService {
     return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
       map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
       switchMap(session => this.http.get<PitStop[]>(openF1.url.pistops(session))),
+      map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
+    );
+  }
+
+  getLivePitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
+
+    let pitStep = 10;
+    return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
+      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
+      switchMap(sessionKey => {
+        let latest: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
+        return timer(0, 5000).pipe(
+          switchMap(() => this.http.get<PitStop[]>(
+            openF1.url.pistops(sessionKey) + `&date>=${latest.toISO(toISOOptions)}&date<=${latest.plus({ minute: pitStep }).toISO(toISOOptions)}`),
+          ),
+          tap(current => {
+            pitStep = current.length ? 5 : pitStep + 10;
+            latest = (getLatestDate(current.map(p => p.date)) ?? latest).plus({ second: 1 });
+          }),
+          scan((old, current) => [...old, ...(current.filter(p => !old.some(op => deepCompare(op, p))))]),
+        );
+      }),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
     );
   }
@@ -123,13 +182,13 @@ export class RacesService {
     return httpsCallable(this.functions, 'cancelRace')(round).then(() => true);
   }
 
-  #getPositionAndLabs(race: IRace, sessionName: 'Race' | 'Qualifying') {
+  #getPositionAndLabs(race: IRace, sessionName: 'Race' | 'Qualifying', positionQuery = '', lapsQuery = ''): Observable<{ positions: Position[], laps: Lap[] }> {
     return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, sessionName)).pipe(
       map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
-      switchMap(sessionKey => combineLatest([
-        this.http.get<Position[]>(openF1.url.positions(sessionKey)),
-        this.http.get<Lap[]>(openF1.url.labs(sessionKey)),
-      ])),
+      switchMap(sessionKey => combineLatest({
+        positions: this.http.get<Position[]>(openF1.url.positions(sessionKey) + positionQuery),
+        laps: this.http.get<Lap[]>(openF1.url.labs(sessionKey) + lapsQuery),
+      })),
     );
   }
 }
