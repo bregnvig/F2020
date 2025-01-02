@@ -17,10 +17,8 @@ export const buildStandings = async (seasonId: number, year: number) => {
 const build = async (seasonId: number, year: number, sessionName: string, prop: 'races' | 'qualify', mapperFnName: 'raceResult' | 'qualifyResult', circuits: Circuit[], drivers: IDriver[]) => {
   const races: Session[] = await fetch(`https://api.openf1.org/v1/sessions?session_name=${sessionName}&year=${year}`)
     .then(r => r.json())
-    .then((response: Session[]) => response.toSorted(propertySort('meeting_key')))
-    .then(reponses => reponses.slice(0, 3));
+    .then((response: Session[]) => response.toSorted(propertySort('meeting_key')));
 
-  
   const db = firebaseApp.database;
   const buildResult = async (session: Session, round: number) => {
     const laps = await fetch(`https://api.openf1.org/v1/laps?session_key=${session.session_key}`).then(r => r.json());

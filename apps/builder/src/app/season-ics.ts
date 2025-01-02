@@ -19,7 +19,7 @@ const nameToF1 = {
 
 const buildLastYear = async (seasonId: number) => {
   const meetings: Meeting[] = await fetch(`https://api.openf1.org/v1/meetings?year=${seasonId}`).then(r => r.json());
-  console.log('Building last year', seasonId - 1, meetings.length);
+  console.log('Building last year', seasonId - 1, 'Number of races:', meetings.length);
   const db = firebaseApp.database;
   const circuits = await db.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
   const drivers = await db.collection('drivers').get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
