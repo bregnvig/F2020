@@ -56,16 +56,25 @@
     </mat-card>
     @if (bids()) {
       @if (bids().length || race().result) {
-        @if (isLiveLive() && submittedBids()?.length) {
-          <f2020-live-race [race]="race()" [bids]="submittedBids()"/>
+        @if ((isLiveLive() || relive) && liveBids()?.length) {
+          <f2020-live-race [race]="race()" [bids]="liveBids()" [isLiveLive]="isLiveLive()"/>
         } @else {
           <mat-card>
             <mat-card-header>
-              <mat-card-title>Bud</mat-card-title>
+              <mat-card-title>
+                @if (isCompleted()) {
+                  Resultat
+                } @else {
+                  Bud
+                }
+              </mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <f2020-bids [bids]="bids()" [disabled]="!clickable()" [result]="race().result"/>
             </mat-card-content>
+            <mat-card-actions>
+              <button mat-button (click)="relive = true">Genoplev løbet</button>
+            </mat-card-actions>
           </mat-card>
         }
       }

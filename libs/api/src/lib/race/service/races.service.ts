@@ -103,7 +103,10 @@ export class RacesService {
         const laps: Lap[] = [...old.laps, ...(current.laps.filter(p => !old.laps.some(ol => deepCompare(ol, p))))];
         return { positions, laps };
       }),
-      map(({ positions, laps }) => mapper.raceResult({ positions, laps, race, drivers })),
+      map(({ positions, laps }) => {
+        const { result, ...raceNoResult } = race;
+        return mapper.raceResult({ positions, laps, race: raceNoResult, drivers });
+      }),
     );
   }
 

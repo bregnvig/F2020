@@ -4,7 +4,7 @@ import { combineLatest, firstValueFrom, Observable, switchMap, takeWhile } from 
 import { Bid, calculateResult, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { shareLatest } from '@f2020/tools';
 import { MatList, MatListItem, MatListItemAvatar } from '@angular/material/list';
 import { MatButton } from '@angular/material/button';
@@ -28,6 +28,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
     MatButton,
     MatList,
     FaIconComponent,
+    MatCardActions,
   ],
   styles: `
     mat-list-item {
@@ -39,6 +40,7 @@ export class LiveRaceComponent {
 
   race = input.required<IRace>();
   bids = input.required<Bid[]>();
+  isLiveLive = input.required<boolean>();
 
   bids$?: Observable<Bid[]>;
 

@@ -1,10 +1,10 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, Input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Bid, Participant } from '@f2020/data';
 import { icon, RelativeToNowPipe } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { PartialBidWarningComponent } from '../partial-bid-warning/partial-bid-warning.component';
 
 const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
@@ -14,17 +14,14 @@ const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number =>
   templateUrl: './bids.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatListModule, FontAwesomeModule, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
+  imports: [MatListModule, FaIconComponent, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
 })
 export class BidsComponent {
 
   private _bids: Bid[] | Participant[] = [];
   icon = icon.fasFlagCheckered;
   disabled = input(false);
-  clickable = input(true);
   isBid = (bid: Bid | Participant): bid is Bid => (bid as Bid).points !== undefined;
-
-  isClickable = computed(() => this.clickable() && !this.disabled());
 
   @Input() result: Partial<Bid>;
 

@@ -19,9 +19,9 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   const gridPositions = source.positions.toReversed().reduce(toMap<Position, number>('driver_number'), new Map<number, Position>());
   const miniSectors = source.laps.reduce((acc, lap) => Math.max(acc, lap.segments_sector_3.length), 0);
   const participants = source.race.drivers?.map(driver => source.drivers.find(({ driverId }) => driverId === driver)!.permanentNumber) ?? [];
-  const dns: number[] = participants.filter(permanentNumbers => !source.laps.some(lap => permanentNumbers.some(permanentNumber => permanentNumber === lap.driver_number))).flat().filter(driverNumber => gridPositions.has(driverNumber));
+  // const dns: number[] = participants.filter(permanentNumbers => !source.laps.some(lap => permanentNumbers.some(permanentNumber => permanentNumber === lap.driver_number))).flat().filter(driverNumber => gridPositions.has(driverNumber));
   const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number);
-  const nc = [...dnfs, ...dns];
+  const nc = [...dnfs];
   const finalPositions = [...source.positions.filter(p => !nc.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
   const bestTimes = source.laps.filter(({ lap_duration }) => typeof lap_duration === 'number').reduce((acc, lap) => {
     const previous = acc.get(lap.driver_number)?.time ?? Number.MAX_SAFE_INTEGER;

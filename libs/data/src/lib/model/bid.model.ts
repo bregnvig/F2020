@@ -39,6 +39,6 @@ export interface Bid {
 
 export type Participant = Pick<Bid, 'player' | 'submitted' | 'updatedAt'>;
 
-export const isBid = (bid: any): bid is Bid => {
-  return bid.qualify && bid.fastestDriver && bid.podium && bid.selectedDriver && bid.polePositionTime;
+export const isBid = (bid: Bid | Participant): bid is Bid => {
+  return ['qualify', 'fastestDriver', 'podium', 'selectedDriver', 'polePositionTime'].every(key => key in bid);
 };

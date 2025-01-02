@@ -45,13 +45,15 @@ export class RaceComponent {
   race: Signal<IRace | undefined>;
   play: Signal<boolean>;
   clickable: Signal<boolean>;
-  bids: Signal<Bid[] | Participant[] | undefined>;
+  bids: Signal<(Bid | Participant)[] | undefined>;
+  isCompleted = computed(() => this.race().state === 'completed');
 
-  submittedBids = computed(() => {
+  liveBids = computed(() => {
     const bids = this.bids();
-    return (bids?.filter(bid => isBid(bid)) ?? []) as Bid[];
+    return bids?.filter(bid => isBid(bid)).map(bid => ({ ...bid, points: undefined })) ?? [];
   });
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
+  relive = false;
 
   options: Signal<google.maps.MapOptions>;
 
@@ -66,7 +68,6 @@ export class RaceComponent {
     });
     this.clickable = computed(() => !this.play());
   }
-
 
   rollbackResult() {
     this.store.rollback();
