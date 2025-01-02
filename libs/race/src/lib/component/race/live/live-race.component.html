@@ -30,7 +30,11 @@
       </mat-list>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button (click)="stop = true">Stop</button>
+      <button mat-button (click)="cancel()">@if (isLiveLive()) {
+        Stop
+      } @else {
+        Tilbage til resultat
+      }</button>
     </mat-card-actions>
   </mat-card>
 }

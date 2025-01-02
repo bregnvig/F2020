@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { buildResult, DriversStore, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, Observable, switchMap, takeWhile } from 'rxjs';
 import { Bid, calculateResult, IRace } from '@f2020/data';
@@ -41,6 +41,7 @@ export class LiveRaceComponent {
   race = input.required<IRace>();
   bids = input.required<Bid[]>();
   isLiveLive = input.required<boolean>();
+  stopped = output<boolean>();
 
   bids$?: Observable<Bid[]>;
 
@@ -51,6 +52,7 @@ export class LiveRaceComponent {
   #originalPosition?: Map<string, number>;
   #currentPosition?: string[];
   stop = false;
+
 
   ngOnInit() {
 
@@ -90,5 +92,10 @@ export class LiveRaceComponent {
   transform(uid: string) {
     const change = -this.currentChange(uid);
     return `translateY(${(change) * 100}%)`;
+  }
+
+  cancel() {
+    this.stop = true;
+    !this.isLiveLive() && this.stopped.emit(true);
   }
 }
