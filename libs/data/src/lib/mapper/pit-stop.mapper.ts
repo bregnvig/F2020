@@ -20,7 +20,7 @@ const openF1PitStops = (params: OpenF1PitstopParams) => {
 
   return params.pitStops.map(pitStop => ({
     driver: drivers.get(pitStop.driver_number)!,
-    team: teams.get(drivers.get(pitStop.driver_number)!.driverId),
+    team: teams.get(drivers.get(pitStop.driver_number)!.driverId)!,
     lap: pitStop.lap_number,
     duration: pitStop.pit_duration * 1000,
   }));
