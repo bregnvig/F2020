@@ -1,16 +1,7 @@
-import { ErgastDriversQualifying, IDriver, IRaceBasis } from '../model';
+import { IDriver, IRaceBasis } from '../model';
 import { IQualifyResult } from './../model/race.model';
-import { driverQualifying } from './driver-qualifying.mapper';
-import { basisMap } from './race.mapper';
 import { Lap, Position } from '@f2020/openf1';
 import { requiredValue, toMap } from '@f2020/tools';
-
-const ergastMap = (source: ErgastDriversQualifying): IQualifyResult => {
-  return {
-    ...basisMap(source),
-    results: source.QualifyingResults.map(driverQualifying),
-  };
-};
 
 interface OpenF1QualifyParams {
   laps: Lap[];
@@ -47,9 +38,7 @@ const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
   };
 };
 
-export function map(source: OpenF1QualifyParams): IQualifyResult;
-export function map(source: ErgastDriversQualifying): IQualifyResult;
-export function map(source: ErgastDriversQualifying | OpenF1QualifyParams): IQualifyResult {
-  return 'QualifyingResults' in source ? ergastMap(source) : openF1Map(source);
+export function map(source: OpenF1QualifyParams): IQualifyResult {
+  return openF1Map(source);
 }
 

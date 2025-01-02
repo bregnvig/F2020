@@ -1,15 +1,13 @@
 import { requiredValue, toMap } from '@f2020/tools';
-import { ErgastRaceResult, IDriver, IDriverRaceResult, IFastestLap, IRace } from '../model';
+import { IDriver, IDriverRaceResult, IFastestLap, IRaceBasis } from '../model';
 import { IRaceResult } from './../model/race.model';
-import { driverResult } from './driver-result.mapper';
-import { basisMap } from './race.mapper';
 import { Lap, Position } from '@f2020/openf1';
 
 interface OpenF1ResultParams {
   laps: Lap[];
   positions: Position[];
   drivers: IDriver[];
-  race: IRace;
+  race: IRaceBasis;
 }
 
 const points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
@@ -18,8 +16,6 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
 
   const gridPositions = source.positions.toReversed().reduce(toMap<Position, number>('driver_number'), new Map<number, Position>());
   const miniSectors = source.laps.reduce((acc, lap) => Math.max(acc, lap.segments_sector_3.length), 0);
-  const participants = source.race.drivers?.map(driver => source.drivers.find(({ driverId }) => driverId === driver)!.permanentNumber) ?? [];
-  // const dns: number[] = participants.filter(permanentNumbers => !source.laps.some(lap => permanentNumbers.some(permanentNumber => permanentNumber === lap.driver_number))).flat().filter(driverNumber => gridPositions.has(driverNumber));
   const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number);
   const nc = [...dnfs];
   const finalPositions = [...source.positions.filter(p => !nc.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
@@ -59,13 +55,6 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   };
 };
 
-export function map(source: OpenF1ResultParams): IRaceResult;
-export function map(source: ErgastRaceResult): IRaceResult;
-export function map(source: ErgastRaceResult | OpenF1ResultParams): IRaceResult {
-  return 'Results' in source
-    ? {
-      ...basisMap(source),
-      results: source.Results.map(driverResult),
-    }
-    : openF1Map(source);
+export function map(source: OpenF1ResultParams): IRaceResult {
+  return openF1Map(source);
 }

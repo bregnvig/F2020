@@ -1,13 +1,14 @@
 import { readFileSync } from 'fs';
 import { parseIcsCalendar, VCalendar } from 'ts-ics';
 import { firebaseApp } from './firebase';
-import { Circuit, IDriver, IRace, mapper } from '@f2020/data';
+import { Circuit, IDriver, IRace, ISeason, mapper } from '@f2020/data';
 import { requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { writeSeason } from './season';
 import { getDrivers } from './drivers-openf1';
 import { Meeting, Session } from '@f2020/openf1';
 import { firestore } from 'firebase-admin';
+import { WriteResult } from '@google-cloud/firestore';
+import { converter } from './converter';
 import { buildStandings } from './build-standings-openf1';
 import Transaction = firestore.Transaction;
 
@@ -75,15 +76,22 @@ interface SeasonRace {
 
 const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
   console.log('Building teams', drivers.length);
+  const allDrivers = await getDrivers().then(
+    drivers => drivers.reduce((acc, driver) => {
+      return driver.teamName ? acc.set(driver.driverId, driver.teamName) : acc;
+    }, new Map<string, string>()),
+  );
   const db = firebaseApp.database;
-  const teams = drivers.reduce((acc, driver) => {
-    const team = acc.find(t => t.name === driver.teamName) ?? { name: driver.teamName, drivers: [] };
-    team.drivers.push(driver.driverId);
-    if (!acc.includes(team)) {
-      acc.push(team);
-    }
-    return acc;
-  }, [] as { name: string, drivers: string[] }[]);
+  const
+    teams = drivers.reduce((acc, driver) => {
+      const teamName = driver.teamName ?? allDrivers.get(driver.driverId);
+      const team = acc.find(t => t.name === teamName) ?? { name: teamName, drivers: [] };
+      !team.drivers.includes(driver.driverId) && team.drivers.push(driver.driverId);
+      if (!acc.includes(team)) {
+        acc.push(team);
+      }
+      return acc;
+    }, [] as { name: string, drivers: string[] }[]);
 
   const teamCollection = db.collection(`seasons/${seasonId}/teams`);
 
@@ -92,15 +100,15 @@ const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
       .forEach(team => {
         !team.name && console.log('Team without name', team);
         const constructorId = team.name.toLocaleLowerCase().replace(/ /g, '-');
-        console.log('Updating team', team.name, constructorId);
+        console.log('Updating team', team.name, constructorId, team.drivers);
         transaction.set(teamCollection.doc(constructorId), { ...team, constructorId });
       });
-    return Promise.resolve(teams.length);
+    return Promise.resolve(teams);
   });
 };
 
 export const buildNewSeason = async (seasonId: number) => {
-  const icsCalendarString = readFileSync('apps/builder/src/assets/f2024.ics', 'utf8');
+  const icsCalendarString = readFileSync(`apps/builder/src/assets/f${seasonId}.ics`, 'utf8');
   const calendarParsed: VCalendar = parseIcsCalendar(icsCalendarString);
 
   const isPracticeOne = /.*Practice ?1$/;
@@ -135,6 +143,7 @@ export const buildNewSeason = async (seasonId: number) => {
     });
 
   let previous: IRace | undefined;
+  console.log('Building season', seasonId, calenderRaces.length);
   const races = calenderRaces.map((cr, round) => {
     const race = mapper.race(cr.circuit, getSelectedDriver(cr.circuit.countryCode2), {
       raceStart: cr.raceStart,
@@ -148,8 +157,21 @@ export const buildNewSeason = async (seasonId: number) => {
   });
 
   const season = mapper.season(seasonId, races[3].close);
-  return writeSeason(season, races)
-    .then(() => buildTeams(seasonId.toString(), drivers))
+  return buildTeams(seasonId.toString(), drivers)
+    .then(teams => races.map(r => ({ ...r, selectedTeam: teams[Math.floor(Math.random() * teams.length)] }) as IRace))
+    .then(racesWithTeams => writeSeason(season, racesWithTeams))
     .then(() => buildLastYear(seasonId))
     .then(() => buildStandings(seasonId, seasonId - 1));
+};
+
+const seasonsURL = 'seasons';
+export const racesURL = seasonId => `${seasonsURL}/${seasonId}/races`;
+
+const writeSeason = async (season: ISeason, races: IRace[]): Promise<WriteResult[]> => {
+  return firebaseApp.database.collection(seasonsURL).doc(season.id).withConverter(converter.season).set(season)
+    .then(() => {
+      const ref = firebaseApp.database.collection(racesURL(season.id));
+      const racesWrite = races.map(race => ref.doc(race.round.toString(10)).withConverter(converter.race).set(race));
+      return Promise.all(racesWrite);
+    });
 };
