@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { LiveRaceComponent } from './live-race.component';
+import { LiveRaceComponent } from './live/live-race.component';
 
 const BaseGoogleMapOptions: google.maps.MapOptions = {
   zoomControl: false,

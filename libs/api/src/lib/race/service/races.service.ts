@@ -83,8 +83,8 @@ export class RacesService {
     let lapsLatestDate: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
     let positionStep = 10;
     let lapsStep = 10;
-    return timer(0, 5000).pipe(
-      takeWhile(() => positionLatestDate.plus({ minute: positionStep }) < lapsLatestDate && lapsLatestDate.plus({ minute: lapsStep }) < latestEndTime),
+    return timer(0, isLiveLive ? 5000 : 2500).pipe(
+      takeWhile(() => positionLatestDate.plus({ minute: positionStep }) < latestEndTime && lapsLatestDate.plus({ minute: lapsStep }) < latestEndTime),
       switchMap(() => this.#getPositionAndLabs(
         race,
         'Race',
@@ -131,8 +131,8 @@ export class RacesService {
 
         let pitStep = 10;
         let latest: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
-        
-        return timer(0, 5000).pipe(
+
+        return timer(0, isLiveLive ? 5000 : 2500).pipe(
           takeWhile(() => latest.plus({ minute: pitStep }) < latestEndTime),
           switchMap(() => this.http.get<PitStop[]>(
             openF1.url.pistops(sessionKey) + `&date>=${latest.toISO(toISOOptions)}&date<=${latest.plus({ minute: pitStep }).toISO(toISOOptions)}`),

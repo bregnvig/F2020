@@ -1,0 +1,22 @@
+@if (bids$ | async; as bids) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Live live</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-action-list>
+        @for (bid of bids; track bid.player.uid) {
+          <mat-list-item [style.transform]="transform(bid.player.uid, $index)">
+            <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName">
+            <div class="flex justify-between" matListItemTitle>
+              <span>{{ bid.player.displayName }}</span>
+              <span>{{ currentChange(bid.player.uid, $index) }}</span>
+            </div>
+            <span matListItemLine>{{ bid.points }} point</span>
+          </mat-list-item>
+        }
+      </mat-action-list>
+      <button mat-button (click)="stop = true">Stop</button>
+    </mat-card-content>
+  </mat-card>
+}
