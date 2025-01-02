@@ -6,9 +6,12 @@ import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { shareLatest } from '@f2020/tools';
-import { MatActionList, MatListItem, MatListItemAvatar } from '@angular/material/list';
+import { MatList, MatListItem, MatListItemAvatar } from '@angular/material/list';
 import { MatButton } from '@angular/material/button';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
+@UntilDestroy()
 @Component({
   selector: 'f2020-live-race',
   templateUrl: 'live-race.component.html',
@@ -19,11 +22,12 @@ import { MatButton } from '@angular/material/button';
     MatCardHeader,
     MatCardTitle,
     MatCardContent,
-    MatActionList,
     MatListItem,
     MatListItemAvatar,
     NgOptimizedImage,
     MatButton,
+    MatList,
+    FaIconComponent,
   ],
   styles: `
     mat-list-item {
@@ -31,7 +35,6 @@ import { MatButton } from '@angular/material/button';
     }
   `,
 })
-
 export class LiveRaceComponent {
 
   race = input.required<IRace>();
@@ -44,6 +47,7 @@ export class LiveRaceComponent {
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;
+  #currentPosition?: string[];
   stop = false;
 
   ngOnInit() {
@@ -57,21 +61,32 @@ export class LiveRaceComponent {
       ),
       map(([result, qualify, pitStops]) => buildResult(result, qualify, pitStops, this.race().selectedDriver, this.race().selectedTeam)),
       map(result => this.bids().map(bid => calculateResult(bid, result))),
-      map(bids => bids.toSorted((a, b) => b.points - a.points)),
+      map(bids => bids.toSorted((a, b) => b.player.uid.localeCompare(a.player.uid))),
       takeWhile(() => !this.stop),
       shareLatest(),
     );
 
     firstValueFrom(this.bids$)
       .then(bids => this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index])));
+    this.bids$.pipe(
+      untilDestroyed(this),
+    ).subscribe(bids => {
+      this.#currentPosition = bids.toSorted((a, b) => b.points - a.points).map(bid => bid.player.uid);
+    });
   }
 
-  currentChange(uid: string, position: number) {
+
+  abs(number: number) {
+    return Math.abs(number);
+  }
+
+  currentChange(uid: string) {
+    const position = this.#currentPosition?.indexOf(uid);
     return this.#originalPosition ? this.#originalPosition.get(uid) - position : 0;
   }
 
-  transform(uid: string, index: number) {
-    const change = this.currentChange(uid, index);
+  transform(uid: string) {
+    const change = -this.currentChange(uid);
     return `translateY(${(change) * 100}%)`;
   }
 }

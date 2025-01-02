@@ -51,6 +51,7 @@ export class RaceComponent {
     const bids = this.bids();
     return (bids?.filter(bid => isBid(bid)) ?? []) as Bid[];
   });
+  isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
 
   options: Signal<google.maps.MapOptions>;
 

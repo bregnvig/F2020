@@ -4,18 +4,25 @@
       <mat-card-title>Live live</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-action-list>
+      <mat-list>
         @for (bid of bids; track bid.player.uid) {
-          <mat-list-item [style.transform]="transform(bid.player.uid, $index)">
+          <mat-list-item [style.transform]="transform(bid.player.uid)">
             <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName">
             <div class="flex justify-between" matListItemTitle>
               <span>{{ bid.player.displayName }}</span>
-              <span>{{ currentChange(bid.player.uid, $index) }}</span>
+              @let change = currentChange(bid.player.uid);
+              @if (change) {
+
+                <span class="rounded-full py-1 px-3" [class.bg-lime-700]="change > 0" [class.bg-red-700]="change < 0">
+                  <fa-icon class="me-1" [icon]="['fas', change > 0 ? 'angle-up' : 'angle-down' ]" [fixedWidth]="true"/>
+                  {{ abs(change) }}
+                </span>
+              }
             </div>
             <span matListItemLine>{{ bid.points }} point</span>
           </mat-list-item>
         }
-      </mat-action-list>
+      </mat-list>
       <button mat-button (click)="stop = true">Stop</button>
     </mat-card-content>
   </mat-card>
