@@ -10,7 +10,7 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
   return fetch(`https://api.openf1.org/v1/drivers${filter}`)
     .then(response => response.json())
     .then((response: Driver[]) => response.map(mapper.driver))
-    .then(drivers => drivers.filter(driver => !!driver.code && !!driver.countryCode))
+    .then(drivers => drivers.filter(driver => !!driver.code && (!!driver.countryCode || sessionKey)))
     .then(drivers => [...drivers.reduce((acc, driver) => {
       const existing = acc.get(driver.code);
       if (existing) {
@@ -33,10 +33,10 @@ export const buildDrivers = async (): Promise<number> => {
   return db.runTransaction(transaction => {
     drivers
       .forEach(driver => {
-        const ergastDriver = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
-        const driverId = ergastDriver?.driverId ?? driver.driverId;
+        const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
+        const driverId = existing?.driverId ?? driver.driverId;
         console.log('Updating driver', driver.code, driverId, driver.teamName, driver.headshotUrl);
-        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...ergastDriver, ...driver, driverId })));
+        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId })));
       });
     return Promise.resolve(drivers.length);
   });
