@@ -26,6 +26,8 @@ import {
   faUserPlus,
 } from '@fortawesome/pro-regular-svg-icons';
 import {
+  faAngleDown,
+  faAngleUp,
   faBars,
   faCloudArrowDown,
   faCloudArrowUp,
@@ -80,6 +82,8 @@ const fasIcons = [
   faStar,
   faBars,
   faRotateRight,
+  faAngleUp,
+  faAngleDown,
 ];
 
 const falIcons = [
