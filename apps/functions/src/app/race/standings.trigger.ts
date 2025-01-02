@@ -1,9 +1,6 @@
 import { IRace } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
-import { collectionPaths, currentSeason, documentPaths, firestoreUtils } from '../../lib';
-import { getDriverQualify, getDriverResults, getDriverStandings } from '../../lib/standing.service';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { logger } from 'firebase-functions';
 
 /**
  * This trigger fetches the current standing for all drivers and for each driver.
@@ -15,15 +12,19 @@ export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{roun
   const after: IRace = event.data.after.data() as IRace;
 
   if (before.state !== 'completed' && after.state === 'completed') {
-    const season = await currentSeason();
-    await setStandings(season.id);
-    await setDriver(season.id);
-    const previousSeasonId = parseInt(season.id) - 1 + '';
-    const noPreviousYear = (await db.collection(collectionPaths.standings.drivers(season.id, previousSeasonId)).count().get()).data().count === 0;
-    noPreviousYear && await setDriver(season.id, previousSeasonId);
+    // TODO Update standing some other way
+    /*
+        const season = await currentSeason();
+        await setStandings(season.id);
+        await setDriver(season.id);
+        const previousSeasonId = parseInt(season.id) - 1 + '';
+        const noPreviousYear = (await db.collection(collectionPaths.standings.drivers(season.id, previousSeasonId)).count().get()).data().count === 0;
+        noPreviousYear && await setDriver(season.id, previousSeasonId);
+    */
   }
 });
 
+/*
 const setStandings = async (seasonId: string) => {
   const db = getFirestore();
   const standing = await getDriverStandings(seasonId);
@@ -46,3 +47,4 @@ const setDriver = async (seasonId: string, resultSeasonId = seasonId) => {
     return Promise.resolve('Drivers results updated');
   });
 };
+*/
