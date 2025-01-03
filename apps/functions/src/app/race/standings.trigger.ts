@@ -1,4 +1,4 @@
-import { Circuit, IDriver, IDriverQualifying, IDriverRaceResult, IRace, mapper } from '@f2020/data';
+import { Circuit, IDriver, IDriverQualifying, IDriverRaceResult, IDriverStanding, IRace, mapper } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { collectionPaths, currentSeason, documentPaths } from '../../lib';
@@ -15,26 +15,33 @@ export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{roun
   const after: IRace = event.data.after.data() as IRace;
 
   if (before.state !== 'completed' && after.state === 'completed') {
-    // TODO Update standing some other way
     const season = await currentSeason();
-    await setDriver(season.id, after);
-    /*
-        await setStandings(season.id);
-        const previousSeasonId = parseInt(season.id) - 1 + '';
-        const noPreviousYear = (await db.collection(collectionPaths.standings.drivers(season.id, previousSeasonId)).count().get()).data().count === 0;
-        noPreviousYear && await setDriver(season.id, previousSeasonId);
-    */
+    await setDriver(season.id, after).then(results => setStandings(season.id, after, results));
   }
 });
 
-/*
-const setStandings = async (seasonId: string) => {
+const setStandings = async (seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
   const db = getFirestore();
-  const standing = await getDriverStandings(seasonId);
-  await db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing });
+  const allDrivers = await db.doc(documentPaths.standing.allDriver(seasonId)).get().then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
+  const unchanged = allDrivers.standing.filter(({ driver }) => !results.some(r => r.driver.driverId === driver.driverId));
+  const standing: IDriverStanding[] = results.map(r => {
+    const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
+    const pointsByRace = {
+      ...previous.pointsByRace,
+      [race.circuitId]: r.points || 0,
+    };
+    const points = Object.values(pointsByRace).reduce((acc, p) => acc + p, 0);
+    const wins = Object.values(pointsByRace).filter(p => p >= 25).length;
+    return {
+      driver: r.driver,
+      pointsByRace,
+      points,
+      wins,
+    };
+  });
+  return db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing: [...unchanged, ...standing] });
 };
 
-*/
 const setDriver = async (seasonId: string, race: IRace) => {
   const db = getFirestore();
 
@@ -66,9 +73,9 @@ const setDriver = async (seasonId: string, race: IRace) => {
           { merge: true },
         );
       });
-    });
+    }).then(() => result.results);
   };
-  return buildResult(raceSession, 'races', 'raceResult').then(() => buildResult(qualifySession, 'qualify', 'qualifyResult'));
+  return buildResult(qualifySession, 'qualify', 'qualifyResult').then(() => buildResult(raceSession, 'races', 'raceResult') as Promise<IDriverRaceResult[]>);
 };
 
 

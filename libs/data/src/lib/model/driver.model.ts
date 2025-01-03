@@ -24,6 +24,7 @@ export interface IFastestLap {
 export interface IDriverStanding {
   wins: number;
   points: number;
+  pointsByRace: Record<number, number>;
   driver: IDriver;
 }
 
