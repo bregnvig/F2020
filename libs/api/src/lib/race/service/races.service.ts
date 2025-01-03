@@ -119,7 +119,7 @@ export class RacesService {
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, 'Race')).pipe(
       map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
-      switchMap(session => this.http.get<PitStop[]>(openF1.url.pistops(session))),
+      switchMap(session => this.http.get<PitStop[]>(openF1.url.pitStops(session))),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
     );
   }
@@ -138,7 +138,7 @@ export class RacesService {
         return timer(0, isLiveLive ? 5000 : 2500).pipe(
           takeWhile(() => latest.plus({ minute: pitStep }) < latestEndTime),
           switchMap(() => this.http.get<PitStop[]>(
-            openF1.url.pistops(sessionKey) + `&date>=${latest.toISO(toISOOptions)}&date<=${latest.plus({ minute: pitStep }).toISO(toISOOptions)}`),
+            openF1.url.pitStops(sessionKey) + `&date>=${latest.toISO(toISOOptions)}&date<=${latest.plus({ minute: pitStep }).toISO(toISOOptions)}`),
           ),
           tap(current => {
             pitStep = current.length ? 5 : pitStep + 10;

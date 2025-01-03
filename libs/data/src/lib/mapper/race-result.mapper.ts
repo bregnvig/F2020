@@ -1,4 +1,4 @@
-import { requiredValue, toMap } from '@f2020/tools';
+import { filterUndefined, requiredValue, toMap } from '@f2020/tools';
 import { IDriver, IDriverRaceResult, IFastestLap, IRaceBasis } from '../model';
 import { IRaceResult } from './../model/race.model';
 import { Lap, Position } from '@f2020/openf1';
@@ -17,8 +17,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   const gridPositions = source.positions.toReversed().reduce(toMap<Position, number>('driver_number'), new Map<number, Position>());
   const miniSectors = source.laps.reduce((acc, lap) => Math.max(acc, lap.segments_sector_3.length), 0);
   const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number);
-  const nc = [...dnfs];
-  const finalPositions = [...source.positions.filter(p => !nc.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
+  const finalPositions = [...source.positions.filter(p => !dnfs.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
   const bestTimes = source.laps.filter(({ lap_duration }) => typeof lap_duration === 'number').reduce((acc, lap) => {
     const previous = acc.get(lap.driver_number)?.time ?? Number.MAX_SAFE_INTEGER;
     (lap.lap_duration! * 1000) < previous && acc.set(lap.driver_number, { time: lap.lap_duration! * 1000, lap: lap.lap_number });
@@ -38,10 +37,10 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
       position: position.position,
       grid: gridPositions.get(position.driver_number)!.position,
       status: 'Finished',
-      points: points[index] ?? 0,
+      points: (points[index] ?? 0) + (rankedTimes[position.driver_number]?.rank === 1 && index < 10 ? 1 : 0),
       fastestLap: rankedTimes[position.driver_number],
     }) as IDriverRaceResult),
-    ...nc.map((driverNumber, index) => ({
+    ...dnfs.map((driverNumber, index) => ({
       driver: drivers.get(driverNumber)!,
       position: finalPositions.length + index + 1,
       grid: requiredValue(gridPositions.get(driverNumber), 'Grid position').position,
@@ -51,7 +50,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   ];
   return {
     ...source.race,
-    results,
+    results: results.map(r => filterUndefined(r)),
   };
 };
 

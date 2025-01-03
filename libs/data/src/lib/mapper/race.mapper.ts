@@ -12,8 +12,8 @@ const basisMapICS = (source: Circuit, round: number, season: number): IRaceBasis
   };
 };
 
-export function basisMap(source: Circuit, round: number, season: number): IRaceBasis {
-  return basisMapICS(source, round!, season!);
+export function basisMap(source: Circuit, round: number, season: number | string): IRaceBasis {
+  return basisMapICS(source, round, typeof season === 'string' ? parseInt(season) : season);
 }
 
 const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season' | 'state' | 'raceStart'>, selectedDriver: IDriver, previousRace?: IRace, drivers?: IDriver[]): IRace => {

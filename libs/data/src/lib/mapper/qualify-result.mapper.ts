@@ -1,7 +1,7 @@
 import { IDriver, IRaceBasis } from '../model';
 import { IQualifyResult } from './../model/race.model';
 import { Lap, Position } from '@f2020/openf1';
-import { requiredValue, toMap } from '@f2020/tools';
+import { filterUndefined, requiredValue, toMap } from '@f2020/tools';
 
 interface OpenF1QualifyParams {
   laps: Lap[];
@@ -29,11 +29,11 @@ const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
     ...source.race,
     results: finalPositions.map(position => {
       const driver = requiredValue(drivers.get(position.driver_number), 'Driver ' + position.driver_number);
-      return {
+      return filterUndefined({
         driver,
         position: position.position,
         duration: bestTimes.get(position.driver_number),
-      };
+      });
     }),
   };
 };
