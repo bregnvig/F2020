@@ -1,4 +1,4 @@
-import { Circuit, IDriver, IDriverQualifying, IDriverRaceResult, IDriverStanding, IRace, mapper } from '@f2020/data';
+import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IQualifyResult, IRace, IRaceBasis, IRaceResult, mapper } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { collectionPaths, currentSeason, documentPaths } from '../../lib';
@@ -10,7 +10,6 @@ import { openF1, Session } from '@f2020/openf1';
  * For each driver both result and qualify.
  */
 export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{round}', async event => {
-  const db = getFirestore();
   const before: IRace = event.data.before.data() as IRace;
   const after: IRace = event.data.after.data() as IRace;
 
@@ -51,31 +50,55 @@ const setDriver = async (seasonId: string, race: IRace) => {
 
   const raceSession = await openF1.api.session(seasonId, circuitId, 'Race');
   const qualifySession = await openF1.api.session(seasonId, circuitId, 'Qualifying');
+  const basicRace = mapper.basisRace(circuit, race.round, seasonId);
 
-  const buildResult = async (session: Session, prop: 'races' | 'qualify', mapperFnName: 'raceResult' | 'qualifyResult') => {
+  const buildResult = async (session: Session, mapperFnName: 'raceResult' | 'qualifyResult') => {
     const laps = await openF1.api.labs(session.session_key);
     const positions = await openF1.api.positions(session.session_key);
-    const basicRace = mapper.basisRace(circuit, race.round, seasonId);
-    const result = mapper[mapperFnName]({
+    return mapper[mapperFnName]({
       race: basicRace,
       laps,
       drivers,
       positions,
     });
-    return db.runTransaction(async transaction => {
-      result.results.forEach((r: IDriverRaceResult | IDriverQualifying) => {
-        transaction.set(
-          db.doc(documentPaths.standing.driver(seasonId, seasonId, r.driver.driverId)),
-          {
-            [prop]:
-              race.round === 1 ? [{ ...race, results: [r] }] : FieldValue.arrayUnion({ ...basicRace, results: [r] }),
-          },
-          { merge: true },
-        );
-      });
-    }).then(() => result.results);
   };
-  return buildResult(qualifySession, 'qualify', 'qualifyResult').then(() => buildResult(raceSession, 'races', 'raceResult') as Promise<IDriverRaceResult[]>);
+  const qualifyResult = await buildResult(qualifySession, 'qualifyResult') as IQualifyResult;
+  const raceResult = await buildResult(raceSession, 'raceResult') as IRaceResult;
+  return writeResult(qualifyResult, raceResult, basicRace);
 };
 
-
+const writeResult = async (qualifyResult: IQualifyResult, raceResult: IRaceResult, race: IRaceBasis) => {
+  const db = getFirestore();
+  const seasonId = race.season;
+  const currentResults: Map<string, IDriverResult> = await db.collection(collectionPaths.standings.drivers(seasonId, seasonId)).get().then(snapshot => {
+    return snapshot.docs.map(doc => ({ driverId: doc.id, ...doc.data() as IDriverResult })).reduce((acc, r) => acc.set(r.driverId, r), new Map<string, IDriverResult>());
+  });
+  return db.runTransaction(async transaction => {
+    raceResult.results.forEach((r: IDriverRaceResult) => {
+      const current = currentResults.get(r.driver.driverId);
+      const q = qualifyResult.results.find(qr => qr.driver.driverId === r.driver.driverId);
+      const currentRaceResult = current?.races.find(r => r.round === race.round);
+      const addRetirement = !finished(r.status) && finished(currentRaceResult?.results[0].status ?? 'Finished');
+      const noOfRacesCompleted = (current?.races.length ?? 0) + 1;
+      const averageFinishPosition = (
+        (current?.races.filter(r => r !== currentRaceResult).reduce((acc, r) => acc + r.results[0].position, 0) ?? 0) +
+        r.position
+      ) / noOfRacesCompleted;
+      const averageGridPosition = (
+        (current?.races.filter(r => r !== currentRaceResult).reduce((acc, r) => acc + r.results[0].grid, 0) ?? 0) +
+        r.grid
+      ) / noOfRacesCompleted;
+      transaction.set(
+        db.doc(documentPaths.standing.driver(seasonId, seasonId, r.driver.driverId)),
+        {
+          races: race.round === 1 ? [{ ...race, results: [r] }] : FieldValue.arrayUnion({ ...race, results: [r] }),
+          qualify: race.round === 1 ? [{ ...race, results: [q] }] : FieldValue.arrayUnion({ ...race, results: [q] }),
+          retired: addRetirement ? (current?.retired ?? 0) + 1 : current?.retired ?? 0,
+          averageFinishPosition,
+          averageGridPosition,
+        } as IDriverResult,
+        { merge: true },
+      );
+    });
+  }).then(() => raceResult.results);
+};
