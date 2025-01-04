@@ -1,18 +1,17 @@
 import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { RouterLink } from '@angular/router';
 import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '23';
+const versionNo = '24';
 
 @Component({
   selector: 'f2020-what-else',
   templateUrl: './what-else.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule],
+  imports: [MatCardModule, FontAwesomeModule, MatButtonModule],
 })
 export class WhatElseComponent {
 
