@@ -18,7 +18,7 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
   const before: WBC = event.data.before.data()?.wbc || [];
   const after: WBC = event.data.after.data()?.wbc || [];
   if ((after.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {
-    const result: WBCResult = after.results.find(r => !before.results.some(({ round }) => round === r.round));
+    const result: WBCResult = after.results.find(r => !before.results?.some(({ round }) => round === r.round));
     log('Race', result.raceName, 'Is now completed - lets send notifications');
     return Promise.all(result.players.map(async element => {
       const sendWBCResult = async (place: string, badge?: string) => {
