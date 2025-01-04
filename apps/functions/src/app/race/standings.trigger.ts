@@ -68,7 +68,7 @@ const setDriver = async (seasonId: string, race: IRace) => {
           db.doc(documentPaths.standing.driver(seasonId, seasonId, r.driver.driverId)),
           {
             [prop]:
-              race.round === 1 ? { ...race, results: [r] } : FieldValue.arrayUnion({ ...basicRace, results: [r] }),
+              race.round === 1 ? [{ ...race, results: [r] }] : FieldValue.arrayUnion({ ...basicRace, results: [r] }),
           },
           { merge: true },
         );
