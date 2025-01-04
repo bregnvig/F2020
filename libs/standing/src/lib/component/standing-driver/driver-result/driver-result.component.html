@@ -1,9 +1,0 @@
-<mat-list>
-  @for (race of driverResult?.races; track race) {
-    <mat-list-item>
-      <h5 matListItemTitle>{{race.name}}</h5>
-      <p matListItemLine>{{race.results[0].status}}</p>
-      <span class="focus-meta" matListItemMeta>{{race.results[0].position}}</span>
-    </mat-list-item>
-  }
-</mat-list>
