@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DriversStore, RaceStore, TeamService } from '@f2020/api';
+import { RaceStore, TeamService } from '@f2020/api';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +29,6 @@ export class SubmitResultComponent {
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
   private store = inject(RaceStore);
-  #driversStore = inject(DriversStore);
 
   constructor(
     private teamsService: TeamService,
