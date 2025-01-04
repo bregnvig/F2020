@@ -27,7 +27,7 @@ const setStandings = async (seasonId: string, race: IRace, results: IDriverRaceR
   const standing: IDriverStanding[] = results.map(r => {
     const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
     const pointsByRace = {
-      ...previous.pointsByRace,
+      ...previous?.pointsByRace,
       [race.circuitId]: r.points || 0,
     };
     const points = Object.values(pointsByRace).reduce((acc, p) => acc + p, 0);
