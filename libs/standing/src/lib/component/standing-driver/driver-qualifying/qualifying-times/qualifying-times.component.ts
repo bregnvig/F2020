@@ -1,30 +1,23 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { IDriverQualifying } from '@f2020/data';
 import { PolePositionTimePipe } from '@f2020/shared';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'f2020-qualifying-times',
   template: `
-    @for (time of times; track $index) {
-      <span [class.me-4]="!$last" [innerHTML]="time"></span>
-    }
+    <span>{{ qualifying() }}</span>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [AsyncPipe],
   providers: [PolePositionTimePipe],
 })
 export class QualifyingTimesComponent {
 
-  times: string[];
+  #polePosition = inject(PolePositionTimePipe);
+  qualifying = input.required<string, IDriverQualifying>({
+    transform: q => {
+      return q.duration ? this.#polePosition.transform(q.duration) : 'Ingen tid';
+    },
+  });
 
-  constructor(private polePosition: PolePositionTimePipe) {
-  }
-
-  @Input()
-  set qualifying(value: IDriverQualifying) {
-    this.times = ['q1', 'q2', 'q3']
-      .map(q => `<strong>${q.toUpperCase()}</strong>: ${value[q] ? this.polePosition.transform(value[q]) : 'Ingen tid'}`);
-  }
 }
