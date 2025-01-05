@@ -81,7 +81,7 @@ export const RacesStore = signalStore(
           if (store.lastYear()) return of();
           const race = store.currentRace();
           return (authorized && race
-              ? from(service.getLastYearResult(race.season, race.countryCode))
+              ? from(service.getLastYearResult(race.season, race.circuitId))
               : of(undefined)
           ).pipe(
             tapResponse({

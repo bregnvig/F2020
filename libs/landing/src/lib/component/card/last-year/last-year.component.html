@@ -13,7 +13,7 @@
       </p>
       <p>
         <a [routerLink]="['standings', lastYear().qualify.results[0].driver.driverId]">{{ lastYear().qualify.results[0].driver.name }}</a> fik pole position
-        på {{ lastYear().qualify.results[0].q3 | polePositionTime }}
+        på {{ lastYear().qualify.results[0].duration | polePositionTime }}
       </p>
     </mat-card-content>
     <mat-card-actions>
