@@ -1,6 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
 import { buildResult, DriversStore, RacesService, TeamService } from '@f2020/api';
-import { combineLatest, firstValueFrom, Observable, switchMap, takeWhile } from 'rxjs';
+import { combineLatest, firstValueFrom, Observable, switchMap, takeWhile, tap } from 'rxjs';
 import { Bid, calculateResult, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
@@ -10,6 +10,8 @@ import { MatList, MatListItem, MatListItemAvatar } from '@angular/material/list'
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { DateTime } from 'luxon';
+import { DateTimePipe } from '@f2020/shared';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +31,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
     MatList,
     FaIconComponent,
     MatCardActions,
+    DateTimePipe,
   ],
   styles: `
     mat-list-item {
@@ -44,6 +47,7 @@ export class LiveRaceComponent {
   stopped = output<boolean>();
 
   bids$?: Observable<Bid[]>;
+  latestUpdate?: DateTime;
 
   #service = inject(RacesService);
   #drivers = inject(DriversStore).drivers;
@@ -51,14 +55,17 @@ export class LiveRaceComponent {
 
   #originalPosition?: Map<string, number>;
   #currentPosition?: string[];
-  stop = false;
+  #stop = false;
 
 
   ngOnInit() {
 
     this.bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
-          this.#service.getLiveResult(this.race(), this.#drivers()),
+          this.#service.getLiveResult(this.race(), this.#drivers()).pipe(
+            tap(({ latestUpdate }) => this.latestUpdate = latestUpdate),
+            map(({ result }) => result),
+          ),
           this.#service.getQualify(this.race(), this.#drivers()),
           this.#service.getLivePitStops(this.race(), this.#drivers(), teams),
         ]),
@@ -66,7 +73,7 @@ export class LiveRaceComponent {
       map(([result, qualify, pitStops]) => buildResult(result, qualify, pitStops, this.race().selectedDriver, this.race().selectedTeam)),
       map(result => this.bids().map(bid => calculateResult(bid, result))),
       map(bids => bids.toSorted((a, b) => b.player.uid.localeCompare(a.player.uid))),
-      takeWhile(() => !this.stop),
+      takeWhile(() => !this.#stop),
       shareLatest(),
     );
 
@@ -95,7 +102,7 @@ export class LiveRaceComponent {
   }
 
   cancel() {
-    this.stop = true;
+    this.#stop = true;
     !this.isLiveLive() && this.stopped.emit(true);
   }
 }

@@ -76,13 +76,14 @@ export class RacesService {
     );
   }
 
-  getLiveResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
+  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime } | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     let positionLatestDate: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
+    let firstPositions = true;
     let lapsLatestDate: DateTime = isLiveLive ? DateTime.now().toUTC() : race.raceStart.toUTC().minus({ hour: 1 });
-    let positionStep = 10;
-    let lapsStep = 10;
+    let positionStep = 30;
+    let lapsStep = 30;
     return timer(0, isLiveLive ? 5000 : 2500).pipe(
       takeWhile(() => positionLatestDate.plus({ minute: positionStep }) < latestEndTime && lapsLatestDate.plus({ minute: lapsStep }) < latestEndTime),
       switchMap(() => this.#getPositionAndLabs(
@@ -92,12 +93,12 @@ export class RacesService {
         `&date_start>=${lapsLatestDate.toISO(toISOOptions)}&date_start<=${lapsLatestDate.plus(({ minute: lapsStep })).toISO(toISOOptions)}`),
       ),
       tap(current => {
-        positionStep = current.positions.length ? 5 : positionStep + 10;
-        lapsStep = current.laps.length ? 5 : lapsStep + 10;
+        positionStep = current.positions.length ? (firstPositions ? 45 : 5) : positionStep + 10;
+        lapsStep = current.laps.length ? (firstPositions ? 45 : 5) : lapsStep + 10;
         positionLatestDate = (getLatestDate(current.positions.map(p => p.date)) ?? positionLatestDate).plus({ second: 1 });
         lapsLatestDate = (getLatestDate(current.laps.map(p => p.date_start)) ?? lapsLatestDate).plus({ second: 1 });
+        current.positions.length && (firstPositions = false);
       }),
-
       scan((old, current) => {
         const positions: Position[] = [...old.positions, ...(current.positions.filter(p => !old.positions.some(op => deepCompare(op, p))))];
         const laps: Lap[] = [...old.laps, ...(current.laps.filter(p => !old.laps.some(ol => deepCompare(ol, p))))];
@@ -107,6 +108,7 @@ export class RacesService {
         const { result, ...raceNoResult } = race;
         return mapper.raceResult({ positions, laps, race: raceNoResult, drivers });
       }),
+      map(result => ({ result, latestUpdate: positionLatestDate.plus({ minute: positionStep }) })),
     );
   }
 
@@ -151,8 +153,8 @@ export class RacesService {
     );
   }
 
-  getLastYearResult(seasonId: number, countryCode: string): Promise<RoundResult> {
-    return getDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${countryCode}`)).then(
+  getLastYearResult(seasonId: number, circuitId: string): Promise<RoundResult> {
+    return getDoc(doc(this.afs, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${circuitId}`)).then(
       snapshot => snapshot.data() as RoundResult,
     );
   }
