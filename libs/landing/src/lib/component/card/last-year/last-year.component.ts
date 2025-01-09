@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'f2020-last-year',
@@ -14,7 +13,7 @@ import { AsyncPipe } from '@angular/common';
   styleUrls: ['./last-year.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, AsyncPipe, PolePositionTimePipe],
+  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, PolePositionTimePipe],
 })
 export class LastYearComponent {
 
@@ -26,7 +25,6 @@ export class LastYearComponent {
     const store = inject(RacesStore);
     effect(() => store.currentRace() && store.loadLastYear());
     this.lastYear = store.lastYear;
-    store.loadLastYear();
     effect(() => this.isHidden = !store.lastYear());
   }
 }
