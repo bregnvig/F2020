@@ -12,4 +12,5 @@ export * from './app/race';
 export * from './app/result';
 export * from './app/transaction';
 export * from './app/wbc';
+export * from './app/weather';
 
