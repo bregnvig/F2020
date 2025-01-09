@@ -17,7 +17,7 @@ const nameToF1 = {
   ['São Paulo Grand Prix'.toLocaleLowerCase()]: 'GRANDE PRÊMIO DE SÃO PAULO',
 };
 
-const buildLastYear = async (seasonId: number) => {
+export const buildLastYear = async (seasonId: number) => {
   const meetings: Meeting[] = await fetch(`https://api.openf1.org/v1/meetings?year=${seasonId}`).then(r => r.json());
   console.log('Building last year', seasonId - 1, 'Number of races:', meetings.length);
   const db = firebaseApp.database;
@@ -33,6 +33,13 @@ const buildLastYear = async (seasonId: number) => {
     console.log('Qualify', qualifySession.circuit_short_name, qualifySession.circuit_key, qualifySession.meeting_key, qualifySession.session_key);
     const qualifyLaps = await fetch(`https://api.openf1.org/v1/laps?session_key=${qualifySession.session_key}`).then(r => r.json());
     const qualifyPositions = await fetch(`https://api.openf1.org/v1/position?session_key=${qualifySession.session_key}`).then(r => r.json());
+    const qualifyWeather = await fetch(`https://api.openf1.org/v1/weather?session_key=${qualifySession.session_key}`)
+      .then(r => r.json())
+      .then(weather => weather[0])
+      .then(weather => {
+        const { date, meeting_key, session_key, ...rest } = weather;
+        return rest;
+      });
     const circuit = requiredValue(circuits.find(c => c.circuitId === meeting.circuit_key), meeting.circuit_key.toString());
     const raceSession = requiredValue(sessions.find(s => s.session_name === 'Race'), `Race session for meeting ${meeting.meeting_key}`);
     console.log('Race', raceSession.meeting_key, raceSession.session_key);
@@ -51,7 +58,7 @@ const buildLastYear = async (seasonId: number) => {
       drivers,
       positions: racePositions,
     });
-    transaction.set(db.doc(`${collection}/${circuit.circuitId}`), { qualify, result });
+    transaction.set(db.doc(`${collection}/${circuit.circuitId}`), { qualify, result, qualifyWeather });
     return new Promise(resolve => setTimeout(() => resolve(qualify.name), 1000));
   };
 
