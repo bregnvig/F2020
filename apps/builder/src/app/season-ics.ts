@@ -5,11 +5,12 @@ import { Circuit, IDriver, IRace, ISeason, mapper } from '@f2020/data';
 import { requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { getDrivers } from './drivers-openf1';
-import { Meeting, Session } from '@f2020/openf1';
+import { Meeting, Session, Weather } from '@f2020/openf1';
 import { firestore } from 'firebase-admin';
 import { WriteResult } from '@google-cloud/firestore';
 import { converter } from './converter';
 import { buildStandings } from './build-standings-openf1';
+import { humanize } from './humanizer';
 import Transaction = firestore.Transaction;
 
 const nameToF1 = {
@@ -33,13 +34,14 @@ export const buildLastYear = async (seasonId: number) => {
     console.log('Qualify', qualifySession.circuit_short_name, qualifySession.circuit_key, qualifySession.meeting_key, qualifySession.session_key);
     const qualifyLaps = await fetch(`https://api.openf1.org/v1/laps?session_key=${qualifySession.session_key}`).then(r => r.json());
     const qualifyPositions = await fetch(`https://api.openf1.org/v1/position?session_key=${qualifySession.session_key}`).then(r => r.json());
-    const qualifyWeather = await fetch(`https://api.openf1.org/v1/weather?session_key=${qualifySession.session_key}`)
+    const qualifyWeatherData = await fetch(`https://api.openf1.org/v1/weather?session_key=${qualifySession.session_key}`)
       .then(r => r.json())
-      .then(weather => weather[0])
+      .then((weather: Weather[]) => weather[Math.floor(weather.length / 2)])
       .then(weather => {
-        const { date, meeting_key, session_key, ...rest } = weather;
+        const { date, meeting_key, pressure, session_key, ...rest } = weather;
         return rest;
       });
+    const qualifyWeather = await humanize.weather(qualifyWeatherData);
     const circuit = requiredValue(circuits.find(c => c.circuitId === meeting.circuit_key), meeting.circuit_key.toString());
     const raceSession = requiredValue(sessions.find(s => s.session_name === 'Race'), `Race session for meeting ${meeting.meeting_key}`);
     console.log('Race', raceSession.meeting_key, raceSession.session_key);
@@ -66,6 +68,9 @@ export const buildLastYear = async (seasonId: number) => {
   return db.runTransaction(async transaction => {
 
     const raceMeetings = meetings.filter(m => !m.meeting_name.toLocaleLowerCase().includes('testing'));
+
+    // Use this when not building all races
+    // raceMeetings.length = 3;
 
     let round = 0;
     while (raceMeetings.length) {
