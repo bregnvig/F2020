@@ -78,3 +78,4 @@ migrations.json
 firestore-backup
 firestore-production
 /saved-data.zip
+/apps/firebase/environment/*
