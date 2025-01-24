@@ -5,6 +5,7 @@ export * from './season.service';
 export * from './timestamp.converter';
 export * from './firestore-utils';
 export * from './user.service';
+export * from './openai.service';
 export * from './paths';
 export * from './transactions.service';
 export * from './mail.service';
