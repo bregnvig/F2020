@@ -44,7 +44,7 @@ export const buildLastYear = async (seasonId: number) => {
     const qualifyWeather = await humanize.weather(qualifyWeatherData);
     const circuit = requiredValue(circuits.find(c => c.circuitId === meeting.circuit_key), meeting.circuit_key.toString());
     const raceSession = requiredValue(sessions.find(s => s.session_name === 'Race'), `Race session for meeting ${meeting.meeting_key}`);
-    console.log('Race', raceSession.meeting_key, raceSession.session_key);
+    console.log('Race', raceSession.meeting_key, raceSession.session_key, qualifyWeather);
     const raceLaps = await fetch(`https://api.openf1.org/v1/laps?session_key=${raceSession.session_key}`).then(r => r.json());
     const racePositions = await fetch(`https://api.openf1.org/v1/position?session_key=${raceSession.session_key}`).then(r => r.json());
 
