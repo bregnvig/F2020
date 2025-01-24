@@ -1,4 +1,4 @@
-import { CallableRequest, onCall } from 'firebase-functions/lib/v2/providers/https';
+import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions';
 
 type Params = Record<string, string | number>;
