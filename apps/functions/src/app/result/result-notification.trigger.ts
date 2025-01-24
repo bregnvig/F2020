@@ -53,7 +53,7 @@ const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcP
               type: 'string',
             },
             body: {
-              description: 'Beskeden. Skal afsluttes med newline og så Wrouum, F1emming',
+              description: 'Beskeden som en HTML mail body. Skal afsluttes med newline og så Wrouum, F1emming',
               type: 'string',
             },
           },
