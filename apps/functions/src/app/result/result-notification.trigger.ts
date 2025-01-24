@@ -136,18 +136,18 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
     log('Race', result.raceName, 'Is now completed - lets send notifications');
     return Promise.all(result.players.map(async (element, index) => {
       const sendWBCResult = async (place: string, badge?: string) => {
-        let mail = {
-          subject: place,
-          body: mailBody(element.player.displayName, element.points, result.raceName),
-        };
-        let notification = {
-          title: place,
-          body: notificationBody(result.raceName, element.points),
-        };
-        if (index < 3) {
-          mail = await aiGeneratedMailMessage(element.player.displayName, result.raceName, element.points, raceResults);
-          notification = await aiGeneratedNoticationMessage(element.player.displayName, result.raceName, index);
-        }
+        const mail = index > 2
+          ? {
+            subject: place,
+            body: mailBody(element.player.displayName, element.points, result.raceName),
+          }
+          : await aiGeneratedMailMessage(element.player.displayName, result.raceName, element.points, raceResults);
+        const notification = index > 2
+          ? {
+            title: place,
+            body: notificationBody(result.raceName, element.points),
+          }
+          : await aiGeneratedNoticationMessage(element.player.displayName, result.raceName, index);
         await sendMail(element.player.email, mail.subject, mail.body).then((msg) => {
           log(`Mail result :(${msg})`);
         });
