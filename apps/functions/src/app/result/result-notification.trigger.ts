@@ -1,10 +1,8 @@
 import { Bid, ISeason, WBC, WBCResult } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { collectionPaths, sendMail, sendNotification } from '../../lib';
-import { getFirestore } from 'firebase-admin/lib/firestore';
-import OpenAI from 'openai';
-import * as process from 'node:process';
+import { collectionPaths, openai, sendMail, sendNotification } from '../../lib';
+import { getFirestore } from 'firebase-admin/firestore';
 
 const wbcPointsToPosition = {
   25: 'første',
@@ -14,7 +12,14 @@ const wbcPointsToPosition = {
 
 const wbcPointsToDescription = {
   25: (bids: Bid[]) => `${bids[0].player.displayName} fik ${bids[0].points} point, mens ${bids[1].player.displayName} kom på anden pladsen med ${bids[1].points} point`,
-  18: (bids: Bid[]) => `${bids[1].player.displayName} kom på anden pladsen med ${bids[1].points} point. Første pladsen gik til ${bids[0].player.displayName} med ${bids[0].points} point, mens tredje pladsen gik til ${bids[2].player.displayName} som fik ${bids[2].points} point`,
+  18: (bids: Bid[]) => {
+    const thirdPlace = bids[2] ? `, mens tredje pladsen gik til ${bids[2].player.displayName} som fik ${bids[2].points} point` : '';
+    return `
+      ${bids[1].player.displayName} kom på anden pladsen med ${bids[1].points} point.
+      Første pladsen gik til ${bids[0].player.displayName} med ${bids[0].points} point
+      ${thirdPlace}
+    `;
+  },
   15: (bids: Bid[]) => `${bids[2].player.displayName} kom på tredje pladsen med ${bids[2].points} point. Første pladsen gik til ${bids[0].player.displayName} med ${bids[0].points} point, mens anden pladsen gik til ${bids[1].player.displayName} som fik ${bids[1].points} point`,
 };
 
@@ -23,13 +28,8 @@ const userChat = (name: string, raceName: string, wbcPoints: number, bids: Bid[]
 `;
 
 const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcPoints: number, bids: Bid[]): Promise<{ subject: string, body: string }> => {
-  const openai = new OpenAI({
-    apiKey: process.env.openAIApiKey,
-    organization: process.env.openAIOrganization,
-    project: process.env.openAIProject,
-  });
 
-  const response = await openai.chat.completions.create({
+  const response = await openai().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -65,14 +65,9 @@ const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcP
   return JSON.parse(response.choices[0].message.content);
 };
 
-const aiGeneratedNoticationMessage = async (playerName: string, raceName: string, index: number): Promise<{ title: string, body: string }> => {
-  const openai = new OpenAI({
-    apiKey: process.env.openAIApiKey,
-    organization: process.env.openAIOrganization,
-    project: process.env.openAIProject,
-  });
+const aiGeneratedNotificationMessage = async (playerName: string, raceName: string, index: number): Promise<{ title: string, body: string }> => {
 
-  const response = await openai.chat.completions.create({
+  const response = await openai().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -123,6 +118,7 @@ const mailBody = (playerName: string, wbcPoints: number, raceName: string) => {
 const notificationBody = (raceName: string, wbcPoints: number) => `${raceName} er nu afgjort - du har fået ${wbcPoints} WBC points`;
 
 export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}', async event => {
+
   const before: WBC = event.data.before.data()?.wbc || [];
   const season = event.data.after.data() as ISeason;
   const after: WBC = season?.wbc;
@@ -147,7 +143,7 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
             title: place,
             body: notificationBody(result.raceName, element.points),
           }
-          : await aiGeneratedNoticationMessage(element.player.displayName, result.raceName, index);
+          : await aiGeneratedNotificationMessage(element.player.displayName, result.raceName, index);
         await sendMail(element.player.email, mail.subject, mail.body).then((msg) => {
           log(`Mail result :(${msg})`);
         });
