@@ -1,4 +1,4 @@
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, inject, Signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute } from '@angular/router';
@@ -11,10 +11,10 @@ import { DisplayBidComponent } from '../display-bid.component';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-display-player-bid',
-    templateUrl: './display-player-bid.component.html',
-    styleUrls: ['./display-player-bid.component.scss'],
-    imports: [MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, AsyncPipe, NgOptimizedImage]
+  selector: 'f2020-display-player-bid',
+  templateUrl: './display-player-bid.component.html',
+  styleUrls: ['./display-player-bid.component.scss'],
+  imports: [MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, NgOptimizedImage],
 })
 export class DisplayPlayerBidComponent {
 

@@ -7,15 +7,15 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
-import { AsyncPipe, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PlayersStore } from '@f2020/api';
 
 @Component({
-    templateUrl: './transfer-dialog.component.html',
-    styleUrls: ['./transfer-dialog.component.scss'],
-    imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatButtonModule, AsyncPipe, CurrencyPipe]
+  templateUrl: './transfer-dialog.component.html',
+  styleUrls: ['./transfer-dialog.component.scss'],
+  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatButtonModule, CurrencyPipe],
 })
 export class TransferDialogComponent implements OnInit {
   fg: FormGroup;

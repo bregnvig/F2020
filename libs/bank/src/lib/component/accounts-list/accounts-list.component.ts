@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe, NgOptimizedImage } from '@angular/common';
+import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,9 +8,9 @@ import { Player } from '@f2020/data';
 import { LoadingComponent } from '@f2020/shared';
 
 @Component({
-    selector: 'f2020-accounts-list',
-    templateUrl: './accounts-list.component.html',
-    imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, AsyncPipe, CurrencyPipe, NgOptimizedImage]
+  selector: 'f2020-accounts-list',
+  templateUrl: './accounts-list.component.html',
+  imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, CurrencyPipe, NgOptimizedImage],
 })
 export class AccountsListComponent {
 

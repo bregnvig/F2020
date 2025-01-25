@@ -1,4 +1,3 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,10 +29,10 @@ const noNullsInArray = (control: FormControl<Bid>) => {
 
 
 @Component({
-    selector: 'f2020-enter-bid',
-    templateUrl: './enter-bid.component.html',
-    styleUrls: ['./enter-bid.component.scss'],
-    imports: [MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
+  selector: 'f2020-enter-bid',
+  templateUrl: './enter-bid.component.html',
+  styleUrls: ['./enter-bid.component.scss'],
+  imports: [MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, LoadingComponent],
 })
 export class EnterBidComponent {
 

@@ -12,5 +12,5 @@ export const converter: FirestoreDataConverter<Transaction> = {
   ): Transaction {
     const data = snapshot.data()!;
     return firestoreWebUtils.convertTimestamps(data);
-  }
+  },
 };

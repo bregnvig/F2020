@@ -1,4 +1,4 @@
-import { AsyncPipe, CurrencyPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -12,8 +12,8 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-my-transactions',
-    template: `
+  selector: 'f2020-my-transactions',
+  template: `
     <div class="flex flex-col h-full">
       <mat-toolbar color="primary">
         <span class="flex-auto">Saldo</span>
@@ -27,8 +27,8 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
       </button>
     </div>
   `,
-    styleUrls: ['./my-transactions.component.scss'],
-    imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, AsyncPipe, CurrencyPipe]
+  styleUrls: ['./my-transactions.component.scss'],
+  imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, CurrencyPipe],
 })
 export class MyTransactionsComponent {
 

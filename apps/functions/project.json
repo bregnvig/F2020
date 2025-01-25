@@ -15,7 +15,7 @@
           "apps/functions/src/assets",
           {
             "glob" : "*.env",
-            "input" : "apps",
+            "input" : "apps/functions/environment",
             "output" : "."
           }
         ],

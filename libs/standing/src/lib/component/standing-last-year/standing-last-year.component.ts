@@ -6,14 +6,13 @@ import { LastYearResultComponent } from './last-year-result.component';
 import { LastYearQualifyComponent } from './last-year-qualify.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'f2020-standing-last-year',
-    templateUrl: './standing-last-year.component.html',
-    styleUrls: ['./standing-last-year.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, MatTabsModule, LastYearQualifyComponent, LastYearResultComponent, LoadingComponent, AsyncPipe, FlagURLPipe]
+  selector: 'f2020-standing-last-year',
+  templateUrl: './standing-last-year.component.html',
+  styleUrls: ['./standing-last-year.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, MatTabsModule, LastYearQualifyComponent, LastYearResultComponent, LoadingComponent, FlagURLPipe],
 })
 export class StandingLastYearComponent {
 

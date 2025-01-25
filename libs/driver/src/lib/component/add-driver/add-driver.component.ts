@@ -5,7 +5,6 @@ import { map, startWith } from 'rxjs/operators';
 import { DriverNamePipe } from '../../pipe/driver-name.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
-import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,9 +12,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DriversStore } from '@f2020/api';
 
 @Component({
-    templateUrl: './add-driver.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe]
+  templateUrl: './add-driver.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, DriverNamePipe],
 })
 export class AddDriverComponent {
 

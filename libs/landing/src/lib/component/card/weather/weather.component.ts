@@ -4,14 +4,13 @@ import { icon } from '@f2020/shared';
 import { WeatherDayComponent } from './weather-day/weather-day.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'f2020-weather',
-    templateUrl: './weather.component.html',
-    styleUrls: ['./weather.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatCardModule, FontAwesomeModule, WeatherDayComponent, AsyncPipe]
+  selector: 'f2020-weather',
+  templateUrl: './weather.component.html',
+  styleUrls: ['./weather.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatCardModule, FontAwesomeModule, WeatherDayComponent],
 })
 export class WeatherComponent {
 

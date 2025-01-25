@@ -8,19 +8,17 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'f2020-join-wbc',
-    templateUrl: './join-wbc.component.html',
-    imports: [
-        MatCardModule,
-        FontAwesomeModule,
-        MatButtonModule,
-        RouterLink,
-        AsyncPipe,
-        RelativeToNowPipe,
-    ]
+  selector: 'f2020-join-wbc',
+  templateUrl: './join-wbc.component.html',
+  imports: [
+    MatCardModule,
+    FontAwesomeModule,
+    MatButtonModule,
+    RouterLink,
+    RelativeToNowPipe,
+  ],
 })
 export class JoinWbcComponent {
 

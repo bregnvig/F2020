@@ -15,13 +15,13 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 
 @UntilDestroy()
 @Component({
-    templateUrl: './edit-player.component.html',
-    styleUrls: ['./edit-player.component.scss'],
-    imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, AsyncPipe, NgOptimizedImage]
+  templateUrl: './edit-player.component.html',
+  styleUrls: ['./edit-player.component.scss'],
+  imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, NgOptimizedImage],
 })
 export class EditPlayerComponent implements OnInit {
 

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,9 +24,9 @@ const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
 
 
 @Component({
-    templateUrl: './wbc-player.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, CardPageComponent, MatListModule, RouterLink, AsyncPipe, FlagURLPipe, NgOptimizedImage]
+  templateUrl: './wbc-player.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, CardPageComponent, MatListModule, RouterLink, FlagURLPipe, NgOptimizedImage],
 })
 export class WbcPlayerComponent {
 

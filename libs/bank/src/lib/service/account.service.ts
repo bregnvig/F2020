@@ -1,7 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
-import { collection, collectionData, Firestore, limit, orderBy, query, where } from '@angular/fire/firestore';
+import { Injectable } from '@angular/core';
+import { collection, collectionData, Firestore, limit, orderBy, query, Timestamp, where } from '@angular/fire/firestore';
 import { converter, Transaction } from '@f2020/data';
-import { Timestamp } from 'firebase/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';

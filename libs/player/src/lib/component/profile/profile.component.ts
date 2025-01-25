@@ -2,15 +2,15 @@ import { Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { PlayersStore, PlayerStore } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    selector: 'f2020-profile',
-    templateUrl: './profile.component.html',
-    imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, AsyncPipe, NgOptimizedImage],
-    providers: [PlayersStore]
+  selector: 'f2020-profile',
+  templateUrl: './profile.component.html',
+  imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, NgOptimizedImage],
+  providers: [PlayersStore],
 })
 export class ProfileComponent implements OnInit {
 

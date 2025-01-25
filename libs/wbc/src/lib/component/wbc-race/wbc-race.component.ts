@@ -5,15 +5,15 @@ import { WBCResult } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
 import { MatListModule } from '@angular/material/list';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'f2020-wbc-race',
-    templateUrl: './wbc-race.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, AsyncPipe, FlagURLPipe, NgOptimizedImage]
+  selector: 'f2020-wbc-race',
+  templateUrl: './wbc-race.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, FlagURLPipe, NgOptimizedImage],
 })
 export class WbcRaceComponent {
 

@@ -5,14 +5,13 @@ import { icon, LoadingComponent } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    templateUrl: './players-list.component.html',
-    styleUrls: ['./players-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe]
+  templateUrl: './players-list.component.html',
+  styleUrls: ['./players-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, LoadingComponent],
 })
 export class PlayersListComponent implements OnInit {
 

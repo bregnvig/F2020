@@ -5,24 +5,23 @@ import { RaceStatusPipe } from './race-status.pipe';
 import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RacesStore } from '@f2020/api';
 
 @Component({
-    selector: 'f2020-races',
-    templateUrl: './races.component.html',
-    styleUrls: ['./races.component.scss'],
-    imports: [
-        MatToolbarModule,
-        MatListModule,
-        RouterLink,
-        LoadingComponent,
-        AsyncPipe,
-        FlagURLPipe,
-        RaceStatusPipe,
-        NgOptimizedImage,
-    ]
+  selector: 'f2020-races',
+  templateUrl: './races.component.html',
+  styleUrls: ['./races.component.scss'],
+  imports: [
+    MatToolbarModule,
+    MatListModule,
+    RouterLink,
+    LoadingComponent,
+    FlagURLPipe,
+    RaceStatusPipe,
+    NgOptimizedImage,
+  ],
 })
 export class RacesComponent {
 
