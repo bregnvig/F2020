@@ -14,8 +14,8 @@ import { TransferDialogComponent } from './../transfer-dialog/transfer-dialog.co
 import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.component';
 
 @Component({
-  selector: 'f2020-player-transactions',
-  template: `
+    selector: 'f2020-player-transactions',
+    template: `
     @if (player()) {
       <mat-toolbar color="primary">
         <span class="flex-auto">{{ player().displayName }}</span><span>{{ player().balance | currency: 'DKK' }}</span>
@@ -30,8 +30,7 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
       </mat-toolbar>
     }
   `,
-  standalone: true,
-  imports: [MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, AsyncPipe, CurrencyPipe],
+    imports: [MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, AsyncPipe, CurrencyPipe]
 })
 export class PlayerTransactionsComponent implements OnInit {
 

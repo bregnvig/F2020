@@ -16,23 +16,22 @@ import { DriverCodesComponent } from '../driver-codes/driver-codes.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
-  selector: 'f2020-bid',
-  templateUrl: './bid.component.html',
-  styleUrls: ['./bid.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => BidComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => BidComponent),
-      multi: true,
-    },
-  ],
-  standalone: true,
-  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe],
+    selector: 'f2020-bid',
+    templateUrl: './bid.component.html',
+    styleUrls: ['./bid.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => BidComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => BidComponent),
+            multi: true,
+        },
+    ],
+    imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
 })
 export class BidComponent extends AbstractControlComponent<Bid> implements OnInit {
 

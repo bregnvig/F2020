@@ -10,11 +10,10 @@ import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { LoadingComponent } from '@f2020/shared';
 
 @Component({
-  selector: 'f2020-transactions',
-  templateUrl: './transactions.component.html',
-  styleUrls: ['./transactions.component.scss'],
-  standalone: true,
-  imports: [InfiniteScrollModule, MatListModule, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
+    selector: 'f2020-transactions',
+    templateUrl: './transactions.component.html',
+    styleUrls: ['./transactions.component.scss'],
+    imports: [InfiniteScrollModule, MatListModule, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
 })
 export class TransactionsComponent {
 

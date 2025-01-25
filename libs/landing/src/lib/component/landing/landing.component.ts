@@ -10,10 +10,9 @@ import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-landing',
-  templateUrl: './landing.component.html',
-  standalone: true,
-  imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent, AsyncPipe],
+    selector: 'f2020-landing',
+    templateUrl: './landing.component.html',
+    imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent, AsyncPipe]
 })
 export class LandingComponent {
 

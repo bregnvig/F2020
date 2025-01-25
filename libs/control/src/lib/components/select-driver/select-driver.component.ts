@@ -10,24 +10,23 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'f2020-select-driver',
-  templateUrl: './select-driver.component.html',
-  styleUrls: ['./select-driver.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectDriverComponent),
-      multi: true,
-    },
-  ],
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOptionModule,
-    DriverNamePipe
-],
+    selector: 'f2020-select-driver',
+    templateUrl: './select-driver.component.html',
+    styleUrls: ['./select-driver.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectDriverComponent),
+            multi: true,
+        },
+    ],
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatOptionModule,
+        DriverNamePipe
+    ]
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {
 

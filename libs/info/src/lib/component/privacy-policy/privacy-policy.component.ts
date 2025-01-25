@@ -8,7 +8,6 @@ import { CardPageComponent } from '@f2020/shared';
     selector: 'info-privacy-policy',
     templateUrl: './privacy-policy.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [CardPageComponent, MatCardModule, FontAwesomeModule]
 })
 export class PrivacyPolicyComponent {

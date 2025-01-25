@@ -4,8 +4,8 @@ import { IDriverResult } from '@f2020/data';
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'f2020-driver-result',
-  template: `
+    selector: 'f2020-driver-result',
+    template: `
     <mat-list>
       @for (race of driverResult()?.races; track $index) {
         <mat-list-item>
@@ -16,9 +16,8 @@ import { MatListModule } from '@angular/material/list';
       }
     </mat-list>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatListModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatListModule]
 })
 export class DriverResultComponent {
   driverResult = input.required<IDriverResult>();

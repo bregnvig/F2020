@@ -5,8 +5,8 @@ import { QualifyingTimesComponent } from './qualifying-times/qualifying-times.co
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'f2020-driver-qualifying',
-  template: `
+    selector: 'f2020-driver-qualifying',
+    template: `
     <mat-list>
       @for (result of qualifyResults(); track $index) {
         <mat-list-item>
@@ -17,9 +17,8 @@ import { MatListModule } from '@angular/material/list';
       }
     </mat-list>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatListModule, QualifyingTimesComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatListModule, QualifyingTimesComponent]
 })
 export class DriverQualifyingComponent {
   qualifyResults = input.required<IQualifyResult[]>();

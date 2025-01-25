@@ -28,11 +28,10 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-race',
-  styleUrls: ['./race.component.scss'],
-  templateUrl: './race.component.html',
-  standalone: true,
-  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule, LiveRaceComponent],
+    selector: 'f2020-race',
+    styleUrls: ['./race.component.scss'],
+    templateUrl: './race.component.html',
+    imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule, LiveRaceComponent]
 })
 export class RaceComponent {
 

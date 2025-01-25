@@ -30,11 +30,10 @@ const message = (driverName: string, operation: Operation) => {
 
 @UntilDestroy()
 @Component({
-  selector: 'race-drivers',
-  templateUrl: './race-drivers.component.html',
-  styleUrls: ['./race-drivers.component.scss'],
-  standalone: true,
-  imports: [MatToolbarModule, MatListModule, CdkDropList, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe],
+    selector: 'race-drivers',
+    templateUrl: './race-drivers.component.html',
+    styleUrls: ['./race-drivers.component.scss'],
+    imports: [MatToolbarModule, MatListModule, CdkDropList, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, AsyncPipe, DriverNamePipe]
 })
 export class RaceDriversComponent implements OnInit {
 

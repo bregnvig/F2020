@@ -5,8 +5,8 @@ import { icon } from '@f2020/shared';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'f2020-standing-list-item',
-  template: `
+    selector: 'f2020-standing-list-item',
+    template: `
     <span class="flex flex-row justify-between items-center">
       <span class="flex flex-col">
         <span>{{standing.driver.name}}</span>
@@ -19,9 +19,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       <span>{{standing.points}} point</span>
     </span>
     `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FontAwesomeModule],
-  standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FontAwesomeModule]
 })
 export class StandingListItemComponent {
 

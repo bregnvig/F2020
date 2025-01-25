@@ -12,7 +12,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
     templateUrl: './withdraw-dialog.component.html',
     styleUrls: ['./withdraw-dialog.component.scss'],
-    standalone: true,
     imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, CurrencyPipe]
 })
 export class WithdrawDialogComponent implements OnInit {

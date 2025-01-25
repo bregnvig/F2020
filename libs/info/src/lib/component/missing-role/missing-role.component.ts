@@ -7,7 +7,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 @Component({
     templateUrl: './missing-role.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [MatToolbarModule, FontAwesomeModule, CardPageComponent]
 })
 export class MissingRoleComponent {

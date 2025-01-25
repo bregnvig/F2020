@@ -7,11 +7,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  selector: 'f2020-profile',
-  templateUrl: './profile.component.html',
-  standalone: true,
-  imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, AsyncPipe, NgOptimizedImage],
-  providers: [PlayersStore],
+    selector: 'f2020-profile',
+    templateUrl: './profile.component.html',
+    imports: [MatToolbarModule, MatListModule, MatSlideToggleModule, AsyncPipe, NgOptimizedImage],
+    providers: [PlayersStore]
 })
 export class ProfileComponent implements OnInit {
 

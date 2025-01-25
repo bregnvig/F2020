@@ -15,10 +15,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-submit-interim-result',
-  templateUrl: './submit-interim-result.component.html',
-  standalone: true,
-  imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule],
+    selector: 'f2020-submit-interim-result',
+    templateUrl: './submit-interim-result.component.html',
+    imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe, FontAwesomeModule]
 })
 export class SubmitInterimResultComponent {
 

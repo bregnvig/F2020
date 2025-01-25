@@ -9,23 +9,22 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'f2020-select-team',
-  templateUrl: './select-team.component.html',
-  styleUrls: ['./select-team.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectTeamComponent),
-      multi: true,
-    },
-  ],
-  standalone: true,
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOptionModule
-],
+    selector: 'f2020-select-team',
+    templateUrl: './select-team.component.html',
+    styleUrls: ['./select-team.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectTeamComponent),
+            multi: true,
+        },
+    ],
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatOptionModule
+    ]
 })
 export class SelectTeamComponent extends AbstractControlComponent<string> implements OnInit {
 

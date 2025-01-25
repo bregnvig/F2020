@@ -14,8 +14,7 @@ import { MatListModule } from '@angular/material/list';
     </button>`,
     styleUrls: ['./sidenav-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatListModule, FontAwesomeModule],
+    imports: [MatListModule, FontAwesomeModule]
 })
 export class SidenavButtonComponent {
 

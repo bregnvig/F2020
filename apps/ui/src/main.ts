@@ -1,5 +1,5 @@
 import localeDa from '@angular/common/locales/da';
-import { APP_INITIALIZER, enableProdMode, importProvidersFrom, LOCALE_ID } from '@angular/core';
+import { enableProdMode, importProvidersFrom, LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
 
 import { NgxMatTimepickerModule } from '@alexfriesen/ngx-mat-timepicker';
 import { DatePipe, registerLocaleData } from '@angular/common';
@@ -81,12 +81,10 @@ bootstrapApplication(AppComponent, {
     },
     DatePipe,
     DateTimePipe,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeFontAwesomeFactory,
-      deps: [FaIconLibrary],
-      multi: true,
-    },
+    provideAppInitializer(() => {
+        const initializerFn = (initializeFontAwesomeFactory)(inject(FaIconLibrary));
+        return initializerFn();
+      }),
     provideAnimations(),
   ],
 }).then(async () => {

@@ -7,12 +7,11 @@ import { MatCardModule } from '@angular/material/card';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-weather',
-  templateUrl: './weather.component.html',
-  styleUrls: ['./weather.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, WeatherDayComponent, AsyncPipe],
+    selector: 'f2020-weather',
+    templateUrl: './weather.component.html',
+    styleUrls: ['./weather.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, FontAwesomeModule, WeatherDayComponent, AsyncPipe]
 })
 export class WeatherComponent {
 

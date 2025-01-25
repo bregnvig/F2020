@@ -30,11 +30,10 @@ const noNullsInArray = (control: FormControl<Bid>) => {
 
 
 @Component({
-  selector: 'f2020-enter-bid',
-  templateUrl: './enter-bid.component.html',
-  styleUrls: ['./enter-bid.component.scss'],
-  standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe],
+    selector: 'f2020-enter-bid',
+    templateUrl: './enter-bid.component.html',
+    styleUrls: ['./enter-bid.component.scss'],
+    imports: [MatToolbarModule, MatButtonModule, RouterLink, FontAwesomeModule, BidComponent, ReactiveFormsModule, MatIconModule, NgTemplateOutlet, LoadingComponent, AsyncPipe]
 })
 export class EnterBidComponent {
 

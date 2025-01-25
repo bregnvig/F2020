@@ -10,11 +10,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'f2020-wbc-race',
-  templateUrl: './wbc-race.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, AsyncPipe, FlagURLPipe, NgOptimizedImage],
+    selector: 'f2020-wbc-race',
+    templateUrl: './wbc-race.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, AsyncPipe, FlagURLPipe, NgOptimizedImage]
 })
 export class WbcRaceComponent {
 

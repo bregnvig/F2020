@@ -5,23 +5,22 @@ import { AbstractControlComponent } from '../../abstract-control-component';
 import { SelectDriverComponent } from '../select-driver/select-driver.component';
 
 @Component({
-  selector: 'f2020-selected-team',
-  templateUrl: './selected-team.component.html',
-  styleUrls: ['./selected-team.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectedTeamComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => SelectedTeamComponent),
-      multi: true,
-    },
-  ],
-  standalone: true,
-  imports: [ReactiveFormsModule, SelectDriverComponent],
+    selector: 'f2020-selected-team',
+    templateUrl: './selected-team.component.html',
+    styleUrls: ['./selected-team.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectedTeamComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => SelectedTeamComponent),
+            multi: true,
+        },
+    ],
+    imports: [ReactiveFormsModule, SelectDriverComponent]
 })
 export class SelectedTeamComponent extends AbstractControlComponent<SelectedTeamValue> implements OnInit {
 

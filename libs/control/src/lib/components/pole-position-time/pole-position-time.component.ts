@@ -8,27 +8,26 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'f2020-pole-position-time',
-  templateUrl: './pole-position-time.component.html',
-  styleUrls: ['./pole-position-time.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => PolePositionTimeComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => PolePositionTimeComponent),
-      multi: true,
-    },
-  ],
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
+    selector: 'f2020-pole-position-time',
+    templateUrl: './pole-position-time.component.html',
+    styleUrls: ['./pole-position-time.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => PolePositionTimeComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => PolePositionTimeComponent),
+            multi: true,
+        },
+    ],
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+    ]
 })
 export class PolePositionTimeComponent extends AbstractControlComponent<number> implements OnInit {
 

@@ -10,12 +10,11 @@ import { DisplayDriversComponent } from './drivers/display-drivers.component';
 import { DisplayTeamsComponent } from './teams/display-teams.component';
 
 @Component({
-  selector: 'f2020-display-bid',
-  templateUrl: './display-bid.component.html',
-  styleUrls: ['./display-bid.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [CardPageComponent, MatExpansionModule, DriverCodesComponent, DisplayDriversComponent, MatListModule, DisplayTeamsComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
+    selector: 'f2020-display-bid',
+    templateUrl: './display-bid.component.html',
+    styleUrls: ['./display-bid.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CardPageComponent, MatExpansionModule, DriverCodesComponent, DisplayDriversComponent, MatListModule, DisplayTeamsComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
 })
 export class DisplayBidComponent {
 

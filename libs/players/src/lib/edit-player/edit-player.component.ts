@@ -19,10 +19,9 @@ import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './edit-player.component.html',
-  styleUrls: ['./edit-player.component.scss'],
-  standalone: true,
-  imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, AsyncPipe, NgOptimizedImage],
+    templateUrl: './edit-player.component.html',
+    styleUrls: ['./edit-player.component.scss'],
+    imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, AsyncPipe, NgOptimizedImage]
 })
 export class EditPlayerComponent implements OnInit {
 

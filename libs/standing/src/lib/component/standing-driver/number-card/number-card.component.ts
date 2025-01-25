@@ -4,12 +4,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
-  selector: 'f2020-number-card',
-  templateUrl: './number-card.component.html',
-  styleUrls: ['./number-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, FontAwesomeModule],
+    selector: 'f2020-number-card',
+    templateUrl: './number-card.component.html',
+    styleUrls: ['./number-card.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, FontAwesomeModule]
 })
 export class NumberCardComponent {
   @Input() title: string;

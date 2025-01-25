@@ -9,11 +9,10 @@ import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  templateUrl: './players-list.component.html',
-  styleUrls: ['./players-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe],
+    templateUrl: './players-list.component.html',
+    styleUrls: ['./players-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, LoadingComponent, AsyncPipe]
 })
 export class PlayersListComponent implements OnInit {
 

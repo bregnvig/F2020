@@ -13,10 +13,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { PlayersStore } from '@f2020/api';
 
 @Component({
-  templateUrl: './transfer-dialog.component.html',
-  styleUrls: ['./transfer-dialog.component.scss'],
-  standalone: true,
-  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatButtonModule, AsyncPipe, CurrencyPipe],
+    templateUrl: './transfer-dialog.component.html',
+    styleUrls: ['./transfer-dialog.component.scss'],
+    imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatButtonModule, AsyncPipe, CurrencyPipe]
 })
 export class TransferDialogComponent implements OnInit {
   fg: FormGroup;

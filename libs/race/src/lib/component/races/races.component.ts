@@ -10,20 +10,19 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RacesStore } from '@f2020/api';
 
 @Component({
-  selector: 'f2020-races',
-  templateUrl: './races.component.html',
-  styleUrls: ['./races.component.scss'],
-  standalone: true,
-  imports: [
-    MatToolbarModule,
-    MatListModule,
-    RouterLink,
-    LoadingComponent,
-    AsyncPipe,
-    FlagURLPipe,
-    RaceStatusPipe,
-    NgOptimizedImage,
-  ],
+    selector: 'f2020-races',
+    templateUrl: './races.component.html',
+    styleUrls: ['./races.component.scss'],
+    imports: [
+        MatToolbarModule,
+        MatListModule,
+        RouterLink,
+        LoadingComponent,
+        AsyncPipe,
+        FlagURLPipe,
+        RaceStatusPipe,
+        NgOptimizedImage,
+    ]
 })
 export class RacesComponent {
 

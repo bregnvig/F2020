@@ -14,12 +14,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { first, map, switchMap } from 'rxjs';
 
 @Component({
-  selector: 'teams-teams-list',
-  templateUrl: './teams-list.component.html',
-  styleUrls: ['./teams-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
+    selector: 'teams-teams-list',
+    templateUrl: './teams-list.component.html',
+    styleUrls: ['./teams-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe]
 })
 export class TeamsListComponent {
 

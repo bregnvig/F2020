@@ -11,11 +11,10 @@ import { DisplayBidComponent } from '../display-bid.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-display-player-bid',
-  templateUrl: './display-player-bid.component.html',
-  styleUrls: ['./display-player-bid.component.scss'],
-  standalone: true,
-  imports: [MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, AsyncPipe, NgOptimizedImage],
+    selector: 'f2020-display-player-bid',
+    templateUrl: './display-player-bid.component.html',
+    styleUrls: ['./display-player-bid.component.scss'],
+    imports: [MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, AsyncPipe, NgOptimizedImage]
 })
 export class DisplayPlayerBidComponent {
 

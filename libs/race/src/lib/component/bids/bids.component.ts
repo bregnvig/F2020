@@ -10,11 +10,10 @@ import { PartialBidWarningComponent } from '../partial-bid-warning/partial-bid-w
 const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
 
 @Component({
-  selector: 'f2020-bids',
-  templateUrl: './bids.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatListModule, FaIconComponent, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
+    selector: 'f2020-bids',
+    templateUrl: './bids.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatListModule, FaIconComponent, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe]
 })
 export class BidsComponent {
 

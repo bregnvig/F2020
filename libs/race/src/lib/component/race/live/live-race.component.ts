@@ -15,29 +15,28 @@ import { DateTimePipe } from '@f2020/shared';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-live-race',
-  templateUrl: 'live-race.component.html',
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    MatListItem,
-    MatListItemAvatar,
-    NgOptimizedImage,
-    MatButton,
-    MatList,
-    FaIconComponent,
-    MatCardActions,
-    DateTimePipe,
-  ],
-  styles: `
+    selector: 'f2020-live-race',
+    templateUrl: 'live-race.component.html',
+    imports: [
+        AsyncPipe,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        MatListItem,
+        MatListItemAvatar,
+        NgOptimizedImage,
+        MatButton,
+        MatList,
+        FaIconComponent,
+        MatCardActions,
+        DateTimePipe,
+    ],
+    styles: `
     mat-list-item {
       transition: all 1s;
     }
-  `,
+  `
 })
 export class LiveRaceComponent {
 

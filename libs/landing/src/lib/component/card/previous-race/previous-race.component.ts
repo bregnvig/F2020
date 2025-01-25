@@ -9,11 +9,10 @@ import { MatCardModule } from '@angular/material/card';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 
 @Component({
-  selector: 'f2020-previous-race',
-  templateUrl: './previous-race.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, FaIconComponent, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage],
+    selector: 'f2020-previous-race',
+    templateUrl: './previous-race.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, FaIconComponent, MatButtonModule, RouterLink, AsyncPipe, NgOptimizedImage]
 })
 export class PreviousRaceComponent {
 

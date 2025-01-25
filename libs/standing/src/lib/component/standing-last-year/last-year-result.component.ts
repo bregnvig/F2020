@@ -17,7 +17,6 @@ import { MatListModule } from '@angular/material/list';
     </mat-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [MatListModule]
 })
 export class LastYearResultComponent {

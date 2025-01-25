@@ -9,16 +9,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'sha-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    FontAwesomeModule,
-    LoadingComponent,
-    AsyncPipe,
-  ],
+    selector: 'sha-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    imports: [
+        MatButtonModule,
+        FontAwesomeModule,
+        LoadingComponent,
+        AsyncPipe,
+    ]
 })
 export class LoginComponent {
 

@@ -7,11 +7,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 const versionNo = '24';
 
 @Component({
-  selector: 'f2020-what-else',
-  templateUrl: './what-else.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, MatButtonModule],
+    selector: 'f2020-what-else',
+    templateUrl: './what-else.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, FontAwesomeModule, MatButtonModule]
 })
 export class WhatElseComponent {
 

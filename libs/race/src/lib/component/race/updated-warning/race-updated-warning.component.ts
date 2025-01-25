@@ -7,12 +7,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
-  selector: 'f2020-race-updated-warning',
-  templateUrl: `./race-updated-warning.component.html`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, DateTimePipe, NgOptimizedImage],
-  providers: [DriverNamePipe],
+    selector: 'f2020-race-updated-warning',
+    templateUrl: `./race-updated-warning.component.html`,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, FontAwesomeModule, DateTimePipe, NgOptimizedImage],
+    providers: [DriverNamePipe]
 })
 export class RaceUpdatedWarningComponent {
 

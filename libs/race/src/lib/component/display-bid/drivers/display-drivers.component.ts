@@ -4,8 +4,8 @@ import { DriverNamePipe } from '@f2020/driver';
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'f2020-display-drivers',
-  template: `
+    selector: 'f2020-display-drivers',
+    template: `
     <mat-list>
       @for (id of driverIds; track $index) {
         <mat-list-item>
@@ -17,9 +17,8 @@ import { MatListModule } from '@angular/material/list';
       }
     </mat-list>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatListModule, DriverNamePipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatListModule, DriverNamePipe]
 })
 export class DisplayDriversComponent {
 

@@ -8,12 +8,11 @@ import { AsyncPipe } from '@angular/common';
 import { RaceStore } from '@f2020/api';
 
 @Component({
-  selector: 'f2020-display-result',
-  templateUrl: './display-result.component.html',
-  styleUrls: ['./display-result.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, FontAwesomeModule, MatListModule, DisplayBidComponent, LoadingComponent, AsyncPipe],
+    selector: 'f2020-display-result',
+    templateUrl: './display-result.component.html',
+    styleUrls: ['./display-result.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, FontAwesomeModule, MatListModule, DisplayBidComponent, LoadingComponent, AsyncPipe]
 })
 export class DisplayResultComponent {
 

@@ -15,11 +15,10 @@ interface GraphEntry {
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-wbc-graph',
-  templateUrl: './wbc-graph.component.html',
-  styleUrls: ['./wbc-graph.component.scss'],
-  standalone: true,
-  imports: [LineChartModule, MatListModule, NgOptimizedImage],
+    selector: 'f2020-wbc-graph',
+    templateUrl: './wbc-graph.component.html',
+    styleUrls: ['./wbc-graph.component.scss'],
+    imports: [LineChartModule, MatListModule, NgOptimizedImage]
 })
 export class WbcGraphComponent {
 

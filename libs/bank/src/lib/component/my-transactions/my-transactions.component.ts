@@ -12,8 +12,8 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-my-transactions',
-  template: `
+    selector: 'f2020-my-transactions',
+    template: `
     <div class="flex flex-col h-full">
       <mat-toolbar color="primary">
         <span class="flex-auto">Saldo</span>
@@ -27,9 +27,8 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
       </button>
     </div>
   `,
-  styleUrls: ['./my-transactions.component.scss'],
-  standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, AsyncPipe, CurrencyPipe],
+    styleUrls: ['./my-transactions.component.scss'],
+    imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, AsyncPipe, CurrencyPipe]
 })
 export class MyTransactionsComponent {
 

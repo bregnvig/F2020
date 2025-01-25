@@ -8,12 +8,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'f2020-last-year',
-  templateUrl: './last-year.component.html',
-  styleUrls: ['./last-year.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, PolePositionTimePipe],
+    selector: 'f2020-last-year',
+    templateUrl: './last-year.component.html',
+    styleUrls: ['./last-year.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, PolePositionTimePipe]
 })
 export class LastYearComponent {
 

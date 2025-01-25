@@ -13,10 +13,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DriversStore } from '@f2020/api';
 
 @Component({
-  templateUrl: './add-driver.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe],
+    templateUrl: './add-driver.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, AsyncPipe, DriverNamePipe]
 })
 export class AddDriverComponent {
 

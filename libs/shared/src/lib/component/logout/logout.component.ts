@@ -4,14 +4,13 @@ import { CardPageComponent } from '../card-page/card-page.component';
 import { PlayerStore } from '@f2020/api';
 
 @Component({
-  selector: 'sha-logout',
-  template: `
+    selector: 'sha-logout',
+    template: `
     <sha-card-page>
       <sha-loading></sha-loading>
     </sha-card-page>
   `,
-  standalone: true,
-  imports: [CardPageComponent, LoadingComponent],
+    imports: [CardPageComponent, LoadingComponent]
 })
 export class LogoutComponent {
 

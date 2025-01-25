@@ -11,17 +11,16 @@ import { MatCardModule } from '@angular/material/card';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-join-wbc',
-  templateUrl: './join-wbc.component.html',
-  standalone: true,
-  imports: [
-    MatCardModule,
-    FontAwesomeModule,
-    MatButtonModule,
-    RouterLink,
-    AsyncPipe,
-    RelativeToNowPipe,
-  ],
+    selector: 'f2020-join-wbc',
+    templateUrl: './join-wbc.component.html',
+    imports: [
+        MatCardModule,
+        FontAwesomeModule,
+        MatButtonModule,
+        RouterLink,
+        AsyncPipe,
+        RelativeToNowPipe,
+    ]
 })
 export class JoinWbcComponent {
 

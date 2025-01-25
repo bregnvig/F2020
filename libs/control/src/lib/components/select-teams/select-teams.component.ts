@@ -24,8 +24,8 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
 };
 
 @Component({
-  selector: 'f2020-select-teams',
-  template: `
+    selector: 'f2020-select-teams',
+    template: `
     <div [formGroup]="fg" class="flex flex-col">
       @for (_ of teamsArray.controls; track _; let i = $index) {
         <ng-container formArrayName="teams">
@@ -39,25 +39,24 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
       }
     </div>
     `,
-  styleUrls: ['./select-teams.component.scss'],
-  providers: [
-    TeamNamePipe,
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectTeamsComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => SelectTeamsComponent),
-      multi: true,
-    },
-  ],
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    SelectTeamComponent
-],
+    styleUrls: ['./select-teams.component.scss'],
+    providers: [
+        TeamNamePipe,
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SelectTeamsComponent),
+            multi: true,
+        },
+        {
+            provide: NG_VALIDATORS,
+            useExisting: forwardRef(() => SelectTeamsComponent),
+            multi: true,
+        },
+    ],
+    imports: [
+        ReactiveFormsModule,
+        SelectTeamComponent
+    ]
 })
 export class SelectTeamsComponent extends AbstractControlComponent<string[]> implements OnInit {
 

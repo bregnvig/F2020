@@ -3,11 +3,10 @@ import { PlayersStore } from '@f2020/api';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'f2020-accounts',
-  template: '<router-outlet/>',
-  standalone: true,
-  imports: [RouterOutlet],
-  providers: [PlayersStore],
+    selector: 'f2020-accounts',
+    template: '<router-outlet/>',
+    imports: [RouterOutlet],
+    providers: [PlayersStore]
 })
 export class AccountsComponent {
 

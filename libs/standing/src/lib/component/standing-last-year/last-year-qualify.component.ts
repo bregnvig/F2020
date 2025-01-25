@@ -18,7 +18,6 @@ import { MatListModule } from '@angular/material/list';
     </mat-list>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
     imports: [MatListModule, QualifyingTimesComponent]
 })
 export class LastYearQualifyComponent {

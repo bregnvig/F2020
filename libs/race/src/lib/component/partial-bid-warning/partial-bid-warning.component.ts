@@ -6,8 +6,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @Component({
-  selector: 'f2020-partial-bid-warning',
-  template: `
+    selector: 'f2020-partial-bid-warning',
+    template: `
     @if (!bid.submitted) {
       <fa-icon
         class="focus-meta"
@@ -19,16 +19,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
       ></fa-icon>
     }
     `,
-  styles: [
-    `
+    styles: [
+        `
       fa-icon {
         color: white;
       }
     `
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [FontAwesomeModule, MatTooltipModule]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FontAwesomeModule, MatTooltipModule]
 })
 export class PartialBidWarningComponent {
 

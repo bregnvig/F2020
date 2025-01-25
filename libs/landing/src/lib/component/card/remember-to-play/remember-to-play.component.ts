@@ -9,12 +9,11 @@ import { DateTime } from 'luxon';
 import { RacesStore } from '@f2020/api';
 
 @Component({
-  selector: 'f2020-remember-to-play',
-  templateUrl: './remember-to-play.component.html',
-  styleUrls: ['./remember-to-play.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe, RelativeToNowPipe, FlagURLPipe, NgOptimizedImage],
+    selector: 'f2020-remember-to-play',
+    templateUrl: './remember-to-play.component.html',
+    styleUrls: ['./remember-to-play.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatCardModule, MatButtonModule, RouterLink, AsyncPipe, RelativeToNowPipe, FlagURLPipe, NgOptimizedImage]
 })
 export class RememberToPlayComponent {
 

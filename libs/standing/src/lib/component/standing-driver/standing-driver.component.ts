@@ -19,23 +19,22 @@ import { toObservable } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-standing-driver',
-  templateUrl: './standing-driver.component.html',
-  styleUrls: ['./standing-driver.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    MatToolbarModule,
-    CardPageComponent,
-    NumberCardComponent,
-    MatTabsModule,
-    DriverQualifyingComponent,
-    DriverResultComponent,
-    LoadingComponent,
-    AsyncPipe,
-    DecimalPipe,
-    DriverNamePipe,
-  ],
+    selector: 'f2020-standing-driver',
+    templateUrl: './standing-driver.component.html',
+    styleUrls: ['./standing-driver.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        MatToolbarModule,
+        CardPageComponent,
+        NumberCardComponent,
+        MatTabsModule,
+        DriverQualifyingComponent,
+        DriverResultComponent,
+        LoadingComponent,
+        AsyncPipe,
+        DecimalPipe,
+        DriverNamePipe,
+    ]
 })
 export class StandingDriverComponent {
 

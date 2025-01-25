@@ -4,8 +4,8 @@ import { TeamNamePipe } from '@f2020/shared';
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-  selector: 'f2020-display-teams',
-  template: `
+    selector: 'f2020-display-teams',
+    template: `
     <mat-list>
       @for (id of constructorIds; track id; let i = $index) {
         <mat-list-item>
@@ -17,9 +17,8 @@ import { MatListModule } from '@angular/material/list';
       }
     </mat-list>
     `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatListModule, TeamNamePipe]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatListModule, TeamNamePipe]
 })
 export class DisplayTeamsComponent {
 

@@ -24,10 +24,9 @@ const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
 
 
 @Component({
-  templateUrl: './wbc-player.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, CardPageComponent, MatListModule, RouterLink, AsyncPipe, FlagURLPipe, NgOptimizedImage],
+    templateUrl: './wbc-player.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, CardPageComponent, MatListModule, RouterLink, AsyncPipe, FlagURLPipe, NgOptimizedImage]
 })
 export class WbcPlayerComponent {
 

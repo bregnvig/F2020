@@ -9,12 +9,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'f2020-standing-last-year',
-  templateUrl: './standing-last-year.component.html',
-  styleUrls: ['./standing-last-year.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, MatTabsModule, LastYearQualifyComponent, LastYearResultComponent, LoadingComponent, AsyncPipe, FlagURLPipe],
+    selector: 'f2020-standing-last-year',
+    templateUrl: './standing-last-year.component.html',
+    styleUrls: ['./standing-last-year.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, MatTabsModule, LastYearQualifyComponent, LastYearResultComponent, LoadingComponent, AsyncPipe, FlagURLPipe]
 })
 export class StandingLastYearComponent {
 

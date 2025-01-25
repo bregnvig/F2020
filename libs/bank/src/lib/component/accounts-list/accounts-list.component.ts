@@ -8,10 +8,9 @@ import { Player } from '@f2020/data';
 import { LoadingComponent } from '@f2020/shared';
 
 @Component({
-  selector: 'f2020-accounts-list',
-  templateUrl: './accounts-list.component.html',
-  standalone: true,
-  imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, AsyncPipe, CurrencyPipe, NgOptimizedImage],
+    selector: 'f2020-accounts-list',
+    templateUrl: './accounts-list.component.html',
+    imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, AsyncPipe, CurrencyPipe, NgOptimizedImage]
 })
 export class AccountsListComponent {
 

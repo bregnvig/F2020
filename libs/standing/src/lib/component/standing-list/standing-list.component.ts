@@ -10,21 +10,20 @@ import { StandingStore } from '../../+state/standing.store';
 import { StandingListItemComponent } from './standing-list-item/standing-list-item.component';
 
 @Component({
-  selector: 'f2020-standing-list',
-  templateUrl: './standing-list.component.html',
-  standalone: true,
-  imports: [
-    MatToolbarModule,
-    MatListModule,
-    RouterLink,
-    StandingListItemComponent,
-    LoadingComponent,
-    AsyncPipe,
-    LowerCasePipe,
-  ],
-  providers: [
-    StandingStore,
-  ],
+    selector: 'f2020-standing-list',
+    templateUrl: './standing-list.component.html',
+    imports: [
+        MatToolbarModule,
+        MatListModule,
+        RouterLink,
+        StandingListItemComponent,
+        LoadingComponent,
+        AsyncPipe,
+        LowerCasePipe,
+    ],
+    providers: [
+        StandingStore,
+    ]
 })
 export class StandingListComponent {
 

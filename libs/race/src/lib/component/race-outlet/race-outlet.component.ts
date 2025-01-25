@@ -5,11 +5,10 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-race-outlet',
-  template: '<router-outlet/>',
-  standalone: true,
-  imports: [RouterOutlet],
-  providers: [RaceStore],
+    selector: 'f2020-race-outlet',
+    template: '<router-outlet/>',
+    imports: [RouterOutlet],
+    providers: [RaceStore]
 })
 export class RaceOutletComponent implements OnInit {
 

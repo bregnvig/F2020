@@ -18,24 +18,23 @@ import { combineLatest, map, Observable } from 'rxjs';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-edit-race',
-  templateUrl: './edit-race.component.html',
-  standalone: true,
-  imports: [
-    CardPageComponent,
-    MatCardModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    SelectDriverComponent,
-    MatButtonModule,
-    AsyncPipe,
-    FlagURLPipe,
-    FontAwesomeModule,
-    NgxMatTimepickerComponent,
-    NgxMatTimepickerDirective,
-  ],
+    selector: 'f2020-edit-race',
+    templateUrl: './edit-race.component.html',
+    imports: [
+        CardPageComponent,
+        MatCardModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        SelectDriverComponent,
+        MatButtonModule,
+        AsyncPipe,
+        FlagURLPipe,
+        FontAwesomeModule,
+        NgxMatTimepickerComponent,
+        NgxMatTimepickerDirective,
+    ]
 })
 export class EditRaceComponent {
 

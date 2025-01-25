@@ -11,12 +11,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-  selector: 'sha-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FontAwesomeModule, AsyncPipe, NgOptimizedImage],
+    selector: 'sha-sidebar',
+    templateUrl: './sidebar.component.html',
+    styleUrls: ['./sidebar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FontAwesomeModule, AsyncPipe, NgOptimizedImage]
 })
 export class SidebarComponent implements OnInit {
 

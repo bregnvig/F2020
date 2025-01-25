@@ -10,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
     templateUrl: './deposit-dialog.component.html',
     styleUrls: ['./deposit-dialog.component.scss'],
-    standalone: true,
     imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
 export class DepositDialogComponent implements OnInit {

@@ -15,10 +15,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-submit-result',
-  templateUrl: './submit-result.component.html',
-  standalone: true,
-  imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FontAwesomeModule],
+    selector: 'f2020-submit-result',
+    templateUrl: './submit-result.component.html',
+    imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FontAwesomeModule]
 })
 export class SubmitResultComponent {
 
