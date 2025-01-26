@@ -20,7 +20,7 @@ export const buildResult = (race: IRaceResult, qualify: IQualifyResult, pitStops
   };
   const selectedTeamResult: SelectedTeamValue = {
     qualify: selectedTeam ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
-    result: selectedTeam ? race.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
+    result: selectedTeam ? race.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId))?.driver.driverId : undefined,
   };
   const firstCrashResult = [...race.results].reverse().filter(r => !finished(r.status)).slice(0, 3).map(getDriverId);
   return <Bid>{
