@@ -6,7 +6,7 @@ import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { combineLatest, Observable, switchMap, takeWhile, tap, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SeasonService } from './../../season/service/season.service';
+import { SeasonService } from '../../season/service/season.service';
 import { HttpClient } from '@angular/common/http';
 import { Lap, openF1, PitStop, Position, Session } from '@f2020/openf1';
 import { DateTime } from 'luxon';
