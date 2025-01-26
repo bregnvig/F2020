@@ -12,18 +12,18 @@ import { filter, first, switchMap } from 'rxjs/operators';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
-    selector: 'f2020-root',
-    templateUrl: './app.component.html',
-    imports: [
-        MatToolbarModule,
-        RouterLink,
-        MatButtonModule,
-        MatIconModule,
-        MatSidenavModule,
-        SidebarComponent,
-        RouterOutlet,
-        FontAwesomeModule,
-    ]
+  selector: 'f2020-root',
+  templateUrl: './app.component.html',
+  imports: [
+    MatToolbarModule,
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    SidebarComponent,
+    RouterOutlet,
+    FontAwesomeModule,
+  ],
 })
 export class AppComponent {
 
@@ -52,7 +52,7 @@ export class AppComponent {
           this.router.navigate(['info', 'roles']);
         }
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   private checkForVersionUpdate() {
