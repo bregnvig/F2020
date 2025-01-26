@@ -1,17 +1,17 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node", "jest"],
-    "target": "es2020"
+  "extends" : "../../tsconfig.base.json",
+  "compilerOptions" : {
+    "types" : ["node", "jest"],
+    "target" : "es2022"
   },
-  "include": [],
-  "files": [],
-  "references": [
+  "include" : [],
+  "files" : [],
+  "references" : [
     {
-      "path": "./tsconfig.lib.json"
+      "path" : "./tsconfig.lib.json"
     },
     {
-      "path": "./tsconfig.spec.json"
+      "path" : "./tsconfig.spec.json"
     }
   ]
 }
