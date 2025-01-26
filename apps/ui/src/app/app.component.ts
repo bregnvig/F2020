@@ -9,7 +9,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { filter, first, switchMap } from 'rxjs/operators';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'f2020-root',
@@ -22,7 +22,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatSidenavModule,
     SidebarComponent,
     RouterOutlet,
-    FontAwesomeModule,
+    FaIconComponent,
   ],
 })
 export class AppComponent {
