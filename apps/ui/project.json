@@ -16,7 +16,9 @@
         "outputPath" : "dist/apps/ui",
         "index" : "apps/ui/src/index.html",
         "main" : "apps/ui/src/main.ts",
-        "polyfills" : "apps/ui/src/polyfills.ts",
+        "polyfills" : [
+          "zone.js"
+        ],
         "tsConfig" : "apps/ui/tsconfig.app.json",
         "aot" : true,
         "assets" : [
