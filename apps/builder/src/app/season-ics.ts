@@ -157,9 +157,9 @@ export const buildNewSeason = async (seasonId: number) => {
   let previous: IRace | undefined;
   console.log('Building season', seasonId, calenderRaces.length);
   const races = calenderRaces.map((cr, round) => {
-    const race = mapper.race(cr.circuit, getSelectedDriver(cr.circuit.countryCode2), {
+    const race = mapper.race(cr.circuit, !round ? getSelectedDriver(cr.circuit.countryCode2) : undefined, {
       raceStart: cr.raceStart,
-      state: round === 0 ? 'open' : 'waiting',
+      state: !round ? 'open' : 'waiting',
       close: cr.close,
       round: round + 1,
       season: seasonId,
