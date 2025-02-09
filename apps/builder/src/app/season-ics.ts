@@ -9,17 +9,22 @@ import { Meeting, Session, Weather } from '@f2020/openf1';
 import { firestore } from 'firebase-admin';
 import { WriteResult } from '@google-cloud/firestore';
 import { converter } from './converter';
-import { buildStandings } from './build-standings-openf1';
 import { humanize } from './humanizer';
+import { buildStandings } from './build-standings-openf1';
 import Transaction = firestore.Transaction;
 
 const nameToF1 = {
   'mexico city grand prix': 'GRAN PREMIO DE LA CIUDAD DE MÉXICO',
-  ['São Paulo Grand Prix'.toLocaleLowerCase()]: 'GRANDE PRÊMIO DE SÃO PAULO',
+  'emilia-romagna grand prix': `Gran Premio del Made in Italy e dell'Emilia-Romagna`,
+  'monaco grand prix': `GRAND PRIX DE MONACO`,
+  'spanish grand prix': `GRAN PREMIO DE ESPAÑA`,
+  'canadian grand prix': `GRAND PRIX DU CANADA`,
+  'italian grand prix': `GRAN PREMIO D’ITALIA`,
+  'são paulo grand prix': 'GRANDE PRÊMIO DE SÃO PAULO',
 };
 
 export const buildLastYear = async (seasonId: number) => {
-  const meetings: Meeting[] = await fetch(`https://api.openf1.org/v1/meetings?year=${seasonId}`).then(r => r.json());
+  const meetings: Meeting[] = await fetch(`https://api.openf1.org/v1/meetings?year=${seasonId - 1}`).then(r => r.json());
   console.log('Building last year', seasonId - 1, 'Number of races:', meetings.length);
   const db = firebaseApp.database;
   const circuits = await db.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
@@ -123,9 +128,6 @@ export const buildNewSeason = async (seasonId: number) => {
   const icsCalendarString = readFileSync(`apps/builder/src/assets/f${seasonId}.ics`, 'utf8');
   const calendarParsed: VCalendar = parseIcsCalendar(icsCalendarString);
 
-  const isPracticeOne = /.*Practice ?1$/;
-  const isRace = /.*- Race$/i;
-
 
   const circuits = await firebaseApp.database.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
   const drivers = await getDrivers('latest').then(async latest => {
@@ -137,6 +139,9 @@ export const buildNewSeason = async (seasonId: number) => {
     const candidates = drivers.filter(d => d.countryCode === countryCode);
     return candidates[Math.floor(Math.random() * candidates.length)] ?? drivers[Math.floor(Math.random() * drivers.length)];
   };
+
+  const isPracticeOne = /.*Practice ?1$/;
+  const isRace = /.*- Race$/i;
 
   const calenderRaces = calendarParsed.events
     .filter(e => isPracticeOne.test(e.summary))
@@ -174,6 +179,8 @@ export const buildNewSeason = async (seasonId: number) => {
     .then(racesWithTeams => writeSeason(season, racesWithTeams))
     .then(() => buildLastYear(seasonId))
     .then(() => buildStandings(seasonId, seasonId - 1));
+  /*
+  */
 };
 
 const seasonsURL = 'seasons';

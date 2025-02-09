@@ -295,5 +295,16 @@
       "lat" : 31.3389,
       "lng" : 121.22
     }
+  },
+  {
+    "circuitId" : 40,
+    "circuitName" : "Autodromo Enzo e Dino Ferrari",
+    "name" : "Emilia-Romagna Grand Prix",
+    "countryCode2" : "IT",
+    "countryCode3" : "ITA",
+    "location" : {
+      "lat" : 44.3439,
+      "lng" : 11.7167
+    }
   }
 ]

@@ -7,7 +7,7 @@
   "generators" : {},
   "targets" : {
     "build" : {
-      "executor" : "@nrwl/webpack:webpack",
+      "executor" : "@nx/webpack:webpack",
       "options" : {
         "webpackConfig" : "apps/builder/webpack.config.js",
         "outputPath" : "dist/apps/builder",

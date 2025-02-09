@@ -1,4 +1,7 @@
 import { environment } from './environment/environment';
+import { buildNewSeason } from './app/season-ics';
+import { buildDrivers } from './app/drivers-openf1';
+import { buildCircuits } from './app/circuits';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -45,17 +48,16 @@ const seasonId = parseInt(environment.season);
 // })();
 /*
 */
-/*
 buildDrivers()
   .then(count => console.log(`Wrote ${count} drivers`))
   .then(() => buildCircuits())
   .then(numberOfCircuits => console.log('Circuits built', numberOfCircuits))
   .then(() => buildNewSeason(seasonId))
   .then(() => console.log('Season built'));
-*/
+
 /*
 */
 // buildCircuits().then(
 //   () => buildNewSeason(seasonId))
 //   .then(() => console.log('Season built'));
-// buildLastYear(seasonId).then(() => console.log('Last year built'));
+//buildLastYear(seasonId).then(() => console.log('Last year built'));
