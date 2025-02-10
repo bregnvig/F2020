@@ -10,7 +10,7 @@
     @if (bidControl.enabled && isOpen()) {
       <button mat-fab aria-label="Indsend bud" color="primary" [disabled]="bidControl.invalid"
               (click)="submitBid()">
-        <fa-icon [icon]="sendIcon" size="lg"></fa-icon>
+        <fa-icon [icon]="sendIcon" size="lg"/>
       </button>
     }
   } @else {

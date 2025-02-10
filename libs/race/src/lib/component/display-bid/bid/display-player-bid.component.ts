@@ -12,8 +12,25 @@ import { DisplayBidComponent } from '../display-bid.component';
 @UntilDestroy()
 @Component({
   selector: 'f2020-display-player-bid',
-  templateUrl: './display-player-bid.component.html',
-  styleUrls: ['./display-player-bid.component.scss'],
+  template: `
+    @if (bid()) {
+      <mat-toolbar color="primary">
+        <img class="avatar" width="40" height="40" [ngSrc]="bid().player.photoURL" alt="Profil billede">
+        <span class="flex-auto">{{ bid().player.displayName }}</span>
+        <f2020-partial-bid-warning [bid]="bid()"></f2020-partial-bid-warning>
+        @if (bid().points !== undefined) {
+          {{ bid().points }} point
+        }
+      </mat-toolbar>
+      @if (bid() && race()) {
+        <div class="max-width py-3">
+          <f2020-display-bid [bid]="bid()" [race]="race()"></f2020-display-bid>
+        </div>
+      }
+    } @else {
+      <sha-loading></sha-loading>
+    }
+  `,
   imports: [MatToolbarModule, PartialBidWarningComponent, DisplayBidComponent, LoadingComponent, NgOptimizedImage],
 })
 export class DisplayPlayerBidComponent {

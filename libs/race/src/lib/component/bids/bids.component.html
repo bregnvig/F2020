@@ -1,11 +1,11 @@
 <mat-action-list>
-  @if (result) {
+  @if (result()) {
     <button mat-list-item [disabled]="disabled()" (click)="!disabled() && gotoResult()">
       <fa-icon matListItemIcon class="text-white" [icon]="icon"/>
       <span matListItemTitle>Resultat</span>
     </button>
   }
-  @for (bid of bids; track bid.player.uid) {
+  @for (bid of bids(); track bid.player.uid) {
     <button mat-list-item [disabled]="disabled()" (click)="!disabled() && gotoBid(bid.player.uid)">
       <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" (click)="gotoBid(bid.player.uid)">
       <span matListItemTitle>{{ bid.player.displayName }} </span>

@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Bid, Participant } from '@f2020/data';
@@ -10,41 +10,37 @@ import { PartialBidWarningComponent } from '../partial-bid-warning/partial-bid-w
 const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number => (a.polePositionTimeDiff ?? 0) - (b.polePositionTimeDiff ?? 0);
 
 @Component({
-    selector: 'f2020-bids',
-    templateUrl: './bids.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatListModule, FaIconComponent, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe]
+  selector: 'f2020-bids',
+  templateUrl: './bids.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatListModule, FaIconComponent, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
 })
 export class BidsComponent {
 
-  private _bids: Bid[] | Participant[] = [];
-  icon = icon.fasFlagCheckered;
-  disabled = input(false);
-  isBid = (bid: Bid | Participant): bid is Bid => (bid as Bid).points !== undefined;
+  readonly #router = inject(Router);
+  readonly #route = inject(ActivatedRoute);
 
-  @Input() result: Partial<Bid>;
+  readonly icon = icon.fasFlagCheckered;
+  readonly disabled = input(false);
+  readonly isBid = (bid: Bid | Participant): bid is Bid => (bid as Bid).points !== undefined;
+  readonly result = input<Partial<Bid>>(undefined);
 
-  @Input({ required: true }) set bids(value: Bid[] | Participant[]) {
-    this._bids = [...value || []].sort((a, b) => {
-      if (this.isBid(a) && this.isBid(b)) {
-        return (b.points - a.points) || (polePositionDiffComparator(a, b));
-      }
-      return a.player.displayName.localeCompare(b.player.displayName);
-    });
-  }
-
-  get bids(): Bid[] | Participant[] {
-    return this._bids;
-  }
-
-  constructor(private router: Router, private route: ActivatedRoute) {
-  }
+  readonly bids = input.required<Bid[] | Participant[], Bid[] | Participant[]>({
+    transform: value => {
+      return [...value || []].toSorted((a, b) => {
+        if (this.isBid(a) && this.isBid(b)) {
+          return (b.points - a.points) || (polePositionDiffComparator(a, b));
+        }
+        return a.player.displayName.localeCompare(b.player.displayName);
+      });
+    },
+  });
 
   gotoBid(uid: string) {
-    this.router.navigate(['bid', uid], { relativeTo: this.route });
+    this.#router.navigate(['bid', uid], { relativeTo: this.#route });
   }
 
   gotoResult() {
-    this.router.navigate(['result'], { relativeTo: this.route });
+    this.#router.navigate(['result'], { relativeTo: this.#route });
   }
 }

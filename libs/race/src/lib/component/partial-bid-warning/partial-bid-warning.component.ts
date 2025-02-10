@@ -1,38 +1,38 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Bid, Participant } from '@f2020/data';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Participant } from '@f2020/data';
 import { icon } from '@f2020/shared';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatTooltip } from '@angular/material/tooltip';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 
 @Component({
-    selector: 'f2020-partial-bid-warning',
-    template: `
-    @if (!bid.submitted) {
+  selector: 'f2020-partial-bid-warning',
+  template: `
+    @if (!bid().submitted) {
       <fa-icon
         class="focus-meta"
         [icon]="icon"
         size="2x"
         #tooltip="matTooltip"
         (click)="tooltip.toggle(); $event.preventDefault();"
-        [matTooltip]="bid.player.displayName + ' har ikke indsendt sit bud'"
-      ></fa-icon>
+        [matTooltip]="bid().player.displayName + ' har ikke indsendt sit bud'"
+      />
     }
-    `,
-    styles: [
-        `
+  `,
+  styles: [
+    `
       fa-icon {
         color: white;
       }
-    `
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FontAwesomeModule, MatTooltipModule]
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FaIconComponent, MatTooltip],
 })
 export class PartialBidWarningComponent {
 
   icon = icon.falTireFlat;
 
-  @Input() bid: Participant;
+  bid = input.required<Participant>();
 
 }
