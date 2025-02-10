@@ -7,7 +7,7 @@ export function driver(d: OpenF1Driver): IDriver {
   return {
     driverId: d.name_acronym.toLocaleLowerCase(),
     code: d.name_acronym,
-    countryCode: countryCode3ToCountryCode2[d.country_code] ?? d.country_code,
+    countryCode: countryCode3ToCountryCode2[d.country_code] ?? d.country_code ?? '??',
     headshotUrl: d.headshot_url,
     name: StringUtils.titleCase(d.full_name),
     permanentNumber: [d.driver_number],

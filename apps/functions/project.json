@@ -12,12 +12,7 @@
         "main" : "apps/functions/src/main.ts",
         "tsConfig" : "apps/functions/tsconfig.app.json",
         "assets" : [
-          "apps/functions/src/assets",
-          {
-            "glob" : "*.env",
-            "input" : "apps/functions/environment",
-            "output" : "."
-          }
+          "apps/functions/src/assets"
         ],
         "generatePackageJson" : true,
         "platform" : "node",

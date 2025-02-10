@@ -27,7 +27,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '2024',
+    redirectTo: '2025',
   },
   {
     path: 'login',

@@ -10,7 +10,11 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
   return fetch(`https://api.openf1.org/v1/drivers${filter}`)
     .then(response => response.json())
     .then((response: Driver[]) => response.map(mapper.driver))
-    .then(drivers => drivers.filter(driver => !!driver.code && (!!driver.countryCode || sessionKey)))
+    .then(drivers => drivers.filter(driver => {
+      const result = !!driver.code && (!!driver.countryCode || !!sessionKey);
+      !result && console.log('Invalid driver', driver);
+      return result;
+    }))
     .then(drivers => [...drivers.reduce((acc, driver) => {
       const existing = acc.get(driver.code);
       if (existing) {
