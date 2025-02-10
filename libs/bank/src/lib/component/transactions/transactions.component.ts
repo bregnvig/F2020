@@ -1,47 +1,41 @@
-import { Component, Input } from '@angular/core';
+import { Component, effect, input } from '@angular/core';
 import { Player, Transaction } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable, scan, switchMap } from 'rxjs';
 import { AccountService } from '../../service';
-import { DateTimePipe } from '@f2020/shared';
+import { DateTimePipe, LoadingComponent } from '@f2020/shared';
 import { MatListModule } from '@angular/material/list';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
-import { LoadingComponent } from '@f2020/shared';
 
 @Component({
-    selector: 'f2020-transactions',
-    templateUrl: './transactions.component.html',
-    styleUrls: ['./transactions.component.scss'],
-    imports: [InfiniteScrollModule, MatListModule, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe]
+  selector: 'f2020-transactions',
+  templateUrl: './transactions.component.html',
+  imports: [InfiniteScrollDirective, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe, MatListModule],
 })
 export class TransactionsComponent {
 
   transactions$: Observable<Transaction[]>;
-  trackByFn = (index: number) => index;
-  private _player: Player;
+  player = input.required<string, Player>({
+    transform: value => value?.uid,
+  });
   private lastDate$ = new BehaviorSubject<DateTime>(DateTime.local());
 
-  constructor(private service: AccountService) { }
-
-
-  @Input() set player(value: Player) {
-    if (value && this._player?.uid !== value?.uid) {
-      this._player = value;
-      this.transactions$ = this.lastDate$.pipe(
-        switchMap(lastDate => this.service.getTransactions(value.uid, lastDate, 20)),
-        scan((acc, transactions) => [...acc, ...transactions], []),
+  constructor(service: AccountService) {
+    effect(() => {
+      const player = this.player();
+      player && (this.transactions$ = this.lastDate$.pipe(
+          switchMap(lastDate => service.getTransactions(player, lastDate, 20)),
+          scan((acc, transactions) => [...acc, ...transactions], []),
+        )
       );
-    }
-  }
-
-  get player(): Player {
-    return this._player;
+    });
   }
 
   amount(transaction: Transaction): number {
-    return transaction.to === this.player.uid ? transaction.amount : - transaction.amount;
+    return transaction.to === this.player() ? transaction.amount : -transaction.amount;
   }
+
   loadMore(transaction: Transaction) {
     this.lastDate$.next(transaction.date);
   }

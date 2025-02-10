@@ -27,18 +27,15 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
       </button>
     </div>
   `,
-  styleUrls: ['./my-transactions.component.scss'],
   imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, CurrencyPipe],
 })
 export class MyTransactionsComponent {
 
+  #dialog = inject(MatDialog);
   player = inject(PlayerStore).player;
   icon = icon.farPiggyBank;
 
-  constructor(private dialog: MatDialog) {
-  }
-
   showInfo() {
-    this.dialog.open(DepositInfoDialogComponent);
+    this.#dialog.open(DepositInfoDialogComponent);
   }
 }
