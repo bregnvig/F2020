@@ -1,10 +1,10 @@
 <h1 mat-dialog-title>{{ data.player.displayName }}</h1>
-<div mat-dialog-content [formGroup]="fg" fxLayout="column">
+<div mat-dialog-content [formGroup]="fg">
   <p>Hvor mange penge skal der overføres og til hvem?</p>
   <p>Dog maksimalt {{ data.player.balance | currency: 'DKK' }}</p>
   <mat-form-field>
     <mat-label>Modtager</mat-label>
-    <mat-select formControlName="to" cdkFocusInitial>
+    <mat-select formControlName="to">
       @for (player of players(); track player) {
         <mat-option [value]=player>
           {{ player.displayName }}

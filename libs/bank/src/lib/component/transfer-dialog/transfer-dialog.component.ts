@@ -1,45 +1,40 @@
-import { Component, computed, inject, Inject, OnInit, Signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Player } from '@f2020/data';
 import { AccountService } from '../../service';
 import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatOption } from '@angular/material/core';
 import { CurrencyPipe } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
 import { PlayersStore } from '@f2020/api';
 
 @Component({
   templateUrl: './transfer-dialog.component.html',
-  styleUrls: ['./transfer-dialog.component.scss'],
-  imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatInputModule, MatButtonModule, CurrencyPipe],
+  imports: [ReactiveFormsModule, MatDialogTitle, MatDialogContent, MatFormField, CurrencyPipe, MatSelect, MatOption, MatLabel, MatInput, MatDialogActions, MatButton, MatDialogClose],
 })
-export class TransferDialogComponent implements OnInit {
-  fg: FormGroup;
-  players: Signal<Player[]>;
+export class TransferDialogComponent {
+
+  readonly #fb = inject(FormBuilder);
+  readonly #dialogRef = inject(MatDialogRef<DepositDialogComponent>);
+  readonly #service = inject(AccountService);
   readonly #store = inject(PlayersStore);
 
-  constructor(
-    private dialogRef: MatDialogRef<DepositDialogComponent>,
-    private service: AccountService,
-    private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { player: Player; }) {
-  }
+  players = computed(() => this.#store.players().filter(p => p.uid !== this.data.player.uid));
+  data = inject<{ player: Player; }>(MAT_DIALOG_DATA);
+
+  fg = this.#fb.group({
+    to: this.#fb.control<Player>(null, Validators.required),
+    amount: this.#fb.control<number>(0, [Validators.required, Validators.min(0), Validators.max(Math.max(0, this.data.player.balance))]),
+    message: this.#fb.control('', Validators.required),
+  });
+
 
   onWithdraw() {
     const { amount, message, to } = this.fg.value;
-    this.dialogRef.close(this.service.transfer(this.data.player.uid, to.uid, amount, message).then(() => ({ to, amount })));
+    this.#dialogRef.close(this.#service.transfer(this.data.player.uid, to.uid, amount, message).then(() => ({ to, amount })));
   }
 
-  ngOnInit(): void {
-    this.players = computed(() => this.#store.players().filter(p => p.uid !== this.data.player.uid));
-    this.fg = this.fb.group({
-      to: [null, Validators.required],
-      amount: [null, [Validators.required, Validators.min(0), Validators.max(Math.max(0, this.data.player.balance))]],
-      message: [null, Validators.required],
-    });
-  }
 }

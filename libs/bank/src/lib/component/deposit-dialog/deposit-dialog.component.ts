@@ -1,41 +1,51 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { Player } from '@f2020/data';
 import { AccountService } from '../../service';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 
 @Component({
-    templateUrl: './deposit-dialog.component.html',
-    styleUrls: ['./deposit-dialog.component.scss'],
-    imports: [MatDialogModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule]
+  template: `
+    <h1 mat-dialog-title>{{ data.player.displayName }}</h1>
+    <div mat-dialog-content [formGroup]="fg">
+      <p>Hvor mange penge skal der indsættes?</p>
+      <mat-form-field>
+        <mat-label>Beløb</mat-label>
+        <input formControlName="amount" matInput type="number">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Besked</mat-label>
+        <input formControlName="message" matInput placeholder="Via MobilePay">
+      </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="close()">Luk</button>
+      <button mat-button (click)="deposit()" [disabled]="fg.invalid">OK</button>
+    </div>
+  `,
+  imports: [MatDialogTitle, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatButton, MatDialogActions, MatDialogContent],
 })
-export class DepositDialogComponent implements OnInit {
+export class DepositDialogComponent {
 
-  fg: FormGroup;
+  #fb = inject(FormBuilder);
+  #dialogRef = inject(MatDialogRef<DepositDialogComponent>);
+  #service = inject(AccountService);
 
-  constructor(
-    private dialogRef: MatDialogRef<DepositDialogComponent>,
-    private service: AccountService,
-    private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { player: Player; }) { }
+  fg = this.#fb.group({
+    amount: this.#fb.control(0, [Validators.required, Validators.min(0)]),
+    message: this.#fb.control(''),
+  });
 
-  onDeposit() {
+  data = inject<{ player: Player; }>(MAT_DIALOG_DATA);
+
+  deposit() {
     const { amount, message } = this.fg.value;
-    this.dialogRef.close(this.service.deposit(this.data.player.uid, amount, message || 'Via MobilePay').then(() => amount));
+    this.#dialogRef.close(this.#service.deposit(this.data.player.uid, amount, message || 'Via MobilePay').then(() => amount));
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  close(): void {
+    this.#dialogRef.close();
   }
-
-  ngOnInit(): void {
-    this.fg = this.fb.group({
-      amount: [null, [Validators.required, Validators.min(0)]],
-      message: []
-    });
-  }
-
 }
