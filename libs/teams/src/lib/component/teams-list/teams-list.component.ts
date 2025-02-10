@@ -14,37 +14,35 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { first, map, switchMap } from 'rxjs';
 
 @Component({
-    selector: 'teams-teams-list',
-    templateUrl: './teams-list.component.html',
-    styleUrls: ['./teams-list.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe]
+  selector: 'teams-teams-list',
+  templateUrl: './teams-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
 })
 export class TeamsListComponent {
+  readonly #store = inject(DriversStore);
+  readonly #dialog = inject(MatDialog);
+  readonly #service = inject(TeamService);
+  readonly #snackBar = inject(MatSnackBar);
 
-  teams$ = this.service.teams$;
+  teams$ = this.#service.teams$;
   icon = icon;
 
-  readonly store = inject(DriversStore);
-  noDrivers = computed(() => !this.store.drivers()?.length);
+  noDrivers = computed(() => !this.#store.drivers()?.length);
 
-  constructor(
-    private dialog: MatDialog,
-    private service: TeamService,
-    private snackBar: MatSnackBar,
-  ) {
-    this.store.loadDrivers();
+  constructor() {
+    this.#store.loadDrivers();
   }
 
   addDriver(team: ITeam) {
-    this.dialog.open(AddDriverComponent, { data: this.store.drivers() }).afterClosed().pipe(
+    this.#dialog.open(AddDriverComponent, { data: this.#store.drivers() }).afterClosed().pipe(
       map(driver => ({
         ...team,
         drivers: [...team.drivers, driver],
       }) as ITeam),
-      switchMap(team => this.service.updateTeam(team).then(() => team.drivers[team.drivers.length - 1])),
+      switchMap(team => this.#service.updateTeam(team).then(() => team.drivers[team.drivers.length - 1])),
       first(),
-    ).subscribe(driver => this.snackBar.open(`${driver} tilføjet til ${team.name}`, undefined, { duration: 1000 }));
+    ).subscribe(driver => this.#snackBar.open(`${driver} tilføjet til ${team.name}`, undefined, { duration: 1000 }));
   }
 
   removeDriver(driver: string, team: ITeam) {
@@ -52,7 +50,7 @@ export class TeamsListComponent {
       ...team,
       drivers: team.drivers.filter(existing => existing !== driver),
     };
-    this.service.updateTeam(payload).then(() => this.snackBar.open(`${driver} fjernet fra ${team.name}`, undefined, { duration: 1000 }));
+    this.#service.updateTeam(payload).then(() => this.#snackBar.open(`${driver} fjernet fra ${team.name}`, undefined, { duration: 1000 }));
 
   }
 }

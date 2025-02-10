@@ -1,13 +1,13 @@
 <mat-card class="flex-auto">
   <mat-card-header>
     <div mat-card-avatar>
-      <fa-icon [icon]="icon" [fixedWidth]="true" size="2x"></fa-icon>
+      <fa-icon [icon]="icon()" [fixedWidth]="true" size="2x"></fa-icon>
     </div>
-    <mat-card-title>{{title}}</mat-card-title>
+    <mat-card-title>{{title()}}</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <h1>
-      {{number}}
+      {{number()}}
     </h1>
   </mat-card-content>
 </mat-card>
