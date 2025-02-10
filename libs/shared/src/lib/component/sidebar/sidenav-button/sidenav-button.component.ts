@@ -1,24 +1,20 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
-    selector: 'sha-sidenav-button',
-    template: `
+  selector: 'sha-sidenav-button',
+  template: `
     <button mat-list-item>
           <span class="flex flex-row items-center">
-            <fa-icon class="mr-3" [icon]="icon" [fixedWidth]="true"></fa-icon>
+            <fa-icon class="mr-3" [icon]="icon()" [fixedWidth]="true"/>
              <ng-content></ng-content>
           </span>
     </button>`,
-    styleUrls: ['./sidenav-button.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatListModule, FontAwesomeModule]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatListModule, FaIconComponent],
 })
 export class SidenavButtonComponent {
-
-  @Input() icon: [IconPrefix, IconName];
-  @Input() title: string;
-
+  readonly icon = input.required<[IconPrefix, IconName]>();
 }

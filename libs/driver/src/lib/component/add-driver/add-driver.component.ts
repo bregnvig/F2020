@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { map, startWith } from 'rxjs/operators';
@@ -20,11 +20,10 @@ export class AddDriverComponent {
 
   filteredDrivers: Signal<string[]>;
   driverControl = new FormControl(null, Validators.required);
-
+  currentDrivers = inject<string[]>(MAT_DIALOG_DATA);
   #term: Signal<string>;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public currentDrivers: string[]) {
+  constructor() {
     this.#term = toSignal(this.driverControl.valueChanges.pipe(
       startWith(''),
       map<string, string>(term => term.toLocaleLowerCase()),

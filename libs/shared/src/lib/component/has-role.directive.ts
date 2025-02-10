@@ -1,6 +1,7 @@
 import { NgIfContext } from '@angular/common';
-import { Directive, effect, EmbeddedViewRef, inject, Input, signal, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, effect, EmbeddedViewRef, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { PlayerStore } from '@f2020/api';
+import { ensureArray } from '@f2020/tools';
 
 @Directive({
   selector: '[shaHasRole]',
@@ -8,46 +9,47 @@ import { PlayerStore } from '@f2020/api';
 })
 export class HasRoleDirective {
 
-  private elseTemplateRef: TemplateRef<NgIfContext> | null = null;
-  private thenViewRef: EmbeddedViewRef<NgIfContext> | null = null;
-  private elseViewRef: EmbeddedViewRef<NgIfContext> | null = null;
-  private condition = false;
-  private roles = signal<string[]>([]);
+  #thenViewRef: EmbeddedViewRef<NgIfContext> | null = null;
+  #elseViewRef: EmbeddedViewRef<NgIfContext> | null = null;
+  #condition = false;
+
+  roles = input.required<string[], string[] | string>({
+    alias: 'shaHasRole',
+    transform: value => ensureArray(value),
+  });
+  elseTemplateRef = input<TemplateRef<NgIfContext> | null>(null, {
+    alias: 'shaHasRoleElse',
+  });
+
 
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef) {
     const { player } = inject(PlayerStore);
     effect(() => {
-      this.condition = (player()?.roles || []).some(r => this.roles().some(role => role === r));
-      this.updateView();
+      this.#condition = (player()?.roles || []).some(r => this.roles().some(role => role === r));
+      this.#updateView();
+    });
+    effect(() => {
+      this.elseTemplateRef();
+      this.#elseViewRef = null;  // clear previous view if any.
+      this.#updateView();
     });
   }
 
-  @Input()
-  set shaHasRoleElse(templateRef: TemplateRef<any> | null) {
-    this.elseTemplateRef = templateRef;
-    this.elseViewRef = null;  // clear previous view if any.
-    this.updateView();
-  }
-
-  @Input() set shaHasRole(roles: string | string[]) {
-    this.roles.set(Array.isArray(roles) ? roles : [roles]);
-  }
-
-  private updateView() {
-    if (this.condition) {
-      if (!this.thenViewRef) {
+  #updateView() {
+    if (this.#condition) {
+      if (!this.#thenViewRef) {
         this.viewContainer.clear();
-        this.elseViewRef = null;
-        this.thenViewRef = this.viewContainer.createEmbeddedView(this.templateRef);
+        this.#elseViewRef = null;
+        this.#thenViewRef = this.viewContainer.createEmbeddedView(this.templateRef);
       }
     } else {
-      if (!this.elseViewRef) {
+      if (!this.#elseViewRef) {
         this.viewContainer.clear();
-        this.thenViewRef = null;
-        if (this.elseTemplateRef) {
-          this.elseViewRef = this.viewContainer.createEmbeddedView(this.elseTemplateRef);
+        this.#thenViewRef = null;
+        if (this.elseTemplateRef()) {
+          this.#elseViewRef = this.viewContainer.createEmbeddedView(this.elseTemplateRef());
         }
       }
     }
