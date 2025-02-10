@@ -1,7 +1,7 @@
 <mat-form-field class="w-full" subscriptSizing="dynamic">
-  <mat-label>{{ label }}</mat-label>
+  <mat-label>{{ label() }}</mat-label>
   <mat-select [formControl]="selectControl">
-    @if (teams) {
+    @if (teams()) {
       @for (teamAndDrivers of allTeamAndDrivers; track teamAndDrivers) {
         <mat-optgroup [label]="teamAndDrivers[0]">
           @for (driverId of teamAndDrivers[1]; track driverId) {
@@ -12,14 +12,14 @@
         </mat-optgroup>
       }
     } @else {
-      @for (driverId of driverIds; track driverId) {
+      @for (driverId of driverIds(); track driverId) {
         <mat-option [value]="driverId">
           {{ driverId | driverName }}
         </mat-option>
       }
     }
   </mat-select>
-  @if (error) {
-    <mat-hint>{{ error }}</mat-hint>
+  @if (error()) {
+    <mat-hint>{{ error() }}</mat-hint>
   }
 </mat-form-field>

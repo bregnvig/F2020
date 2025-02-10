@@ -1,50 +1,55 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, input } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { ITeam } from '@f2020/data';
-import { untilDestroyed } from '@ngneat/until-destroy';
-import { AbstractControlComponent } from '../../abstract-control-component';
 import { MatOptionModule } from '@angular/material/core';
+import { ITeam } from '@f2020/data';
+import { AbstractControlComponent } from '../../abstract-control-component';
 
-import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'f2020-select-team',
-    templateUrl: './select-team.component.html',
-    styleUrls: ['./select-team.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => SelectTeamComponent),
-            multi: true,
-        },
-    ],
-    imports: [
-        MatFormFieldModule,
-        MatSelectModule,
-        ReactiveFormsModule,
-        MatOptionModule
-    ]
+  selector: 'f2020-select-team',
+  template: `
+    <mat-form-field class="w-full">
+      <mat-label>{{ label() }}</mat-label>
+      <mat-select [formControl]="selectControl">
+        @for (team of teams(); track team) {
+          <mat-option [value]="team.constructorId">
+            {{ team.name }}
+          </mat-option>
+        }
+      </mat-select>
+      <mat-hint align="end">{{ error() }}</mat-hint>
+    </mat-form-field>
+  `,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SelectTeamComponent),
+      multi: true,
+    },
+  ],
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatOptionModule,
+  ],
 })
-export class SelectTeamComponent extends AbstractControlComponent<string> implements OnInit {
+export class SelectTeamComponent extends AbstractControlComponent<string> {
 
-  @Input({ required: true }) teams: ITeam[];
-  @Input({ required: true }) label: string;
-  @Input() error: string;
-  selectControl = new FormControl<string>('');
+  readonly teams = input.required<ITeam[]>();
+  readonly label = input.required<string>();
+  readonly error = input<string>(undefined);
+  selectControl = new FormControl<string>('', { nonNullable: true });
 
-  ngOnInit(): void {
+  constructor() {
+    super();
+    this.setupStandardControl(this.selectControl);
     this.selectControl.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(),
     ).subscribe(teamId => this.propagateChange(teamId));
-  }
-
-  markAllTouched(): void {
-    this.selectControl.markAsTouched();
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    isDisabled ? this.selectControl.disable() : this.selectControl.enable();
   }
 
   writeValue(value: string): void {

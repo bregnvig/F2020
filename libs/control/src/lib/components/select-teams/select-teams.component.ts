@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { ITeam } from '@f2020/data';
 import { TeamNamePipe } from '@f2020/shared';
@@ -24,59 +24,58 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
 };
 
 @Component({
-    selector: 'f2020-select-teams',
-    template: `
+  selector: 'f2020-select-teams',
+  template: `
     <div [formGroup]="fg" class="flex flex-col">
-      @for (_ of teamsArray.controls; track _; let i = $index) {
+      @for (_ of teamsArray.controls; track $index) {
         <ng-container formArrayName="teams">
           <f2020-select-team
-            [teams]="teams"
-            [label]="labelFn(i + 1)"
-            [error]="errorMessage(i)"
-            [formControlName]="i">
+            [teams]="teams()"
+            [label]="labelFn()($index + 1)"
+            [error]="errorMessage($index)"
+            [formControlName]="$index">
           </f2020-select-team>
         </ng-container>
       }
     </div>
-    `,
-    styleUrls: ['./select-teams.component.scss'],
-    providers: [
-        TeamNamePipe,
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => SelectTeamsComponent),
-            multi: true,
-        },
-        {
-            provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => SelectTeamsComponent),
-            multi: true,
-        },
-    ],
-    imports: [
-        ReactiveFormsModule,
-        SelectTeamComponent
-    ]
+  `,
+  providers: [
+    TeamNamePipe,
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SelectTeamsComponent),
+      multi: true,
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => SelectTeamsComponent),
+      multi: true,
+    },
+  ],
+  imports: [
+    ReactiveFormsModule,
+    SelectTeamComponent,
+  ],
 })
 export class SelectTeamsComponent extends AbstractControlComponent<string[]> implements OnInit {
 
-  @Input({ required: true }) teams: ITeam[];
-  @Input({ required: true }) noOfTeams: number;
+  readonly teams = input.required<ITeam[]>();
+  readonly noOfTeams = input.required<number>();
+  readonly labelFn = input<LabelFn>((index: number) => `Vælg ${index}. hold`);
 
   fg: FormGroup;
   teamsArray: FormArray<FormControl<string>>;
-
-  @Input() labelFn: LabelFn = (index: number) => `Vælg ${index}. hold`;
 
   constructor(private fb: FormBuilder, private teamName: TeamNamePipe) {
     super();
   }
 
   ngOnInit(): void {
-    this.teamsArray = this.fb.array(Array.from({ length: this.noOfTeams }, () => [null]), uniqueTeams);
+    this.teamsArray = this.fb.array(Array.from({ length: this.noOfTeams() }, () => [null]), uniqueTeams);
     this.fg = this.fb.group({
       teams: this.teamsArray,
     });
+    this.setupStandardControl(this.fg);
     this.teamsArray.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe(value => this.propagateChange(value));
@@ -88,14 +87,6 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
     } else {
       this.fg.reset({}, { emitEvent: false });
     }
-  }
-
-  markAllTouched(): void {
-    this.fg.markAllAsTouched();
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    isDisabled ? this.fg.disable() : this.fg.enable();
   }
 
   validate(): ValidationErrors | null {

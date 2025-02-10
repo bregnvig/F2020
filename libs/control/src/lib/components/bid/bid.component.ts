@@ -1,7 +1,6 @@
-import { Component, computed, forwardRef, input, OnInit, Signal } from '@angular/core';
+import { Component, computed, forwardRef, inject, input } from '@angular/core';
 import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Bid, IRace, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime } from 'rxjs/operators';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { DriverNamePipe } from '@f2020/driver';
@@ -14,67 +13,62 @@ import { SelectDriversComponent } from '../select-drivers/select-drivers.compone
 import { DriverCodesComponent } from '../driver-codes/driver-codes.component';
 
 import { MatExpansionModule } from '@angular/material/expansion';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    selector: 'f2020-bid',
-    templateUrl: './bid.component.html',
-    styleUrls: ['./bid.component.scss'],
-    providers: [
-        {
-            provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => BidComponent),
-            multi: true,
-        },
-        {
-            provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => BidComponent),
-            multi: true,
-        },
-    ],
-    imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe]
+  selector: 'f2020-bid',
+  templateUrl: './bid.component.html',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => BidComponent),
+      multi: true,
+    },
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => BidComponent),
+      multi: true,
+    },
+  ],
+  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe],
 })
-export class BidComponent extends AbstractControlComponent<Bid> implements OnInit {
+export class BidComponent extends AbstractControlComponent<Bid> {
+
+  #fb = inject(FormBuilder);
 
   race = input.required<IRace>();
   teams = input.required<ITeam[]>();
   type = input.required<'bid' | 'result' | 'interim'>();
-  isInterim: Signal<boolean>;
-  isResult: Signal<boolean>;
-  notBid: Signal<boolean>;
+  isInterim = computed(() => this.type() === 'interim');
+  isResult = computed(() => this.type() === 'result');
+  notBid = computed(() => this.type() !== 'bid');
 
-  fg = this.fb.group({
-    qualify: this.fb.control<string[]>(null, Validators.required),
-    fastestDriver: this.fb.control<string[]>(null, Validators.required),
-    podium: this.fb.control<string[]>(null, Validators.required),
-    selectedDriver: this.fb.control<SelectedDriverValue>(null),
-    selectedTeam: this.fb.control<SelectedTeamValue>({ value: null, disabled: true }),
-    slowestPitStop: this.fb.control<string[]>(null, Validators.required),
-    firstCrash: this.fb.control<string[]>(null, Validators.required),
-    polePositionTime: this.fb.control<number>(null, Validators.required),
+  fg = this.#fb.group({
+    qualify: this.#fb.control<string[]>(null, Validators.required),
+    fastestDriver: this.#fb.control<string[]>(null, Validators.required),
+    podium: this.#fb.control<string[]>(null, Validators.required),
+    selectedDriver: this.#fb.control<SelectedDriverValue>(null),
+    selectedTeam: this.#fb.control<SelectedTeamValue>({ value: null, disabled: true }),
+    slowestPitStop: this.#fb.control<string[]>(null, Validators.required),
+    firstCrash: this.#fb.control<string[]>(null, Validators.required),
+    polePositionTime: this.#fb.control<number>(null, Validators.required),
   });
 
   fastestLapLabelFn = () => 'Hurtigste kører';
   firstCrashLabelFn = () => 'Første udgået';
   podiumLabelFn = (index: number) => `${index}. plads`;
 
-  constructor(
-    private fb: FormBuilder) {
+  constructor() {
     super();
-  }
-
-  ngOnInit(): void {
-    this.isInterim = computed(() => this.type() === 'interim');
-    this.isResult = computed(() => this.type() === 'result');
-    this.notBid = computed(() => this.type() !== 'bid');
     this.fg.valueChanges.pipe(
       debounceTime(300),
-      untilDestroyed(this),
+      takeUntilDestroyed(),
     ).subscribe(value => this.propagateChange(value));
   }
 
   writeValue(value: Bid): void {
     if (value) {
-      this.fg.patchValue({
+      this.fg.reset({
         qualify: null,
         fastestDriver: null,
         podium: null,

@@ -1,7 +1,7 @@
 import { Directive } from '@angular/core';
-import { ControlValueAccessor } from '@angular/forms';
+import { AbstractControl, ControlValueAccessor } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Directive()
@@ -9,12 +9,14 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
 
 
   protected subscriptions: Subscription[] = [];
-  protected destroyed$ = new Subject<boolean>();
 
   private queue: any[] = [];
   private _propagateChange: (_: T) => any;
   private _propagateTouched: (_?: any) => any;
   private readonly _uniqueId: string;
+
+  #setDisabledState: (_: boolean) => void;
+  #markAllTouched: () => void;
 
   constructor() {
   }
@@ -39,6 +41,15 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
     this._propagateTouched = fn;
   }
 
+  setDisabledState(isDisabled: boolean): void {
+    this.#setDisabledState?.(isDisabled);
+  }
+
+  markAllTouched(): void {
+    this.#markAllTouched?.();
+  }
+
+
   protected propagateChange(_: any): void {
     if (this._propagateChange) {
       this._propagateChange(_);
@@ -55,6 +66,11 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
 
   abstract writeValue(value: T): void;
 
-  abstract markAllTouched(): void;
-
+  protected setupStandardControl(control: AbstractControl): void {
+    this.#setDisabledState = (isDisabled: boolean) => {
+      if (control.disabled === isDisabled || control.enabled === !isDisabled) return;
+      isDisabled ? control.disable() : control.enable();
+    };
+    this.#markAllTouched = () => control.markAllAsTouched();
+  }
 }

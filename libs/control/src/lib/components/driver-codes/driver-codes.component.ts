@@ -1,30 +1,23 @@
-
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DriverPipe } from '@f2020/driver';
 
 @Component({
-    selector: 'f2020-driver-codes',
-    template: `
-    @for (driverId of driverIds; track driverId; let last = $last) {
-      {{(driverId | driver)?.code}}
-      @if (!last) {
+  selector: 'f2020-driver-codes',
+  template: `
+    @for (driverId of driverIds(); track driverId) {
+      {{ (driverId | driver)?.code }}
+      @if (!$last) {
         ,
       }
     }
-    `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [DriverPipe]
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DriverPipe],
 })
 export class DriverCodesComponent {
 
-  #driverIds: string[];
-
-  @Input({ required: true }) set driverIds(value: string[]) {
-    this.#driverIds = (value || []).filter(id => !!id);
-  }
-
-  get driverIds() {
-    return this.#driverIds;
-  }
+  readonly driverIds = input.required<string[], string[]>({
+    transform: value => (value || []).filter(id => !!id),
+  });
 
 }
