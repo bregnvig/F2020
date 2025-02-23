@@ -24,9 +24,11 @@ export class JoinWbcComponent {
 
   @HostBinding('hidden') isHidden = true;
   latestWBCJoinDate: Signal<DateTime>;
-  canJoin: Signal<boolean>;
+  stillTimeToJoin: Signal<boolean>;
+  hasJoined: Signal<boolean>;
   loading: Signal<boolean>;
-  icon = icon.fasTrophy;
+  icon = icon.fasStar;
+  title = computed(() => this.hasJoined() ? 'Du er med i WBC!' : 'Deltag i WBC');
   readonly playerStore = inject(PlayerStore);
 
   constructor(
@@ -35,13 +37,17 @@ export class JoinWbcComponent {
     const seasonStore = inject(SeasonStore);
     this.latestWBCJoinDate = computed(() => seasonStore.season()?.wbc?.latestWBCJoinDate);
 
-    this.canJoin = computed(() => {
+    this.stillTimeToJoin = computed(() => {
+      return this.latestWBCJoinDate() > DateTime.local();
+    });
+    this.hasJoined = computed(() => {
       const wbc = seasonStore.season()?.wbc;
       const uid = this.playerStore.player().uid;
-      return (wbc?.participants || []).includes(uid) === false && this.latestWBCJoinDate() > DateTime.local();
+      return (wbc?.participants || []).includes(uid);
     });
-    effect(() => this.isHidden = !this.canJoin());
+    effect(() => this.isHidden = !this.stillTimeToJoin());
   }
+
 
   joinWBC() {
     this.playerStore.joinWBC()

@@ -1,5 +1,5 @@
 import localeDa from '@angular/common/locales/da';
-import { enableProdMode, importProvidersFrom, LOCALE_ID, inject, provideAppInitializer } from '@angular/core';
+import { enableProdMode, importProvidersFrom, inject, LOCALE_ID, provideAppInitializer } from '@angular/core';
 
 import { NgxMatTimepickerModule } from '@alexfriesen/ngx-mat-timepicker';
 import { DatePipe, registerLocaleData } from '@angular/common';
@@ -15,7 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -44,7 +44,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     provideHttpClient(),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => {
@@ -82,9 +82,9 @@ bootstrapApplication(AppComponent, {
     DatePipe,
     DateTimePipe,
     provideAppInitializer(() => {
-        const initializerFn = (initializeFontAwesomeFactory)(inject(FaIconLibrary));
-        return initializerFn();
-      }),
+      const initializerFn = (initializeFontAwesomeFactory)(inject(FaIconLibrary));
+      return initializerFn();
+    }),
     provideAnimations(),
   ],
 }).then(async () => {
