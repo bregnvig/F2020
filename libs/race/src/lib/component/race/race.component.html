@@ -72,9 +72,11 @@
             <mat-card-content>
               <f2020-bids [bids]="bids()" [disabled]="!clickable()" [result]="race().result"/>
             </mat-card-content>
-            <mat-card-actions>
-              <button mat-button (click)="relive = true">Genoplev løbet</button>
-            </mat-card-actions>
+            @if (race().state === 'completed') {
+              <mat-card-actions>
+                <button mat-button (click)="relive = true">Genoplev løbet</button>
+              </mat-card-actions>
+            }
           </mat-card>
         }
       }

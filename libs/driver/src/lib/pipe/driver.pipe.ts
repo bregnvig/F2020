@@ -21,7 +21,7 @@ export class DriverPipe implements PipeTransform {
     });
   }
 
-  transform(driverId: string, ...args: unknown[]): IDriver | undefined {
+  transform(driverId: string): IDriver | undefined {
 
     if (driverId && driverId !== this.previousCode && this.drivers?.length) {
       this.previousCode = driverId;
