@@ -1,5 +1,7 @@
+@let driver = driverId$ | async | driver;
 <mat-toolbar color="primary">
-  <span>{{ driverId$ | async | driverName }}</span>
+  <img class="avatar bg-white" height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver?.name">
+  <span>{{ driver?.name }}</span>
 </mat-toolbar>
 <sha-card-page>
   @if (currentSeasonResult$ | async; as result) {

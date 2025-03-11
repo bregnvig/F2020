@@ -8,33 +8,34 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StandingService } from '../../service/standing.service';
-import { DriverNamePipe } from '@f2020/driver';
+import { DriverPipe } from '@f2020/driver';
 import { DriverResultComponent } from './driver-result/driver-result.component';
 import { DriverQualifyingComponent } from './driver-qualifying/driver-qualifying.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NumberCardComponent } from './number-card/number-card.component';
-import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { AsyncPipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-standing-driver',
-    templateUrl: './standing-driver.component.html',
-    styleUrls: ['./standing-driver.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        MatToolbarModule,
-        CardPageComponent,
-        NumberCardComponent,
-        MatTabsModule,
-        DriverQualifyingComponent,
-        DriverResultComponent,
-        LoadingComponent,
-        AsyncPipe,
-        DecimalPipe,
-        DriverNamePipe,
-    ]
+  selector: 'f2020-standing-driver',
+  templateUrl: './standing-driver.component.html',
+  styleUrls: ['./standing-driver.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatToolbarModule,
+    CardPageComponent,
+    NumberCardComponent,
+    MatTabsModule,
+    DriverQualifyingComponent,
+    DriverResultComponent,
+    LoadingComponent,
+    AsyncPipe,
+    DecimalPipe,
+    NgOptimizedImage,
+    DriverPipe,
+  ],
 })
 export class StandingDriverComponent {
 

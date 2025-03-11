@@ -6,6 +6,7 @@
     <mat-action-list>
       @for (standing of standings(); track standing) {
         <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
+          <img matListItemAvatar height="40" width="40" [ngSrc]="standing.driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="standing.driver.name">
           <f2020-standing-list-item [standing]="standing"></f2020-standing-list-item>
         </button>
       }

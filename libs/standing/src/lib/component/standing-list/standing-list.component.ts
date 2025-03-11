@@ -1,4 +1,4 @@
-import { LowerCasePipe } from '@angular/common';
+import { LowerCasePipe, NgOptimizedImage } from '@angular/common';
 import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -19,6 +19,7 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
     StandingListItemComponent,
     LoadingComponent,
     LowerCasePipe,
+    NgOptimizedImage,
   ],
   providers: [
     StandingStore,
