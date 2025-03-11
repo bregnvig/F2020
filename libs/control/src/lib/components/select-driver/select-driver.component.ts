@@ -8,6 +8,7 @@ import { AbstractControlComponent } from '../../abstract-control-component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'f2020-select-driver',
@@ -25,6 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatOptionModule,
     DriverPipe,
+    NgOptimizedImage,
   ],
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {

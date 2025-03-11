@@ -9,7 +9,10 @@
 
               @let driver = driverId | driver;
               <mat-option [value]="driverId">
-                {{ driver?.name }} {{ driver?.teamColor }}
+                <div class="flex flex-row">
+                  <img class="avatar" height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/red.svg'" [alt]="driver?.name">
+                  <span class="my-auto">{{ driver?.name }}</span>
+                </div>
               </mat-option>
             </ng-container>
           }
