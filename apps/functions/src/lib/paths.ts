@@ -2,6 +2,7 @@ const seasonsURL = 'seasons';
 const racesURL = 'races';
 const playersURL = 'players';
 const driversURL = 'drivers';
+const teamsURL = 'teams';
 const circuitsURL = 'circuits';
 
 export const documentPaths = {
@@ -25,6 +26,7 @@ export const collectionPaths = {
   circuits: () => `${circuitsURL}`,
   bids: (seasonId: string | number, raceId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}/${raceId}/bids`,
   races: (seasonId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}`,
+  teams: (seasonId: string | number) => `${seasonsURL}/${seasonId}/${teamsURL}`,
   standings: {
     drivers: (seasonId: string | number, resultSeasonId: string | number) => `${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId}`,
   },
