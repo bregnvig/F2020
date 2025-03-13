@@ -1,10 +1,10 @@
 import { IRace, Player } from '@f2020/data';
 import { requiredValue } from '@f2020/tools';
-import { log } from 'firebase-functions/logger';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { DateTime } from 'luxon';
 import { getCurrentRace, playerWithoutBid, sendMail } from '../../lib';
 import { sendNotification } from './../../lib';
+import { logger } from 'firebase-functions';
 
 const dayNames = new Map<string, string>([
   ['1', 'mandag'],
@@ -35,37 +35,42 @@ const finalNotificationMessage = (race: IRace): string =>
 export const mailReminderCrontab = onSchedule({
     timeZone: 'Europe/Copenhagen',
     schedule: '11 * * * *',
-  }, async () => getCurrentRace('open')
-    .then(async race => {
-      if (race) {
-        const diff = race.close.diffNow(['days', 'hours', 'minutes']);
-        if (diff.days === 1 && DateTime.local().hour === 11) {
-          const players = await playerWithoutBid();
-          const closeDay = requiredValue(dayNames.get(race.close.setLocale('da').toFormat('E')), 'Weekday');
-          const closeTime = race.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
-          await Promise.all(players.map(player => {
-            log(`Should mail to ${player.displayName}`);
-            sendMail(player.email, `Tid til at spille på det ${race.name} `, mailBody(player, race, closeDay, closeTime)).then((msg) => {
-              log(`sendMail result :(${msg})`);
-            });
-            if (player.tokens && player.tokens.length) {
-              log(`Should send notification to ${player.displayName}`);
-              sendNotification(player.tokens, `Husk at spille`, notificationMessage(race, closeDay, closeTime));
-            }
+  }, async () => {
+    const race = await getCurrentRace('open');
+    if (race) {
+      const diff = race.close.diffNow(['days', 'hours', 'minutes']);
+      if (diff.days === 1 && DateTime.local().hour === 11) {
+        const players = await playerWithoutBid();
+        const closeDay = requiredValue(dayNames.get(race.close.setLocale('da').toFormat('E')), 'Weekday');
+        const closeTime = race.close.setLocale('da').setZone('Europe/Copenhagen').toFormat('T');
+        await Promise.all(players.map(player => {
+          const result: Promise<void>[] = [];
+          logger.info(`Should mail to ${player.displayName}`);
+          result.push(sendMail(player.email, `Tid til at spille på det ${race.name} `, mailBody(player, race, closeDay, closeTime)).then((msg) => {
+            logger.info(`sendMail result :(${msg})`);
           }));
-        } else if (diff.days === 0 && diff.hours === 0) {
-          const players = await playerWithoutBid();
-          await Promise.all(players.map(player => {
-            if (player.tokens && player.tokens.length) {
-              log(`Should send final reminder notification to ${player.displayName}`);
-              sendNotification(player.tokens, `Tik tok tiden går`, finalNotificationMessage(race));
-            }
-          }));
-        } else {
-          log(`No reminder needs to sent at this time`);
-        }
-      } else if (!race) {
-        log('No open race');
+          if (player.tokens && player.tokens.length) {
+            logger.info(`Should send notification to ${player.displayName}`);
+            result.push(
+              sendNotification(player.tokens, `Husk at spille`, notificationMessage(race, closeDay, closeTime)),
+            );
+          }
+          return Promise.all(result);
+        }));
+      } else if (diff.days === 0 && diff.hours === 0) {
+        const players = await playerWithoutBid();
+        await Promise.all(players.map(player => {
+          if (player.tokens && player.tokens.length) {
+            logger.info(`Should send final reminder notification to ${player.displayName}`);
+            return sendNotification(player.tokens, `Tik tok tiden går`, finalNotificationMessage(race));
+          }
+        }));
+      } else {
+        logger.info(`No reminder needs to sent at this time`);
       }
-    }),
+    } else if (!race) {
+      logger.info('No open race');
+    }
+
+  },
 );

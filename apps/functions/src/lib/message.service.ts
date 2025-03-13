@@ -1,11 +1,11 @@
 import { getMessaging } from 'firebase-admin/messaging';
-import { log } from 'firebase-functions/logger';
+import { logger } from 'firebase-functions';
 
-export const sendNotification = async (tokens: string[], title: string, body: string, badge = 'https://f1.bregnvig.dk/assets/messaging/badge.v2.png', data?: {
+export const sendNotification = (tokens: string[], title: string, body: string, badge = 'https://f1.bregnvig.dk/assets/messaging/badge.v2.png', data?: {
   [key: string]: string;
 }): Promise<any> => {
   try {
-    const response = await getMessaging().sendEachForMulticast({
+    return getMessaging().sendEachForMulticast({
       data,
       tokens,
       notification: {
@@ -18,10 +18,11 @@ export const sendNotification = async (tokens: string[], title: string, body: st
           icon: 'https://f1.bregnvig.dk/assets/icons/icon-192x192.png',
         },
       },
+    }).then(response => {
+      // Response is a message ID string.
+      logger.info(`Successfully sent notification. Success: ${response.successCount}, Failure: ${response.failureCount}`);
     });
-    // Response is a message ID string.
-    log(`Successfully sent notification. Success: ${response.successCount}, Failure: ${response.failureCount}`);
   } catch (error) {
-    log('Error sending message:', error);
+    logger.error('Error sending message:', error);
   }
 };
