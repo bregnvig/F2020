@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { DriverCodesComponent } from '@f2020/control';
 import { Bid, IRace } from '@f2020/data';
-import { DriverNamePipe } from '@f2020/driver';
 import { CardPageComponent, PolePositionTimePipe, TeamNamePipe } from '@f2020/shared';
 import { DisplayDriversComponent } from './drivers/display-drivers.component';
+import { DriverNamePipe, DriverPipe } from '@f2020/driver';
 import { DisplayTeamsComponent } from './teams/display-teams.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'f2020-display-bid',
@@ -16,18 +17,18 @@ import { DisplayTeamsComponent } from './teams/display-teams.component';
     DriverCodesComponent,
     DisplayDriversComponent,
     MatListModule,
-    DisplayTeamsComponent,
-    PolePositionTimePipe,
-    TeamNamePipe,
-    DriverNamePipe,
     MatAccordion,
     MatExpansionPanel,
     MatExpansionPanelTitle,
     MatExpansionPanelHeader,
-    MatExpansionPanelDescription],
+    MatExpansionPanelDescription, DriverNamePipe, TeamNamePipe, DisplayTeamsComponent, PolePositionTimePipe, DriverPipe, NgOptimizedImage],
 })
 export class DisplayBidComponent {
 
   bid = input.required<Partial<Bid>>();
   race = input.required<IRace>();
+
+  constructor() {
+    effect(() => console.log('Bid', this.bid()));
+  }
 }

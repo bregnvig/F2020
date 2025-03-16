@@ -86,15 +86,21 @@
         </mat-expansion-panel-header>
         <div>
           <mat-list>
-            <mat-list-item>
-              <h4 matListItemTitle>{{ bid().selectedTeam?.qualify | driverName }} kvalificerer sig bedst</h4>
-              @if (bid().selectedTeam?.qualifyPoints !== undefined) {
-                <small matListItemLine>{{ bid().selectedTeam?.qualifyPoints }} point</small>
-              }
-            </mat-list-item>
-            @if (bid().selectedTeam?.result) {
+            @let qualifyDriver = bid().selectedTeam?.qualify | driver;
+            @if (qualifyDriver) {
               <mat-list-item>
-                <h4 matListItemTitle>{{ bid().selectedTeam?.result | driverName }} slutter bedst</h4>
+                <img matListItemAvatar height="40" width="40" [ngSrc]="qualifyDriver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="qualifyDriver.name">
+                <h4 matListItemTitle>{{ qualifyDriver.name }} kvalificerer sig bedst</h4>
+                @if (bid().selectedTeam?.qualifyPoints !== undefined) {
+                  <small matListItemLine>{{ bid().selectedTeam?.qualifyPoints }} point</small>
+                }
+              </mat-list-item>
+            }
+            @let resultDriver = bid().selectedTeam?.result | driver;
+            @if (resultDriver) {
+              <mat-list-item>
+                <img matListItemAvatar height="40" width="40" [ngSrc]="resultDriver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="resultDriver.name">
+                <h4 matListItemTitle>{{ resultDriver.name }} slutter bedst</h4>
                 @if (bid().selectedTeam?.resultPoints !== undefined) {
                   <small matListItemLine>{{ bid().selectedTeam?.resultPoints }} point</small>
                 }
