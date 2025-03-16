@@ -2,7 +2,7 @@ import { PlayersStore } from '@f2020/api';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { Player } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -11,7 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   templateUrl: './players-list.component.html',
   styleUrls: ['./players-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, LoadingComponent],
+  imports: [MatToolbarModule, MatListModule, RouterLink, FaIconComponent, LoadingComponent],
 })
 export class PlayersListComponent implements OnInit {
 

@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { icon } from '@f2020/shared';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
@@ -22,10 +22,10 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
 };
 
 @Component({
-    templateUrl: './wbc-standings.component.html',
-    styleUrls: ['./wbc-standings.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, MatListModule, RouterLink, FontAwesomeModule, MatButtonModule, MatIconModule, AsyncPipe]
+  templateUrl: './wbc-standings.component.html',
+  styleUrls: ['./wbc-standings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, MatListModule, RouterLink, FaIconComponent, MatButtonModule, MatIconModule, AsyncPipe],
 })
 export class WbcStandingsComponent {
 

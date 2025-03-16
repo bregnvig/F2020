@@ -10,14 +10,14 @@ import { DriversStore, TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
 import { AddDriverComponent, DriverNamePipe } from '@f2020/driver';
 import { CardPageComponent, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { first, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'teams-teams-list',
   templateUrl: './teams-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FontAwesomeModule, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
+  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FaIconComponent, MatDividerModule, LoadingComponent, AsyncPipe, DriverNamePipe],
 })
 export class TeamsListComponent {
   readonly #store = inject(DriversStore);

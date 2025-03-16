@@ -10,7 +10,7 @@ import { RaceStore } from '@f2020/api';
 import { IRace } from '@f2020/data';
 import { AddDriverComponent, DriverNamePipe } from '@f2020/driver';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { first } from 'rxjs/operators';
 
@@ -32,7 +32,7 @@ const message = (driverName: string, operation: Operation) => {
   selector: 'race-drivers',
   templateUrl: './race-drivers.component.html',
   styleUrls: ['./race-drivers.component.scss'],
-  imports: [MatToolbarModule, MatListModule, CdkDropList, CdkDrag, MatButtonModule, FontAwesomeModule, MatIconModule, LoadingComponent, DriverNamePipe],
+  imports: [MatToolbarModule, MatListModule, CdkDropList, CdkDrag, MatButtonModule, FaIconComponent, MatIconModule, LoadingComponent, DriverNamePipe],
 })
 export class RaceDriversComponent implements OnInit {
 

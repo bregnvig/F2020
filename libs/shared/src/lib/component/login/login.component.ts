@@ -4,7 +4,7 @@ import { PlayerApiService, PlayerStore } from '@f2020/api';
 import { isNullish } from '@f2020/tools';
 import { icon } from '../../font-awesome';
 import { LoadingComponent } from '../loading/loading.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./login.component.scss'],
   imports: [
     MatButtonModule,
-    FontAwesomeModule,
+    FaIconComponent,
     LoadingComponent,
   ],
 })

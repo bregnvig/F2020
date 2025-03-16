@@ -3,7 +3,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RaceStore } from '@f2020/api';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DisplayBidComponent } from '../display-bid.component';
 
 @Component({
@@ -22,7 +22,7 @@ import { DisplayBidComponent } from '../display-bid.component';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, FontAwesomeModule, MatListModule, DisplayBidComponent, LoadingComponent],
+  imports: [MatToolbarModule, FaIconComponent, MatListModule, DisplayBidComponent, LoadingComponent],
 })
 export class DisplayResultComponent {
 

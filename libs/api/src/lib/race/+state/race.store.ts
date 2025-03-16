@@ -14,7 +14,7 @@ import { PlayerStore } from '../../player';
 import { SeasonStore } from '../../season/+state';
 import { TeamService } from '../../service';
 import { RacesService } from '../service/races.service';
-import { buildResult } from '../service/result-builder';
+import { buildInterimResult, buildResult } from '../service/result-builder';
 import { RacesStore } from './races.store';
 
 export interface RaceState {
@@ -94,6 +94,15 @@ export const RaceStore = signalStore(
             }),
           ));
           patchState(store, { result });
+        }
+      },
+      loadInterimResult: async (): Promise<void> => {
+        const race = store.race();
+        if (race) {
+          const interimResult = await firstValueFrom(service.getQualify(race, driversStore.drivers()).pipe(
+            map(qualify => buildInterimResult(qualify, race.selectedDriver, race.selectedTeam)),
+          ));
+          patchState(store, { interimResult });
         }
       },
       updateDrivers: (drivers: string[]) => service.updateRace(seasonStore.season().id, store.race().round, { drivers }),

@@ -4,15 +4,15 @@ import { RoundResult } from '@f2020/data';
 import { icon, PolePositionTimePipe } from '@f2020/shared';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-    selector: 'f2020-last-year',
-    templateUrl: './last-year.component.html',
-    styleUrls: ['./last-year.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatCardModule, FontAwesomeModule, RouterLink, MatButtonModule, PolePositionTimePipe]
+  selector: 'f2020-last-year',
+  templateUrl: './last-year.component.html',
+  styleUrls: ['./last-year.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatCardModule, FaIconComponent, RouterLink, MatButtonModule, PolePositionTimePipe],
 })
 export class LastYearComponent {
 

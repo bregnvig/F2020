@@ -10,30 +10,45 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { BidComponent } from '@f2020/control';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-submit-result',
-    templateUrl: './submit-result.component.html',
-    imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FontAwesomeModule]
+  selector: 'f2020-submit-result',
+  template: `
+    <mat-toolbar color="primary">
+      <span>Result - {{ race()?.name }}</span>
+    </mat-toolbar>
+    <div class="max-width">
+      @if (loaded()) {
+        @if (race()) {
+          <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result"></f2020-bid>
+        }
+        <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="!validResult()" (click)="submitResult()">
+          <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
+        </button>
+      } @else {
+        <sha-loading></sha-loading>
+      }
+    </div>
+  `,
+  imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FaIconComponent],
 })
 export class SubmitResultComponent {
 
+  #teamsService = inject(TeamService);
+  #store = inject(RaceStore);
+
   resultControl = new FormControl<Bid | null>(null);
-  race: Signal<IRace>;
-  loaded: Signal<boolean>;
-  teams: Signal<ITeam[]> = toSignal(this.teamsService.teams$);
+  race: Signal<IRace> = this.#store.race;
+  loaded: Signal<boolean> = computed(() => this.#store.loaded() && !!this.#store.result());
+  teams: Signal<ITeam[]> = toSignal(this.#teamsService.teams$);
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
-  private store = inject(RaceStore);
 
   constructor(
-    private teamsService: TeamService,
     private router: Router) {
-    this.loaded = computed(() => this.store.loaded() && !!this.store.result());
-    this.race = this.store.race;
     const result = toSignal(this.resultControl.valueChanges);
     this.validResult = computed(() => !!(result()?.qualify?.length === 7
       && (result()?.fastestDriver ?? []).filter(Boolean).length === 2
@@ -42,8 +57,11 @@ export class SubmitResultComponent {
       && (result()?.slowestPitStop ?? []).filter(Boolean).length === 2
       && result()?.polePositionTime),
     );
-    this.store.loadResult();
-    effect(() => this.store.result() && this.resultControl.patchValue(this.store.result()));
+    this.#store.loadResult();
+    effect(() => {
+      const result = this.#store.result();
+      result && this.resultControl.patchValue(result);
+    });
   }
 
   submitResult() {
@@ -51,7 +69,7 @@ export class SubmitResultComponent {
       const result = Object.fromEntries(
         Object.entries(this.resultControl.value).map(([key, value]) => [key, Array.isArray(value) ? value.filter(v => !isNullish(v)) : value]),
       ) as Bid;
-      this.store.submitResult(result).then(() => this.router.navigate(['/']));
+      this.#store.submitResult(result).then(() => this.router.navigate(['/']));
     }
   }
 }

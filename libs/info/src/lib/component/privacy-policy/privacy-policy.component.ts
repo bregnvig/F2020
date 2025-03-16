@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { icon } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { CardPageComponent, icon } from '@f2020/shared';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
-import { CardPageComponent } from '@f2020/shared';
 
 @Component({
-    selector: 'info-privacy-policy',
-    templateUrl: './privacy-policy.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CardPageComponent, MatCardModule, FontAwesomeModule]
+  selector: 'info-privacy-policy',
+  templateUrl: './privacy-policy.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CardPageComponent, MatCardModule, FaIconComponent],
 })
 export class PrivacyPolicyComponent {
   icon = icon.farInfo;

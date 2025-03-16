@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { icon } from '@f2020/shared';
-import { CardPageComponent } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { CardPageComponent, icon } from '@f2020/shared';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    templateUrl: './missing-role.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, FontAwesomeModule, CardPageComponent]
+  templateUrl: './missing-role.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, FaIconComponent, CardPageComponent],
 })
 export class MissingRoleComponent {
   icon = icon.falTireFlat;

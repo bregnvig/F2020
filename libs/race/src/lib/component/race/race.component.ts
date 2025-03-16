@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { PlayerStore, RaceStore } from '@f2020/api';
 import { Bid, IRace, isBid, Participant } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
@@ -28,10 +28,10 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-race',
-    styleUrls: ['./race.component.scss'],
-    templateUrl: './race.component.html',
-    imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FontAwesomeModule, LiveRaceComponent]
+  selector: 'f2020-race',
+  styleUrls: ['./race.component.scss'],
+  templateUrl: './race.component.html',
+  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FaIconComponent, LiveRaceComponent],
 })
 export class RaceComponent {
 

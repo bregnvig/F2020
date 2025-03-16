@@ -2,15 +2,15 @@ import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { icon } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 const versionNo = '24';
 
 @Component({
-    selector: 'f2020-what-else',
-    templateUrl: './what-else.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatCardModule, FontAwesomeModule, MatButtonModule]
+  selector: 'f2020-what-else',
+  templateUrl: './what-else.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatCardModule, FaIconComponent, MatButtonModule],
 })
 export class WhatElseComponent {
 

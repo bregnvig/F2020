@@ -3,7 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { IRace, RaceUpdatedBy } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { DateTimePipe, icon } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
@@ -28,7 +28,7 @@ import { NgOptimizedImage } from '@angular/common';
     </mat-card>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, FontAwesomeModule, DateTimePipe, NgOptimizedImage],
+  imports: [MatCardModule, FaIconComponent, DateTimePipe, NgOptimizedImage],
   providers: [DriverNamePipe],
 })
 export class RaceUpdatedWarningComponent {

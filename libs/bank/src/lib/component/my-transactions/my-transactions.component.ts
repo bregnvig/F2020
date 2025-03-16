@@ -5,7 +5,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerStore } from '@f2020/api';
 import { icon } from '@f2020/shared';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TransactionsComponent } from '../transactions/transactions.component';
 import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
@@ -27,7 +27,7 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
       </button>
     </div>
   `,
-  imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FontAwesomeModule, TransactionsComponent, CurrencyPipe],
+  imports: [MatToolbarModule, MatButtonModule, MatDialogModule, FaIconComponent, TransactionsComponent, CurrencyPipe],
 })
 export class MyTransactionsComponent {
 

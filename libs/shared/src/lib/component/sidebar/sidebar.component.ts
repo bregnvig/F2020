@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, OnI
 import { Router, RouterLink } from '@angular/router';
 import { PlayerStore, SeasonStore } from '@f2020/api';
 import { icon } from '../../font-awesome';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatDividerModule } from '@angular/material/divider';
 import { SidenavButtonComponent } from './sidenav-button/sidenav-button.component';
 import { HasRoleDirective } from '../has-role.directive';
@@ -15,7 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FontAwesomeModule, NgOptimizedImage],
+  imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FaIconComponent, NgOptimizedImage],
 })
 export class SidebarComponent implements OnInit {
 

@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
@@ -14,7 +14,7 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './join-wbc.component.html',
   imports: [
     MatCardModule,
-    FontAwesomeModule,
+    FaIconComponent,
     MatButtonModule,
     RouterLink,
     RelativeToNowPipe,

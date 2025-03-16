@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
-    selector: 'f2020-number-card',
-    template: `
+  selector: 'f2020-number-card',
+  template: `
 <mat-card class="flex-auto">
   <mat-card-header>
     <div mat-card-avatar>
@@ -20,8 +20,8 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
   </mat-card-content>
 </mat-card>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatCardModule, FontAwesomeModule]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatCardModule, FaIconComponent],
 })
 export class NumberCardComponent {
   readonly title = input<string>(undefined);
