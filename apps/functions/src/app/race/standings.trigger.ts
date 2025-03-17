@@ -58,7 +58,7 @@ const setDriver = async (seasonId: string, race: IRace) => {
     return mapper[mapperFnName]({
       race: basicRace,
       laps,
-      drivers,
+      drivers: drivers.filter(d => race.drivers.includes(d.driverId)),
       positions,
     });
   };
