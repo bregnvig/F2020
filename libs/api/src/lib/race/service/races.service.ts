@@ -185,7 +185,7 @@ export class RacesService {
   #getPositionAndLabs(race: IRace, sessionName: 'Race' | 'Qualifying', positionAfter?: DateTime, lapsAfter?: DateTime): Observable<{ positions: Position[], laps: Lap[] }> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const positionQuery = `&date<=${latestEndTime.toISO(toISOOptions)}` + (positionAfter ? `&date_start>=${positionAfter.toISO(toISOOptions)}` : '');
-    const lapsQuery = `&date_start<=${latestEndTime.toISO(toISOOptions)}${lapsAfter}` + (lapsAfter ? `&date_start>=${lapsAfter.toISO(toISOOptions)}` : '');
+    const lapsQuery = `&date_start<=${latestEndTime.toISO(toISOOptions)}` + (lapsAfter ? `&date_start>=${lapsAfter.toISO(toISOOptions)}` : '');
     return this.http.get<Session[]>(openF1.url.session(race.season, race.circuitId, sessionName)).pipe(
       map(sessions => requiredValue(sessions[0], 'Session')),
       switchMap(session => {
