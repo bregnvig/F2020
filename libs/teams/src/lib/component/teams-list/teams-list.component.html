@@ -9,7 +9,13 @@
         <h2 matSubheader>{{ team.name }}</h2>
         @for (driverId of team.drivers; track driverId) {
           <mat-list-item>
-            <p matListItemTitle>{{ driverId | driverName }}</p>
+            @let driver = driverId | driver;
+
+            <p matListItemTitle>{{ driver?.name }}</p>
+            <small class="!flex justify-between" matListItemLine>
+              <span class="flex-auto">{{ driverId }}</span>
+              <span class="flex-auto text-end"># {{ driver?.permanentNumber?.join(', ') }}</span>
+            </small>
             <p matListItemMeta>
               <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
                 <fa-icon [icon]="icon.farTrash"></fa-icon>
