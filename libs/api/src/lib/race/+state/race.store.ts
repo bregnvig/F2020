@@ -1,7 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Bid, IRace, Participant } from '@f2020/data';
+import { Bid, IDriver, IRace, Participant } from '@f2020/data';
 import { truthy } from '@f2020/tools';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
@@ -21,6 +21,7 @@ export interface RaceState {
   race: IRace | undefined;
   bids: Participant[] | Bid[] | undefined;
   bid?: Bid;
+  drivers?: IDriver[];
   interimResult: Partial<Bid> | undefined;
   result: Bid | undefined;
   loaded: boolean; // has the Races list been loaded
@@ -39,6 +40,14 @@ const initialState: RaceState = {
 // @ts-ignore
 export const RaceStore = signalStore(
   withState(initialState),
+  withComputed((
+    { bids, race },
+    playerStore = inject(PlayerStore),
+    driversStore = inject(DriversStore),
+  ) => ({
+    bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)) as any,
+    drivers: computed(() => driversStore.drivers().filter(driver => race()?.drivers.includes(driver.driverId))) as any,
+  })),
   withMethods((
       store,
       service = inject(RacesService),
@@ -85,9 +94,9 @@ export const RaceStore = signalStore(
         if (race) {
           const result = await firstValueFrom(teamsService.teams$.pipe(
             switchMap(teams => combineLatest([
-              service.getResult(race, driversStore.drivers()),
-              service.getQualify(race, driversStore.drivers()),
-              service.getPitStops(race, driversStore.drivers(), teams),
+              service.getResult(race, store.drivers()),
+              service.getQualify(race, store.drivers()),
+              service.getPitStops(race, store.drivers(), teams),
             ])),
             map(([raceResult, qualify, pitStops]) => {
               return buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
@@ -99,7 +108,7 @@ export const RaceStore = signalStore(
       loadInterimResult: async (): Promise<void> => {
         const race = store.race();
         if (race) {
-          const interimResult = await firstValueFrom(service.getQualify(race, driversStore.drivers()).pipe(
+          const interimResult = await firstValueFrom(service.getQualify(race, store.drivers()).pipe(
             map(qualify => buildInterimResult(qualify, race.selectedDriver, race.selectedTeam)),
           ));
           patchState(store, { interimResult });
@@ -120,11 +129,5 @@ export const RaceStore = signalStore(
       update: (race: IRace) => service.updateRaceV2(race).then(() => snackBar.open(`✔ ${race.name} er blevet opdateret`, null, { duration: 3000 })),
     }),
   ),
-  withComputed((
-    { bids },
-    playerStore = inject(PlayerStore),
-  ) => ({
-    bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)) as any,
-  })),
 );
 
