@@ -57,7 +57,7 @@
     @if (bids()) {
       @if (bids().length || race().result) {
         @if ((isLiveLive() || relive) && liveBids()?.length) {
-          <f2020-live-race [race]="race()" [bids]="liveBids()" [isLiveLive]="isLiveLive()" (stopped)="relive = false"/>
+          <f2020-live-race [race]="race()" [drivers]="drivers()" [bids]="liveBids()" [isLiveLive]="isLiveLive()" (stopped)="relive = false"/>
         } @else {
           <mat-card>
             <mat-card-header>

@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { PlayerStore, RaceStore } from '@f2020/api';
-import { Bid, IRace, isBid, Participant } from '@f2020/data';
+import { Bid, IDriver, IRace, isBid, Participant } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
@@ -38,13 +38,14 @@ export class RaceComponent {
   downloadIcon = icon.farCloudArrowDown;
   plusIcon = icon.farPlus;
 
-  private store = inject(RaceStore);
+  #store = inject(RaceStore);
 
   // center: Signal<google.maps.LatLng | undefined>;
-  race: Signal<IRace | undefined>;
+  race: Signal<IRace | undefined> = this.#store.race;
+  drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
   play: Signal<boolean>;
   clickable: Signal<boolean>;
-  bids: Signal<(Bid | Participant)[] | undefined>;
+  bids: Signal<(Bid | Participant)[] | undefined> = this.#store.bids;
   isCompleted = computed(() => this.race().state === 'completed');
 
   liveBids = computed(() => {
@@ -58,9 +59,7 @@ export class RaceComponent {
 
   constructor() {
     const playerStore = inject(PlayerStore);
-    this.race = this.store.race;
     this.options = computed(() => ({ ...BaseGoogleMapOptions, lat: this.race()?.location.lat, lng: this.race()?.location.lng }));
-    this.bids = this.store.bids;
     this.play = computed(() => {
       return this.race()?.close > DateTime.local()
         && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);
@@ -69,10 +68,10 @@ export class RaceComponent {
   }
 
   rollbackResult() {
-    this.store.rollback();
+    this.#store.rollback();
   }
 
   cancelRace() {
-    this.store.cancel();
+    this.#store.cancel();
   }
 }
