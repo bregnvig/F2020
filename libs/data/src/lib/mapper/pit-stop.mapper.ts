@@ -1,5 +1,6 @@
 import { IDriver, IPitStop, ITeam } from '../model';
 import { PitStop } from '@f2020/openf1';
+import { requiredValue } from '@f2020/tools';
 
 
 interface OpenF1PitstopParams {
@@ -18,12 +19,15 @@ const openF1PitStops = (params: OpenF1PitstopParams) => {
     return acc;
   }, new Map<string, ITeam>());
 
-  return params.pitStops.map(pitStop => ({
-    driver: drivers.get(pitStop.driver_number)!,
-    team: teams.get(drivers.get(pitStop.driver_number)!.driverId)!,
-    lap: pitStop.lap_number,
-    duration: pitStop.pit_duration * 1000,
-  }));
+  return params.pitStops.map(pitStop => {
+    const driver = requiredValue(drivers.get(pitStop.driver_number), 'Pit stop driver with driver number', pitStop.driver_number);
+    return ({
+      driver,
+      team: requiredValue(teams.get(driver.driverId), 'Pit stop team with driver id', driver.driverId),
+      lap: pitStop.lap_number,
+      duration: pitStop.pit_duration * 1000,
+    });
+  });
 };
 
 

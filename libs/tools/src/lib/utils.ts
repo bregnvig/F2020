@@ -1,5 +1,5 @@
 export type nullish = null | undefined;
-export const isNullish = <T>(value: T | nullish): value is T => value === null || value === undefined;
+export const isNullish = (value: unknown): value is nullish => value === null || value === undefined;
 export const unfreeze = <T>(value: T): T => {
   if (Array.isArray(value)) {
     return value.map(unfreeze) as unknown as T;
@@ -17,10 +17,14 @@ export const TypedObject = {
   fromEntries: Object.fromEntries as <K, V>(entries: [keyof K, V][]) => Record<keyof K, V>,
 };
 
-export const requiredValue = <T>(value: T | null | undefined, type: string): T | never => {
-  if (!value) throw new Error(`Required ${type} not found`);
+export const requiredValue = <T>(value: T | null | undefined, type: string, ...additional: unknown[]): T | never => {
+  if (isNullish(value)) {
+    additional && console.error(...additional);
+    throw new Error(`Required ${type} not found`);
+  }
   return value;
 };
+
 
 export const filterProperties = <T>(o: Partial<T>, filterFn: (v: T[keyof T]) => boolean): Partial<T> => Object.fromEntries(Object.entries(o).filter(([, _value]: [any, any]) => filterFn(_value))) as Partial<T>;
 export const filterUndefined = <T>(o: object): Exclude<T, undefined> => Object.fromEntries(Object.entries(o).filter(([, _value]) => _value !== undefined)) as Exclude<T, undefined>;

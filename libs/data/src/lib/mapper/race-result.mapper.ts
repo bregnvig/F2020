@@ -32,21 +32,29 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   }, new Map<number, IDriver>());
 
   const results = [
-    ...finalPositions.map((position, index) => ({
-      driver: drivers.get(position.driver_number)!,
-      position: position.position,
-      grid: gridPositions.get(position.driver_number)!.position,
-      status: 'Finished',
-      points: (points[index] ?? 0) + (rankedTimes[position.driver_number]?.rank === 1 && index < 10 ? 1 : 0),
-      fastestLap: rankedTimes[position.driver_number],
-    }) as IDriverRaceResult),
-    ...dnfs.map((driverNumber, index) => ({
-      driver: drivers.get(driverNumber)!,
-      position: finalPositions.length + index + 1,
-      grid: requiredValue(gridPositions.get(driverNumber), 'Grid position').position,
-      status: 'DNF',
-      fastestLap: rankedTimes[driverNumber],
-    }) as IDriverRaceResult),
+    ...finalPositions.map((position, index) => {
+      const driver = requiredValue(drivers.get(position.driver_number), 'Result driver with driver number', position.driver_number);
+      const grid = requiredValue(gridPositions.get(position.driver_number), 'Grid position', position.driver_number).position;
+      return ({
+        driver,
+        position: position.position,
+        grid,
+        status: 'Finished',
+        points: (points[index] ?? 0) + (rankedTimes[position.driver_number]?.rank === 1 && index < 10 ? 1 : 0),
+        fastestLap: rankedTimes[position.driver_number],
+      }) as IDriverRaceResult;
+    }),
+    ...dnfs.map((driverNumber, index) => {
+      const driver = requiredValue(drivers.get(driverNumber), 'Result driver with driver number', driverNumber);
+      const grid = requiredValue(gridPositions.get(driverNumber), 'Grid position', driverNumber).position;
+      return ({
+        driver,
+        position: finalPositions.length + index + 1,
+        grid,
+        status: 'DNF',
+        fastestLap: rankedTimes[driverNumber],
+      }) as IDriverRaceResult;
+    }),
   ];
   return {
     ...source.race,
