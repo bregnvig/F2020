@@ -20,10 +20,8 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
       if (existing) {
         const permanentNumber = driver.permanentNumber[0];
         !existing.permanentNumber.includes(permanentNumber) && existing.permanentNumber.push(driver.permanentNumber[0]);
-      } else {
-        acc.set(driver.code, driver);
       }
-      return acc;
+      return acc.set(driver.code, { ...(existing ?? {}), ...filterNullish(driver), permanentNumber: existing?.permanentNumber ?? driver.permanentNumber } as IDriver);
     }, new Map<string, IDriver>()).values()]);
 };
 

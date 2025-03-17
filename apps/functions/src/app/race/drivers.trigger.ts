@@ -34,7 +34,16 @@ export const updateDriversCollection = onDocumentUpdated('seasons/{seasonId}/rac
           const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
           const driverId = existing?.driverId ?? driver.driverId;
           logger.info('Updating driver', driver.code, driverId, driver.teamName, driver.headshotUrl);
-          transaction.set(db.doc(documentPaths.driver(driverId)), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId })));
+          if (existing) {
+            const permanentNumber = driver.permanentNumber[0];
+            !existing.permanentNumber.includes(permanentNumber) && existing.permanentNumber.push(driver.permanentNumber[0]);
+          }
+          transaction.set(db.doc(documentPaths.driver(driverId)), firestoreUtils.convertTimestamps({
+            ...existing,
+            ...filterNullish(driver),
+            driverId,
+            permanentNumber: existing?.permanentNumber ?? driver.permanentNumber,
+          }));
         });
       return Promise.resolve(drivers.length);
     });
