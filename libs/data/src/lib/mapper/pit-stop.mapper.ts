@@ -23,7 +23,7 @@ const openF1PitStops = (params: OpenF1PitstopParams) => {
     const driver = requiredValue(drivers.get(pitStop.driver_number), 'Pit stop driver with driver number', pitStop.driver_number);
     return ({
       driver,
-      team: requiredValue(teams.get(driver.driverId), 'Pit stop team with driver id', driver.driverId),
+      team: requiredValue(teams.get(driver.driverId), 'Pit stop team with driver id', driver),
       lap: pitStop.lap_number,
       duration: pitStop.pit_duration * 1000,
     });
