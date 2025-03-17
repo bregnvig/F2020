@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
-import { buildResult, DriversStore, RacesService, TeamService } from '@f2020/api';
+import { buildResult, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, Observable, switchMap, takeWhile, tap } from 'rxjs';
-import { Bid, calculateResult, IRace } from '@f2020/data';
+import { Bid, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -15,32 +15,33 @@ import { DateTimePipe } from '@f2020/shared';
 
 @UntilDestroy()
 @Component({
-    selector: 'f2020-live-race',
-    templateUrl: 'live-race.component.html',
-    imports: [
-        AsyncPipe,
-        MatCard,
-        MatCardHeader,
-        MatCardTitle,
-        MatCardContent,
-        MatListItem,
-        MatListItemAvatar,
-        NgOptimizedImage,
-        MatButton,
-        MatList,
-        FaIconComponent,
-        MatCardActions,
-        DateTimePipe,
-    ],
-    styles: `
+  selector: 'f2020-live-race',
+  templateUrl: 'live-race.component.html',
+  imports: [
+    AsyncPipe,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatListItem,
+    MatListItemAvatar,
+    NgOptimizedImage,
+    MatButton,
+    MatList,
+    FaIconComponent,
+    MatCardActions,
+    DateTimePipe,
+  ],
+  styles: `
     mat-list-item {
       transition: all 1s;
     }
-  `
+  `,
 })
 export class LiveRaceComponent {
 
   race = input.required<IRace>();
+  drivers = input.required<IDriver[]>();
   bids = input.required<Bid[]>();
   isLiveLive = input.required<boolean>();
   stopped = output<boolean>();
@@ -49,7 +50,6 @@ export class LiveRaceComponent {
   latestUpdate?: DateTime;
 
   #service = inject(RacesService);
-  #drivers = inject(DriversStore).drivers;
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;
@@ -61,12 +61,12 @@ export class LiveRaceComponent {
 
     this.bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
-          this.#service.getLiveResult(this.race(), this.#drivers()).pipe(
+          this.#service.getLiveResult(this.race(), this.drivers()).pipe(
             tap(({ latestUpdate }) => this.latestUpdate = latestUpdate),
             map(({ result }) => result),
           ),
-          this.#service.getQualify(this.race(), this.#drivers()),
-          this.#service.getLivePitStops(this.race(), this.#drivers(), teams),
+          this.#service.getQualify(this.race(), this.drivers()),
+          this.#service.getLivePitStops(this.race(), this.drivers(), teams),
         ]),
       ),
       map(([result, qualify, pitStops]) => buildResult(result, qualify, pitStops, this.race().selectedDriver, this.race().selectedTeam)),
