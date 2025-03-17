@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { first, map, switchMap } from 'rxjs';
   selector: 'teams-teams-list',
   templateUrl: './teams-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FaIconComponent, MatDividerModule, LoadingComponent, AsyncPipe, DriverPipe],
+  imports: [MatToolbarModule, CardPageComponent, MatListModule, HasRoleDirective, MatDialogModule, MatButtonModule, FaIconComponent, MatDividerModule, LoadingComponent, AsyncPipe, DriverPipe, NgOptimizedImage],
 })
 export class TeamsListComponent {
   readonly #store = inject(DriversStore);
