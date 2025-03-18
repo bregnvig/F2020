@@ -1,18 +1,15 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { buildResult, RacesService, TeamService } from '@f2020/api';
-import { combineLatest, firstValueFrom, Observable, switchMap, takeWhile, tap } from 'rxjs';
+import { combineLatest, firstValueFrom, Observable, switchMap, tap } from 'rxjs';
 import { Bid, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { shareLatest } from '@f2020/tools';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
-import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { DateTimePipe } from '@f2020/shared';
-import { LiveRadioComponent } from './live-radio.component';
 
 @UntilDestroy()
 @Component({
@@ -20,21 +17,15 @@ import { LiveRadioComponent } from './live-radio.component';
   templateUrl: 'live-race.component.html',
   imports: [
     AsyncPipe,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
     MatListItem,
     MatListItemAvatar,
     NgOptimizedImage,
-    MatButton,
     MatList,
     FaIconComponent,
-    MatCardActions,
     DateTimePipe,
     MatListItemLine,
     MatListItemTitle,
-    LiveRadioComponent,
+
   ],
   styles: `
     mat-list-item {
@@ -47,8 +38,6 @@ export class LiveRaceComponent {
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
   bids = input.required<Bid[]>();
-  isLiveLive = input.required<boolean>();
-  stopped = output<boolean>();
 
   bids$?: Observable<Bid[]>;
   latestUpdate?: DateTime;
@@ -57,7 +46,6 @@ export class LiveRaceComponent {
 
   #originalPosition?: Map<string, number>;
   #currentPosition?: string[];
-  #stop = false;
 
   ngOnInit() {
 
@@ -74,7 +62,7 @@ export class LiveRaceComponent {
       map(([result, qualify, pitStops]) => buildResult(result, qualify, pitStops, this.race().selectedDriver, this.race().selectedTeam)),
       map(result => this.bids().map(bid => calculateResult(bid, result))),
       map(bids => bids.toSorted((a, b) => b.player.uid.localeCompare(a.player.uid))),
-      takeWhile(() => !this.#stop),
+      untilDestroyed(this),
       shareLatest(),
     );
     firstValueFrom(this.bids$)
@@ -85,7 +73,6 @@ export class LiveRaceComponent {
       this.#currentPosition = bids.toSorted((a, b) => b.points - a.points).map(bid => bid.player.uid);
     });
   }
-
 
   abs(number: number) {
     return Math.abs(number);
@@ -101,8 +88,4 @@ export class LiveRaceComponent {
     return `translateY(${(change) * 100}%)`;
   }
 
-  cancel() {
-    this.#stop = true;
-    !this.isLiveLive() && this.stopped.emit(true);
-  }
 }

@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { LiveRaceComponent } from './live/live-race.component';
+import { LiveLiveComponent } from './live/live-live.component';
 
 const BaseGoogleMapOptions: google.maps.MapOptions = {
   zoomControl: false,
@@ -31,7 +31,7 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
   selector: 'f2020-race',
   styleUrls: ['./race.component.scss'],
   templateUrl: './race.component.html',
-  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FaIconComponent, LiveRaceComponent],
+  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FaIconComponent, LiveLiveComponent],
 })
 export class RaceComponent {
 
