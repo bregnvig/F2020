@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, inject, OnInit, Output, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output, Signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { PlayerStore, SeasonStore } from '@f2020/api';
 import { icon } from '../../font-awesome';
@@ -17,9 +17,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FaIconComponent, NgOptimizedImage],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
 
-  @Output() closing = new EventEmitter<void>();
+  closing = output<void>();
   player = inject(PlayerStore).player;
   seasonId: Signal<string>;
   icon = icon;
@@ -27,9 +27,6 @@ export class SidebarComponent implements OnInit {
   constructor(private router: Router) {
     const season = inject(SeasonStore).season;
     this.seasonId = computed(() => season()?.id);
-  }
-
-  ngOnInit(): void {
   }
 
   signIn() {
