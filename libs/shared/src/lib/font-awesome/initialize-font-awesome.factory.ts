@@ -3,6 +3,7 @@ import { faApple, faCss3, faFacebookF, faFirefoxBrowser, faGoogle } from '@forta
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
 import {
   faBookAlt,
+  faBug,
   faCalendarAlt,
   faCarCrash,
   faChartLineUpDown,
@@ -66,6 +67,7 @@ const farIcons = [
   faChartLineUpDown,
   faClock,
   faLocationDot,
+  faBug,
 ];
 
 const fasIcons = [

@@ -43,6 +43,7 @@ type Icon =
   | 'fasRotateRight'
   | 'farLocationDot'
   | 'fabFirefoxBrowser'
+  | 'farBug'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -88,4 +89,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farClock: ['far', 'clock'],
   farLocationDot: ['far', 'location-dot'],
   fabFirefoxBrowser: ['fab', 'firefox-browser'],
+  farBug: ['far', 'bug'],
 };
