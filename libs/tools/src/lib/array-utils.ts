@@ -7,7 +7,7 @@ export const ensureArray = <T>(value: T | T[]): T[] | null => {
   return Array.isArray(value) ? value : [value];
 };
 
-export const arrayContainsAll = <T extends number | string | boolean | DateTime>(a: T[], b: T[]): boolean => {
+const arrayContainsAll = <T extends number | string | boolean | DateTime>(a: T[], b: T[]): boolean => {
   if (a === b) {
     return true;
   }
@@ -18,13 +18,13 @@ export const arrayContainsAll = <T extends number | string | boolean | DateTime>
   return a.length === b.length && a.every(a => b.some(element => compareValueFn(element) === compareValueFn(a)));
 };
 
-export function toRecord<T>(array: T[], property: keyof T): Record<string, T>
-export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty: K): Record<string, T[K]>
-export function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty?: K): Record<string, T | T[K]> {
+function toRecord<T>(array: T[], property: keyof T): Record<string, T>
+function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty: K): Record<string, T[K]>
+function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty?: K): Record<string, T | T[K]> {
   return Object.fromEntries(array.map(element => [element[property], valueProperty ? element[valueProperty] : element]));
 }
 
-export const toMapArray = <T, K = string>(propertyOrFn: keyof T | ((item: T) => K)) => (acc: Map<K, T[]>, item: T): Map<K, T[]> => {
+const toMapArray = <T, K = string>(propertyOrFn: keyof T | ((item: T) => K)) => (acc: Map<K, T[]>, item: T): Map<K, T[]> => {
   const key = (typeof propertyOrFn === 'function' ? propertyOrFn(item) : `${item[propertyOrFn]}`) as K;
   return acc.set(key, [...(acc.get(key) || []), item]);
 };
@@ -50,7 +50,24 @@ const getSortValue: <T>(a: T, b: T, getFn: GetFn<T>) => number = <T>(a: T, b: T,
   return `${aValue}`.toLocaleLowerCase().localeCompare(`${bValue}`.toLocaleLowerCase());
 };
 
-export const propertySort = <T>(keyOrGetFn: KeyOrGetFn<T>, direction: SortDirection = 'asc') => {
+const propertySort = <T>(keyOrGetFn: KeyOrGetFn<T>, direction: SortDirection = 'asc') => {
   const getFn = typeof keyOrGetFn === 'function' ? keyOrGetFn : (obj: T) => obj[keyOrGetFn];
   return (a: T, b: T) => getSortValue(a, b, getFn) * (direction === 'desc' ? -1 : 1);
+};
+
+const findDeleted = <T extends string | number>(previous: T[], current: T[]): T[] => previous.filter(p => !current.some(c => c === p));
+const findAdded = <T extends string | number>(previous: T[], current: T[]): T[] => current.filter(c => !previous.some(p => p === c));
+const intersection = <T>(arrays: T[][]): T[] => {
+  return arrays.reduce((acc, array) => acc.filter(element => array.includes(element)));
+};
+
+export const arrayUtils = {
+  ensureArray,
+  arrayContainsAll,
+  toRecord,
+  toMapArray,
+  propertySort,
+  findDeleted,
+  findAdded,
+  intersection,
 };
