@@ -1,9 +1,9 @@
 import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IQualifyResult, IRace, IRaceBasis, IRaceResult, mapper } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { collectionPaths, currentSeason, documentPaths } from '../../lib';
+import { collectionPaths, currentSeason, documentPaths, openF1Api } from '../../lib';
 import { requiredValue } from '@f2020/tools';
-import { openF1, Session } from '@f2020/openf1';
+import { Session } from '@f2020/openf1';
 
 /**
  * This trigger fetches the current standing for all drivers and for each driver.
@@ -48,13 +48,13 @@ const setDriver = async (seasonId: string, race: IRace) => {
   const circuit = await db.doc(documentPaths.circuit(circuitId)).get().then(doc => doc.data() as Circuit);
   const drivers = await db.collection(collectionPaths.drivers()).get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
 
-  const raceSession = await openF1.api.session(seasonId, circuitId, 'Race');
-  const qualifySession = await openF1.api.session(seasonId, circuitId, 'Qualifying');
+  const raceSession = await openF1Api.session(seasonId, circuitId, 'Race');
+  const qualifySession = await openF1Api.session(seasonId, circuitId, 'Qualifying');
   const basicRace = mapper.basisRace(circuit, race.round, seasonId);
 
   const buildResult = async (session: Session, mapperFnName: 'raceResult' | 'qualifyResult') => {
-    const laps = await openF1.api.labs(session.session_key);
-    const positions = await openF1.api.positions(session.session_key);
+    const laps = await openF1Api.labs(session.session_key);
+    const positions = await openF1Api.positions(session.session_key);
     return mapper[mapperFnName]({
       race: basicRace,
       laps,

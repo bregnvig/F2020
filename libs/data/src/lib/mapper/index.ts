@@ -6,6 +6,7 @@ import { map as qualifyResult } from './qualify-result.mapper';
 import { map as raceResult } from './race-result.mapper';
 import { basisMap as basisRace, map as race } from './race.mapper';
 import { map as season } from './season.mapper';
+import { map as radio } from './radio.mapper';
 
 export const mapper = {
   basisRace,
@@ -19,4 +20,5 @@ export const mapper = {
   nationality,
   polePosition,
   pitStops,
+  radio,
 };

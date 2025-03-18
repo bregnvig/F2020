@@ -13,8 +13,10 @@ import {
   faGavel,
   faInfo,
   faLocationDot,
+  faPause,
   faPen,
   faPiggyBank,
+  faPlay,
   faPlus,
   faSignInAlt,
   faSignOutAlt,
@@ -68,6 +70,8 @@ const farIcons = [
   faClock,
   faLocationDot,
   faBug,
+  faPlay,
+  faPause,
 ];
 
 const fasIcons = [

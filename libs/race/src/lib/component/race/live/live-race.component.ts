@@ -6,12 +6,13 @@ import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { shareLatest } from '@f2020/tools';
-import { MatList, MatListItem, MatListItemAvatar } from '@angular/material/list';
+import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { DateTimePipe } from '@f2020/shared';
+import { LiveRadioComponent } from './live-radio.component';
 
 @UntilDestroy()
 @Component({
@@ -31,6 +32,9 @@ import { DateTimePipe } from '@f2020/shared';
     FaIconComponent,
     MatCardActions,
     DateTimePipe,
+    MatListItemLine,
+    MatListItemTitle,
+    LiveRadioComponent,
   ],
   styles: `
     mat-list-item {
@@ -48,14 +52,12 @@ export class LiveRaceComponent {
 
   bids$?: Observable<Bid[]>;
   latestUpdate?: DateTime;
-
   #service = inject(RacesService);
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;
   #currentPosition?: string[];
   #stop = false;
-
 
   ngOnInit() {
 
@@ -75,7 +77,6 @@ export class LiveRaceComponent {
       takeWhile(() => !this.#stop),
       shareLatest(),
     );
-
     firstValueFrom(this.bids$)
       .then(bids => this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index])));
     this.bids$.pipe(

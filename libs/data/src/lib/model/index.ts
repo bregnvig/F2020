@@ -9,3 +9,4 @@ export * from './transaction.model';
 export * from './round-result.model';
 export * from './team.model';
 export * from './circuit.model';
+export * from './team-radio.model';
