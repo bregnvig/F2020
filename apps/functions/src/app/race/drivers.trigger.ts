@@ -1,9 +1,9 @@
 import { IDriver, IRace, mapper } from '@f2020/data';
-import { documentPaths, firestoreUtils } from '../../lib';
+import { documentPaths, firestoreUtils, openF1Api } from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { filterNullish, StringUtils } from '@f2020/tools';
-import { Driver, openF1 } from '@f2020/openf1';
+import { Driver } from '@f2020/openf1';
 import { logger } from 'firebase-functions';
 
 /**
@@ -14,7 +14,7 @@ export const updateDriversCollection = onDocumentUpdated('seasons/{seasonId}/rac
   const before: IRace = event.data.before.data() as IRace;
   const after: IRace = event.data.after.data() as IRace;
   if (before.state === 'closed' && after.state === 'completed') {
-    const drivers = (await openF1.api.drivers()
+    const drivers = (await openF1Api.drivers()
       .then((response: Driver[]) => response.map(mapper.driver))
       .then(drivers => drivers.filter(driver => {
         const result = !!driver.code && !!driver.countryCode;

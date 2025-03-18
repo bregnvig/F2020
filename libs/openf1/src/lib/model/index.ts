@@ -5,3 +5,4 @@ export * from './season.model';
 export * from './session.model';
 export * from './weather.model';
 export * from './pitstop.model';
+export * from './radio.model';

@@ -11,6 +11,7 @@ export * from './transactions.service';
 export * from './mail.service';
 export * from './message.service';
 export * from './reminder.service';
+export * from './openf1.api';
 
 
 import { converter as playerConverter } from './auth.converter';

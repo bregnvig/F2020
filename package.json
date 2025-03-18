@@ -6,9 +6,9 @@
     "ng": "nx",
     "nx": "nx",
     "serve:ui": "nx serve ui",
+    "build:ui": "nx build ui --prod",
     "serve:firebase": "nx run firebase:watch",
     "start": "ng serve ui --liveReload false",
-    "build": "nx build",
     "build-with-stats": "nx build --stats-json",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
@@ -79,6 +79,7 @@
     "openai": "^4.87.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "uuid": "^11.1.0",
     "zone.js": "0.15.0"
   },
   "devDependencies": {
