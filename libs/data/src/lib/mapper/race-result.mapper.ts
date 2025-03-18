@@ -1,4 +1,4 @@
-import { filterUndefined, requiredValue, toMap } from '@f2020/tools';
+import { arrayUtils, filterUndefined, requiredValue, toMap } from '@f2020/tools';
 import { IDriver, IDriverRaceResult, IFastestLap, IRaceBasis } from '../model';
 import { IRaceResult } from './../model/race.model';
 import { Lap, Position } from '@f2020/openf1';
@@ -10,13 +10,27 @@ interface OpenF1ResultParams {
   race: IRaceBasis;
 }
 
+
+const getDNFs = (source: OpenF1ResultParams) => {
+  const miniSectors = source.laps.reduce((acc, lap) => Math.max(acc, lap.segments_sector_3.length), 0);
+  const positionDriverNumbers = [...new Set(source.positions.map(p => p.driver_number))];
+  const lapsDriverNumbers = [...new Set(source.laps.map(p => p.driver_number))];
+  const dnfAtFirstLap = arrayUtils.findDeleted(positionDriverNumbers, lapsDriverNumbers);
+
+  return [
+    ...[...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number),
+    ...dnfAtFirstLap.toReversed(),
+  ];
+};
+
 const points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
 
 const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
 
   const gridPositions = source.positions.toReversed().reduce(toMap<Position, number>('driver_number'), new Map<number, Position>());
-  const miniSectors = source.laps.reduce((acc, lap) => Math.max(acc, lap.segments_sector_3.length), 0);
-  const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number);
+
+  const dnfs = getDNFs(source);
+
   const finalPositions = [...source.positions.filter(p => !dnfs.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
   const bestTimes = source.laps.filter(({ lap_duration }) => typeof lap_duration === 'number').reduce((acc, lap) => {
     const previous = acc.get(lap.driver_number)?.time ?? Number.MAX_SAFE_INTEGER;
