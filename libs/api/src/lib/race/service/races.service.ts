@@ -31,7 +31,7 @@ export class RacesService {
     );
   }
 
-  getBids(seasonId: string, race: IRace | string, uid: string): Observable<Bid[]> {
+  getBids(seasonId: string, race: IRace | string): Observable<Bid[]> {
     const round = typeof race === 'string' ? race : race.round;
     return collectionData(collection(this.afs, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).withConverter(bidConverter));
   }
@@ -175,9 +175,8 @@ export class RacesService {
   }
 
   async updateRaceV2(race: IRace): Promise<true> {
-    const u = unfreeze;
     return httpsCallable(this.functions, 'updateRace')({
-      ...firestoreWebUtils.convertToJSON(u(race)),
+      ...firestoreWebUtils.convertToJSON(unfreeze(race)),
       version: 2,
     }).then(() => true);
   }

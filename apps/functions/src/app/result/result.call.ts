@@ -3,6 +3,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
 import { collectionPaths, currentSeason, documentPaths, getBookie, getRaceByRound, internalError, logAndCreateError, transferInTransaction, validateAccess } from '../../lib';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
+import { requiredValue } from '@f2020/tools';
 
 export const submitResult = onCall(async (request: CallableRequest<{ round: number, result: Bid; }>) => {
   return validateAccess(request.auth?.uid, 'admin')
@@ -35,20 +36,21 @@ const buildResult = async (round: number, result: Bid) => {
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data()))
     .then(bids => bids.map(bid => calculateResult(bid as Bid, result)))
-    .then(bids => bids.sort((a, b) => b.points! - a.points!));
+    .then(bids => bids.sort((a, b) => (b.points ?? 0) - (a.points ?? 0)));
 
-  const winners = calculatedResults.filter(r => r.points! === calculatedResults[0].points!);
+  const winners = calculatedResults.filter(r => (r.points ?? 0) === (calculatedResults[0].points ?? 0));
   const winningPrice = Math.floor(calculatedResults.length * 20 / winners.length);
 
   return db.runTransaction(transaction => {
     winners.forEach(winner => {
+      const to = requiredValue(winner.player, 'Winner must have a player', winner);
       transferInTransaction({
         date: DateTime.local(),
         amount: winningPrice,
         message: `Gevinst ${race.name}`,
         from: bookie.uid,
-        to: winner.player!.uid,
-        involved: [bookie.uid, winner.player!.uid],
+        to: to.uid,
+        involved: [bookie.uid, to.uid],
       }, transaction);
     });
     calculatedResults.forEach(cr => {

@@ -72,7 +72,7 @@ const aiGeneratedNotificationMessage = async (playerName: string, raceName: stri
     messages: [
       {
         role: 'system',
-        content: 'Du laver morsomme en morsom smart phone notifikations title og body der beskriver deltagerens første anden eller tredje plads i et F1 væddemål. Du bliver oplyst følgende information navn på deltager, navn på løb, plcering. Notifikationen skal være på dansk',
+        content: 'Du laver morsomme en morsom smart phone notifikations title og body der beskriver deltagerens første anden eller tredje plads i et F1 væddemål. Du bliver oplyst følgende information navn på deltager, navn på løb, placering. Notifikationen skal være på dansk',
       },
       {
         role: 'user',
@@ -158,7 +158,7 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
       } else if ([12, 10, 8, 6, 4, 2, 1].includes(element.points)) {
         await sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
       } else {
-        await sendWBCResult('🫣 Æv du fik ingen points  :-(');
+        await sendWBCResult('🫣 Æv du fik ingen points :-(');
       }
     }));
   }
