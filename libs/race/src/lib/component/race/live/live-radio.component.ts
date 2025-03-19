@@ -1,11 +1,11 @@
 import { Component, inject, input } from '@angular/core';
-import { DateTimePipe, icon } from '@f2020/shared';
-import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { DateTimePipe } from '@f2020/shared';
+import { NgOptimizedImage } from '@angular/common';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RacesService } from '@f2020/api';
 import { IDriver, IRace } from '@f2020/data';
+import { RadioMessageComponent } from './radio-message.component';
 
 @Component({
   selector: 'f2020-live-radio',
@@ -18,14 +18,7 @@ import { IDriver, IRace } from '@f2020/data';
             <img matListItemAvatar height="40" width="40" [ngSrc]="message.driver.headshotUrl" [alt]="message.driver.name">
             <h4 matListItemTitle>
               <span>{{ message.driver.name }}</span>
-              <span class="float-right mt-5 flex items-center">
-                  @if (audio.duration; as duration) {
-                    <span class="text-xs">{{ duration | number: '1.2-2' }}s</span>
-                  }
-                <button (click)="audio.paused ? audio.play() : audio.pause()">
-                    <fa-icon size="2x" [icon]="audio.paused ? play : pause" [fixedWidth]="true"></fa-icon>
-                  </button>
-                </span>
+              <f2020-radio-message [url]="message.recordingUrl"/>
             </h4>
             <div matListItemLine>
               <audio #audio (ended)="audio.pause()">
@@ -41,14 +34,13 @@ import { IDriver, IRace } from '@f2020/data';
   `,
   imports: [
     DateTimePipe,
-    DecimalPipe,
-    FaIconComponent,
     MatList,
     MatListItem,
     MatListItemAvatar,
     MatListItemLine,
     MatListItemTitle,
     NgOptimizedImage,
+    RadioMessageComponent,
   ],
 })
 
@@ -56,9 +48,6 @@ export class LiveRadioComponent {
   #service = inject(RacesService);
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
-
-  play = icon.farPlay;
-  pause = icon.farPause;
 
   messages = rxResource({
     request: () => ({ drivers: this.drivers(), race: this.race() }),

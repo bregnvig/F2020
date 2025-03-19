@@ -79,7 +79,7 @@ export const RaceStore = signalStore(
             const player = playerStore.player();
             const season = seasonStore.season();
             return ((type === 'bids')
-              ? service.getBids(season.id, race, player.uid)
+              ? service.getBids(season.id, race)
               : service.getParticipants(season.id, race)).pipe(
               tapResponse({
                 next: bids => patchState(store, { race, bids, loaded: true, error: undefined }),
