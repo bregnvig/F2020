@@ -1,1 +1,1 @@
-export * from "./lib/info.module";
+export * from './lib/info.routes';

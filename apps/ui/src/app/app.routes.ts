@@ -40,21 +40,21 @@ export const routes: Routes = [
   {
     path: 'players',
     canActivate: [mustBeAuthorized],
-    loadChildren: () => import('@f2020/players').then(m => m.PlayersModule),
+    loadChildren: () => import('@f2020/players').then(r => r.PlayersRoutes),
   },
   {
     path: 'accounts',
     canActivate: [mustBeAuthorized],
-    loadChildren: () => import('@f2020/bank').then(m => m.BankModule),
+    loadChildren: () => import('@f2020/bank').then(r => r.BankRoutes),
   },
   {
     path: 'player',
     canActivate: [mustBeAuthorized],
-    loadChildren: () => import('@f2020/player').then(m => m.PlayerModule),
+    loadChildren: () => import('@f2020/player').then(r => r.PlayerRoutes),
   },
   {
     path: 'info',
-    loadChildren: () => import('@f2020/info').then(m => m.InfoModule),
+    loadChildren: () => import('@f2020/info').then(r => r.InfoRoutes),
   },
   {
     path: ':season',

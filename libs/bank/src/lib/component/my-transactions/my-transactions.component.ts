@@ -21,7 +21,7 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
           <span>{{ player().balance | currency: 'DKK' }}</span>
         }
       </mat-toolbar>
-      <f2020-transactions class="flex-auto" [player]="player()"></f2020-transactions>
+      <f2020-transactions class="flex-auto" [player]="player()"/>
       <button mat-fab aria-label="Indsæt penge" color="primary" (click)="showInfo()">
         <fa-icon [icon]="icon" size="lg"></fa-icon>
       </button>

@@ -1,1 +1,1 @@
-export * from "./lib/players.module";
+export * from './lib/players.routes';

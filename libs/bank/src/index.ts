@@ -1,1 +1,1 @@
-export * from "./lib/bank.module";
+export * from './lib/bank.routes';

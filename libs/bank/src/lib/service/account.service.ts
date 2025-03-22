@@ -6,7 +6,9 @@ import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AccountService {
 
   static readonly transactionsURL = 'transactions';
