@@ -1,5 +1,5 @@
 import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, Signal } from '@angular/core';
+import { Component, computed, inject, signal, Signal } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -53,13 +53,14 @@ export class RaceComponent {
     return bids?.filter(bid => isBid(bid)).map(bid => ({ ...bid, points: undefined })) ?? [];
   });
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
-  relive = false;
+  relive = signal(false);
 
   options: Signal<google.maps.MapOptions>;
+  showLive = signal(true);
 
   constructor() {
     const playerStore = inject(PlayerStore);
-    this.options = computed(() => ({ ...BaseGoogleMapOptions, lat: this.race()?.location.lat, lng: this.race()?.location.lng }));
+    this.options = computed(() => ({ ...BaseGoogleMapOptions, center: { lat: this.race()?.location.lat, lng: this.race()?.location.lng } }));
     this.play = computed(() => {
       return this.race()?.close > DateTime.local()
         && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);

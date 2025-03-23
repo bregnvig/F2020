@@ -56,8 +56,8 @@
     </mat-card>
     @if (bids()) {
       @if (bids().length || race().result) {
-        @if ((isLiveLive() || relive) && liveBids()?.length) {
-          <f2020-live-live [race]="race()" [drivers]="drivers()" [bids]="liveBids()" [isLiveLive]="isLiveLive()" (stopped)="relive = false"/>
+        @if (((isLiveLive() || relive) && showLive()) && liveBids()?.length) {
+          <f2020-live-live [race]="race()" [drivers]="drivers()" [bids]="liveBids()" [isLiveLive]="isLiveLive()" (stopped)="showLive.set(false)"/>
         } @else {
           <mat-card>
             <mat-card-header>
@@ -74,7 +74,7 @@
             </mat-card-content>
             @if (race().state === 'completed') {
               <mat-card-actions>
-                <button mat-button (click)="relive = true">Genoplev løbet</button>
+                <button mat-button (click)="relive.set(true); showLive.set(true)">Genoplev løbet</button>
               </mat-card-actions>
             }
           </mat-card>
