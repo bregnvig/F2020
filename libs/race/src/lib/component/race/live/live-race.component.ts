@@ -1,6 +1,6 @@
 import { Component, inject, input } from '@angular/core';
 import { buildResult, RacesService, TeamService } from '@f2020/api';
-import { combineLatest, firstValueFrom, Observable, switchMap, tap } from 'rxjs';
+import { combineLatest, firstValueFrom, Observable, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
@@ -59,6 +59,9 @@ export class LiveRaceComponent {
           this.#service.getLivePitStops(this.race(), this.drivers(), teams),
         ]),
       ),
+      retry({
+        delay: 5000,
+      }),
       map(([result, qualify, pitStops]) => buildResult(result, qualify, pitStops, this.race().selectedDriver, this.race().selectedTeam)),
       map(result => this.bids().map(bid => calculateResult(bid, result))),
       map(bids => bids.toSorted((a, b) => b.player.uid.localeCompare(a.player.uid))),
