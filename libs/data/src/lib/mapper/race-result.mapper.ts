@@ -16,9 +16,15 @@ const getDNFs = (source: OpenF1ResultParams) => {
   const positionDriverNumbers = [...new Set(source.positions.map(p => p.driver_number))];
   const lapsDriverNumbers = [...new Set(source.laps.map(p => p.driver_number))];
   const dnfAtFirstLap = arrayUtils.findDeleted(positionDriverNumbers, lapsDriverNumbers);
+  const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number);
 
+  const dnfPosition = source.positions.filter(p => dnfs.includes(p.driver_number)).reduce((acc, p) => {
+    return acc.set(p.driver_number, p.position);
+  }, new Map<number, number>());
+  // Sometimes there are mini sectors not part of the lap, which gives false dnfs. But if the position is not at the end, then it is not a DNF
+  const dnfsWashed = dnfs.toReversed().filter((d, index) => dnfPosition.get(d) === positionDriverNumbers.length - index);
   return [
-    ...[...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number),
+    ...dnfsWashed,
     ...dnfAtFirstLap.toReversed(),
   ];
 };
