@@ -1,15 +1,15 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult, TeamRadio } from '@f2020/data';
+import { Lap, TeamRadio as OpenF1TeamRadio, openF1Url, PitStop, Position, Session } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
-import { combineLatest, Observable, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SeasonService } from '../../season/service/season.service';
-import { HttpClient } from '@angular/common/http';
-import { Lap, openF1Url, PitStop, Position, Session, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { DateTime } from 'luxon';
+import { combineLatest, Observable, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { exhaustMap, map } from 'rxjs/operators';
+import { SeasonService } from '../../season/service/season.service';
 
 const bidConverter = converter.timestamp<Bid>();
 const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
@@ -62,20 +62,24 @@ export class RacesService {
   }
 
   getResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
-    return this.#getPositionAndLabs(race, 'Race').pipe(
+    return this.#getSession(race, 'Race').pipe(
+      switchMap(session => this.#getPositionAndLabs(race, session.session_key)),
       map(({ positions, laps }) => mapper.raceResult({ positions, laps, race, drivers })),
     );
   }
 
-  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime } | null> {
+  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     let positionAfter: DateTime | undefined = undefined;
     let labsAfter: DateTime | undefined = undefined;
     return isLiveLive
-      ? timer(0, 5000).pipe(
+      ? this.#getSession(race, 'Race').pipe(
+        switchMap(session => timer(0, 5000).pipe(
+          map(() => session.session_key),
+        )),
         takeWhile(() => DateTime.local() < latestEndTime),
-        switchMap(() => this.#getPositionAndLabs(race, 'Race', positionAfter, labsAfter)),
+        exhaustMap(sessionKey => this.#getPositionAndLabs(race, sessionKey, positionAfter, labsAfter)),
         tap(({ positions, laps }) => {
           positionAfter = positions?.length ? DateTime.fromISO(positions.at(-1).date) : positionAfter;
           labsAfter = laps?.length ? DateTime.fromISO(laps.at(-1).date_start) : labsAfter;
@@ -97,10 +101,14 @@ export class RacesService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     let positionAfter: DateTime | undefined = undefined;
+
     return isLiveLive
-      ? timer(0, 5000).pipe(
+      ? this.#getSession(race, 'Race').pipe(
+        switchMap(session => timer(0, 5000).pipe(
+          map(() => session.session_key),
+        )),
         takeWhile(() => DateTime.local() < latestEndTime),
-        switchMap(() => this.#getTeamRadio(race, positionAfter)),
+        exhaustMap(sessionKey => this.#getTeamRadio(race, sessionKey, positionAfter)),
         tap(messages => positionAfter = messages?.length ? DateTime.fromISO(messages.at(-1).date) : positionAfter),
         map(messages => mapper.radio({ messages, drivers })),
         scan((previous, current) => [...previous, ...current]),
@@ -110,7 +118,8 @@ export class RacesService {
   }
 
   getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
-    return this.#getPositionAndLabs(race, 'Qualifying').pipe(
+    return this.#getSession(race, 'Qualifying').pipe(
+      switchMap(session => this.#getPositionAndLabs(race, session.session_key)),
       map(({ positions, laps }) => mapper.qualifyResult({ positions, laps, race, drivers })),
     );
   }
@@ -131,8 +140,8 @@ export class RacesService {
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     const positionFilter = `&date<=${latestEndTime.toISO(toISOOptions)}`;
 
-    return this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, 'Race')).pipe(
-      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
+    return this.#getSession(race, 'Race').pipe(
+      map(session => requiredValue(session.session_key, 'session_key')),
       switchMap(sessionKey => {
 
         let replaceDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
@@ -140,7 +149,7 @@ export class RacesService {
         return isLiveLive
           ? timer(0, 5000).pipe(
             takeWhile(() => DateTime.local() < latestEndTime),
-            switchMap(() => this.http.get<PitStop[]>(openF1Url.pitStops(sessionKey) + positionFilter)),
+            exhaustMap(() => this.http.get<PitStop[]>(openF1Url.pitStops(sessionKey) + positionFilter)),
           )
           : this.http.get<PitStop[]>(openF1Url.pitStops(sessionKey) + positionFilter).pipe(
             switchMap(pitStops => {
@@ -197,34 +206,33 @@ export class RacesService {
     return httpsCallable(this.functions, 'cancelRace')(round).then(() => true);
   }
 
-  #getPositionAndLabs(race: IRace, sessionName: 'Race' | 'Qualifying', positionAfter?: DateTime, lapsAfter?: DateTime): Observable<{ positions: Position[], laps: Lap[] }> {
+  #getSession(race: IRace, sessionName: 'Race' | 'Qualifying'): Observable<Session> {
+    return this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, sessionName)).pipe(
+      map(sessions => requiredValue(sessions[0], 'Session'))
+    );
+  }
+
+  #getPositionAndLabs(race: IRace, sessionKey: number, positionAfter?: DateTime, lapsAfter?: DateTime): Observable<{ positions: Position[], laps: Lap[]; }> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const positionQuery = `&date<=${latestEndTime.toISO(toISOOptions)}` + (positionAfter ? `&date_start>=${positionAfter.toISO(toISOOptions)}` : '');
     const lapsQuery = `&date_start<=${latestEndTime.toISO(toISOOptions)}` + (lapsAfter ? `&date_start>=${lapsAfter.toISO(toISOOptions)}` : '');
-    return this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, sessionName)).pipe(
-      map(sessions => requiredValue(sessions[0], 'Session')),
-      switchMap(session => {
-        return combineLatest({
-          positions: this.http.get<Position[]>(openF1Url.positions(session.session_key) + positionQuery),
-          laps: this.http.get<Lap[]>(openF1Url.labs(session.session_key) + lapsQuery),
-        });
-      }),
-    );
+    return combineLatest({
+      positions: this.http.get<Position[]>(openF1Url.positions(sessionKey) + positionQuery),
+      laps: this.http.get<Lap[]>(openF1Url.labs(sessionKey) + lapsQuery),
+    });
   }
 
-  #getTeamRadio(race: IRace, positionAfter?: DateTime): Observable<OpenF1TeamRadio[]> {
+  #getTeamRadio(race: IRace, sessionKey: number, positionAfter?: DateTime): Observable<OpenF1TeamRadio[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const positionQuery = `&date<=${latestEndTime.toISO(toISOOptions)}` + (positionAfter ? `&date_start>=${positionAfter.toISO(toISOOptions)}` : '');
-    return this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, 'Race')).pipe(
-      map(sessions => requiredValue(sessions[0], 'Session')),
-      switchMap(session => this.http.get<OpenF1TeamRadio[]>(openF1Url.radio(session.session_key) + positionQuery)),
-    );
+    return this.http.get<OpenF1TeamRadio[]>(openF1Url.radio(sessionKey) + positionQuery);
   }
 
-  #replayResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime } | null> {
+  #replayResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     let date = race.raceStart.toUTC().minus({ hour: 1 });
-    return this.#getPositionAndLabs(race, 'Race').pipe(
+    return this.#getSession(race, 'Race').pipe(
+      switchMap(session => this.#getPositionAndLabs(race, session.session_key)),
       switchMap(({ positions, laps }) => {
         return timer(0, 500).pipe(
           takeWhile(() => date < latestEndTime),
@@ -244,7 +252,8 @@ export class RacesService {
   }
 
   #replayRadio(race: IRace, drivers: IDriver[]): Observable<TeamRadio[] | null> {
-    return this.#getTeamRadio(race).pipe(
+    return this.#getSession(race, 'Race').pipe(
+      switchMap(session => this.#getTeamRadio(race, session.session_key)),
       map(messages => mapper.radio({ messages, drivers }).toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
     );
   }
