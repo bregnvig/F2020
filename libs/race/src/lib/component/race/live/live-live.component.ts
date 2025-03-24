@@ -1,10 +1,10 @@
-import { Component, computed, inject, Signal } from '@angular/core';
+import { Component, computed, inject, signal, Signal } from '@angular/core';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { LiveRadioComponent } from './live-radio.component';
 import { Bid, IDriver } from '@f2020/data';
 import { LiveRaceComponent } from './live-race.component';
 import { RaceStore } from '@f2020/api';
-import { CardPageComponent, FlagURLPipe } from '@f2020/shared';
+import { CardPageComponent, DateTimePipe, FlagURLPipe } from '@f2020/shared';
 import { DateTime } from 'luxon';
 import { NgOptimizedImage } from '@angular/common';
 
@@ -23,10 +23,10 @@ import { NgOptimizedImage } from '@angular/common';
                 Relive
               }
             </mat-card-title>
-            <mat-card-subtitle>{{ race().name }}</mat-card-subtitle>
+            <mat-card-subtitle>Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()"/>
+            <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()" (latestUpdate)="latestUpdate.set($event)"/>
           </mat-card-content>
         </mat-card>
         <mat-card>
@@ -54,6 +54,7 @@ import { NgOptimizedImage } from '@angular/common';
     MatCardAvatar,
     MatCardSubtitle,
     NgOptimizedImage,
+    DateTimePipe,
   ],
 })
 
@@ -66,5 +67,5 @@ export class LiveLiveComponent {
   drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
   bids: Signal<Bid[]> = this.#store.bids as Signal<Bid[]>;
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
-
+  latestUpdate = signal<DateTime | undefined>(undefined);
 }

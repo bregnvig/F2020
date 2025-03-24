@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { buildResult, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, Observable, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateResult, IDriver, IRace } from '@f2020/data';
@@ -9,7 +9,6 @@ import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTi
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
-import { DateTimePipe } from '@f2020/shared';
 
 @UntilDestroy()
 @Component({
@@ -22,7 +21,6 @@ import { DateTimePipe } from '@f2020/shared';
     NgOptimizedImage,
     MatList,
     FaIconComponent,
-    DateTimePipe,
     MatListItemLine,
     MatListItemTitle,
 
@@ -40,7 +38,7 @@ export class LiveRaceComponent {
   bids = input.required<Bid[]>();
 
   bids$?: Observable<Bid[]>;
-  latestUpdate?: DateTime;
+  latestUpdate = output<DateTime>();
   #service = inject(RacesService);
   #teams = inject(TeamService).teams$;
 
@@ -52,7 +50,7 @@ export class LiveRaceComponent {
     this.bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
           this.#service.getLiveResult(this.race(), this.drivers()).pipe(
-            tap(({ latestUpdate }) => this.latestUpdate = latestUpdate),
+            tap(({ latestUpdate }) => this.latestUpdate.emit(latestUpdate)),
             map(({ result }) => result),
           ),
           this.#service.getQualify(this.race(), this.drivers()),
