@@ -12,31 +12,34 @@ import { NgOptimizedImage } from '@angular/common';
   selector: 'f2020-live-live',
   template: `
     <sha-card-page>
-      <mat-card>
-        <mat-card-header>
-          <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
-          <mat-card-title>
-            @if (isLiveLive()) {
-              Live live
-            } @else {
-              Relive
-            }
-          </mat-card-title>
-          <mat-card-subtitle>{{ race().name }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()"/>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Holdbeskeder</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <f2020-live-radio class="block mt-3" [race]="race()" [drivers]="drivers()"/>
-        </mat-card-content>
-      </mat-card>
+      @if (race()) {
+        <mat-card>
+          <mat-card-header>
+            <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
+            <mat-card-title>
+              @if (isLiveLive()) {
+                Live live
+              } @else {
+                Relive
+              }
+            </mat-card-title>
+            <mat-card-subtitle>{{ race().name }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()"/>
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Holdbeskeder</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <f2020-live-radio class="block mt-3" [race]="race()" [drivers]="drivers()"/>
+          </mat-card-content>
+        </mat-card>
+      }
     </sha-card-page>
+
   `,
   standalone: true,
   imports: [
