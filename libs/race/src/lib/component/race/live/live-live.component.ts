@@ -11,7 +11,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'f2020-live-live',
   template: `
-    <sha-card-page>
+    <sha-card-page cols="lg:grid-cols-2">
       @if (race()) {
         <mat-card>
           <mat-card-header>

@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { NgClass } from '@angular/common';
 
 @Component({
-    selector: 'sha-card-page',
-    template: `
+  selector: 'sha-card-page',
+  template: `
     <div>
-      <div class="p-3 grid gap-x-4 gap-y-4 grid-cols-1 max-w-3xl mx-auto">
-        <ng-content></ng-content>
+      <div class="p-3 grid gap-x-4 gap-y-4 grid-cols-1 mx-auto" [ngClass]="cols()">
+        <ng-content/>
       </div>
     </div>
   `,
-    styleUrls: ['./card-page.component.scss'],
-    standalone: true,
+  imports: [
+    NgClass,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardPageComponent {
-
+  cols = input<string>('max-w-3xl');
 }
