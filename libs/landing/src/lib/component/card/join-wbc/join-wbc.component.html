@@ -1,26 +1,28 @@
-@if (stillTimeToJoin()) {
-  @if (latestWBCJoinDate()) {
-    <mat-card>
-      <mat-card-header>
-        <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
-        <mat-card-title>{{ title() }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        @if (hasJoined()) {
-          <p>Tillykke med din deltagelse</p>
-          <p>Du deltager i kampen om den store gevinst!</p>
-        } @else {
-          <p>Har du lyst til at deltage i det samlet mesterskab?</p>
-          <p>Så tilmeld dig <strong>WBC!</strong> Det koster 100,00 kr</p>
-          <p>Tilmeldingen lukker om {{ latestWBCJoinDate() | relativeToNow }}</p>
-        }
-      </mat-card-content>
-      @if (!hasJoined()) {
-        <mat-card-actions>
-          <button mat-button [disabled]="loading()" (click)="joinWBC()">Deltag</button>
-          <button mat-button routerLink="/info/rules" fragment="wbc">Mere information</button>
-        </mat-card-actions>
-      }
-    </mat-card>
-  }
+@if (hasJoined()) {
+  <mat-card>
+    <mat-card-header>
+      <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
+      <mat-card-title>Du er med i WBC!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Tillykke med din deltagelse</p>
+      <p>Du deltager i kampen om den store gevinst!</p>
+    </mat-card-content>
+  </mat-card>
+} @else if (stillTimeToJoin()) {
+  <mat-card>
+    <mat-card-header>
+      <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
+      <mat-card-title>Deltag i WBC</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Har du lyst til at deltage i det samlet mesterskab?</p>
+      <p>Så tilmeld dig <strong>WBC!</strong> Det koster 100,00 kr</p>
+      <p>Tilmeldingen lukker om {{ latestWBCJoinDate() | relativeToNow }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button [disabled]="loading()" (click)="joinWBC()">Deltag</button>
+      <button mat-button routerLink="/info/rules" fragment="wbc">Mere information</button>
+    </mat-card-actions>
+  </mat-card>
 }

@@ -28,7 +28,6 @@ export class JoinWbcComponent {
   hasJoined: Signal<boolean>;
   loading: Signal<boolean>;
   icon = icon.fasStar;
-  title = computed(() => this.hasJoined() ? 'Du er med i WBC!' : 'Deltag i WBC');
   readonly playerStore = inject(PlayerStore);
 
   constructor(
@@ -38,7 +37,7 @@ export class JoinWbcComponent {
     this.latestWBCJoinDate = computed(() => seasonStore.season()?.wbc?.latestWBCJoinDate);
 
     this.stillTimeToJoin = computed(() => {
-      return this.latestWBCJoinDate() > DateTime.local();
+      return this.latestWBCJoinDate() && this.latestWBCJoinDate() > DateTime.local();
     });
     this.hasJoined = computed(() => {
       const wbc = seasonStore.season()?.wbc;
