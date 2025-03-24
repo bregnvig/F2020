@@ -11,7 +11,6 @@ import { RadioMessageComponent } from './radio-message.component';
   selector: 'f2020-live-radio',
   template: `
     @if (messages.value(); as messages) {
-      <h2>Hold beskeder</h2>
       <mat-list>
         @for (message of messages; track message.metaId) {
           <mat-list-item>

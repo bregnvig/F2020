@@ -1,57 +1,67 @@
-import { Component, input, output } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { Component, computed, inject, Signal } from '@angular/core';
+import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { LiveRadioComponent } from './live-radio.component';
-import { Bid, IDriver, IRace } from '@f2020/data';
+import { Bid, IDriver } from '@f2020/data';
 import { LiveRaceComponent } from './live-race.component';
+import { RaceStore } from '@f2020/api';
+import { CardPageComponent, FlagURLPipe } from '@f2020/shared';
+import { DateTime } from 'luxon';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'f2020-live-live',
   template: `
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          @if (isLiveLive()) {
-            Live live
-          } @else {
-            Relive
-          }
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()"/>
-        <f2020-live-radio class="block mt-3" [race]="race()" [drivers]="drivers()"/>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button (click)="cancel()">@if (isLiveLive()) {
-          Stop
-        } @else {
-          Tilbage til resultat
-        }</button>
-      </mat-card-actions>
-    </mat-card>
+    <sha-card-page>
+      <mat-card>
+        <mat-card-header>
+          <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
+          <mat-card-title>
+            @if (isLiveLive()) {
+              Live live
+            } @else {
+              Relive
+            }
+          </mat-card-title>
+          <mat-card-subtitle>{{ race().name }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()"/>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Holdbeskeder</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <f2020-live-radio class="block mt-3" [race]="race()" [drivers]="drivers()"/>
+        </mat-card-content>
+      </mat-card>
+    </sha-card-page>
   `,
   standalone: true,
   imports: [
-    MatButton,
     MatCard,
-    MatCardActions,
     MatCardContent,
     MatCardHeader,
     MatCardTitle,
     LiveRadioComponent,
     LiveRaceComponent,
+    CardPageComponent,
+    FlagURLPipe,
+    MatCardAvatar,
+    MatCardSubtitle,
+    NgOptimizedImage,
   ],
 })
 
 export class LiveLiveComponent {
-  race = input.required<IRace>();
-  drivers = input.required<IDriver[]>();
-  bids = input.required<Bid[]>();
-  isLiveLive = input.required<boolean>();
-  stopped = output<boolean>();
 
-  cancel() {
-    this.stopped.emit(true);
-  }
+  #store = inject(RaceStore);
+
+
+  race = this.#store.race;
+  drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
+  bids: Signal<Bid[]> = this.#store.bids as Signal<Bid[]>;
+  isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
+
 }
