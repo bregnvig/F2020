@@ -1,4 +1,4 @@
-import { GithubService } from './../../service/github.service';
+import { GithubService } from '../../service/github.service';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { angularLogo, cloudMessagingLogo, firebaseLogo, firestoreLogo, functionsLogo, githubLogo, ngrxLogo, tailwindCSS } from './assets';
