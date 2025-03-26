@@ -1,5 +1,5 @@
 import { GithubService } from './../../service/github.service';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { angularLogo, cloudMessagingLogo, firebaseLogo, firestoreLogo, functionsLogo, githubLogo, ngrxLogo, tailwindCSS } from './assets';
 import { AsyncPipe } from '@angular/common';
@@ -16,15 +16,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 })
 export class AboutComponent {
 
-  angular = this.sanitizer.bypassSecurityTrustResourceUrl(angularLogo);
-  firebase = this.sanitizer.bypassSecurityTrustResourceUrl(firebaseLogo);
-  firestore = this.sanitizer.bypassSecurityTrustResourceUrl(firestoreLogo);
-  functions = this.sanitizer.bypassSecurityTrustResourceUrl(functionsLogo);
-  github = this.sanitizer.bypassSecurityTrustResourceUrl(githubLogo);
-  cloudMessaging = this.sanitizer.bypassSecurityTrustResourceUrl(cloudMessagingLogo);
-  tailwindCSS = this.sanitizer.bypassSecurityTrustResourceUrl(tailwindCSS);
-  ngrx = this.sanitizer.bypassSecurityTrustResourceUrl(ngrxLogo);
+  #sanitizer = inject(DomSanitizer);
+  service = inject(GithubService);
+  angular = this.#sanitizer.bypassSecurityTrustResourceUrl(angularLogo);
+  firebase = this.#sanitizer.bypassSecurityTrustResourceUrl(firebaseLogo);
+  firestore = this.#sanitizer.bypassSecurityTrustResourceUrl(firestoreLogo);
+  functions = this.#sanitizer.bypassSecurityTrustResourceUrl(functionsLogo);
+  github = this.#sanitizer.bypassSecurityTrustResourceUrl(githubLogo);
+  cloudMessaging = this.#sanitizer.bypassSecurityTrustResourceUrl(cloudMessagingLogo);
+  tailwindCSS = this.#sanitizer.bypassSecurityTrustResourceUrl(tailwindCSS);
+  ngrx = this.#sanitizer.bypassSecurityTrustResourceUrl(ngrxLogo);
 
-  constructor(private sanitizer: DomSanitizer, public service: GithubService) {
-  }
 }
