@@ -7,11 +7,12 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    selector: 'info-about',
-    templateUrl: './about.component.html',
-    styleUrls: ['./about.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbarModule, MatGridListModule, AsyncPipe]
+  selector: 'info-about',
+  templateUrl: './about.component.html',
+  styleUrls: ['./about.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatToolbarModule, MatGridListModule, AsyncPipe],
+  providers: [GithubService],
 })
 export class AboutComponent {
 
