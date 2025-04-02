@@ -7,19 +7,27 @@
     <mat-list>
       @for (team of teams; track team.constructorId; ) {
         <h2 matSubheader>{{ team.name }}</h2>
-        @for (driverId of team.drivers; track driverId) {
+        @let drivers = allDrivers(team);
+        @for (driverId of drivers; track driverId) {
           <mat-list-item>
             @let driver = driverId | driver;
-
-            <h5 matListItemTitle>{{ driver?.name }}</h5>
+            <h5 matListItemTitle>
+              {{ driver?.name }}
+              @if (team.previousDrivers?.includes(driverId)) {
+                <fa-icon [icon]="icon.falTireFlat"></fa-icon>
+              }
+            </h5>
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver?.name">
             <small class="!flex justify-between" matListItemLine>
               <span class="flex-auto uppercase">{{ driverId }}</span>
               <span class="flex-auto text-end"># {{ driver?.permanentNumber?.join(', ') }}</span>
             </small>
-            <p matListItemMeta>
-              <button *shaHasRole="'admin'" mat-icon-button (click)="removeDriver(driverId, team)">
+            <p *shaHasRole="'admin'" matListItemMeta>
+              <button mat-icon-button (click)="removeDriver(driverId, team)">
                 <fa-icon [icon]="icon.farTrash"></fa-icon>
+              </button>
+              <button mat-icon-button (click)="previousDriver(driverId, team)">
+                <fa-icon [icon]="icon.falTireFlat"></fa-icon>
               </button>
             </p>
           </mat-list-item>

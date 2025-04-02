@@ -51,6 +51,18 @@ export class TeamsListComponent {
       drivers: team.drivers.filter(existing => existing !== driver),
     };
     this.#service.updateTeam(payload).then(() => this.#snackBar.open(`${driver} fjernet fra ${team.name}`, undefined, { duration: 1000 }));
+  }
 
+  previousDriver(driver: string, team: ITeam) {
+    const payload: ITeam = {
+      ...team,
+      drivers: team.drivers.filter(existing => existing !== driver),
+      previousDrivers: [...(team.previousDrivers ?? []), driver],
+    };
+    this.#service.updateTeam(payload).then(() => this.#snackBar.open(`${driver} er nu forhenværende kører for ${team.name}`, undefined, { duration: 1000 }));
+  }
+
+  allDrivers(team: ITeam) {
+    return [...team.drivers, ...(team.previousDrivers ?? [])];
   }
 }

@@ -5,4 +5,5 @@ export interface ITeam {
   countryCode?: string;
   points: number;
   drivers: string[];
+  previousDrivers?: string[];
 }
