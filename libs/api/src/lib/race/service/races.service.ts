@@ -3,16 +3,18 @@ import { Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult, TeamRadio } from '@f2020/data';
-import { Lap, TeamRadio as OpenF1TeamRadio, openF1Url, PitStop, Position, Session } from '@f2020/openf1';
+import { Lap, openF1Url, PitStop, Position, Session, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { DateTime } from 'luxon';
-import { combineLatest, Observable, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
-import { exhaustMap, map } from 'rxjs/operators';
+import { combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { exhaustMap, map, shareReplay } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
 
 const bidConverter = converter.timestamp<Bid>();
 const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
+const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-${race.circuitId}`;
+const sessionCache = new Map<string, Observable<Session>>();
 
 @Injectable({
   providedIn: 'root',
@@ -128,8 +130,8 @@ export class RacesService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const positionFilter = `&date<=${latestEndTime.toISO(toISOOptions)}`;
 
-    return this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, 'Race')).pipe(
-      map(sessions => requiredValue(sessions[0].session_key, 'session_key')),
+    return this.#getSession(race, 'Race').pipe(
+      map(session => requiredValue(session.session_key, 'session_key')),
       switchMap(session => this.http.get<PitStop[]>(openF1Url.pitStops(session) + positionFilter)),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
     );
@@ -207,9 +209,19 @@ export class RacesService {
   }
 
   #getSession(race: IRace, sessionName: 'Race' | 'Qualifying'): Observable<Session> {
-    return this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, sessionName)).pipe(
-      map(sessions => requiredValue(sessions[0], 'Session'))
-    );
+    const key = sessionKey(race, sessionName);
+    if (!sessionCache.has(key)) {
+      const session = JSON.parse(localStorage.getItem(key)) as Session | null;
+      const session$ = session
+        ? of(session)
+        : this.http.get<Session[]>(openF1Url.session(race.season, race.circuitId, sessionName)).pipe(
+          map(sessions => requiredValue(sessions[0], 'Session')),
+          tap(session => localStorage.setItem(key, JSON.stringify(session))),
+          shareReplay(1),
+        );
+      sessionCache.set(key, session$);
+    }
+    return sessionCache.get(key);
   }
 
   #getPositionAndLabs(race: IRace, sessionKey: number, positionAfter?: DateTime, lapsAfter?: DateTime): Observable<{ positions: Position[], laps: Lap[]; }> {
