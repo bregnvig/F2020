@@ -25,7 +25,7 @@ export interface RaceState {
   interimResult: Partial<Bid> | undefined;
   result: Bid | undefined;
   loaded: boolean; // has the Races list been loaded
-  error?: string | undefined; // last none error (if any)
+  error?: unknown | undefined; // last none error (if any)
 }
 
 const initialState: RaceState = {
@@ -101,8 +101,8 @@ export const RaceStore = signalStore(
             map(([raceResult, qualify, pitStops]) => {
               return buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
             }),
-          ));
-          patchState(store, { result });
+          )).catch(error => patchState(store, { error }));
+          result && patchState(store, { result });
         }
       },
       loadInterimResult: async (): Promise<void> => {
@@ -110,8 +110,8 @@ export const RaceStore = signalStore(
         if (race) {
           const interimResult = await firstValueFrom(service.getQualify(race, store.drivers()).pipe(
             map(qualify => buildInterimResult(qualify, race.selectedDriver, race.selectedTeam)),
-          ));
-          patchState(store, { interimResult });
+          )).catch(error => patchState(store, { error }));
+          interimResult && patchState(store, { interimResult });
         }
       },
       updateDrivers: (drivers: string[]) => service.updateRace(seasonStore.season().id, store.race().round, { drivers }),

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RaceStore, TeamService } from '@f2020/api';
@@ -12,6 +12,8 @@ import { icon, LoadingComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @UntilDestroy()
 @Component({
@@ -28,8 +30,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
         <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="!validResult()" (click)="submitResult()">
           <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
         </button>
-      } @else {
-        <sha-loading></sha-loading>
+      }
+      @if (!loaded() || !downloaded()) {
+        <sha-loading/>
       }
     </div>
   `,
@@ -39,6 +42,7 @@ export class SubmitResultComponent {
 
   #teamsService = inject(TeamService);
   #store = inject(RaceStore);
+  #snackBar = inject(MatSnackBar);
 
   resultControl = new FormControl<Bid | null>(null);
   race: Signal<IRace> = this.#store.race;
@@ -46,6 +50,7 @@ export class SubmitResultComponent {
   teams: Signal<ITeam[]> = toSignal(this.#teamsService.teams$);
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
+  downloaded = signal(false);
 
   constructor(
     private router: Router) {
@@ -60,7 +65,18 @@ export class SubmitResultComponent {
     this.#store.loadResult();
     effect(() => {
       const result = this.#store.result();
-      result && this.resultControl.patchValue(result);
+      if (result) {
+        this.resultControl.patchValue(result);
+        this.downloaded.set(true);
+
+      }
+    });
+    effect(() => {
+      const error = this.#store.error();
+      if (error) {
+        const errorMessage = error instanceof HttpErrorResponse ? error.message : error.toString();
+        this.#snackBar.open(errorMessage, undefined, { duration: 20000 });
+      }
     });
   }
 
