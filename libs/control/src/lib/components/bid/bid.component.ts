@@ -1,4 +1,4 @@
-import { Component, computed, forwardRef, inject, input } from '@angular/core';
+import { Component, computed, effect, forwardRef, inject, input } from '@angular/core';
 import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Bid, IRace, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
 import { debounceTime } from 'rxjs/operators';
@@ -41,6 +41,7 @@ export class BidComponent extends AbstractControlComponent<Bid> {
   type = input.required<'bid' | 'result' | 'interim'>();
   isInterim = computed(() => this.type() === 'interim');
   isResult = computed(() => this.type() === 'result');
+  isBid = computed(() => this.type() === 'bid');
   notBid = computed(() => this.type() !== 'bid');
 
   fg = this.#fb.group({
@@ -50,7 +51,7 @@ export class BidComponent extends AbstractControlComponent<Bid> {
     selectedDriver: this.#fb.control<SelectedDriverValue>(null),
     selectedTeam: this.#fb.control<SelectedTeamValue>({ value: null, disabled: true }),
     slowestPitStop: this.#fb.control<string[]>(null, Validators.required),
-    firstCrash: this.#fb.control<string[]>(null, Validators.required),
+    firstCrash: this.#fb.control<string[]>(null),
     polePositionTime: this.#fb.control<number>(null, Validators.required),
   });
 
@@ -64,6 +65,7 @@ export class BidComponent extends AbstractControlComponent<Bid> {
       debounceTime(300),
       takeUntilDestroyed(),
     ).subscribe(value => this.propagateChange(value));
+    effect(() => this.isBid() && this.fg.controls.firstCrash.setValidators(Validators.required));
   }
 
   writeValue(value: Bid): void {
