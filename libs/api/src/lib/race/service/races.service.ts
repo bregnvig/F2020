@@ -1,13 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult, TeamRadio } from '@f2020/data';
-import { Lap, TeamRadio as OpenF1TeamRadio, openF1Url, PitStop, Position, Session } from '@f2020/openf1';
+import { Lap, openF1Url, PitStop, Position, Session, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { DateTime } from 'luxon';
-import { combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
 import { catchError, exhaustMap, map, retry, shareReplay } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
 
@@ -16,10 +16,22 @@ const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
 const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-${race.circuitId}`;
 const sessionCache = new Map<string, Observable<Session>>();
 
+interface LiveStatus {
+  loading: boolean;
+  error?: HttpErrorResponse;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class RacesService {
+
+  #resultStatus$ = new BehaviorSubject<LiveStatus>({ loading: false });
+  #radioStatus$ = new BehaviorSubject<LiveStatus>({ loading: false });
+  #pitStopStatus$ = new BehaviorSubject<LiveStatus>({ loading: false });
+  readonly resultStatus = this.#resultStatus$.asObservable();
+  readonly radioStatus = this.#radioStatus$.asObservable();
+  readonly pitStopStatus = this.#pitStopStatus$.asObservable();
 
   constructor(
     private afs: Firestore,
@@ -70,7 +82,7 @@ export class RacesService {
     );
   }
 
-  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; error?: any; } | null> {
+  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime } | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     let positionAfter: DateTime | undefined = undefined;
@@ -85,8 +97,12 @@ export class RacesService {
           map(() => session.session_key),
         )),
         takeWhile(() => DateTime.local() < latestEndTime),
+        tap(() => this.#resultStatus$.next({ loading: true, error: undefined })),
         exhaustMap(sessionKey => this.#getPositionAndLabs(race, sessionKey, positionAfter, labsAfter).pipe(
-          catchError(error => of({ positions: [], laps: [], error })),
+          catchError(error => {
+            this.#resultStatus$.next({ loading: false, error });
+            return of({ positions: [], laps: [] });
+          }),
         )),
         tap(({ positions, laps }) => {
           positionAfter = positions?.length ? DateTime.fromISO(positions.at(-1).date) : positionAfter;
@@ -95,13 +111,13 @@ export class RacesService {
         scan((previous, current) => ({
           positions: [...previous.positions, ...current.positions ?? []],
           laps: [...previous.laps, ...current.laps ?? []],
-          error: current['error'],
         })),
         map(value => {
           const { result, ...raceNoResult } = race;
           const raceResult = mapper.raceResult({ positions: value.positions, laps: value.laps, race: raceNoResult, drivers });
           return ({ result: raceResult, latestUpdate: positionAfter > labsAfter ? positionAfter : labsAfter, error: value['error'] });
         }),
+        tap(() => this.#resultStatus$.next({ loading: false })),
       )
       : this.#replayResult(race, drivers);
   }
@@ -113,15 +129,22 @@ export class RacesService {
 
     return isLiveLive
       ? this.#getSession(race, 'Race').pipe(
-        switchMap(session => timer(0, 5000).pipe(
+        switchMap(session => timer(5000).pipe(
           map(() => session.session_key),
         )),
         takeWhile(() => DateTime.local() < latestEndTime),
-        exhaustMap(sessionKey => this.#getTeamRadio(race, sessionKey, positionAfter)),
+        tap(() => this.#radioStatus$.next({ loading: true, error: undefined })),
+        exhaustMap(sessionKey => this.#getTeamRadio(race, sessionKey, positionAfter).pipe(
+          catchError(error => {
+            this.#radioStatus$.next({ error, loading: false });
+            return of<OpenF1TeamRadio[]>([]);
+          }),
+        )),
         tap(messages => positionAfter = messages?.length ? DateTime.fromISO(messages.at(-1).date) : positionAfter),
         map(messages => mapper.radio({ messages, drivers })),
         scan((previous, current) => [...previous, ...current]),
         map(messages => messages.toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
+        tap(() => this.#radioStatus$.next({ loading: false })),
       )
       : this.#replayRadio(race, drivers);
   }
@@ -158,7 +181,15 @@ export class RacesService {
         return isLiveLive
           ? timer(0, 5000).pipe(
             takeWhile(() => DateTime.local() < latestEndTime),
-            exhaustMap(() => this.http.get<PitStop[]>(openF1Url.pitStops(sessionKey) + positionFilter)),
+            tap(() => this.#pitStopStatus$.next({ loading: true, error: undefined })),
+            exhaustMap(() => this.http.get<PitStop[]>(openF1Url.pitStops(sessionKey) + positionFilter).pipe(
+              catchError(error => {
+                this.#pitStopStatus$.next({ loading: false, error });
+                return of([]);
+              }),
+            )),
+            scan((previous, current) => [...previous, ...current], []),
+            tap(() => this.#pitStopStatus$.next({ loading: false })),
           )
           : this.http.get<PitStop[]>(openF1Url.pitStops(sessionKey) + positionFilter).pipe(
             switchMap(pitStops => {

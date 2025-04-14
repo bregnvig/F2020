@@ -3,10 +3,14 @@ import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle,
 import { LiveRadioComponent } from './live-radio.component';
 import { Bid, IDriver } from '@f2020/data';
 import { LiveRaceComponent } from './live-race.component';
-import { RaceStore } from '@f2020/api';
-import { CardPageComponent, DateTimePipe, FlagURLPipe } from '@f2020/shared';
+import { RacesService, RaceStore } from '@f2020/api';
+import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
 import { DateTime } from 'luxon';
 import { NgOptimizedImage } from '@angular/common';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'f2020-live-live',
@@ -23,7 +27,14 @@ import { NgOptimizedImage } from '@angular/common';
                 Relive
               }
             </mat-card-title>
-            <mat-card-subtitle>Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}</mat-card-subtitle>
+            <mat-card-subtitle>
+              Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}
+              <fa-icon [style.visibility]="loadingState()" class="ms-1" [icon]="icons.farCircleDot" animation="beat"/>
+              @if (error()) {
+                <fa-icon class="text-red-400 mx-2" [icon]="icons.falTireFlat"/>
+                <span class="text-red-400">{{ error() }}</span>
+              }
+            </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()" (latestUpdate)="latestUpdate.set($event)"/>
@@ -32,6 +43,12 @@ import { NgOptimizedImage } from '@angular/common';
         <mat-card>
           <mat-card-header>
             <mat-card-title>Holdbeskeder</mat-card-title>
+            <mat-card-subtitle>
+              @if (radioError()) {
+                <fa-icon class="text-red-400 me-2" [icon]="icons.falTireFlat"/>
+                <span class="text-red-400">{{ radioError() }}</span>
+              }
+            </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <f2020-live-radio class="block mt-3" [race]="race()" [drivers]="drivers()"/>
@@ -55,13 +72,32 @@ import { NgOptimizedImage } from '@angular/common';
     MatCardSubtitle,
     NgOptimizedImage,
     DateTimePipe,
+    FaIconComponent,
   ],
 })
 
 export class LiveLiveComponent {
 
+  icons = icon;
   #store = inject(RaceStore);
+  #service = inject(RacesService);
+  radioError = toSignal(this.#service.radioStatus.pipe(
+    map(status => status.error?.statusText),
+  ));
+  loadingState = toSignal(combineLatest({
+    result: this.#service.resultStatus,
+    pitStop: this.#service.pitStopStatus,
+  }).pipe(
+    map(({ result, pitStop }) => result.loading || pitStop.loading),
+    map(loading => loading ? 'visible' : 'hidden'),
+  ));
 
+  error = toSignal(combineLatest({
+    result: this.#service.resultStatus,
+    pitStop: this.#service.pitStopStatus,
+  }).pipe(
+    map(({ result, pitStop }) => result.error?.statusText || pitStop.error?.statusText),
+  ));
 
   race = this.#store.race;
   drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
