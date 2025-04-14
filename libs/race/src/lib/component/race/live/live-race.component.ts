@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
-import { buildResult, RacesService, TeamService } from '@f2020/api';
+import { buildInterimResult, buildResult, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, Observable, retry, switchMap, tap } from 'rxjs';
-import { Bid, calculateResult, IDriver, IRace } from '@f2020/data';
+import { Bid, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { shareLatest } from '@f2020/tools';
@@ -47,13 +47,16 @@ export class LiveRaceComponent {
 
   ngOnInit() {
 
+    const qualify$ = this.#service.getQualify(this.race(), this.drivers()).pipe(
+      shareLatest(),
+    );
     this.bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
           this.#service.getLiveResult(this.race(), this.drivers()).pipe(
             tap(({ latestUpdate }) => this.latestUpdate.emit(latestUpdate)),
             map(({ result }) => result),
           ),
-          this.#service.getQualify(this.race(), this.drivers()),
+          qualify$,
           this.#service.getLivePitStops(this.race(), this.drivers(), teams),
         ]),
       ),
@@ -66,8 +69,11 @@ export class LiveRaceComponent {
       untilDestroyed(this),
       shareLatest(),
     );
-    firstValueFrom(this.bids$)
-      .then(bids => this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index])));
+    firstValueFrom(qualify$.pipe(
+        map(qualify => buildInterimResult(qualify, this.race().selectedDriver, this.race().selectedTeam)),
+        map(result => this.bids().map(bid => calculateInterimResult(bid, result)).reverse()),
+      ),
+    ).then(bids => this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index])));
     this.bids$.pipe(
       untilDestroyed(this),
     ).subscribe(bids => {
