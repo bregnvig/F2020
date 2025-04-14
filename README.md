@@ -7,9 +7,9 @@ The application is developed using
 
 ## Frontend
 
-* Angular
-* Angular Material
-* tailwindcss
+- Angular
+- Angular Material
+- tailwindcss
 
 ## Builder
 
@@ -21,10 +21,10 @@ If you need to populate the firebase emulator use `export FIRESTORE_EMULATOR_HOS
 
 ## Backend
 
-* Firebase
-* Firestore
-* Functions
-* Cloud Messaging
+- Firebase
+- Firestore
+- Functions
+- Cloud Messaging
 
 The project is supported by the Nx mono repo.
 
@@ -49,7 +49,7 @@ You can create it using `firebase functions:config:get > .runtimeconfig.json`
 
 1. Start by running `npx nx run firebase:watch`
 2. Run emulators
-   use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions`
+   use `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions --project f1-playground-e1f23`
    Delete `export`, `import` and/or `--inspect-functions` if not wanted
 3. If ports are already taken, run `npm run kill-ports`
 
