@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult, TeamRadio } from '@f2020/data';
-import { Lap, openF1Url, PitStop, Position, Session, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { Lap, TeamRadio as OpenF1TeamRadio, openF1Url, PitStop, Position, Session } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
 import { DateTime } from 'luxon';
 import { combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
-import { exhaustMap, map, shareReplay } from 'rxjs/operators';
+import { catchError, exhaustMap, map, retry, shareReplay } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
 
 const bidConverter = converter.timestamp<Bid>();
@@ -70,18 +70,24 @@ export class RacesService {
     );
   }
 
-  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
+  getLiveResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; error?: any; } | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     let positionAfter: DateTime | undefined = undefined;
     let labsAfter: DateTime | undefined = undefined;
     return isLiveLive
       ? this.#getSession(race, 'Race').pipe(
+        retry({
+          count: 3,
+          delay: 5000,
+        }),
         switchMap(session => timer(0, 5000).pipe(
           map(() => session.session_key),
         )),
         takeWhile(() => DateTime.local() < latestEndTime),
-        exhaustMap(sessionKey => this.#getPositionAndLabs(race, sessionKey, positionAfter, labsAfter)),
+        exhaustMap(sessionKey => this.#getPositionAndLabs(race, sessionKey, positionAfter, labsAfter).pipe(
+          catchError(error => of({ positions: [], laps: [], error })),
+        )),
         tap(({ positions, laps }) => {
           positionAfter = positions?.length ? DateTime.fromISO(positions.at(-1).date) : positionAfter;
           labsAfter = laps?.length ? DateTime.fromISO(laps.at(-1).date_start) : labsAfter;
@@ -89,12 +95,13 @@ export class RacesService {
         scan((previous, current) => ({
           positions: [...previous.positions, ...current.positions ?? []],
           laps: [...previous.laps, ...current.laps ?? []],
+          error: current['error'],
         })),
-        map(({ positions, laps }) => {
+        map(value => {
           const { result, ...raceNoResult } = race;
-          return mapper.raceResult({ positions, laps, race: raceNoResult, drivers });
+          const raceResult = mapper.raceResult({ positions: value.positions, laps: value.laps, race: raceNoResult, drivers });
+          return ({ result: raceResult, latestUpdate: positionAfter > labsAfter ? positionAfter : labsAfter, error: value['error'] });
         }),
-        map(result => ({ result, latestUpdate: positionAfter > labsAfter ? positionAfter : labsAfter })),
       )
       : this.#replayResult(race, drivers);
   }
