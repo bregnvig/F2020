@@ -72,15 +72,17 @@ export const RaceStore = signalStore(
             const closed = race.close < DateTime.now();
             return {
               race,
-              type: closed || racesStore.yourBid()?.submitted ? 'bids' : 'participants',
+              type: closed ? 'closed' : racesStore.yourBid()?.submitted ? 'bids' : 'participants',
             };
           }),
           switchMap(({ race, type }) => {
             const player = playerStore.player();
             const season = seasonStore.season();
-            return ((type === 'bids')
-              ? service.getBids(season.id, race)
-              : service.getParticipants(season.id, race)).pipe(
+            return ((type === 'participants')
+              ? service.getParticipants(season.id, race)
+              : service.getBids(season.id, race).pipe(
+                map(bids => bids.filter(bid => type !== 'closed' || bid.submitted)),
+              )).pipe(
               tapResponse({
                 next: bids => patchState(store, { race, bids, loaded: true, error: undefined }),
                 error: error => patchState(store, { error: error?.toString() }),
