@@ -45,6 +45,7 @@ import {
   faTrophyAlt as fasTrophyAlt,
   faUserAstronaut,
 } from '@fortawesome/pro-solid-svg-icons';
+import { faCircleDot } from '@fortawesome/free-regular-svg-icons';
 
 const farIcons = [
   faSunCloud,
@@ -72,6 +73,7 @@ const farIcons = [
   faBug,
   faPlay,
   faPause,
+  faCircleDot,
 ];
 
 const fasIcons = [

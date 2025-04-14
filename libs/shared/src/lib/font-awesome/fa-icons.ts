@@ -46,6 +46,7 @@ type Icon =
   | 'farBug'
   | 'farPlay'
   | 'farPause'
+  | 'farCircleDot'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -94,4 +95,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farBug: ['far', 'bug'],
   farPlay: ['far', 'play'],
   farPause: ['far', 'pause'],
+  farCircleDot: ['far', 'circle-dot'],
 };
