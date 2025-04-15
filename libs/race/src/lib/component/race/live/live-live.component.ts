@@ -29,7 +29,7 @@ import { combineLatest } from 'rxjs';
             </mat-card-title>
             <mat-card-subtitle>
               Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}
-              <fa-icon [style.visibility]="loadingState()" class="ms-1" [icon]="icons.farCircleDot" animation="beat"/>
+              <fa-icon class="ms-1" [icon]="icons.farCircleDot" [animation]="$any(animationState())"/>
               @if (error()) {
                 <fa-icon class="text-red-400 mx-2" [icon]="icons.falTireFlat"/>
                 <span class="text-red-400">{{ error() }}</span>
@@ -84,12 +84,12 @@ export class LiveLiveComponent {
   radioError = toSignal(this.#service.radioStatus.pipe(
     map(status => status.error?.statusText),
   ));
-  loadingState = toSignal(combineLatest({
+  animationState = toSignal(combineLatest({
     result: this.#service.resultStatus,
     pitStop: this.#service.pitStopStatus,
   }).pipe(
     map(({ result, pitStop }) => result.loading || pitStop.loading),
-    map(loading => loading ? 'visible' : 'hidden'),
+    map(loading => loading ? 'beat-fade' : ''),
   ));
 
   error = toSignal(combineLatest({
