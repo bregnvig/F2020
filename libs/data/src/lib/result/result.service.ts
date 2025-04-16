@@ -51,8 +51,8 @@ export const calculateResult = (bid: Bid, result: Bid): Bid => {
   return calculatedResult;
 };
 
-export const calculateInterimResult = (bid: Partial<Bid>, result: Partial<Bid>): Partial<Bid> => {
-  const calculatedResult: Partial<Bid> = { ...bid };
+export const calculateInterimResult = (bid: Bid, result: Partial<Bid>): Bid => {
+  const calculatedResult: Bid = { ...bid };
   calculatedResult.qualifyPoints = offsetPoints(bid.qualify as string[], result.qualify as string[], 1) as [number, number, number, number, number, number];
   calculatedResult.selectedDriver = { ...bid.selectedDriver, ...propertyPoints(bid.selectedDriver, result.selectedDriver, 3) } as SelectedDriverValue;
   const qualifyPoints = bid.selectedTeam!.qualify === result.selectedTeam?.qualify ? 1 : 0;

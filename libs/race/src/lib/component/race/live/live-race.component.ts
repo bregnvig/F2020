@@ -1,9 +1,9 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { buildInterimResult, buildResult, RacesService, TeamService } from '@f2020/api';
-import { combineLatest, firstValueFrom, Observable, retry, switchMap, tap } from 'rxjs';
+import { combineLatest, firstValueFrom, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { shareLatest } from '@f2020/tools';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,7 +15,6 @@ import { DateTime } from 'luxon';
   selector: 'f2020-live-race',
   templateUrl: 'live-race.component.html',
   imports: [
-    AsyncPipe,
     MatListItem,
     MatListItemAvatar,
     NgOptimizedImage,
@@ -36,8 +35,8 @@ export class LiveRaceComponent {
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
   bids = input.required<Bid[]>();
+  initialPositions = signal<Bid[]>([]);
 
-  bids$?: Observable<Bid[]>;
   latestUpdate = output<DateTime>();
   #service = inject(RacesService);
   #teams = inject(TeamService).teams$;
@@ -50,7 +49,7 @@ export class LiveRaceComponent {
     const qualify$ = this.#service.getQualify(this.race(), this.drivers()).pipe(
       shareLatest(),
     );
-    this.bids$ = this.#teams.pipe(
+    const bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
           this.#service.getLiveResult(this.race(), this.drivers()).pipe(
             tap(({ latestUpdate }) => this.latestUpdate.emit(latestUpdate)),
@@ -71,13 +70,21 @@ export class LiveRaceComponent {
     );
     firstValueFrom(qualify$.pipe(
         map(qualify => buildInterimResult(qualify, this.race().selectedDriver, this.race().selectedTeam)),
-        map(result => this.bids().map(bid => calculateInterimResult(bid, result)).reverse()),
+        map(result => this.bids().map(bid => calculateInterimResult(bid, result))),
+        map(bids => bids.toSorted((a, b) => b.points - a.points)),
       ),
-    ).then(bids => this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index])));
-    this.bids$.pipe(
+    ).then(bids => {
+      this.initialPositions.set(bids);
+      this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index]));
+    });
+    bids$.pipe(
       untilDestroyed(this),
     ).subscribe(bids => {
       this.#currentPosition = bids.toSorted((a, b) => b.points - a.points).map(bid => bid.player.uid);
+      this.initialPositions.update(positions => positions.map(bid => ({
+        ...bid,
+        points: bids.find(b => b.player.uid === bid.player.uid)?.points ?? 0,
+      } as Bid)));
     });
   }
 
