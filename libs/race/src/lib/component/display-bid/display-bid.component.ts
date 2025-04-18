@@ -7,13 +7,14 @@ import { CardPageComponent, PolePositionTimePipe, TeamNamePipe } from '@f2020/sh
 import { DisplayDriversComponent } from './drivers/display-drivers.component';
 import { DriverNamePipe, DriverPipe } from '@f2020/driver';
 import { DisplayTeamsComponent } from './teams/display-teams.component';
-import { NgOptimizedImage } from '@angular/common';
+import { DisplayPoleTimeComponent } from './pole-position/display-pole-position.component';
 
 @Component({
   selector: 'f2020-display-bid',
   templateUrl: './display-bid.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardPageComponent,
+  imports: [
+    CardPageComponent,
     DriverCodesComponent,
     DisplayDriversComponent,
     MatListModule,
@@ -21,12 +22,19 @@ import { NgOptimizedImage } from '@angular/common';
     MatExpansionPanel,
     MatExpansionPanelTitle,
     MatExpansionPanelHeader,
-    MatExpansionPanelDescription, DriverNamePipe, TeamNamePipe, DisplayTeamsComponent, PolePositionTimePipe, DriverPipe, NgOptimizedImage],
+    MatExpansionPanelDescription,
+    DriverNamePipe,
+    TeamNamePipe,
+    DisplayTeamsComponent,
+    PolePositionTimePipe,
+    DriverPipe,
+    DisplayPoleTimeComponent,
+  ],
 })
 export class DisplayBidComponent {
-
   bid = input.required<Partial<Bid>>();
   race = input.required<IRace>();
+  bidToCompare = input<Partial<Bid>>();
 
   constructor() {
     effect(() => console.log('Bid', this.bid()));
