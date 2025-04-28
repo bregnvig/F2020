@@ -76,8 +76,6 @@ const farIcons = [
   faPlay,
   faPause,
   faCircleDot,
-  faArrowUp,
-  faArrowDown
 ];
 
 const fasIcons = [

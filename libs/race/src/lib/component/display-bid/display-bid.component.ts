@@ -8,6 +8,10 @@ import { DisplayDriversComponent } from './drivers/display-drivers.component';
 import { DriverNamePipe, DriverPipe } from '@f2020/driver';
 import { DisplayTeamsComponent } from './teams/display-teams.component';
 import { DisplayPoleTimeComponent } from './pole-position/display-pole-position.component';
+import {
+  DisplayDriverStartPositionComponent,
+  DriverStartPosition
+} from './driver-start-position/display-driver-start-position.component';
 
 @Component({
   selector: 'f2020-display-bid',
@@ -29,6 +33,7 @@ import { DisplayPoleTimeComponent } from './pole-position/display-pole-position.
     PolePositionTimePipe,
     DriverPipe,
     DisplayPoleTimeComponent,
+    DisplayDriverStartPositionComponent,
   ],
 })
 export class DisplayBidComponent {
@@ -38,5 +43,23 @@ export class DisplayBidComponent {
 
   constructor() {
     effect(() => console.log('Bid', this.bid()));
+  }
+  
+  getDriverStartPosition(): DriverStartPosition {
+    const driverStartPosition: DriverStartPosition = {
+      grid: this.bid().selectedDriver.grid,
+      gridPoints: this.bid().selectedDriver.gridPoints,
+      finish: this.bid().selectedDriver.finish,
+      finishPoints: this.bid().selectedDriver.finishPoints,
+    };
+
+    if (this.bidToCompare()) {
+      driverStartPosition.compareGrid = this.bidToCompare().selectedDriver.grid;
+      driverStartPosition.compareGridPoints = this.bidToCompare().selectedDriver.gridPoints;
+      driverStartPosition.compareFinish = this.bidToCompare().selectedDriver.finish;
+      driverStartPosition.compareFinishPoints = this.bidToCompare().selectedDriver.finishPoints;
+    }
+
+    return driverStartPosition;
   }
 }

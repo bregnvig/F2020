@@ -25,7 +25,7 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
               </div>
               <div class="flex justify-between">
                 <small>{{ points()[$index] }} points</small>
-                @if (comparePoints() && comparePoints()[$index] !== undefined) {
+                @if (comparePoints() && comparePoints()[$index] !== undefined && comparison) {
                   <small [ngClass]="comparison[1]">
                     @if (comparison[0]; as compIcon) {
                       <fa-icon class="text-sm" [icon]="compIcon" />
@@ -60,9 +60,9 @@ export class DisplayTeamsComponent {
 
   pointComparison(teamPoints: number, compareTeamPoints: number): [[IconPrefix, IconName] | undefined, string] {
     if (teamPoints < compareTeamPoints) {
-      return [icon.farArrowUp, 'text-green-500'];
+      return [icon.fasAngleUp, 'text-green-500'];
     } else if (teamPoints > compareTeamPoints) {
-      return [icon.farArrowDown, 'text-red-500'];
+      return [icon.fasAngleDown, 'text-red-500'];
     }
     return [undefined, 'text-gray-500'];
   }

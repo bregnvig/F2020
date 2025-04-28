@@ -22,7 +22,7 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
             @if (polePositionTimeDiff() !== undefined) {
               <div class="flex justify-between">
                 <small class="text-gray-300">{{ polePositionTimeDiff() }} ms fra pole tiden</small>
-                @if (comparePolePositionTimeDiff()) {
+                @if (comparePolePositionTimeDiff() && comparison) {
                   <small [ngClass]="comparison[1]">
                     @if (comparison[0]; as compIcon) {
                       <fa-icon class="text-sm" [icon]="compIcon" />
@@ -46,9 +46,9 @@ export class DisplayPoleTimeComponent {
 
   timeComparison(time: number, compareTime: number): [[IconPrefix, IconName] | undefined, string] {
     if (time > compareTime) {
-      return [icon.farArrowUp, 'text-green-500']; // Faster
+      return [icon.fasAngleUp, 'text-green-500']; // Faster
     } else if (time < compareTime) {
-      return [icon.farArrowDown, 'text-red-500']; // Slower
+      return [icon.fasAngleDown, 'text-red-500']; // Slower
     }
     return [undefined, 'text-gray-500']; // Equal
   }
