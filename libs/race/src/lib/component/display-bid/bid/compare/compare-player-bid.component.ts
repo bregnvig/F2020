@@ -19,7 +19,6 @@ import { Player } from '@f2020/data';
           </mat-option>
           }
         </mat-select>
-        <mat-hint>Her kan du vælge en spiller der har afgivet bud, og sammeligne med</mat-hint>
       </mat-form-field>
   `,
   imports: [MatSelectModule, MatInputModule, ReactiveFormsModule],

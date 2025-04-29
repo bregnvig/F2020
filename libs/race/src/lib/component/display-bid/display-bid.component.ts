@@ -7,11 +7,11 @@ import { CardPageComponent, PolePositionTimePipe, TeamNamePipe } from '@f2020/sh
 import { DisplayDriversComponent } from './drivers/display-drivers.component';
 import { DriverNamePipe, DriverPipe } from '@f2020/driver';
 import { DisplayTeamsComponent } from './teams/display-teams.component';
-import { DisplayPoleTimeComponent } from './pole-position/display-pole-position.component';
+import { DisplayPoleTimeComponent } from './pole-time/display-pole-time.component';
 import {
-  DisplayDriverStartPositionComponent,
-  DriverStartPosition
-} from './driver-start-position/display-driver-start-position.component';
+  DisplaySelectedDriverComponent,
+  SelectedDriver
+} from './selected-driver/display-selected-driver.component';
 
 @Component({
   selector: 'f2020-display-bid',
@@ -33,7 +33,7 @@ import {
     PolePositionTimePipe,
     DriverPipe,
     DisplayPoleTimeComponent,
-    DisplayDriverStartPositionComponent,
+    DisplaySelectedDriverComponent,
   ],
 })
 export class DisplayBidComponent {
@@ -45,8 +45,8 @@ export class DisplayBidComponent {
     effect(() => console.log('Bid', this.bid()));
   }
   
-  getDriverStartPosition(): DriverStartPosition {
-    const driverStartPosition: DriverStartPosition = {
+  getDriverStartPosition(): SelectedDriver {
+    const driverStartPosition: SelectedDriver = {
       grid: this.bid().selectedDriver.grid,
       gridPoints: this.bid().selectedDriver.gridPoints,
       finish: this.bid().selectedDriver.finish,

@@ -5,12 +5,12 @@
         <mat-panel-title>Kvalifikation</mat-panel-title>
         @if (!qualifyPanel.expanded) {
           <mat-panel-description>
-            <f2020-driver-codes [driverIds]="bid().qualify"></f2020-driver-codes>
+            <f2020-driver-codes [driverIds]="bid().qualify" />
           </mat-panel-description>
         }
       </mat-expansion-panel-header>
       <div>
-        <f2020-display-drivers [compareDriverIds]="bidToCompare()?.qualify" [comparePoints]="bidToCompare()?.qualifyPoints" [driverIds]="bid().qualify" [points]="bid().qualifyPoints"></f2020-display-drivers>
+        <f2020-display-drivers [compareDriverIds]="bidToCompare()?.qualify" [comparePoints]="bidToCompare()?.qualifyPoints" [driverIds]="bid().qualify" [points]="bid().qualifyPoints" />
       </div>
     </mat-expansion-panel>
     @if (bid().fastestDriver) {
@@ -19,12 +19,12 @@
           <mat-panel-title>Hurtigste kører</mat-panel-title>
           @if (!fastestDriver.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().fastestDriver"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="bid().fastestDriver" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.fastestDriver" [driverIds]="bid().fastestDriver" [points]="bid().fastestDriverPoints" [comparePoints]="bidToCompare()?.fastestDriverPoints" ></f2020-display-drivers>
+          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.fastestDriver" [driverIds]="bid().fastestDriver" [points]="bid().fastestDriverPoints" [comparePoints]="bidToCompare()?.fastestDriverPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -34,12 +34,12 @@
           <mat-panel-title>Podium</mat-panel-title>
           @if (!podium.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().podium"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="bid().podium" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.podium" [driverIds]="bid().podium" [points]="bid().podiumPoints" [comparePoints]="bidToCompare()?.podiumPoints"></f2020-display-drivers>
+          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.podium" [driverIds]="bid().podium" [points]="bid().podiumPoints" [comparePoints]="bidToCompare()?.podiumPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -57,7 +57,7 @@
       </mat-expansion-panel-header>
       <div>
         <mat-list>
-          <f2020-display-driver-start-position [driverStartPosition]="getDriverStartPosition()" />
+          <f2020-display-selected-driver [driverStartPosition]="getDriverStartPosition()" />
         </mat-list>
       </div>
     </mat-expansion-panel>
@@ -67,24 +67,20 @@
           <mat-panel-title>Hvem er bedst for {{ race()?.selectedTeam.name }}</mat-panel-title>
           @if (!selectedTeam.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="[bid().selectedTeam.qualify, bid().selectedTeam.result]"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="[bid().selectedTeam.qualify, bid().selectedTeam.result]" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
-        <div>
-          <mat-list>
-            @let qualifyDriver = bid().selectedTeam?.qualify | driver;
-            @if (qualifyDriver) {
-              <h5 class="!mb-0 !ml-4">Bedste kvalifikation</h5>
-              <f2020-display-drivers [driverIds]="[bid().selectedTeam?.qualify]" [points]="[bid().selectedTeam?.qualifyPoints]" [compareDriverIds]="[bidToCompare()?.selectedTeam?.qualify]" [comparePoints]="[bidToCompare()?.selectedTeam?.qualifyPoints]" />
-            }
-            @let resultDriver = bid().selectedTeam?.result | driver;
-            @if (resultDriver) {
-              <h5 class="!mb-0 !mt-4 !ml-4">Bedste resultat</h5>
-              <f2020-display-drivers [driverIds]="[bid().selectedTeam?.result]" [points]="[bid().selectedTeam?.resultPoints]" [compareDriverIds]="[bidToCompare()?.selectedTeam?.result]" [comparePoints]="[bidToCompare()?.selectedTeam?.resultPoints]" />
-            }
-          </mat-list>
-        </div>
+        @let qualifyDriver = bid().selectedTeam?.qualify | driver;
+        @let resultDriver = bid().selectedTeam?.result | driver;
+        @if (qualifyDriver) {
+          <h5 class="!mb-0 !ml-4">Bedste kvalifikation</h5>
+          <f2020-display-drivers [driverIds]="[bid().selectedTeam?.qualify]" [points]="[bid().selectedTeam?.qualifyPoints]" [compareDriverIds]="[bidToCompare()?.selectedTeam?.qualify]" [comparePoints]="[bidToCompare()?.selectedTeam?.qualifyPoints]" />
+        }
+        @if (resultDriver) {
+          <h5 class="!mb-0 !mt-4 !ml-4">Bedste resultat</h5>
+          <f2020-display-drivers [driverIds]="[bid().selectedTeam?.result]" [points]="[bid().selectedTeam?.resultPoints]" [compareDriverIds]="[bidToCompare()?.selectedTeam?.result]" [comparePoints]="[bidToCompare()?.selectedTeam?.resultPoints]" />
+        }
       </mat-expansion-panel>
     }
     @if (bid().slowestPitStop) {
@@ -104,7 +100,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-teams [compareConstructorIds]="bidToCompare()?.slowestPitStop" [comparePoints]="bidToCompare()?.slowestPitStopPoints" [constructorIds]="bid().slowestPitStop" [points]="bid().slowestPitStopPoints"></f2020-display-teams>
+          <f2020-display-teams [compareConstructorIds]="bidToCompare()?.slowestPitStop" [comparePoints]="bidToCompare()?.slowestPitStopPoints" [constructorIds]="bid().slowestPitStop" [points]="bid().slowestPitStopPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -114,12 +110,12 @@
           <mat-panel-title>Første udgået</mat-panel-title>
           @if (!firstCrash.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().firstCrash"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="bid().firstCrash" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.firstCrash" [comparePoints]="bidToCompare()?.firstCrashPoints" [driverIds]="bid().firstCrash" [points]="bid().firstCrashPoints"></f2020-display-drivers>
+          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.firstCrash" [comparePoints]="bidToCompare()?.firstCrashPoints" [driverIds]="bid().firstCrash" [points]="bid().firstCrashPoints" />
         </div>
       </mat-expansion-panel>
     }
