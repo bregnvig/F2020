@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { DriverPipe } from '@f2020/driver';
 import { MatListModule } from '@angular/material/list';
 import { NgClass, NgOptimizedImage } from '@angular/common';
@@ -12,7 +12,7 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
       @for (id of driverIds(); track $index) {
         @let driver = id | driver;
         @let compareDriver = findCompareDriver($index) | driver;
-        @let comparison = compareDriver && pointComparison();
+        @let comparison = compareDriver && pointComparison($index);
         @if (driver) {
           <mat-list-item class="driver-item">
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver.name">
@@ -46,18 +46,25 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
   imports: [MatListModule, NgOptimizedImage, DriverPipe, FaIconComponent, NgClass],
 })
 export class DisplayDriversComponent {
+  driverIndex = signal<number>(0);
   readonly driverIds = input.required<string[]>();
   readonly points = input<number[]>();
   readonly compareDriverIds = input<string[]>();
   readonly comparePoints = input<number[]>();
-  readonly pointComparison = computed((): [[IconPrefix, IconName] | undefined, string] => {
-    if (this.points() < this.comparePoints()) {
-      return [icon.fasAngleUp, 'text-green-500'];
-    } else if (this.points() > this.comparePoints()) {
-      return [icon.fasAngleDown, 'text-red-500'];
+  pointComparison(index: number): [[IconPrefix, IconName] | undefined, string] | undefined {
+    const points = this.points();
+    const comparePoints = this.comparePoints();
+    if (!points || !comparePoints || points[index] == null || comparePoints[index] == null) {
+      return undefined;
     }
+
+    const a = points[index];
+    const b = comparePoints[index];
+
+    if (a < b) return [icon.fasAngleUp, 'text-green-500'];
+    if (a > b) return [icon.fasAngleDown, 'text-red-500'];
     return [undefined, 'text-gray-500'];
-  });
+  }
 
   findCompareDriver(index: number): string {
     return this.compareDriverIds()?.[index];
