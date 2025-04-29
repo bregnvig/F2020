@@ -21,6 +21,16 @@ import { Player } from '@f2020/data';
         </mat-select>
       </mat-form-field>
   `,
+  styles: [
+    `
+      :host {
+        mat-form-field .mat-mdc-form-field-subscript-wrapper {
+          display: none;
+          height: 0;
+        }
+      }
+    `
+  ],
   imports: [MatSelectModule, MatInputModule, ReactiveFormsModule],
 })
 export class ComparePlayerBidComponent{
