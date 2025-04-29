@@ -2,8 +2,6 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faApple, faCss3, faFacebookF, faFirefoxBrowser, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
 import {
-  faArrowDown,
-  faArrowUp,
   faBookAlt,
   faBug,
   faCalendarAlt,
