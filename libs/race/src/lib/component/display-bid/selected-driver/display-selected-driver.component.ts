@@ -20,57 +20,57 @@ export interface SelectedDriver {
   template: `
     @let dsp = driverStartPosition();
     @let comparison = dsp.compareGrid && pointComparison();
-    <mat-list-item>
-      @if (dsp.compareGrid) {
-        <span class="flex justify-between">
-          <h4 matListItemTitle>Startede som nummer {{ dsp.grid }}</h4>
-          <h4 matListItemTitle class="!text-gray-400">nummer {{ dsp.compareGrid }}</h4>
-        </span>
-      } @else {
-        <h4 matListItemTitle>Startede som nummer {{ dsp.grid }}</h4>
-      } 
-      @if (dsp.gridPoints !== undefined) { 
-        @if (dsp.compareGrid) {
-          <span class="flex justify-between mt-1">
-            <small class="text-sm">{{ dsp.gridPoints }} point</small>
-            <small class="text-sm" [ngClass]="comparison.grid[1]">
-              @if (comparison.grid[0]; as compIcon) {
-                <fa-icon [icon]="compIcon" />
-              }
-              {{ dsp.compareGridPoints }} point
-            </small>
-          </span>
-        } @else {
-          <small class="text-sm">{{ dsp.gridPoints }} point</small>
-        } 
-      }
-    </mat-list-item>
-    @if (dsp.finish) {
+    <mat-list>
       <mat-list-item>
-        @if (dsp.compareFinish) {
-        <span class="flex justify-between">
-          <h4 matListItemTitle>Sluttede som nummer {{ dsp.finish }}</h4>
-          <h4 matListItemTitle class="!text-gray-400">nummer {{ dsp.compareFinish }}</h4>
-        </span>
-        } @else {
-        <h4 matListItemTitle>Sluttede som nummer {{ dsp.finish }}</h4>
-        } @if (dsp.finishPoints !== undefined) { @if (dsp.compareFinish) {
-        <span class="flex justify-between mt-1">
-          <small class="text-sm">{{ dsp.finishPoints }} point</small>
-          <small class="text-sm" [ngClass]="comparison.finish[1]">
-              @if (comparison.finish[0]; as compIcon) {
-                <fa-icon [icon]="compIcon" />
-              }
-            {{ dsp.compareFinishPoints }} point
-            </small>
-        </span>
-        } @else {
-        <small class="text-sm">{{ dsp.finishPoints }} point</small>
-        } }
+        <div class="flex justify-between items-center">
+          <div class="flex flex-col">
+            <span>Startede som nummer {{ dsp.grid }}</span>
+            <small class="text-sm">{{ dsp.gridPoints }} point</small>
+          </div>
+          @if (dsp.compareGrid) {
+            <div class="flex">
+              <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
+                @if (comparison.grid[0]; as compIcon) {
+                  <fa-icon [icon]="compIcon" />
+                }
+                {{ dsp.compareGridPoints }}
+                - P{{ dsp.compareGrid }}
+              </small>
+            </div>
+          }
+        </div>
       </mat-list-item>
-    }
+      @if (dsp.finish) {
+        <mat-list-item class="mt-3">
+          <div class="flex justify-between items-center">
+            <div class="flex flex-col">
+              <span>Sluttede som nummer {{ dsp.finish }}</span>
+              <small class="text-sm">{{ dsp.finishPoints }} point</small>
+            </div>
+            @if (dsp.compareFinish) {
+              <div class="flex">
+                <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
+                  @if (comparison.grid[0]; as compIcon) {
+                    <fa-icon [icon]="compIcon" />
+                  }
+                  {{ dsp.compareFinishPoints }}
+                  - P{{ dsp.compareFinish }}
+                </small>
+              </div>
+            }
+          </div> 
+        </mat-list-item>
+      }
+    </mat-list>
   `,
   imports: [MatListModule, NgClass, FaIconComponent],
+  styles: [`
+    :host {
+      mat-list-item .mdc-list-item__secondary-text::before {
+        display: none;
+      }
+    }  
+  `]
 })
 export class DisplaySelectedDriverComponent {
   driverStartPosition = input.required<SelectedDriver>();
@@ -78,9 +78,9 @@ export class DisplaySelectedDriverComponent {
     const { gridPoints, compareGridPoints, finishPoints, compareFinishPoints } = this.driverStartPosition();
 
     const compare = (a: number, b: number): [[IconPrefix, IconName] | undefined, string] => {
-      if (a < b) return [icon.fasAngleUp, 'text-green-500'];
-      if (a > b) return [icon.fasAngleDown, 'text-red-500'];
-      return [undefined, 'text-gray-500'];
+      if (a < b) return [icon.fasAngleUp, 'bg-lime-700'];
+      if (a > b) return [icon.fasAngleDown, 'bg-red-700'];
+      return [undefined, 'bg-gray-500'];
     };
 
     return {

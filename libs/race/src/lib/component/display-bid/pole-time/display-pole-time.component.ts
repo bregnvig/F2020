@@ -9,30 +9,24 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
   template: `
       @if (polePositionTime()) {
         @let comparison = comparePolePositionTimeDiff() && timeComparison();
-
-        <mat-list-item>
-            <div class="flex justify-between">
-              <small>{{ polePositionTime() | polePositionTime }}</small>
-              @if (comparePolePositionTime()) {
-                <small class="text-gray-400">
-                  {{ comparePolePositionTime() | polePositionTime }}
+        <mat-list>
+          <mat-list-item>
+            <div class="flex justify-between items-center">
+              <div class="flex flex-col">
+                <small>{{ polePositionTime() | polePositionTime }}</small>
+                <small class="text-gray-300">{{ polePositionTimeDiff() }} ms fra pole tiden</small>
+              </div>
+              @if (comparePolePositionTimeDiff() && comparison) {
+                <small class="rounded-full py-1 px-3" [ngClass]="comparison[1]">
+                  @if (comparison[0]; as compIcon) {
+                    <fa-icon class="text-sm" [icon]="compIcon" />
+                  }
+                  {{ comparePolePositionTimeDiff() }} ms
                 </small>
               }
             </div>
-            @if (polePositionTimeDiff() !== undefined) {
-              <div class="flex justify-between">
-                <small class="text-gray-300">{{ polePositionTimeDiff() }} ms fra pole tiden</small>
-                @if (comparePolePositionTimeDiff() && comparison) {
-                  <small [ngClass]="comparison[1]">
-                    @if (comparison[0]; as compIcon) {
-                      <fa-icon class="text-sm" [icon]="compIcon" />
-                    }
-                    {{ comparePolePositionTimeDiff() }} ms
-                  </small>
-                }
-              </div>
-            }
-        </mat-list-item>
+          </mat-list-item>
+        </mat-list>
       }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,10 +39,10 @@ export class DisplayPoleTimeComponent {
   readonly comparePolePositionTimeDiff = input<number>();
   readonly timeComparison = computed((): [[IconPrefix, IconName] | undefined, string] => {
     if (this.polePositionTimeDiff() > this.comparePolePositionTimeDiff()) {
-      return [icon.fasAngleUp, 'text-green-500']; // Faster
+      return [icon.fasAngleUp, 'bg-lime-700']; // Faster
     } else if (this.polePositionTimeDiff() < this.comparePolePositionTimeDiff()) {
-      return [icon.fasAngleDown, 'text-red-500']; // Slower
+      return [icon.fasAngleDown, 'bg-red-700']; // Slower
     }
-    return [undefined, 'text-gray-500']; // Equal
+    return [undefined, 'bg-gray-500']; // Equal
   });
 }

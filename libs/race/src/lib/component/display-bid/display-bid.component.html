@@ -56,9 +56,7 @@
         }
       </mat-expansion-panel-header>
       <div>
-        <mat-list>
-          <f2020-display-selected-driver [driverStartPosition]="getDriverStartPosition()" />
-        </mat-list>
+        <f2020-display-selected-driver [driverStartPosition]="getDriverStartPosition()" />
       </div>
     </mat-expansion-panel>
     @if (race()?.selectedTeam) {
@@ -128,11 +126,7 @@
           </mat-panel-description>
         }
       </mat-expansion-panel-header>
-      <div>
-        <mat-list>
-          <f2020-display-pole-time [comparePolePositionTime]="bidToCompare()?.polePositionTime" [comparePolePositionTimeDiff]="bidToCompare()?.polePositionTimeDiff" [polePositionTime]="bid().polePositionTime" [polePositionTimeDiff]="bid().polePositionTimeDiff" />
-        </mat-list>
-      </div>
+      <f2020-display-pole-time [comparePolePositionTime]="bidToCompare()?.polePositionTime" [comparePolePositionTimeDiff]="bidToCompare()?.polePositionTimeDiff" [polePositionTime]="bid().polePositionTime" [polePositionTimeDiff]="bid().polePositionTimeDiff" />
     </mat-expansion-panel>
   </mat-accordion>
 </sha-card-page>

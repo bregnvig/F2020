@@ -14,29 +14,23 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
         @let compareDriver = findCompareDriver($index) | driver;
         @let comparison = compareDriver && pointComparison($index);
         @if (driver) {
-          <mat-list-item class="driver-item">
+          <mat-list-item>
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver.name">
-            <div class="flex flex-col w-full">
-              <div class="flex justify-between text-sm font-medium">
+            <div class="flex w-full justify-between items-center">
+              <div class="flex flex-col">
                 <span>{{ driver.name }}</span>
-                @if (compareDriver) {
-                  <span class="text-gray-400">
-                    {{ compareDriver.code }}
-                  </span>
-                }
-              </div>
-              <div class="flex justify-between">
                 <small>{{ points()[$index] }} points</small>
+              </div>
                 @if (comparePoints() && comparePoints()[$index] !== undefined && comparison) {
-                  <small [ngClass]="comparison[1]">
+                  <small class="rounded-full py-1 px-3" [ngClass]="comparison[1]">
                     @if (comparison[0]; as compIcon) {
                       <fa-icon class="text-sm" [icon]="compIcon" />
                     }
-                    {{ comparePoints()[$index] }} points
+                    {{ comparePoints()[$index] }}
+                    - {{ compareDriver.code }}
                   </small>
                 }
               </div>
-            </div>
           </mat-list-item>
         }
       }
@@ -61,9 +55,9 @@ export class DisplayDriversComponent {
     const a = points[index];
     const b = comparePoints[index];
 
-    if (a < b) return [icon.fasAngleUp, 'text-green-500'];
-    if (a > b) return [icon.fasAngleDown, 'text-red-500'];
-    return [undefined, 'text-gray-500'];
+    if (a < b) return [icon.fasAngleUp, 'bg-lime-700'];
+    if (a > b) return [icon.fasAngleDown, 'bg-red-700'];
+    return [undefined, 'bg-gray-500'];
   }
 
   findCompareDriver(index: number): string {
