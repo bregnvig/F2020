@@ -1,5 +1,4 @@
-import { internalError, validateAccess } from '../../lib';
-import { documentPaths } from '../../lib/paths';
+import { documentPaths, internalError, validateAccess } from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 

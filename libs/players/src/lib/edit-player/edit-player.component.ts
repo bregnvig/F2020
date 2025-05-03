@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersApiService, PlayersStore } from '@f2020/api';
 import { Role } from '@f2020/data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,26 +20,26 @@ import { NgOptimizedImage } from '@angular/common';
 @UntilDestroy()
 @Component({
   templateUrl: './edit-player.component.html',
-  styleUrls: ['./edit-player.component.scss'],
   imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, NgOptimizedImage],
 })
 export class EditPlayerComponent implements OnInit {
 
+  #fb = inject(FormBuilder);
+  #router = inject(Router);
   #store = inject(PlayersStore);
   player = this.#store.player;
-  fg = this.fb.group({
-    player: this.fb.nonNullable.control<boolean>(false),
-    admin: this.fb.nonNullable.control<boolean>(false),
-    bankAdmin: this.fb.nonNullable.control<boolean>(false),
+  fg = this.#fb.group({
+    player: this.#fb.nonNullable.control<boolean>(false),
+    admin: this.#fb.nonNullable.control<boolean>(false),
+    bankAdmin: this.#fb.nonNullable.control<boolean>(false),
   });
 
   constructor(
     private route: ActivatedRoute,
     private service: PlayersApiService,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder) {
+  ) {
     effect(() => {
-
       this.fg.reset({
         player: this.player()?.roles.includes('player') ?? false,
         admin: this.player()?.roles.includes('admin') ?? false,
@@ -61,6 +61,12 @@ export class EditPlayerComponent implements OnInit {
     this.service.updatePlayer(this.player().uid, { roles: roles.length ? roles : ['anonymous'] }).then(
       () => this.snackBar.open('Roller opdateret', null, { duration: 2000 }),
     );
+  }
+
+  deletePlayer() {
+    this.service.deletePlayer(this.player().uid)
+      .then(() => this.#router.navigate(['/players']))
+      .then(() => this.snackBar.open('Spiller slettet', null, { duration: 2000 }));
   }
 
 }

@@ -1,3 +1,4 @@
+export * from './delete-player.call';
 export * from './manual-balance.call';
 export * from './migrate-account.call';
 export * from './new-player.trigger';
