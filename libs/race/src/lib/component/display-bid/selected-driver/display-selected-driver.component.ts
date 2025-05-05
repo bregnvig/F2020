@@ -49,8 +49,8 @@ export interface SelectedDriver {
             </div>
             @if (dsp.compareFinish) {
               <div class="flex">
-                <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
-                  @if (comparison.grid[0]; as compIcon) {
+                <small class="rounded-full py-1 px-3" [ngClass]="comparison.finish[1]">
+                  @if (comparison.finish[0]; as compIcon) {
                     <fa-icon [icon]="compIcon" />
                   }
                   {{ dsp.compareFinishPoints }}
