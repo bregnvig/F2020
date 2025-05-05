@@ -54,7 +54,7 @@ export class DisplayBidComponent {
     effect(() => console.log('Bid', this.bid()));
   }
 
-  getDriverStartPosition = computed(() => {
+  getDriverStartPosition() {
     const driverStartPosition: SelectedDriver = {
       grid: this.bid().selectedDriver.grid,
       gridPoints: this.bid().selectedDriver.gridPoints,
@@ -70,5 +70,5 @@ export class DisplayBidComponent {
     }
 
     return driverStartPosition;
-  });
+  }
 }
