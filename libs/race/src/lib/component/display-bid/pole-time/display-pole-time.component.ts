@@ -38,5 +38,5 @@ export class DisplayPoleTimeComponent {
   readonly polePositionTimeDiff = input<number>();
   readonly comparePolePositionTime = input<number>();
   readonly comparePolePositionTimeDiff = input<number>();
-  protected readonly pointComparison = pointComparison;
+  readonly pointComparison = pointComparison;
 }

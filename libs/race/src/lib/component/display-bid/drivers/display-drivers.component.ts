@@ -49,5 +49,5 @@ export class DisplayDriversComponent {
     return this.compareDriverIds()?.[index];
   }
 
-  protected readonly pointComparison = pointComparison;
+  readonly pointComparison = pointComparison;
 }

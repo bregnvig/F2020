@@ -55,5 +55,5 @@ export class DisplayTeamsComponent {
     return this.compareConstructorIds()?.[index];
   }
 
-  protected readonly pointComparison = pointComparison;
+  readonly pointComparison = pointComparison;
 }
