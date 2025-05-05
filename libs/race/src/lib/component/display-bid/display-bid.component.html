@@ -5,12 +5,12 @@
         <mat-panel-title>Kvalifikation</mat-panel-title>
         @if (!qualifyPanel.expanded) {
           <mat-panel-description>
-            <f2020-driver-codes [driverIds]="bid().qualify"></f2020-driver-codes>
+            <f2020-driver-codes [driverIds]="bid().qualify" />
           </mat-panel-description>
         }
       </mat-expansion-panel-header>
       <div>
-        <f2020-display-drivers [driverIds]="bid().qualify" [points]="bid().qualifyPoints"></f2020-display-drivers>
+        <f2020-display-drivers [compareDriverIds]="bidToCompare()?.qualify" [comparePoints]="bidToCompare()?.qualifyPoints" [driverIds]="bid().qualify" [points]="bid().qualifyPoints" />
       </div>
     </mat-expansion-panel>
     @if (bid().fastestDriver) {
@@ -19,12 +19,12 @@
           <mat-panel-title>Hurtigste kører</mat-panel-title>
           @if (!fastestDriver.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().fastestDriver"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="bid().fastestDriver" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-drivers [driverIds]="bid().fastestDriver" [points]="bid().fastestDriverPoints"></f2020-display-drivers>
+          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.fastestDriver" [driverIds]="bid().fastestDriver" [points]="bid().fastestDriverPoints" [comparePoints]="bidToCompare()?.fastestDriverPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -34,12 +34,12 @@
           <mat-panel-title>Podium</mat-panel-title>
           @if (!podium.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().podium"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="bid().podium" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-drivers [driverIds]="bid().podium" [points]="bid().podiumPoints"></f2020-display-drivers>
+          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.podium" [driverIds]="bid().podium" [points]="bid().podiumPoints" [comparePoints]="bidToCompare()?.podiumPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -56,22 +56,7 @@
         }
       </mat-expansion-panel-header>
       <div>
-        <mat-list>
-          <mat-list-item>
-            <h4 matListItemTitle>Startede som nummer {{ bid().selectedDriver?.grid }}</h4>
-            @if (bid().selectedDriver?.gridPoints !== undefined) {
-              <small matListItemLine>{{ bid().selectedDriver?.gridPoints }} point</small>
-            }
-          </mat-list-item>
-          @if (bid().selectedDriver?.finish) {
-            <mat-list-item>
-              <h4 matListItemTitle>Sluttede som nummer {{ bid().selectedDriver?.finish }}</h4>
-              @if (bid().selectedDriver?.finishPoints !== undefined) {
-                <small matListItemLine>{{ bid().selectedDriver?.finishPoints }} point</small>
-              }
-            </mat-list-item>
-          }
-        </mat-list>
+        <f2020-display-selected-driver [driverStartPosition]="getDriverStartPosition()" />
       </div>
     </mat-expansion-panel>
     @if (race()?.selectedTeam) {
@@ -80,34 +65,20 @@
           <mat-panel-title>Hvem er bedst for {{ race()?.selectedTeam.name }}</mat-panel-title>
           @if (!selectedTeam.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="[bid().selectedTeam.qualify, bid().selectedTeam.result]"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="[bid().selectedTeam.qualify, bid().selectedTeam.result]" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
-        <div>
-          <mat-list>
-            @let qualifyDriver = bid().selectedTeam?.qualify | driver;
-            @if (qualifyDriver) {
-              <mat-list-item>
-                <img matListItemAvatar height="40" width="40" [ngSrc]="qualifyDriver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="qualifyDriver.name">
-                <h4 matListItemTitle>{{ qualifyDriver.name }} kvalificerer sig bedst</h4>
-                @if (bid().selectedTeam?.qualifyPoints !== undefined) {
-                  <small matListItemLine>{{ bid().selectedTeam?.qualifyPoints }} point</small>
-                }
-              </mat-list-item>
-            }
-            @let resultDriver = bid().selectedTeam?.result | driver;
-            @if (resultDriver) {
-              <mat-list-item>
-                <img matListItemAvatar height="40" width="40" [ngSrc]="resultDriver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="resultDriver.name">
-                <h4 matListItemTitle>{{ resultDriver.name }} slutter bedst</h4>
-                @if (bid().selectedTeam?.resultPoints !== undefined) {
-                  <small matListItemLine>{{ bid().selectedTeam?.resultPoints }} point</small>
-                }
-              </mat-list-item>
-            }
-          </mat-list>
-        </div>
+        @let qualifyDriver = bid().selectedTeam?.qualify | driver;
+        @let resultDriver = bid().selectedTeam?.result | driver;
+        @if (qualifyDriver) {
+          <h5 class="!mb-0 !ml-4">Bedste kvalifikation</h5>
+          <f2020-display-drivers [driverIds]="[bid().selectedTeam?.qualify]" [points]="[bid().selectedTeam?.qualifyPoints]" [compareDriverIds]="[bidToCompare()?.selectedTeam?.qualify]" [comparePoints]="[bidToCompare()?.selectedTeam?.qualifyPoints]" />
+        }
+        @if (resultDriver) {
+          <h5 class="!mb-0 !mt-4 !ml-4">Bedste resultat</h5>
+          <f2020-display-drivers [driverIds]="[bid().selectedTeam?.result]" [points]="[bid().selectedTeam?.resultPoints]" [compareDriverIds]="[bidToCompare()?.selectedTeam?.result]" [comparePoints]="[bidToCompare()?.selectedTeam?.resultPoints]" />
+        }
       </mat-expansion-panel>
     }
     @if (bid().slowestPitStop) {
@@ -127,7 +98,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-teams [constructorIds]="bid().slowestPitStop" [points]="bid().slowestPitStopPoints"></f2020-display-teams>
+          <f2020-display-teams [compareConstructorIds]="bidToCompare()?.slowestPitStop" [comparePoints]="bidToCompare()?.slowestPitStopPoints" [constructorIds]="bid().slowestPitStop" [points]="bid().slowestPitStopPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -137,12 +108,12 @@
           <mat-panel-title>Første udgået</mat-panel-title>
           @if (!firstCrash.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().firstCrash"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="bid().firstCrash" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-display-drivers [driverIds]="bid().firstCrash" [points]="bid().firstCrashPoints"></f2020-display-drivers>
+          <f2020-display-drivers [compareDriverIds]="bidToCompare()?.firstCrash" [comparePoints]="bidToCompare()?.firstCrashPoints" [driverIds]="bid().firstCrash" [points]="bid().firstCrashPoints" />
         </div>
       </mat-expansion-panel>
     }
@@ -155,16 +126,7 @@
           </mat-panel-description>
         }
       </mat-expansion-panel-header>
-      <div>
-        <mat-list>
-          <mat-list-item>
-            <h4 matListItemTitle>{{ bid().polePositionTime | polePositionTime }}</h4>
-            @if (bid().polePositionTimeDiff != undefined) {
-              <small matListItemLine>{{ bid().polePositionTimeDiff }} ms fra pole tiden</small>
-            }
-          </mat-list-item>
-        </mat-list>
-      </div>
+      <f2020-display-pole-time [comparePolePositionTime]="bidToCompare()?.polePositionTime" [comparePolePositionTimeDiff]="bidToCompare()?.polePositionTimeDiff" [polePositionTime]="bid().polePositionTime" [polePositionTimeDiff]="bid().polePositionTimeDiff" />
     </mat-expansion-panel>
   </mat-accordion>
 </sha-card-page>
