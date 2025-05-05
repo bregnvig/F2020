@@ -3,7 +3,7 @@ import { MatListModule } from '@angular/material/list';
 import { NgClass } from '@angular/common';
 import { TeamNamePipe } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { pointComparison } from '../display-bid.component';
+import { pointsDiffIcon } from '../display-bid.component';
 
 @Component({
   selector: 'f2020-display-teams',
@@ -12,7 +12,7 @@ import { pointComparison } from '../display-bid.component';
       @for (id of constructorIds(); track $index) {
         @let team = id | teamName;
         @let compareTeam = findCompareTeam($index) | teamName;
-        @let comparison = compareTeam && pointComparison(points()[$index], comparePoints()[$index]);
+        @let comparison = compareTeam && pointsDiffIcon(points()[$index], comparePoints()[$index]);
         @if (team) {
           <mat-list-item>
             <div class="flex justify-between items-center w-full">
@@ -55,5 +55,5 @@ export class DisplayTeamsComponent {
     return this.compareConstructorIds()?.[index];
   }
 
-  readonly pointComparison = pointComparison;
+  readonly pointsDiffIcon = pointsDiffIcon;
 }

@@ -3,7 +3,7 @@ import { DriverPipe } from '@f2020/driver';
 import { MatListModule } from '@angular/material/list';
 import { NgClass, NgOptimizedImage } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { pointComparison } from '../display-bid.component';
+import { pointsDiffIcon } from '../display-bid.component';
 
 @Component({
   selector: 'f2020-display-drivers',
@@ -12,7 +12,7 @@ import { pointComparison } from '../display-bid.component';
       @for (id of driverIds(); track $index) {
         @let driver = id | driver;
         @let compareDriver = findCompareDriver($index) | driver;
-        @let comparison = compareDriver && pointComparison(points()[$index], comparePoints()[$index]);
+        @let comparison = compareDriver && pointsDiffIcon(points()[$index], comparePoints()[$index]);
         @if (driver) {
           <mat-list-item>
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver.name">
@@ -49,5 +49,5 @@ export class DisplayDriversComponent {
     return this.compareDriverIds()?.[index];
   }
 
-  readonly pointComparison = pointComparison;
+  readonly pointsDiffIcon = pointsDiffIcon;
 }

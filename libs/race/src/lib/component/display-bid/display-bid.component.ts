@@ -13,7 +13,7 @@ import {
   SelectedDriver
 } from './selected-driver/display-selected-driver.component';
 
-export const pointComparison = (points: number, comparePoints: number) => {
+export const pointsDiffIcon = (points: number, comparePoints: number) => {
   if (points < comparePoints) {
     return [icon.fasAngleUp, 'bg-lime-700'];
   } else if (points > comparePoints) {

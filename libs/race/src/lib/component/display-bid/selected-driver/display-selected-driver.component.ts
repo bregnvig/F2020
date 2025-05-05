@@ -19,7 +19,7 @@ export interface SelectedDriver {
   selector: 'f2020-display-selected-driver',
   template: `
     @let dsp = driverStartPosition();
-    @let comparison = dsp.compareGrid && pointComparison();
+    @let comparison = dsp.compareGrid && pointsDiffIcon();
     <mat-list>
       <mat-list-item>
         <div class="flex justify-between items-center">
@@ -75,7 +75,7 @@ export interface SelectedDriver {
 })
 export class DisplaySelectedDriverComponent {
   driverStartPosition = input.required<SelectedDriver>();
-  readonly pointComparison = computed(() => {
+  readonly pointsDiffIcon = computed(() => {
     const { gridPoints, compareGridPoints, finishPoints, compareFinishPoints } = this.driverStartPosition();
 
     const compare = (a: number, b: number): [[IconPrefix, IconName] | undefined, string] => {

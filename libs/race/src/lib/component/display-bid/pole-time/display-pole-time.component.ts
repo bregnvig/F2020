@@ -3,13 +3,13 @@ import { MatListModule } from '@angular/material/list';
 import { NgClass } from '@angular/common';
 import { PolePositionTimePipe } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { pointComparison } from '../display-bid.component';
+import { pointsDiffIcon } from '../display-bid.component';
 
 @Component({
   selector: 'f2020-display-pole-time',
   template: `
       @if (polePositionTime()) {
-        @let comparison = comparePolePositionTimeDiff() && pointComparison(comparePolePositionTimeDiff(), polePositionTimeDiff());
+        @let comparison = comparePolePositionTimeDiff() && pointsDiffIcon(comparePolePositionTimeDiff(), polePositionTimeDiff());
         <mat-list>
           <mat-list-item>
             <div class="flex justify-between items-center">
@@ -38,5 +38,5 @@ export class DisplayPoleTimeComponent {
   readonly polePositionTimeDiff = input<number>();
   readonly comparePolePositionTime = input<number>();
   readonly comparePolePositionTimeDiff = input<number>();
-  readonly pointComparison = pointComparison;
+  readonly pointsDiffIcon = pointsDiffIcon;
 }
