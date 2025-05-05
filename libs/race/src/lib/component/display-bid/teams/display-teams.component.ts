@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { NgClass } from '@angular/common';
-import { icon, TeamNamePipe } from '@f2020/shared';
-import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
+import { TeamNamePipe } from '@f2020/shared';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { pointComparison } from '../display-bid.component';
 
 @Component({
   selector: 'f2020-display-teams',
@@ -11,7 +12,7 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
       @for (id of constructorIds(); track $index) {
         @let team = id | teamName;
         @let compareTeam = findCompareTeam($index) | teamName;
-        @let comparison = compareTeam && pointComparison();
+        @let comparison = compareTeam && pointComparison(points()[$index], comparePoints()[$index]);
         @if (team) {
           <mat-list-item>
             <div class="flex justify-between items-center w-full">
@@ -49,17 +50,10 @@ export class DisplayTeamsComponent {
   readonly points = input<number[]>();
   readonly compareConstructorIds = input<string[]>();
   readonly comparePoints = input<number[]>();
-  readonly pointComparison = computed((): [[IconPrefix, IconName] | undefined, string] => {
-    if (this.points() < this.comparePoints()) {
-      return [icon.fasAngleUp, 'bg-lime-700'];
-    } else if (this.points() > this.comparePoints()) {
-      return [icon.fasAngleDown, 'bg-red-700'];
-    }
-    return [undefined, 'bg-gray-500'];
-  });
 
   findCompareTeam(index: number): string {
     return this.compareConstructorIds()?.[index];
   }
 
+  protected readonly pointComparison = pointComparison;
 }

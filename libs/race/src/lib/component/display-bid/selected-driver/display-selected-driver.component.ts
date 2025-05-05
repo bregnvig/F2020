@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
 import { icon } from '@f2020/shared';
@@ -64,6 +64,7 @@ export interface SelectedDriver {
     </mat-list>
   `,
   imports: [MatListModule, NgClass, FaIconComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [`
     :host {
       mat-list-item .mdc-list-item__secondary-text::before {

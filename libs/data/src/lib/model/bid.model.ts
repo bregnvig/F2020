@@ -16,6 +16,11 @@ export interface SelectedTeamValue {
   resultPoints?: number;
 }
 
+export interface BidInput {
+  id: string;
+  compareId?: string;
+}
+
 export interface Bid {
   qualify: [string, string, string, string, string, string, string?];
   qualifyPoints?: [number, number, number, number, number, number];

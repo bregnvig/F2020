@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { NgClass } from '@angular/common';
-import { PolePositionTimePipe, icon } from '@f2020/shared';
-import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
+import { PolePositionTimePipe } from '@f2020/shared';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { pointComparison } from '../display-bid.component';
 
 @Component({
   selector: 'f2020-display-pole-time',
   template: `
       @if (polePositionTime()) {
-        @let comparison = comparePolePositionTimeDiff() && timeComparison();
+        @let comparison = comparePolePositionTimeDiff() && pointComparison(comparePolePositionTimeDiff(), polePositionTimeDiff());
         <mat-list>
           <mat-list-item>
             <div class="flex justify-between items-center">
@@ -37,12 +38,5 @@ export class DisplayPoleTimeComponent {
   readonly polePositionTimeDiff = input<number>();
   readonly comparePolePositionTime = input<number>();
   readonly comparePolePositionTimeDiff = input<number>();
-  readonly timeComparison = computed((): [[IconPrefix, IconName] | undefined, string] => {
-    if (this.polePositionTimeDiff() > this.comparePolePositionTimeDiff()) {
-      return [icon.fasAngleUp, 'bg-lime-700']; // Faster
-    } else if (this.polePositionTimeDiff() < this.comparePolePositionTimeDiff()) {
-      return [icon.fasAngleDown, 'bg-red-700']; // Slower
-    }
-    return [undefined, 'bg-gray-500']; // Equal
-  });
+  protected readonly pointComparison = pointComparison;
 }

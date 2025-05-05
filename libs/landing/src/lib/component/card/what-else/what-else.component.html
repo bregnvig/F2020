@@ -1,18 +1,15 @@
 <mat-card>
   <mat-card-header>
     <fa-icon mat-card-avatar [icon]="icon" size="2x"></fa-icon>
-    <mat-card-title>Sammenlign dinne bud</mat-card-title>
+    <mat-card-title>Sammenlign bud</mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <p>
-      Nu kan du sammenligne dine bud med andre spillere der også har afgivet bud på et løb
+      Nu kan du sammenligne to bud for at se hvad forskellen er!
     </p>
     <video controls autoplay muted loop class="mb-2">
       <source src="assets/comparebid.webm" type="video/mp4"/>
     </video>
-    <p>
-      Det er kun muligt at sammenligne med andre spillere der har afgive bud på det givende løb, derfor er der ikke nogen fordele eller ulemper ved dette. Men bare en meget sjov feature.
-    </p>
   </mat-card-content>
   <mat-card-actions>
     <a mat-button (click)="dismissMessage()">

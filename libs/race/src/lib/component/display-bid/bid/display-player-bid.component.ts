@@ -56,8 +56,9 @@ export class DisplayPlayerBidComponent {
   players: Signal<Player[]>;
   bidToCompare: Signal<Partial<Bid>>;
 
-  constructor(route: ActivatedRoute) {
+  constructor() {
     const store = inject(RaceStore);
+    const route = inject(ActivatedRoute);
     this.race = store.race;
     this.players = computed(() => store.bids()
       .map((bid: Bid) => bid.player)
