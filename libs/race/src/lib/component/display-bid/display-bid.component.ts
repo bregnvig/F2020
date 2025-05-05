@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input } from '@angular/core';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { DriverCodesComponent } from '@f2020/control';
@@ -53,8 +53,8 @@ export class DisplayBidComponent {
   constructor() {
     effect(() => console.log('Bid', this.bid()));
   }
-  
-  getDriverStartPosition(): SelectedDriver {
+
+  getDriverStartPosition = computed(() => {
     const driverStartPosition: SelectedDriver = {
       grid: this.bid().selectedDriver.grid,
       gridPoints: this.bid().selectedDriver.gridPoints,
@@ -70,5 +70,5 @@ export class DisplayBidComponent {
     }
 
     return driverStartPosition;
-  }
+  });
 }
