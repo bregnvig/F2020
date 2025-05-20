@@ -55,8 +55,8 @@ export class SubmitInterimResultComponent {
       const interimResult = this.#store.interimResult();
       if (interimResult) {
         this.resultControl.patchValue(interimResult);
-        this.loading.set(false);
       }
+      this.loading.set(false);
     });
     effect(() => {
       const error = this.#store.error();

@@ -112,7 +112,7 @@ export const RaceStore = signalStore(
         if (race) {
           const interimResult = await firstValueFrom(service.getQualify(race, store.drivers()).pipe(
             map(qualify => buildInterimResult(qualify, race.selectedDriver, race.selectedTeam)),
-          )).catch(error => patchState(store, { error }));
+          )).catch(error => patchState(store, { error, loaded: true }));
           interimResult && patchState(store, { interimResult });
         }
       },

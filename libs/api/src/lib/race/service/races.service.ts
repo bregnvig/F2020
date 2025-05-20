@@ -152,7 +152,10 @@ export class RacesService {
   getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
     return this.#getSession(race, 'Qualifying').pipe(
       switchMap(session => this.#getPositionAndLabs(race, session.session_key)),
-      map(({ positions, laps }) => mapper.qualifyResult({ positions, laps, race, drivers })),
+      map(({ positions, laps }) => {
+        if (!positions.length || !laps.length) throw new Error('No positions or laps');
+        return mapper.qualifyResult({ positions, laps, race, drivers });
+      }),
     );
   }
 
