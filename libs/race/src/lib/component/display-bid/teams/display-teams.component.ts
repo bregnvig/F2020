@@ -18,13 +18,15 @@ import { pointsDiffIcon } from '../display-bid.component';
             <div class="flex justify-between items-center w-full">
               <div class="flex flex-col text-sm font-medium">
                 <span>{{ team }}</span>
-                <small>{{ points()[$index] }} points</small>
+                @if (points()) {
+                  <small>{{ points()[$index] }} points</small>
+                }
               </div>
               <div class="flex">
                 @if (comparePoints() && comparePoints()[$index] !== undefined && comparison) {
                   <small class="rounded-full py-1 px-3" [ngClass]="comparison[1]">
                     @if (comparison[0]; as compIcon) {
-                      <fa-icon class="text-sm" [icon]="compIcon" />
+                      <fa-icon class="text-sm" [icon]="compIcon"/>
                     }
                     {{ comparePoints()[$index] }}
                     - {{ compareTeam }}

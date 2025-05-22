@@ -25,13 +25,15 @@ export interface SelectedDriver {
         <div class="flex justify-between items-center">
           <div class="flex flex-col">
             <span>Startede som nummer {{ dsp.grid }}</span>
-            <small class="text-sm">{{ dsp.gridPoints }} point</small>
+            @if (dsp.gridPoints !== undefined) {
+              <small class="text-sm">{{ dsp.gridPoints }} point</small>
+            }
           </div>
           @if (dsp.compareGrid) {
             <div class="flex">
               <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
                 @if (comparison.grid[0]; as compIcon) {
-                  <fa-icon [icon]="compIcon" />
+                  <fa-icon [icon]="compIcon"/>
                 }
                 {{ dsp.compareGridPoints }}
                 - P{{ dsp.compareGrid }}
@@ -45,20 +47,22 @@ export interface SelectedDriver {
           <div class="flex justify-between items-center">
             <div class="flex flex-col">
               <span>Sluttede som nummer {{ dsp.finish }}</span>
-              <small class="text-sm">{{ dsp.finishPoints }} point</small>
+              @if (dsp.finishPoints !== undefined) {
+                <small class="text-sm">{{ dsp.finishPoints }} point</small>
+              }
             </div>
             @if (dsp.compareFinish) {
               <div class="flex">
                 <small class="rounded-full py-1 px-3" [ngClass]="comparison.finish[1]">
                   @if (comparison.finish[0]; as compIcon) {
-                    <fa-icon [icon]="compIcon" />
+                    <fa-icon [icon]="compIcon"/>
                   }
                   {{ dsp.compareFinishPoints }}
                   - P{{ dsp.compareFinish }}
                 </small>
               </div>
             }
-          </div> 
+          </div>
         </mat-list-item>
       }
     </mat-list>
@@ -70,8 +74,8 @@ export interface SelectedDriver {
       mat-list-item .mdc-list-item__secondary-text::before {
         display: none;
       }
-    }  
-  `]
+    }
+  `],
 })
 export class DisplaySelectedDriverComponent {
   driverStartPosition = input.required<SelectedDriver>();
