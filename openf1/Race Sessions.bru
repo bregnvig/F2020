@@ -5,15 +5,15 @@ meta {
 }
 
 get {
-  url: https://api.openf1.org/v1/sessions?year=2024&session_key=9644
+  url: https://api.openf1.org/v1/sessions?year=2025&circuit_key=6
   body: none
   auth: none
 }
 
 params:query {
-  year: 2024
-  session_key: 9644
+  year: 2025
+  circuit_key: 6
+  ~session_key: 9644
   ~session_name: Race
-  ~circuit_key: 14
   ~meeting_key: 1249
 }
