@@ -50,7 +50,7 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   const participantDoc = db.doc(documentPaths.participant(season.id, race.round, player.uid)) as DocumentReference<Participant>;
   return db.runTransaction(transaction => {
     transaction.set(bidDoc, firestoreUtils.convertDateTimes({ ...bid, submitted: true }), { merge: true });
-    transaction.set(participantDoc, firestoreUtils.convertDateTimes({ submitted: true, player }), { merge: true });
+    transaction.set(participantDoc, firestoreUtils.convertDateTimes({ submitted: true, player: { ...bid.player } }), { merge: true });
     transferInTransaction({
       date: DateTime.local(),
       amount: 20,
