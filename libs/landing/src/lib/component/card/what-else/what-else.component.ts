@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '31';
+const versionNo = '32';
 
 @Component({
   selector: 'f2020-what-else',
