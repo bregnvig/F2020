@@ -3,8 +3,10 @@ import { MatListModule } from '@angular/material/list';
 import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
 import { icon } from '@f2020/shared';
 import { NgClass } from '@angular/common';
+import { filterUndefined } from '@f2020/tools';
+import { SelectedDriverValue } from '@f2020/data';
 
-export interface SelectedDriver {
+interface SelectedDriverComparison {
   grid: number;
   gridPoints?: number;
   compareGrid?: number;
@@ -18,47 +20,47 @@ export interface SelectedDriver {
 @Component({
   selector: 'f2020-display-selected-driver',
   template: `
-    @let dsp = driverStartPosition();
-    @let comparison = dsp.compareGrid && pointsDiffIcon();
+    @let driver = selectedDriverComparison();
+    @let comparison = driver.compareGrid && pointsDiffIcon();
     <mat-list>
       <mat-list-item>
         <div class="flex justify-between items-center">
           <div class="flex flex-col">
-            <span>Startede som nummer {{ dsp.grid }}</span>
-            @if (dsp.gridPoints !== undefined) {
-              <small class="text-sm">{{ dsp.gridPoints }} point</small>
+            <span>Startede som nummer {{ driver.grid }}</span>
+            @if (driver.gridPoints !== undefined) {
+              <small class="text-sm">{{ driver.gridPoints }} point</small>
             }
           </div>
-          @if (dsp.compareGrid) {
+          @if (driver.compareGrid) {
             <div class="flex">
               <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
                 @if (comparison.grid[0]; as compIcon) {
                   <fa-icon [icon]="compIcon"/>
                 }
-                {{ dsp.compareGridPoints }}
-                - P{{ dsp.compareGrid }}
+                {{ driver.compareGridPoints }}
+                - P{{ driver.compareGrid }}
               </small>
             </div>
           }
         </div>
       </mat-list-item>
-      @if (dsp.finish) {
+      @if (driver.finish) {
         <mat-list-item class="mt-3">
           <div class="flex justify-between items-center">
             <div class="flex flex-col">
-              <span>Sluttede som nummer {{ dsp.finish }}</span>
-              @if (dsp.finishPoints !== undefined) {
-                <small class="text-sm">{{ dsp.finishPoints }} point</small>
+              <span>Sluttede som nummer {{ driver.finish }}</span>
+              @if (driver.finishPoints !== undefined) {
+                <small class="text-sm">{{ driver.finishPoints }} point</small>
               }
             </div>
-            @if (dsp.compareFinish) {
+            @if (driver.compareFinish) {
               <div class="flex">
                 <small class="rounded-full py-1 px-3" [ngClass]="comparison.finish[1]">
                   @if (comparison.finish[0]; as compIcon) {
                     <fa-icon [icon]="compIcon"/>
                   }
-                  {{ dsp.compareFinishPoints }}
-                  - P{{ dsp.compareFinish }}
+                  {{ driver.compareFinishPoints }}
+                  - P{{ driver.compareFinish }}
                 </small>
               </div>
             }
@@ -78,9 +80,9 @@ export interface SelectedDriver {
   `],
 })
 export class DisplaySelectedDriverComponent {
-  driverStartPosition = input.required<SelectedDriver>();
+
   readonly pointsDiffIcon = computed(() => {
-    const { gridPoints, compareGridPoints, finishPoints, compareFinishPoints } = this.driverStartPosition();
+    const { gridPoints, compareGridPoints, finishPoints, compareFinishPoints } = this.selectedDriverComparison();
 
     const compare = (a: number, b: number): [[IconPrefix, IconName] | undefined, string] => {
       if (a < b) return [icon.fasAngleUp, 'bg-lime-700'];
@@ -92,5 +94,25 @@ export class DisplaySelectedDriverComponent {
       grid: compare(gridPoints, compareGridPoints),
       finish: compare(finishPoints, compareFinishPoints),
     };
+  });
+
+  selectedDriver = input.required<SelectedDriverValue>();
+  compareWith = input<Partial<SelectedDriverValue>>();
+
+  selectedDriverComparison = computed(() => {
+    const selectedDriver = this.selectedDriver();
+    if (!selectedDriver) {
+      return undefined;
+    }
+    return filterUndefined({
+      grid: selectedDriver.grid,
+      gridPoints: selectedDriver.gridPoints,
+      finish: selectedDriver.finish,
+      finishPoints: selectedDriver.finishPoints,
+      compareGrid: this.compareWith()?.grid,
+      compareGridPoints: this.compareWith()?.gridPoints,
+      compareFinish: this.compareWith()?.finish,
+      compareFinishPoints: this.compareWith()?.finishPoints,
+    }) as SelectedDriverComparison;
   });
 }
