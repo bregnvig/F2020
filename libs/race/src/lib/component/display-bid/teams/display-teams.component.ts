@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { NgClass } from '@angular/common';
 import { TeamNamePipe } from '@f2020/shared';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { pointsDiffIcon } from '../display-bid.component';
+import { DisplayPointsDiffComponent } from '../diff/display-points-diff.component';
 
 @Component({
   selector: 'f2020-display-teams',
@@ -11,8 +9,6 @@ import { pointsDiffIcon } from '../display-bid.component';
     <mat-list>
       @for (id of constructorIds(); track $index) {
         @let team = id | teamName;
-        @let compareTeam = findCompareTeam($index) | teamName;
-        @let comparison = compareTeam && pointsDiffIcon(points()[$index], comparePoints()[$index]);
         @if (team) {
           <mat-list-item>
             <div class="flex justify-between items-center w-full">
@@ -23,15 +19,7 @@ import { pointsDiffIcon } from '../display-bid.component';
                 }
               </div>
               <div class="flex">
-                @if (comparePoints() && comparePoints()[$index] !== undefined && comparison) {
-                  <small class="rounded-full py-1 px-3" [ngClass]="comparison[1]">
-                    @if (comparison[0]; as compIcon) {
-                      <fa-icon class="text-sm" [icon]="compIcon"/>
-                    }
-                    {{ comparePoints()[$index] }}
-                    - {{ compareTeam }}
-                  </small>
-                }
+                <f2020-display-points-diff [postfix]="compareWith()?.[$index] | teamName" [value]="points()?.[$index]" [compareWith]="comparePoints()?.[$index]"/>
               </div>
             </div>
           </mat-list-item>
@@ -43,19 +31,13 @@ import { pointsDiffIcon } from '../display-bid.component';
   imports: [
     MatListModule,
     TeamNamePipe,
-    FaIconComponent,
-    NgClass,
+    DisplayPointsDiffComponent,
   ],
 })
 export class DisplayTeamsComponent {
   readonly constructorIds = input.required<string[]>();
   readonly points = input<number[]>();
-  readonly compareConstructorIds = input<string[]>();
+  readonly compareWith = input<string[]>();
   readonly comparePoints = input<number[]>();
 
-  findCompareTeam(index: number): string {
-    return this.compareConstructorIds()?.[index];
-  }
-
-  readonly pointsDiffIcon = pointsDiffIcon;
 }
