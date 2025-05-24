@@ -14,7 +14,13 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
               <small>{{ polePositionTime() | polePositionTime }}</small>
               <small class="text-gray-300">{{ polePositionTimeDiff() }} ms fra pole tiden</small>
             </div>
-            <f2020-display-points-diff [value]="polePositionTimeDiff()" [compareWith]="comparePolePositionTimeDiff()" flipValues postfix="ms"/>
+            @if (comparePolePositionTimeDiff()) {
+              <f2020-display-points-diff [value]="polePositionTimeDiff()" [compareWith]="comparePolePositionTimeDiff()" flipValues postfix="ms"/>
+            } @else if (comparePolePositionTime()) {
+              <small class="rounded-full py-1 px-3 bg-gray-500">
+                {{ comparePolePositionTime() | polePositionTime }}
+              </small>
+            }
           </div>
         </mat-list-item>
       </mat-list>

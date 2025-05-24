@@ -25,6 +25,7 @@ export const requiredValue = <T>(value: T | null | undefined, type: string, ...a
   return value;
 };
 
+export const undefinedAttribute = <T>(a: T | nullish): T | undefined => a ?? undefined;
 
 export const filterProperties = <T>(o: Partial<T>, filterFn: (v: T[keyof T]) => boolean): Partial<T> => Object.fromEntries(Object.entries(o).filter(([, _value]: [any, any]) => filterFn(_value))) as Partial<T>;
 export const filterUndefined = <T>(o: object): Exclude<T, undefined> => Object.fromEntries(Object.entries(o).filter(([, _value]) => _value !== undefined)) as Exclude<T, undefined>;

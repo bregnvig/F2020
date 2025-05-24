@@ -32,6 +32,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
     MatListModule,
     TeamNamePipe,
     DisplayPointsDiffComponent,
+
   ],
 })
 export class DisplayTeamsComponent {
