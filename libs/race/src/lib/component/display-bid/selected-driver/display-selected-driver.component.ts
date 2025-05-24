@@ -37,8 +37,11 @@ interface SelectedDriverComparison {
                 @if (comparison.grid[0]; as compIcon) {
                   <fa-icon [icon]="compIcon"/>
                 }
-                {{ driver.compareGridPoints }}
-                - P{{ driver.compareGrid }}
+                @if (driver.compareGridPoints !== undefined) {
+                  {{ driver.compareGridPoints }}
+                  -
+                }
+                P{{ driver.compareGrid }}
               </small>
             </div>
           }
@@ -59,8 +62,10 @@ interface SelectedDriverComparison {
                   @if (comparison.finish[0]; as compIcon) {
                     <fa-icon [icon]="compIcon"/>
                   }
-                  {{ driver.compareFinishPoints }}
-                  - P{{ driver.compareFinish }}
+                  @if (driver.compareFinishPoints !== undefined) {
+                    {{ driver.compareFinishPoints }} -
+                  }
+                  P{{ driver.compareFinish }}
                 </small>
               </div>
             }

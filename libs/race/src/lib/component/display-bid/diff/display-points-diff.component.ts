@@ -11,7 +11,9 @@ import { icon } from '@f2020/shared';
         @if (diff().icon) {
           <fa-icon class="text-sm" [icon]="diff().icon"/>
         }
-        {{ compareWith() }} - {{ postfix() }}
+        @if (compareWith() !== null) {
+          {{ compareWith() }} -
+        } {{ postfix() }}
       </small>
     }`,
   imports: [
@@ -23,7 +25,7 @@ import { icon } from '@f2020/shared';
 
 export class DisplayPointsDiffComponent {
   readonly value = input.required<number | undefined>();
-  readonly compareWith = input.required<number | undefined>();
+  readonly compareWith = input.required<number | undefined | null>();
   readonly postfix = input.required<string | undefined>();
   flipValues = input<boolean, boolean | string>(false, { transform: booleanAttribute });
 
