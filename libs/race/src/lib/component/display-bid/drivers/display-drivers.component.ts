@@ -17,7 +17,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
             <div class="flex w-full justify-between items-center">
               <div class="flex flex-col">
                 <span>{{ driver.name }}</span>
-                @if (points()?.[$index] !== undefined) {
+                @if (points()) {
                   <small>{{ points()[$index] }} points</small>
                 }
               </div>
@@ -34,7 +34,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
 export class DisplayDriversComponent {
   readonly driverIds = input.required<string[]>();
   readonly points = input<number[] | undefined, number[] | nullish>([], {
-    transform: value => value?.length && value.every(v => !isNullish(value)) ? value : undefined,
+    transform: value => value?.length && value.every(v => !isNullish(v)) ? value : undefined,
   });
   readonly compareWith = input<string[]>();
   readonly comparePoints = input<number[]>();
