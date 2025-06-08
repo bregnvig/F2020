@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Player } from '@f2020/data';
 
 @Component({
@@ -9,14 +9,22 @@ import { Player } from '@f2020/data';
   template: `
       <mat-form-field class="w-full">
         <mat-label>{{ label() }}</mat-label>
-        <mat-select (selectionChange)="compareWithId.emit($event.value)">
+        <mat-select #select (selectionChange)="compareWithId.emit($event.value)">
+          @if(select.value) {
+           <mat-option [value]="null">
+              <div class="flex gap-3">
+                <img class="player-avatar rounded-full" src="assets/loading/red.svg" alt="Nulstil" width="24" height="24">
+                <span>Nulstil</span>
+              </div>
+           </mat-option>
+          }
           @for (player of players(); track player) {
-          <mat-option [value]="player.uid">
-            <div class="flex gap-3">
-              <img class="player-avatar rounded-full" [src]="player.photoURL" alt="{{ player.displayName }}" width="24" height="24">
-              <span>{{ player.displayName }}</span>
-            </div>
-          </mat-option>
+            <mat-option [value]="player.uid">
+              <div class="flex gap-3">
+                <img class="player-avatar rounded-full" [src]="player.photoURL" [alt]="player.displayName" width="24" height="24">
+                <span>{{ player.displayName }}</span>
+              </div>
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -33,8 +41,8 @@ import { Player } from '@f2020/data';
   ],
   imports: [MatSelectModule, MatInputModule, ReactiveFormsModule],
 })
-export class ComparePlayerBidComponent{
-  compareWithId = output<string>()
+export class ComparePlayerBidComponent {
+  compareWithId = output<string>();
   players = input.required<Player[]>();
   label = input.required<string>();
 }
