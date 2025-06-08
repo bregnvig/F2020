@@ -1,7 +1,7 @@
+import { Lap, Position } from '@f2020/openf1';
 import { arrayUtils, filterUndefined, requiredValue, toMap } from '@f2020/tools';
 import { IDriver, IDriverRaceResult, IFastestLap, IRaceBasis } from '../model';
 import { IRaceResult } from './../model/race.model';
-import { Lap, Position } from '@f2020/openf1';
 
 interface OpenF1ResultParams {
   laps: Lap[];
@@ -13,18 +13,19 @@ interface OpenF1ResultParams {
 
 const getDNFs = (source: OpenF1ResultParams) => {
   const miniSectors = source.laps.reduce((acc, lap) => Math.max(acc, lap.segments_sector_3.length), 0);
+  const maxLapNumber = source.laps.reduce((acc, lap) => Math.max(acc, lap.lap_number), 0);
   const positionDriverNumbers = [...new Set(source.positions.map(p => p.driver_number))];
   const lapsDriverNumbers = [...new Set(source.laps.map(p => p.driver_number))];
   const dnfAtFirstLap = arrayUtils.findDeleted(positionDriverNumbers, lapsDriverNumbers);
-  const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors).toSorted((a, b) => b.lap_number - a.lap_number).map(l => l.driver_number);
+  const dnfs = [...source.laps.reduce(toMap<Lap, number>('driver_number'), new Map<number, Lap>()).values()].filter(l => l.segments_sector_3.length !== miniSectors || maxLapNumber !== l.lap_number).toSorted((a, b) => a.lap_number - b.lap_number).map(l => l.driver_number);
 
   const dnfPosition = source.positions.filter(p => dnfs.includes(p.driver_number)).reduce((acc, p) => {
     return acc.set(p.driver_number, p.position);
   }, new Map<number, number>());
   // Sometimes there are mini sectors not part of the lap, which gives false dnfs. But if the position is not at the end, then it is not a DNF
-  const dnfsWashed = dnfs.toReversed().filter((d, index) => dnfPosition.get(d) === positionDriverNumbers.length - index);
+  const dnfsWashed = dnfs.filter((d, index) => dnfPosition.get(d) === positionDriverNumbers.length - index);
   return [
-    ...dnfsWashed,
+    ...dnfsWashed.toReversed(),
     ...dnfAtFirstLap.toReversed(),
   ];
 };
