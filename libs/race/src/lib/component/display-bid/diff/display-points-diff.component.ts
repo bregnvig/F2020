@@ -1,21 +1,23 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
 import { NgClass } from '@angular/common';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { icon } from '@f2020/shared';
-import { nullish, undefinedAttribute } from '@f2020/tools';
+import { isNullish, nullish, undefinedAttribute } from '@f2020/tools';
+import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'f2020-display-points-diff',
   template: `
-    <small class="rounded-full py-1 px-3" [ngClass]="diff().css">
+  @if(diff(); as diff) {
+    <small class="rounded-full py-1 px-3" [ngClass]="diff.css">
       @if (value() !== undefined && compareWith() !== undefined) {
-        @if (diff().icon) {
-          <fa-icon class="text-sm" [icon]="diff().icon"/>
+        @if (diff.icon) {
+          <fa-icon class="text-sm" [icon]="diff.icon"/>
         }
         {{ compareWith() }} -
       }
       {{ postfix() }}
     </small>
+  }
   `,
   imports: [
     FaIconComponent,
@@ -30,9 +32,12 @@ export class DisplayPointsDiffComponent {
   readonly postfix = input.required<string | undefined>();
   flipValues = input<boolean, boolean | string>(false, { transform: booleanAttribute });
 
-  diff = computed<{ icon: [IconPrefix, IconName] | undefined, css: string }>(() => {
+  diff = computed<{ icon: [IconPrefix, IconName] | undefined, css: string; }>(() => {
     const value = this.value();
     const compareValue = this.compareWith();
+
+    if (isNullish(value) || isNullish(compareValue)) return undefined;
+
     if (value < compareValue) {
       return {
         icon: this.flipValues() ? icon.fasAngleDown : icon.fasAngleUp,
