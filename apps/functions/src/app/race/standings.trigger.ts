@@ -26,14 +26,14 @@ const setStandings = async (seasonId: string, race: IRace, results: IDriverRaceR
   const sprint = await sprintRace(seasonId, race.circuitId, allDrivers.standing);
   const standing: IDriverStanding[] = results.map(r => {
     const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
-    const sprintPoints = sprint?.get(previous.driver.driverId).points ?? 0;
-    const sprintWin = (sprint?.get(previous.driver.driverId).win ?? false) ? 1 : 0;
+    const sprintPoints = sprint?.get(previous?.driver.driverId)?.points ?? 0;
+    const sprintWin = (sprint?.get(previous?.driver.driverId)?.win ?? false) ? 1 : 0;
     const pointsByRace = {
       ...previous?.pointsByRace,
       [race.circuitId]: (r.points + sprintPoints) || 0,
     };
-    const points = (previous.points ?? 0) + r.points + sprintPoints;
-    const wins = (previous.wins ?? 0) + (r.points === 25 ? 1 : 0) + sprintWin;
+    const points = (previous?.points ?? 0) + r.points + sprintPoints;
+    const wins = (previous?.wins ?? 0) + (r.points === 25 ? 1 : 0) + sprintWin;
     return {
       driver: r.driver,
       pointsByRace,
