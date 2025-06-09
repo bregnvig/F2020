@@ -1,9 +1,9 @@
 import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IQualifyResult, IRace, IRaceBasis, IRaceResult, mapper } from '@f2020/data';
+import { Session } from '@f2020/openf1';
+import { requiredValue } from '@f2020/tools';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { collectionPaths, currentSeason, documentPaths, openF1Api } from '../../lib';
-import { requiredValue } from '@f2020/tools';
-import { Session } from '@f2020/openf1';
 
 /**
  * This trigger fetches the current standing for all drivers and for each driver.
@@ -21,16 +21,19 @@ export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{roun
 
 const setStandings = async (seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
   const db = getFirestore();
-  const allDrivers = await db.doc(documentPaths.standing.allDriver(seasonId)).get().then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
+  const allDrivers = await db.doc(documentPaths.standing.allDriver(seasonId)).get().then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[]; });
   const unchanged = allDrivers.standing.filter(({ driver }) => !results.some(r => r.driver.driverId === driver.driverId));
+  const sprint = await sprintRace(seasonId, race.circuitId, allDrivers.standing);
   const standing: IDriverStanding[] = results.map(r => {
     const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
     const pointsByRace = {
       ...previous?.pointsByRace,
       [race.circuitId]: r.points || 0,
     };
-    const points = Object.values(pointsByRace).reduce((acc, p) => acc + p, 0);
-    const wins = Object.values(pointsByRace).filter(p => p >= 25).length;
+    const sprintPoints = sprint?.get(previous.driver.driverId).points ?? 0;
+    const sprintWin = (sprint?.get(previous.driver.driverId).win ?? false) ? 1 : 0;
+    const points = Object.values(pointsByRace).reduce((acc, p) => acc + p, 0) + sprintPoints;
+    const wins = Object.values(pointsByRace).filter(p => p >= 25).length + sprintWin;
     return {
       driver: r.driver,
       pointsByRace,
@@ -101,4 +104,20 @@ const writeResult = async (qualifyResult: IQualifyResult, raceResult: IRaceResul
       );
     });
   }).then(() => raceResult.results);
+};
+
+const sprintRace = async (seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<Map<string, { win: boolean, points: number; }> | undefined> => {
+  const session = await openF1Api.session(seasonId, circuitId, 'Sprint');
+
+  if (!session) return undefined;
+
+  const positions = await openF1Api.positions(session.session_key);
+
+  const spritPoints = [8, 7, 6, 5, 4, 3, 2, 1];
+  const findDriverId = (driverNumber: number): string => drivers.find(d => d.driver.permanentNumber.includes(driverNumber))?.driver.driverId;
+
+  return positions.reduce((acc, p) => {
+    return acc.set(findDriverId(p.driver_number), { points: spritPoints[p.position - 1] ?? 0, win: p.position === 1 });
+  }, new Map<string, { win: boolean, points: number; }>());
+
 };

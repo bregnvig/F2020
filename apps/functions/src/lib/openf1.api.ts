@@ -1,12 +1,12 @@
-import axios from 'axios';
 import { Driver, Lap, openF1Url, PitStop, Position, Session, TeamRadio } from '@f2020/openf1';
+import axios from 'axios';
 
 const _http = axios.create({
   baseURL: 'https://api.openf1.org/v1/',
 });
 
 export const openF1Api = {
-  session: async (seasonId: string | number, circuitKey: number, sessionName: 'Race' | 'Qualifying') => _http.get<Session[]>(openF1Url.session(seasonId, circuitKey, sessionName))
+  session: async (seasonId: string | number, circuitKey: number, sessionName: 'Race' | 'Qualifying' | 'Sprint') => _http.get<Session[]>(openF1Url.session(seasonId, circuitKey, sessionName))
     .then(response => response.data)
     .then(sessions => sessions[0]),
   positions: async (sessionKey: number) => _http.get<Position[]>(openF1Url.positions(sessionKey)).then(response => response.data),
