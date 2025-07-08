@@ -1,0 +1,16 @@
+meta {
+  name: Token
+  type: http
+  seq: 11
+}
+
+post {
+  url: https://api.openf1.org/token
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  username: {{username}}
+  password: {{password}}
+}
