@@ -5,4 +5,5 @@ export const openF1Url = {
   pitStops: (sessionKey: number) => `https://api.openf1.org/v1/pit?session_key=${sessionKey}`,
   driver: (sessionKey?: number) => `https://api.openf1.org/v1/drivers?session_key=${sessionKey ?? 'latest'}`,
   radio: (sessionKey?: number) => `https://api.openf1.org/v1/team_radio?session_key=${sessionKey ?? 'latest'}`,
+  token: () => `https://api.openf1.org/token`,
 } as const;

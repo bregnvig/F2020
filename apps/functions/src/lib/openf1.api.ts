@@ -1,4 +1,4 @@
-import { Driver, Lap, openF1Url, PitStop, Position, Session, TeamRadio } from '@f2020/openf1';
+import { Driver, Lap, openF1Url, PitStop, Position, Session, TeamRadio, Token } from '@f2020/openf1';
 import axios from 'axios';
 
 const _http = axios.create({
@@ -14,4 +14,14 @@ export const openF1Api = {
   pitStops: async (sessionKey: number) => _http.get<PitStop[]>(openF1Url.pitStops(sessionKey)),
   drivers: async (sessionKey?: number) => _http.get<Driver[]>(openF1Url.driver(sessionKey)).then(response => response.data),
   radio: async (sessionKey?: number) => _http.get<TeamRadio[]>(openF1Url.radio(sessionKey)).then(response => response.data),
+  token: async (username: string, password: string) => {
+    const body = new URLSearchParams();
+    body.append('username', username);
+    body.append('password', password);
+    return _http.post<Token>(openF1Url.token(), body, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }
+    }).then(response => response.data);
+  }
 };
