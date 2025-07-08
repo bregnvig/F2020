@@ -81,3 +81,4 @@ firestore-production
 /apps/functions/environment/*
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+openf1/environments/*
