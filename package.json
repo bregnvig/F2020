@@ -68,7 +68,7 @@
     "@ngrx/operators": "^19.0.0",
     "@ngrx/signals": "^19.0.0",
     "@nx/angular": "21.1.2",
-    "@swimlane/ngx-charts": "^22.0.0-alpha.0",
+    "@swimlane/ngx-charts": "^23.0.0-alpha.0",
     "axios": "^1.7.2",
     "core-js": "^2.5.4",
     "firebase": "^11.4.0",
