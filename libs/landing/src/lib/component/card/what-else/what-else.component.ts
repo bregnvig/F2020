@@ -15,7 +15,7 @@ const versionNo = '33';
 export class WhatElseComponent {
 
   @HostBinding('hidden') isHidden = localStorage.getItem('what-else') === versionNo;
-  icon = icon.falRocketLaunch;
+  icon = icon.farBlockBrick;
   bug = icon.farBug;
 
   dismissMessage() {

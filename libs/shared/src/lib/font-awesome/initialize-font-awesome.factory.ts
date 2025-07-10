@@ -2,6 +2,7 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faApple, faCss3, faFacebookF, faFirefoxBrowser, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
 import {
+  faBlockBrick,
   faBookAlt,
   faBug,
   faCalendarAlt,
@@ -74,6 +75,7 @@ const farIcons = [
   faPlay,
   faPause,
   faCircleDot,
+  faBlockBrick,
 ];
 
 const fasIcons = [
