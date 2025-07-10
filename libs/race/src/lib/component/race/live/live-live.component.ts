@@ -3,7 +3,7 @@ import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle,
 import { LiveRadioComponent } from './live-radio.component';
 import { Bid, IDriver } from '@f2020/data';
 import { LiveRaceComponent } from './live-race.component';
-import { RacesService, RaceStore } from '@f2020/api';
+import { LiveResultService, OpenF1WSSService, RaceStore } from '@f2020/api';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
 import { DateTime } from 'luxon';
 import { NgOptimizedImage } from '@angular/common';
@@ -28,8 +28,9 @@ import { combineLatest } from 'rxjs';
               }
             </mat-card-title>
             <mat-card-subtitle>
-              Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}
-              <fa-icon class="ms-1" [icon]="icons.farCircleDot" [animation]="$any(animationState())"/>
+              @if (latestUpdate()) {
+                Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}
+              }
               @if (error()) {
                 <fa-icon class="text-red-400 mx-2" [icon]="icons.falTireFlat"/>
                 <span class="text-red-400">{{ error() }}</span>
@@ -74,22 +75,19 @@ import { combineLatest } from 'rxjs';
     DateTimePipe,
     FaIconComponent,
   ],
+  providers: [
+    LiveResultService,
+    OpenF1WSSService,
+  ],
 })
 
 export class LiveLiveComponent {
 
   icons = icon;
   #store = inject(RaceStore);
-  #service = inject(RacesService);
+  #service = inject(LiveResultService);
   radioError = toSignal(this.#service.radioStatus.pipe(
     map(status => status.error?.statusText),
-  ));
-  animationState = toSignal(combineLatest({
-    result: this.#service.resultStatus,
-    pitStop: this.#service.pitStopStatus,
-  }).pipe(
-    map(({ result, pitStop }) => result.loading || pitStop.loading),
-    map(loading => loading ? 'beat-fade' : ''),
   ));
 
   error = toSignal(combineLatest({
