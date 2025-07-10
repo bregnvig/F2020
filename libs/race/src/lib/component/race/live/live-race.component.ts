@@ -1,5 +1,5 @@
 import { Component, inject, input, output, signal } from '@angular/core';
-import { buildInterimResult, buildResult, RacesService, TeamService } from '@f2020/api';
+import { buildInterimResult, buildResult, LiveResultService, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
@@ -38,7 +38,8 @@ export class LiveRaceComponent {
   initialPositions = signal<Bid[]>([]);
 
   latestUpdate = output<DateTime>();
-  #service = inject(RacesService);
+  #racesService = inject(RacesService);
+  #resultService = inject(LiveResultService);
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;
@@ -46,17 +47,17 @@ export class LiveRaceComponent {
 
   ngOnInit() {
 
-    const qualify$ = this.#service.getQualify(this.race(), this.drivers()).pipe(
+    const qualify$ = this.#racesService.getQualify(this.race(), this.drivers()).pipe(
       shareLatest(),
     );
     const bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
-          this.#service.getLiveResult(this.race(), this.drivers()).pipe(
+          this.#resultService.getLiveResult(this.race(), this.drivers()).pipe(
             tap(({ latestUpdate }) => this.latestUpdate.emit(latestUpdate)),
             map(({ result }) => result),
           ),
           qualify$,
-          this.#service.getLivePitStops(this.race(), this.drivers(), teams),
+          this.#resultService.getLivePitStops(this.race(), this.drivers(), teams),
         ]),
       ),
       retry({

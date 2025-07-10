@@ -3,7 +3,7 @@ import { DateTimePipe } from '@f2020/shared';
 import { NgOptimizedImage } from '@angular/common';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RacesService } from '@f2020/api';
+import { LiveResultService } from '@f2020/api';
 import { IDriver, IRace } from '@f2020/data';
 import { RadioMessageComponent } from './radio-message.component';
 
@@ -44,7 +44,7 @@ import { RadioMessageComponent } from './radio-message.component';
 })
 
 export class LiveRadioComponent {
-  #service = inject(RacesService);
+  #service = inject(LiveResultService);
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
 
