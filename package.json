@@ -73,7 +73,7 @@
     "core-js": "^2.5.4",
     "firebase": "^11.4.0",
     "firebase-admin": "^13.2.0",
-    "firebase-functions": "^6.3.2",
+    "firebase-functions": "^6.4.0",
     "luxon": "^3.5.0",
     "mqtt": "^5.13.2",
     "ngx-infinite-scroll": "^19.0.0",
