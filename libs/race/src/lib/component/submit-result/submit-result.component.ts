@@ -1,19 +1,19 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RaceStore, TeamService } from '@f2020/api';
-import { Bid, IRace, ITeam } from '@f2020/data';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
+import { RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
+import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +66,7 @@ export class SubmitResultComponent {
     effect(() => {
       const result = this.#store.result();
       if (result) {
+        result.firstCrash.length = 0; // Not really working, so I'll set it manually to avoid issues
         this.resultControl.patchValue(result);
         this.downloaded.set(true);
 
