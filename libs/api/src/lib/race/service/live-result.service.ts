@@ -1,13 +1,23 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { IDriver, IPitStop, IRace, IRaceResult, ITeam, mapper, TeamRadio } from '@f2020/data';
-import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { Lap, TeamRadio as OpenF1TeamRadio, PitStop } from '@f2020/openf1';
+import { isTruthy, requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { catchError, map, retry } from 'rxjs/operators';
-import { requiredValue } from '@f2020/tools';
-import { PitStop, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { catchError, concatMap, map, retry } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { OpenF1WSSService } from './openf1-wss.service';
-import { HttpErrorResponse } from '@angular/common/http';
+
+const mergeLaps = (previousLaps: Lap[], currentLaps: Lap[]) => {
+  const lapMap = new Map(previousLaps.map(lap => [`${lap.lap_number}-${lap.driver_number}`, lap]));
+
+  return Array.from(
+    currentLaps.reduce((map, lap) =>
+      map.set(`${lap.lap_number}-${lap.driver_number}`, lap), lapMap
+    ).values()
+  );
+};
 
 interface LiveStatus {
   error?: HttpErrorResponse;
@@ -83,16 +93,16 @@ export class LiveResultService {
         }),
         map(session => requiredValue(session.session_key, 'session_key')),
         // takeWhile(() => DateTime.local() < latestEndTime),
-        switchMap(sessionKey => combineLatest([
+        concatMap(sessionKey => combineLatest([
           this.#openF1HttpService.getPositionAndLabs(race, sessionKey),
           combineLatest({
-            positions: this.#openF1WSSService.positions$,
-            laps: this.#openF1WSSService.laps$,
+            position: this.#openF1WSSService.positions$,
+            lap: this.#openF1WSSService.laps$,
           }),
         ])),
-        map(([{ positions, laps }, { positions: positionUpdates, laps: lapUpdates }], index) => ({
-          positions: index === 0 ? [...positions, ...positionUpdates] : positionUpdates,
-          laps: index === 0 ? [...laps, ...lapUpdates] : lapUpdates,
+        map(([{ positions, laps }, { position, lap }], index) => ({
+          positions: (index === 0 ? [...positions, position] : [position]).filter(isTruthy),
+          laps: (index === 0 ? [...laps, lap] : [lap]).filter(isTruthy),
         })),
         catchError(error => {
           this.#resultStatus$.next({ latestUpdate: DateTime.now(), error });
@@ -100,7 +110,7 @@ export class LiveResultService {
         }),
         scan((previous, current) => ({
           positions: [...previous.positions, ...current.positions ?? []],
-          laps: [...previous.laps, ...current.laps ?? []],
+          laps: mergeLaps(previous.laps, current.laps ?? []),
         })),
         map(value => {
           const { result, ...raceNoResult } = race;
@@ -120,11 +130,11 @@ export class LiveResultService {
       ? this.#openF1HttpService.getSession(race, 'Race').pipe(
         map(session => requiredValue(session.session_key, 'session_key')),
         tap(() => this.#radioStatus$.next({ latestUpdate: DateTime.now(), error: undefined })),
-        switchMap(sessionKey => combineLatest([
+        concatMap(sessionKey => combineLatest([
           this.#openF1HttpService.getTeamRadio(race, sessionKey),
           this.#openF1WSSService.radio$,
         ]).pipe(
-          map(([radioMessages, radioUpdates], index) => index === 0 ? [...radioMessages, ...radioUpdates] : radioUpdates),
+          map(([radioMessages, radioUpdate], index) => (index === 0 ? [...radioMessages, radioUpdate] : [radioUpdate]).filter(isTruthy)),
           catchError(error => {
             this.#radioStatus$.next({ latestUpdate: DateTime.now(), error });
             return of<OpenF1TeamRadio[]>([]);
@@ -145,13 +155,13 @@ export class LiveResultService {
 
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       map(session => requiredValue(session.session_key, 'session_key')),
-      switchMap(sessionKey => {
+      concatMap(sessionKey => {
         return isLiveLive
           ? combineLatest([
             this.#openF1HttpService.getPitStops(sessionKey),
             this.#openF1WSSService.pitStops$,
           ]).pipe(
-            map(([pitStops, pitStopUpdates], index) => index === 0 ? [...pitStops, ...pitStopUpdates] : pitStopUpdates),
+            map(([pitStops, pitStopUpdate], index) => (index === 0 ? [...pitStops, pitStopUpdate] : [pitStopUpdate]).filter(isTruthy)),
             catchError(error => {
               console.error(error);
               this.#pitStopStatus$.next({ error, latestUpdate: DateTime.now() });

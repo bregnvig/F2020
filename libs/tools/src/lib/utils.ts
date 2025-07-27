@@ -1,5 +1,9 @@
 export type nullish = null | undefined;
 export const isNullish = (value: unknown): value is nullish => value === null || value === undefined;
+export const isNotNullish = <T>(value: T | nullish): value is T => !isNullish(value);
+export const isRecord = <T = unknown>(value: unknown): value is Record<string, T> => !isNullish(value) && typeof value === 'object';
+export const isTruthy = <T>(a: T | undefined | null | '' | 0 | false): a is T => !!a;
+export const isFalsy = <T>(a: T | undefined | null | '' | 0 | false): a is undefined | null | '' | 0 | false => !a;
 export const unfreeze = <T>(value: T): T => {
   if (Array.isArray(value)) {
     return value.map(unfreeze) as unknown as T;

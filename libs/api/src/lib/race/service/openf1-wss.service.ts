@@ -1,4 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
+import { firestoreWebUtils } from '@f2020/data';
 import { Lap, PitStop, Position, TeamRadio } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -46,10 +47,10 @@ const topics = {
 export class OpenF1WSSService implements OnDestroy {
 
   #openF1Http = inject(OpenF1HttpService);
-  #laps = new BehaviorSubject<Lap[]>([]);
-  #positions = new BehaviorSubject<Position[]>([]);
-  #pitStops = new BehaviorSubject<PitStop[]>([]);
-  #radio = new BehaviorSubject<TeamRadio[]>([]);
+  #laps = new BehaviorSubject<Lap | undefined>(undefined);
+  #positions = new BehaviorSubject<Position | undefined>(undefined);
+  #pitStops = new BehaviorSubject<PitStop | undefined>(undefined);
+  #radio = new BehaviorSubject<TeamRadio | undefined>(undefined);
   #client: MqttClient | null = null;
 
   #isResetting = false;
@@ -101,7 +102,7 @@ export class OpenF1WSSService implements OnDestroy {
         const data = JSON.parse(message.toString());
         const subject = this.#topicSubjects[topic];
         if (subject) {
-          subject.next(data);
+          subject.next(firestoreWebUtils.convertJSONDates(data));
         } else {
           console.warn(`No handler for topic ${topic}`, data);
         }
@@ -132,6 +133,6 @@ export class OpenF1WSSService implements OnDestroy {
     this.#isResetting = true;
     this.#disconnectClient();
     // A small delay to ensure the old connection is fully closed.
-    setTimeout(() => this.#initializeClient(), 200);
+    setTimeout(() => this.#initializeClient(), 100);
   };
 }
