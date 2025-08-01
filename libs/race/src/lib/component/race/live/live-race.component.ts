@@ -39,7 +39,7 @@ export class LiveRaceComponent {
 
   latestUpdate = output<DateTime>();
   #racesService = inject(RacesService);
-  #resultService = inject(LiveResultService);
+  #live = inject(LiveResultService);
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;
@@ -52,12 +52,12 @@ export class LiveRaceComponent {
     );
     const bids$ = this.#teams.pipe(
       switchMap(teams => combineLatest([
-          this.#resultService.getLiveResult(this.race(), this.drivers()).pipe(
+          this.#live.getResult(this.race(), this.drivers()).pipe(
             tap(({ latestUpdate }) => this.latestUpdate.emit(latestUpdate)),
             map(({ result }) => result),
           ),
           qualify$,
-          this.#resultService.getLivePitStops(this.race(), this.drivers(), teams),
+          this.#live.getPitStops(this.race(), this.drivers(), teams),
         ]),
       ),
       retry({

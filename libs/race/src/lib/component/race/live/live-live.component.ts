@@ -1,8 +1,6 @@
 import { Component, computed, inject, signal, Signal } from '@angular/core';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { LiveRadioComponent } from './live-radio.component';
 import { Bid, IDriver } from '@f2020/data';
-import { LiveRaceComponent } from './live-race.component';
 import { LiveResultService, OpenF1WSSService, RaceStore } from '@f2020/api';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
 import { DateTime } from 'luxon';
@@ -11,6 +9,9 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
+import { LivePositionsComponent } from './positions/live-positions.component';
+import { LiveRaceComponent } from './live-race.component';
+import { LiveRadioComponent } from './live-radio.component';
 
 @Component({
   selector: 'f2020-live-live',
@@ -43,6 +44,17 @@ import { combineLatest } from 'rxjs';
         </mat-card>
         <mat-card>
           <mat-card-header>
+            <mat-card-title>Løbspositioner</mat-card-title>
+            <mat-card-subtitle>
+              Sidst opdateret {{ positions.latestUpdate() | dateTime: 'HH:mm.ss' }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <f2020-live-postions #positions class="block mt-3" [race]="race()" [drivers]="drivers()"/>
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
             <mat-card-title>Holdbeskeder</mat-card-title>
             <mat-card-subtitle>
               @if (radioError()) {
@@ -65,8 +77,6 @@ import { combineLatest } from 'rxjs';
     MatCardContent,
     MatCardHeader,
     MatCardTitle,
-    LiveRadioComponent,
-    LiveRaceComponent,
     CardPageComponent,
     FlagURLPipe,
     MatCardAvatar,
@@ -74,6 +84,9 @@ import { combineLatest } from 'rxjs';
     NgOptimizedImage,
     DateTimePipe,
     FaIconComponent,
+    LiveRaceComponent,
+    LivePositionsComponent,
+    LiveRadioComponent,
   ],
   providers: [
     LiveResultService,
@@ -85,14 +98,14 @@ export class LiveLiveComponent {
 
   icons = icon;
   #store = inject(RaceStore);
-  #service = inject(LiveResultService);
-  radioError = toSignal(this.#service.radioStatus.pipe(
+  #live = inject(LiveResultService);
+  radioError = toSignal(this.#live.radioStatus.pipe(
     map(status => status.error?.statusText),
   ));
 
   error = toSignal(combineLatest({
-    result: this.#service.resultStatus,
-    pitStop: this.#service.pitStopStatus,
+    result: this.#live.resultStatus,
+    pitStop: this.#live.pitStopStatus,
   }).pipe(
     map(({ result, pitStop }) => result.error?.statusText || pitStop.error?.statusText),
   ));

@@ -44,12 +44,12 @@ import { RadioMessageComponent } from './radio-message.component';
 })
 
 export class LiveRadioComponent {
-  #service = inject(LiveResultService);
+  #live = inject(LiveResultService);
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
 
   messages = rxResource({
     request: () => ({ drivers: this.drivers(), race: this.race() }),
-    loader: ({ request }) => this.#service.getLiveRadio(request.race, request.drivers),
+    loader: ({ request }) => this.#live.getRadio(request.race, request.drivers),
   });
 }

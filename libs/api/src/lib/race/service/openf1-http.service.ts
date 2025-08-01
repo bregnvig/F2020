@@ -56,6 +56,13 @@ export class OpenF1HttpService {
     );
   }
 
+  getPositions(sessionKey: number): Observable<Position[]> {
+    return this.#ready.pipe(
+      switchMap(() => this.#http.get<Position[]>(openF1Url.positions(sessionKey), { headers: this.#headers })),
+      this.retryWithNewToken(),
+    );
+  }
+
 
   getTeamRadio(race: IRace, sessionKey: number, positionAfter?: DateTime): Observable<OpenF1TeamRadio[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
