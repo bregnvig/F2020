@@ -1,17 +1,17 @@
-import { Component, computed, inject, signal, Signal } from '@angular/core';
-import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { Bid, IDriver } from '@f2020/data';
-import { LiveResultService, OpenF1WSSService, RaceStore } from '@f2020/api';
-import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
-import { DateTime } from 'luxon';
 import { NgOptimizedImage } from '@angular/common';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { Component, computed, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { LiveResultService, OpenF1WSSService, RaceStore } from '@f2020/api';
+import { Bid, IDriver } from '@f2020/data';
+import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { DateTime } from 'luxon';
 import { combineLatest } from 'rxjs';
-import { LivePositionsComponent } from './positions/live-positions.component';
+import { map } from 'rxjs/operators';
 import { LiveRaceComponent } from './live-race.component';
 import { LiveRadioComponent } from './live-radio.component';
+import { LivePositionsComponent } from './positions/live-positions.component';
 
 @Component({
   selector: 'f2020-live-live',
@@ -53,7 +53,7 @@ import { LiveRadioComponent } from './live-radio.component';
             <f2020-live-postions #positions class="block mt-3" [race]="race()" [drivers]="drivers()"/>
           </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card class="col-span-2">
           <mat-card-header>
             <mat-card-title>Holdbeskeder</mat-card-title>
             <mat-card-subtitle>
