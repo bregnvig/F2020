@@ -32,7 +32,7 @@ export class LiveResultService {
   #resultStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #radioStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #pitStopStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
-  #postionStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #positionStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
@@ -190,11 +190,11 @@ export class LiveResultService {
         map(([positions, update], index) => (index === 0 ? [...positions, update] : [update]).filter(isTruthy)),
         catchError(error => {
           console.error(error);
-          this.#postionStatus$.next({ error, latestUpdate: DateTime.now() });
+          this.#positionStatus$.next({ error, latestUpdate: DateTime.now() });
           return of<Position[]>([]);
         }),
         scan((previous, current) => [...previous, ...current], []),
-        tap(() => this.#postionStatus$.next({ latestUpdate: DateTime.now() })),
+        tap(() => this.#positionStatus$.next({ latestUpdate: DateTime.now() })),
         takeWhile(() => DateTime.local() < latestEndTime),
       )),
       map(positions => mapper.position({ positions, race, drivers })),

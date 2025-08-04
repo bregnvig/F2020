@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { inject, Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { IRace } from '@f2020/data';
-import { Lap, openF1Url, PitStop, Position, Session, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { Lap, TeamRadio as OpenF1TeamRadio, openF1Url, PitStop, Position, Session } from '@f2020/openf1';
 import { requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, MonoTypeOperatorFunction, Observable, of, pipe, retry, shareReplay, switchMap, tap } from 'rxjs';
@@ -85,7 +85,8 @@ export class OpenF1HttpService {
       if (error instanceof HttpErrorResponse && error.status === 401 && retryCount < 3) {
         return this.getToken();
       }
-      throw new Error(`Failed to fetch data after ${retryCount} retries: ${error.message}`);
+      console.error(`Retrying due to error: ${error.message} (retry count: ${retryCount})`, error);
+      throw new Error(`See log statement`);
     },
   }));
 

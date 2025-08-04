@@ -50,7 +50,7 @@ import { LivePositionsComponent } from './positions/live-positions.component';
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <f2020-live-postions #positions class="block mt-3" [race]="race()" [drivers]="drivers()"/>
+            <f2020-live-positions #positions class="block mt-3" [race]="race()" [drivers]="drivers()"/>
           </mat-card-content>
         </mat-card>
         <mat-card class="col-span-2">

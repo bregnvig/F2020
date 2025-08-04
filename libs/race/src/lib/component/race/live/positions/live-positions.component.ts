@@ -1,17 +1,17 @@
+import { NgOptimizedImage } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatList, MatListItem, MatListItemAvatar, MatListItemTitle } from '@angular/material/list';
 import { LiveResultService } from '@f2020/api';
 import { IDriver, IRace } from '@f2020/data';
-import { filter, first, map } from 'rxjs/operators';
-import { NgOptimizedImage } from '@angular/common';
-import { MatList, MatListItem, MatListItemAvatar, MatListItemTitle } from '@angular/material/list';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { shareLatest } from '@f2020/tools';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter, first, map } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
-  selector: 'f2020-live-postions',
+  selector: 'f2020-live-positions',
   templateUrl: 'live-positions.component.html',
   imports: [
     MatListItem,
@@ -52,12 +52,16 @@ export class LivePositionsComponent {
     ).subscribe(initial => {
       this.initialPositions.set(initial);
       this.#originalPosition = new Map(initial.map((driver, index) => [driver.driverId, index]));
+      console.log('Initial positions:', [...this.#originalPosition.keys()].join(', '));
     });
     positions$.pipe(
       map(positions => positions.toSorted((a, b) => a.position - b.position)),
       map(positions => positions.map(p => p.driver.driverId)),
       untilDestroyed(this),
-    ).subscribe(current => this.#currentPosition = current);
+    ).subscribe(current => {
+      console.log('Current positions:', current.join(', '));
+      this.#currentPosition = current;
+    });
   }
 
   abs(number: number) {
