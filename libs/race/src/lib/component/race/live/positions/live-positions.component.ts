@@ -1,13 +1,13 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatList, MatListItem, MatListItemAvatar, MatListItemTitle } from '@angular/material/list';
+import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { LiveResultService } from '@f2020/api';
 import { IDriver, IRace } from '@f2020/data';
 import { shareLatest } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, first, map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +20,7 @@ import { filter, first, map } from 'rxjs/operators';
     MatList,
     FaIconComponent,
     MatListItemTitle,
-
+    MatListItemLine,
   ],
   styles: `
     mat-list-item {
@@ -48,7 +48,7 @@ export class LivePositionsComponent {
     positions$.pipe(
       filter(value => value?.length > 0),
       map(positions => positions.toSorted((a, b) => a.grid - b.grid).map(p => p.driver)),
-      first(),
+      take(1),
     ).subscribe(initial => {
       this.initialPositions.set(initial);
       this.#originalPosition = new Map(initial.map((driver, index) => [driver.driverId, index]));

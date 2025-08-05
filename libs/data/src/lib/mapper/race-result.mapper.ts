@@ -21,17 +21,20 @@ export const getRankedTimes = (laps: Lap[]): Record<number, IFastestLap> => {
   return Object.fromEntries([...bestTimes.entries()]
     .toSorted(([, a], [, b]) => a.time - b.time).map(([driverNumber, lap], index) => [driverNumber, ({ ...lap, rank: index + 1 }) as IFastestLap]),
   );
-
 };
 
-export const championshipPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
-
-const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
-  const sortedResults = [...source.sessionResults];
-  const gridPositionMap = source.gridPositions.reduce((acc, gridPos) => {
+export const getGridPositions = (gridPositions: GridPosition[]): Map<number, number> => {
+  return gridPositions.reduce((acc, gridPos) => {
     acc.set(gridPos.driver_number, gridPos.position);
     return acc;
   }, new Map<number, number>());
+};
+
+export const ChampionshipPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+
+const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
+  const sortedResults = [...source.sessionResults];
+  const gridPosition = getGridPositions(source.gridPositions);
 
   const drivers = source.drivers.reduce((acc, driver) => {
     driver.permanentNumber.forEach(number => acc.set(number, driver));
@@ -41,7 +44,7 @@ const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
 
   const results = sortedResults.map((sessionResult, index) => {
     const driver = requiredValue(drivers.get(sessionResult.driver_number), 'Driver ' + sessionResult.driver_number);
-    const grid = gridPositionMap.get(sessionResult.driver_number) ?? sessionResult.position;
+    const grid = gridPosition.get(sessionResult.driver_number) ?? sessionResult.position;
 
     // Determine status based on SessionResult flags
     let status = 'Gennemført';
@@ -55,7 +58,7 @@ const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
       grid,
       status,
       fastestLap: rankedTimes[sessionResult.driver_number],
-      points: status === 'Gennemført' ? (championshipPoints[index] ?? 0) : 0,
+      points: status === 'Gennemført' ? (ChampionshipPoints[index] ?? 0) : 0,
     });
   });
 

@@ -66,15 +66,11 @@ export class OpenF1WSSService implements OnDestroy {
   pitStops$ = this.#pitStops.asObservable();
   radio$ = this.#radio.asObservable();
 
-  constructor() {
-    this.#initializeClient();
-  }
-
   ngOnDestroy(): void {
     this.#disconnectClient();
   }
 
-  #initializeClient() {
+  initializeClient() {
     if (this.#client?.connected) {
       console.debug('OpenF1WSSService already connected');
       return;
@@ -133,6 +129,6 @@ export class OpenF1WSSService implements OnDestroy {
     this.#isResetting = true;
     this.#disconnectClient();
     // A small delay to ensure the old connection is fully closed.
-    setTimeout(() => this.#initializeClient(), 100);
+    setTimeout(() => this.initializeClient(), 100);
   };
 }

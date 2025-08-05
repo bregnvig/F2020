@@ -2,14 +2,16 @@
   <mat-list>
     @for (driver of initialPositions(); track driver.driverId) {
       <mat-list-item [style.transform]="transform(driver.driverId)">
-        <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl" [alt]="driver.name">
+        <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/red.svg'" [alt]="driver.name">
         <div matListItemTitle>
           <span>{{ driver.name }}</span>
           @let change = currentChange(driver.driverId);
-          <span [class.invisible]="!change" class="float-right rounded-full mt-5 py-1 px-3" [class.bg-lime-700]="change > 0" [class.bg-red-700]="change < 0">
+          @if (change) {
+            <span class="float-right rounded-full mt-5 py-1 px-3" [class.bg-lime-700]="change > 0" [class.bg-red-700]="change < 0">
                 <fa-icon class="me-1" [icon]="['fas', change > 0 ? 'angle-up' : 'angle-down' ]" [fixedWidth]="true"/>
-            {{ abs(change) }}
+              {{ abs(change) }}
           </span>
+          }
         </div>
         <div matListItemLine>{{ currentPosition(driver.driverId) }}</div>
       </mat-list-item>
