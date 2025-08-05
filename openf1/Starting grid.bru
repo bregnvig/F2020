@@ -1,0 +1,20 @@
+meta {
+  name: Starting grid
+  type: http
+  seq: 13
+}
+
+get {
+  url: https://api.openf1.org/v1/starting_grid?session_key=9924
+  body: none
+  auth: inherit
+}
+
+params:query {
+  session_key: 9924
+  ~position<: 3
+}
+
+settings {
+  encodeUrl: true
+}

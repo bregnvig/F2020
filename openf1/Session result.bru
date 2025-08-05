@@ -1,0 +1,20 @@
+meta {
+  name: Session result
+  type: http
+  seq: 11
+}
+
+get {
+  url: https://api.openf1.org/v1/session_result?session_key=9928
+  body: none
+  auth: inherit
+}
+
+params:query {
+  session_key: 9928
+  ~position<: 3
+}
+
+settings {
+  encodeUrl: true
+}
