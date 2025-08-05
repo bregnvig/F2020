@@ -66,7 +66,6 @@ export class SubmitResultComponent {
     effect(() => {
       const result = this.#store.result();
       if (result) {
-        result.firstCrash.length = 0; // Not really working, so I'll set it manually to avoid issues
         this.resultControl.patchValue(result);
         this.downloaded.set(true);
 

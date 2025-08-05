@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { inject, Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { IRace } from '@f2020/data';
-import { Lap, TeamRadio as OpenF1TeamRadio, openF1Url, PitStop, Position, Session } from '@f2020/openf1';
+import { GridPosition, Lap, openF1Url, PitStop, Position, Session, SessionResult, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, MonoTypeOperatorFunction, Observable, of, pipe, retry, shareReplay, switchMap, tap } from 'rxjs';
@@ -24,6 +24,7 @@ export class OpenF1HttpService {
   #ready: Observable<unknown> = this.getToken().pipe(
     shareLatest(),
   );
+  #token?: Observable<string>;
 
   getSession(race: IRace, sessionName: 'Race' | 'Qualifying'): Observable<Session> {
     const key = sessionKey(race, sessionName);
@@ -63,6 +64,26 @@ export class OpenF1HttpService {
     );
   }
 
+  getLaps(sessionKey: number): Observable<Lap[]> {
+    return this.#ready.pipe(
+      switchMap(() => this.#http.get<Lap[]>(openF1Url.labs(sessionKey), { headers: this.#headers })),
+      this.retryWithNewToken(),
+    );
+  }
+
+  getSessionResult(sessionKey: number): Observable<SessionResult[]> {
+    return this.#ready.pipe(
+      switchMap(() => this.#http.get<SessionResult[]>(openF1Url.sessionResults(sessionKey), { headers: this.#headers })),
+      this.retryWithNewToken(),
+    );
+  }
+
+  getStartingGrid(sessionKey: number): Observable<GridPosition[]> {
+    return this.#ready.pipe(
+      switchMap(() => this.#http.get<GridPosition[]>(openF1Url.startingGrid(sessionKey), { headers: this.#headers })),
+      this.retryWithNewToken(),
+    );
+  }
 
   getTeamRadio(race: IRace, sessionKey: number, positionAfter?: DateTime): Observable<OpenF1TeamRadio[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
@@ -75,7 +96,7 @@ export class OpenF1HttpService {
 
   getPitStops(sessionKey: number) {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<PitStop[]>(openF1Url.pitStops(sessionKey))),
+      switchMap(() => this.#http.get<PitStop[]>(openF1Url.pitStops(sessionKey), { headers: this.#headers })),
       this.retryWithNewToken(),
     );
   }

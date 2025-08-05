@@ -1,25 +1,17 @@
 import { IDriver, IRaceBasis } from '../model';
 import { IQualifyResult } from './../model/race.model';
-import { Lap, Position } from '@f2020/openf1';
-import { filterUndefined, requiredValue, toMap } from '@f2020/tools';
+import { SessionResult } from '@f2020/openf1';
+import { filterUndefined, isTruthy, requiredValue } from '@f2020/tools';
 
 interface OpenF1QualifyParams {
-  laps: Lap[];
-  positions: Position[];
+  sessionResults: SessionResult[];
   drivers: IDriver[];
   race: IRaceBasis;
 }
 
 const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
 
-  const finalPositions = [...source.positions
-    .reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values(),
-  ].toSorted((a, b) => a.position - b.position);
-  const bestTimes = source.laps.reduce((acc, lap) => {
-    const previous = acc.get(lap.driver_number) ?? Number.MAX_SAFE_INTEGER;
-    (typeof lap.lap_duration === 'number' && (lap.lap_duration * 1000) < previous) && acc.set(lap.driver_number, lap.lap_duration * 1000);
-    return acc;
-  }, new Map<number, number>());
+  const sortedResults = [...source.sessionResults].toSorted((a, b) => a.position - b.position);
   const drivers = source.drivers.reduce((acc, driver) => {
     driver.permanentNumber.forEach(number => acc.set(number, driver));
     return acc;
@@ -27,12 +19,13 @@ const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
 
   return {
     ...source.race,
-    results: finalPositions.map(position => {
-      const driver = requiredValue(drivers.get(position.driver_number), 'Driver ' + position.driver_number);
+    results: sortedResults.map(sessionResult => {
+      const driver = requiredValue(drivers.get(sessionResult.driver_number), 'Driver ' + sessionResult.driver_number);
+      const latestQ = sessionResult.duration.length > 0 ? (sessionResult.duration.toReversed().find(isTruthy) ?? 0) * 1000 : undefined;
       return filterUndefined({
         driver,
-        position: position.position,
-        duration: bestTimes.get(position.driver_number),
+        position: sessionResult.position,
+        duration: latestQ,
       });
     }),
   };

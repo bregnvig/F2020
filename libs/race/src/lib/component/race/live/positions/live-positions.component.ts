@@ -73,6 +73,11 @@ export class LivePositionsComponent {
     return this.#originalPosition ? this.#originalPosition.get(driverId) - position : 0;
   }
 
+  currentPosition(driverId: string) {
+    const index = this.#currentPosition?.indexOf(driverId);
+    return index === -1 ? '' : (this.#currentPosition?.indexOf(driverId) + 1).toString(10);
+  }
+
   transform(uid: string) {
     const change = -this.currentChange(uid);
     return `translateY(${(change) * 100}%)`;

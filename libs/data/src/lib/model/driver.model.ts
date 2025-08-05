@@ -36,7 +36,7 @@ export interface IDriverResult {
   qualify: IQualifyResult[];
 }
 
-export const finished = (status?: string): boolean => /(\+[0-9] Lap)|(Finished)/.test(status ?? '');
+export const finished = (status?: string): boolean => /(\+[0-9] Lap)|(Gennemført)/.test(status ?? '');
 
 export interface IDriverRaceResult {
   driver: IDriver;

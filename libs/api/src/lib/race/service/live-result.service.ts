@@ -53,7 +53,7 @@ export class LiveResultService {
           tap(() => date = date.plus({ minute: 5 })),
           map(({ positions, laps }) => {
             const { result, ...raceNoResult } = race;
-            return mapper.raceResult({ positions, laps, race: raceNoResult, drivers });
+            return mapper.liveRaceResult({ positions, laps, race: raceNoResult, drivers });
           }),
           map(result => ({ result, latestUpdate: date })),
         );
@@ -116,7 +116,7 @@ export class LiveResultService {
         })),
         map(value => {
           const { result, ...raceNoResult } = race;
-          const raceResult = mapper.raceResult({ positions: value.positions, laps: value.laps, race: raceNoResult, drivers });
+          const raceResult = mapper.liveRaceResult({ positions: value.positions, laps: value.laps, race: raceNoResult, drivers });
           return ({ result: raceResult, latestUpdate: DateTime.now(), error: value['error'] });
         }),
         tap(() => this.#resultStatus$.next({ latestUpdate: DateTime.now() })),

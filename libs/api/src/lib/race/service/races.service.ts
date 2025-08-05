@@ -6,7 +6,7 @@ import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, I
 import { openF1Url, PitStop } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { collection } from 'firebase/firestore';
-import { Observable, switchMap } from 'rxjs';
+import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
 import { OpenF1HttpService } from './openf1-http.service';
@@ -62,18 +62,27 @@ export class RacesService {
   }
 
   getResult(race: IRace, drivers: IDriver[]): Observable<IRaceResult | null> {
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      switchMap(session => this.#openF1HttpService.getPositionAndLabs(race, session.session_key)),
-      map(({ positions, laps }) => mapper.raceResult({ positions, laps, race, drivers })),
+    const qualifyKey$ = this.#openF1HttpService.getSession(race, 'Qualifying').pipe(map(session => requiredValue(session.session_key, 'session_key')));
+    const raceKey$ = this.#openF1HttpService.getSession(race, 'Race').pipe(map(session => requiredValue(session.session_key, 'session_key')));
+    return combineLatest({
+      qualifyKey: qualifyKey$,
+      raceKey: raceKey$,
+    }).pipe(
+      switchMap(({ raceKey, qualifyKey }) => combineLatest({
+        gridPositions: this.#openF1HttpService.getStartingGrid(qualifyKey),
+        sessionResults: this.#openF1HttpService.getSessionResult(raceKey),
+        laps: this.#openF1HttpService.getLaps(raceKey),
+      })),
+      map(({ sessionResults, gridPositions, laps }) => mapper.raceResult({ gridPositions, sessionResults, race, drivers, laps })),
     );
   }
 
   getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
     return this.#openF1HttpService.getSession(race, 'Qualifying').pipe(
-      switchMap(session => this.#openF1HttpService.getPositionAndLabs(race, session.session_key)),
-      map(({ positions, laps }) => {
-        if (!positions.length || !laps.length) throw new Error('No positions or laps');
-        return mapper.qualifyResult({ positions, laps, race, drivers });
+      switchMap(session => this.#openF1HttpService.getSessionResult(session.session_key)),
+      map(sessionResults => {
+        if (!sessionResults.length) throw new Error('No session results found');
+        return mapper.qualifyResult({ sessionResults, race, drivers });
       }),
     );
   }
