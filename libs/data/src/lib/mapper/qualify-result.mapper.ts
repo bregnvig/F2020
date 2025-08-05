@@ -21,7 +21,8 @@ const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
     ...source.race,
     results: sortedResults.map(sessionResult => {
       const driver = requiredValue(drivers.get(sessionResult.driver_number), 'Driver ' + sessionResult.driver_number);
-      const latestQ = sessionResult.duration.length > 0 ? (sessionResult.duration.toReversed().find(isTruthy) ?? 0) * 1000 : undefined;
+      const duration = Array.isArray(sessionResult.duration) ? sessionResult.duration : [];
+      const latestQ = duration.length > 0 ? (duration.toReversed().find(isTruthy) ?? 0) * 1000 : undefined;
       return filterUndefined({
         driver,
         position: sessionResult.position,
