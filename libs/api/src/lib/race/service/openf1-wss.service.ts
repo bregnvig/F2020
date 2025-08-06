@@ -1,6 +1,6 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { firestoreWebUtils } from '@f2020/data';
-import { Lap, PitStop, Position, TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, PitStop, Position, TeamRadio } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
@@ -39,6 +39,7 @@ const websocketUrl = 'wss://mqtt.openf1.org:8084/mqtt';
 const topics = {
   laps: 'v1/laps',
   positions: 'v1/position',
+  intervals: 'v1/intervals',
   radio: 'v1/team_radio',
   pitStops: 'v1/pit',
 };
@@ -49,6 +50,7 @@ export class OpenF1WSSService implements OnDestroy {
   #openF1Http = inject(OpenF1HttpService);
   #laps = new BehaviorSubject<Lap | undefined>(undefined);
   #positions = new BehaviorSubject<Position | undefined>(undefined);
+  #intervals = new BehaviorSubject<Interval | undefined>(undefined);
   #pitStops = new BehaviorSubject<PitStop | undefined>(undefined);
   #radio = new BehaviorSubject<TeamRadio | undefined>(undefined);
   #client: MqttClient | null = null;
@@ -57,12 +59,14 @@ export class OpenF1WSSService implements OnDestroy {
   #topicSubjects: Record<string, Subject<any>> = {
     [topics.laps]: this.#laps,
     [topics.positions]: this.#positions,
+    [topics.intervals]: this.#intervals,
     [topics.radio]: this.#radio,
     [topics.pitStops]: this.#pitStops,
   };
 
   laps$ = this.#laps.asObservable();
   positions$ = this.#positions.asObservable();
+  intervals$ = this.#intervals.asObservable();
   pitStops$ = this.#pitStops.asObservable();
   radio$ = this.#radio.asObservable();
 
