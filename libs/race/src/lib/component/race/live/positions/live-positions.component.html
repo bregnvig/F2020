@@ -13,7 +13,10 @@
           </span>
           }
         </div>
-        <div matListItemLine>{{ currentPosition(driver.driverId) }}</div>
+        <div matListItemLine>
+          <span class="text-xs">{{ interval(driver.driverId) }}</span>
+          <span class="text-xs ml-2">{{ gapToLeader(driver.driverId) }}</span>
+        </div>
       </mat-list-item>
     } @empty {
       Venter på positioner...

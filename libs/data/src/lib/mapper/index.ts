@@ -3,6 +3,7 @@ import { map as nationality } from './nationality.mapper';
 import { pitStops } from './pit-stop.mapper';
 import { polePosition } from './pole-position.mapper';
 import { map as qualifyResult } from './qualify-result.mapper';
+import { map as intervalMapper } from './interval.mapper';
 import { map as liveRaceResult } from './live-race-result.mapper';
 import { map as raceResult } from './race-result.mapper';
 import { basisMap as basisRace, map as race } from './race.mapper';
@@ -18,6 +19,7 @@ export const mapper = {
   qualifyResult,
   driver,
   drivers,
+  intervalMapper,
   joinDrivers,
   season,
   nationality,

@@ -3,8 +3,8 @@ import { Component, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { LiveResultService } from '@f2020/api';
-import { IDriver, IRace } from '@f2020/data';
-import { shareLatest } from '@f2020/tools';
+import { IDriver, IDriverInterval, IRace } from '@f2020/data';
+import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, take } from 'rxjs/operators';
@@ -42,6 +42,7 @@ export class LivePositionsComponent {
 
   #originalPosition?: Map<string, number>;
   #currentPosition?: string[];
+  #intervals?: Map<string, IDriverInterval>;
 
   ngOnInit() {
     const positions$ = this.#live.getPositions(this.race(), this.drivers()).pipe(shareLatest());
@@ -62,6 +63,10 @@ export class LivePositionsComponent {
       console.log('Current positions:', current.join(', '));
       this.#currentPosition = current;
     });
+    this.#live.getIntervals(this.race(), this.drivers()).pipe(
+      untilDestroyed(this),
+    ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));
+
   }
 
   abs(number: number) {
@@ -73,9 +78,18 @@ export class LivePositionsComponent {
     return this.#originalPosition ? this.#originalPosition.get(driverId) - position : 0;
   }
 
-  currentPosition(driverId: string) {
-    const index = this.#currentPosition?.indexOf(driverId);
-    return index === -1 ? '' : (this.#currentPosition?.indexOf(driverId) + 1).toString(10);
+  interval(driverId: string) {
+    const interval = this.#intervals?.get(driverId)?.interval;
+    return typeof interval === 'number' && interval !== 0 ? `+${interval}s` : (interval || ' ');
+  }
+
+  gapToLeader(driverId: string) {
+    const interval = this.#intervals?.get(driverId)?.interval;
+    const gapToLeader = this.#intervals?.get(driverId)?.gapToLeader;
+    if (typeof interval === 'number' && interval === gapToLeader) return ' ';
+    if (typeof interval === 'number' && !gapToLeader) return `Lapped`;
+
+    return typeof gapToLeader === 'number' && gapToLeader !== 0 ? `(+${gapToLeader}s)` : (gapToLeader || ' ');
   }
 
   transform(uid: string) {

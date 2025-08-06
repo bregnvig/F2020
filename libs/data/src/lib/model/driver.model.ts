@@ -1,5 +1,6 @@
 import { IQualifyResult, IRaceResult } from './race.model';
 import { ITeam } from './team.model';
+import { Gap } from '@f2020/openf1';
 
 export interface IDriver {
   readonly name: string;
@@ -54,6 +55,12 @@ export interface IDriverQualifying {
   q2?: number;
   q3?: number;
   duration?: number;
+}
+
+export interface IDriverInterval {
+  driver: IDriver;
+  interval: Gap;
+  gapToLeader: Gap;
 }
 
 export interface IPitStop {

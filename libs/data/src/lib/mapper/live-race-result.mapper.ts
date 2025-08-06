@@ -2,7 +2,7 @@ import { GridPosition, Lap, Position } from '@f2020/openf1';
 import { arrayUtils, filterUndefined, requiredValue, toMap } from '@f2020/tools';
 import { IDriver, IDriverRaceResult, IRaceBasis } from '../model';
 import { IRaceResult } from './../model';
-import { ChampionshipPoints, getGridPositions, getRankedTimes } from './race-result.mapper';
+import { ChampionshipPoints, getDrivers, getGridPositions, getRankedTimes } from './mapper-utils';
 
 interface OpenF1ResultParams {
   laps: Lap[];
@@ -40,10 +40,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   const finalPositions = [...source.positions.filter(p => !dnfs.includes(p.driver_number)).reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
 
   const rankedTimes = getRankedTimes(source.laps);
-  const drivers = source.drivers.reduce((acc, driver) => {
-    driver.permanentNumber.forEach(number => acc.set(number, driver));
-    return acc;
-  }, new Map<number, IDriver>());
+  const drivers = getDrivers(source.drivers);
 
   const results = [
     ...finalPositions.map((position, index) => {

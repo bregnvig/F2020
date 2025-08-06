@@ -1,5 +1,6 @@
 export * from './driver.model';
 export * from './grid-position.model';
+export * from './interval.model';
 export * from './lap.model';
 export * from './pitstop.model';
 export * from './position.model';
