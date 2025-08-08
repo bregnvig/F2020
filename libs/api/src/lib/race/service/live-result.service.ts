@@ -100,7 +100,7 @@ export class LiveResultService {
     );
   }
 
-  #replayPitStops(race: IRace) {
+  #replayPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]) {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     let replaceDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
 
@@ -111,9 +111,29 @@ export class LiveResultService {
         return timer(0, 500).pipe(
           takeWhile(() => replaceDate < latestEndTime),
           map(() => pitStops.filter(p => !p.date || DateTime.fromISO(p.date) <= replaceDate)),
+          map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
           tap(() => replaceDate = replaceDate.plus({ minute: 5 })),
         );
       }));
+  }
+
+  #replayIntervals(race: IRace, drivers: IDriver[]): Observable<IDriverInterval[]> {
+    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+    let replaceDate: DateTime = race.raceStart.toUTC().minus({ hour: 1 });
+    return this.#openF1HttpService.getSession(race, 'Race').pipe(
+      switchMap(session => this.#openF1HttpService.getIntervals(session.session_key)),
+      switchMap(intervals => {
+        return timer(0, 500).pipe(
+          map(() => intervals.filter(i => !i.date || DateTime.fromISO(i.date) <= replaceDate)),
+          takeWhile(() => replaceDate < latestEndTime),
+        );
+      }),
+      map(intervals => mapper.intervalMapper({ intervals, drivers })),
+      tap(() => {
+        this.#intervalStatus$.next({ latestUpdate: DateTime.now() });
+        replaceDate = replaceDate.plus({ minute: 5 });
+      }),
+    );
   }
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
@@ -193,8 +213,8 @@ export class LiveResultService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
 
-    return (isLiveLive
-      ? this.#openF1HttpService.getSession(race, 'Race').pipe(
+    if (isLiveLive) {
+      return this.#openF1HttpService.getSession(race, 'Race').pipe(
         map(session => requiredValue(session.session_key, 'session_key')),
         concatMap(sessionKey => combineLatest([
           this.#openF1HttpService.getPitStops(sessionKey),
@@ -207,13 +227,12 @@ export class LiveResultService {
             return of<PitStop[]>([]);
           }),
           scan((previous, current) => [...previous, ...current], []),
+          map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
           tap(() => this.#pitStopStatus$.next({ latestUpdate: DateTime.now() })),
           takeWhile(() => DateTime.local() < latestEndTime),
-        )
-        ))
-      : this.#replayPitStops(race)).pipe(
-        map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
-      );
+        )));
+    }
+    return this.#replayPitStops(race, drivers, teams);
   }
 
   getPositions(race: IRace, drivers: IDriver[]): Observable<IDriverRaceResult[]> {
@@ -268,11 +287,7 @@ export class LiveResultService {
         )),
         map(intervals => mapper.intervalMapper({ intervals, drivers })),
       )
-      : this.#openF1HttpService.getSession(race, 'Race').pipe(
-        switchMap(session => this.#openF1HttpService.getIntervals(session.session_key)),
-        map(intervals => mapper.intervalMapper({ intervals, drivers })),
-        tap(() => this.#intervalStatus$.next({ latestUpdate: DateTime.now() })),
-      );
+      : this.#replayIntervals(race, drivers);
   }
 
   #getGrid(race: IRace): Observable<GridPosition[]> {
