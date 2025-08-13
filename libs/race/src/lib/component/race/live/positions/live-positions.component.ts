@@ -57,6 +57,7 @@ export class LivePositionsComponent {
     positions$.pipe(
       map(positions => positions.toSorted((a, b) => a.position - b.position)),
       map(positions => positions.map(p => p.driver.driverId)),
+      filter(positions => positions.length === this.initialPositions().length),
       untilDestroyed(this),
     ).subscribe(current => this.#currentPosition = current);
     this.#live.getIntervals(this.race(), this.drivers()).pipe(
