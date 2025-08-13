@@ -245,9 +245,10 @@ export class LiveResultService {
           )),
           map(({ positions, laps, gridPositions, currentTime }) => {
             const { result, ...raceNoResult } = race;
+            const latestUpdate = DateTime.fromISO(laps.at(-1)?.date_start ?? currentTime.toISO());
             return {
               result: mapper.liveRaceResult({ positions, laps, race: raceNoResult, drivers, gridPositions }),
-              latestUpdate: currentTime,
+              latestUpdate,
             };
           }),
         ),
@@ -278,15 +279,14 @@ export class LiveResultService {
       switchMap(({ positions, gridPositions }) =>
         this.#replayState$.pipe(
           truthy(),
-          map(state => {
-            const filteredPositions = positions.filter(p => !p.date || DateTime.fromISO(p.date) <= state.currentTime);
-            const latestDate = filteredPositions
-              .filter(p => p.date)
-              .map(p => DateTime.fromISO(p.date))
-              .sort((a, b) => b.valueOf() - a.valueOf())[0] || state.currentTime;
-            return { positions: filteredPositions, latestDate };
+          map(state => ({
+            positions: positions.filter(p => !p.date || DateTime.fromISO(p.date) <= state.currentTime),
+            currentTime: state.currentTime,
+          })),
+          tap(({ positions, currentTime }) => {
+            const latestUpdate = DateTime.fromISO(positions.at(-1)?.date ?? currentTime.toISO());
+            this.#positionStatus$.next({ latestUpdate });
           }),
-          tap(({ latestDate }) => this.#positionStatus$.next({ latestUpdate: latestDate })),
           map(({ positions }) => mapper.position({ positions, race, drivers, gridPositions })),
         ),
       ),
