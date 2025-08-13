@@ -53,16 +53,12 @@ export class LivePositionsComponent {
     ).subscribe(initial => {
       this.initialPositions.set(initial);
       this.#originalPosition = new Map(initial.map((driver, index) => [driver.driverId, index]));
-      console.log('Initial positions:', [...this.#originalPosition.keys()].join(', '));
     });
     positions$.pipe(
       map(positions => positions.toSorted((a, b) => a.position - b.position)),
       map(positions => positions.map(p => p.driver.driverId)),
       untilDestroyed(this),
-    ).subscribe(current => {
-      console.log('Current positions:', current.join(', '));
-      this.#currentPosition = current;
-    });
+    ).subscribe(current => this.#currentPosition = current);
     this.#live.getIntervals(this.race(), this.drivers()).pipe(
       untilDestroyed(this),
     ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));

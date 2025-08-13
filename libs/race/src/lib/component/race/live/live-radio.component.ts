@@ -12,7 +12,7 @@ import { RadioMessageComponent } from './radio-message.component';
   template: `
     @if (messages.value(); as messages) {
       <mat-list>
-        @for (message of messages; track message.metaId) {
+        @for (message of messages; track $index) {
           <mat-list-item>
             <img matListItemAvatar height="40" width="40" [ngSrc]="message.driver.headshotUrl" [alt]="message.driver.name">
             <h4 matListItemTitle>
