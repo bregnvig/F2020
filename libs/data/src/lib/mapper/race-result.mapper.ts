@@ -1,11 +1,11 @@
-import { GridPosition, Lap, SessionResult } from '@f2020/openf1';
+import { Lap, SessionResult } from '@f2020/openf1';
 import { filterUndefined, requiredValue } from '@f2020/tools';
-import { IDriver, IDriverRaceResult, IRaceBasis, IRaceResult } from '../model';
+import { IDriver, IDriverGridPosition, IDriverRaceResult, IRaceBasis, IRaceResult } from '../model';
 import { ChampionshipPoints, getDrivers, getGridPositions, getRankedTimes } from './mapper-utils';
 
 interface OpenF1RaceResultParams {
   sessionResults: SessionResult[];
-  gridPositions: GridPosition[];
+  gridPositions: IDriverGridPosition[];
   laps: Lap[];
   drivers: IDriver[];
   race: IRaceBasis;
@@ -20,7 +20,7 @@ const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
 
   const results = sortedResults.map((sessionResult, index) => {
     const driver = requiredValue(drivers.get(sessionResult.driver_number), 'Driver ' + sessionResult.driver_number);
-    const grid = gridPosition.get(sessionResult.driver_number) ?? sessionResult.position;
+    const grid = gridPosition.get(driver.driverId) ?? sessionResult.position;
 
     // Determine status based on SessionResult flags
     let status = 'Gennemført';

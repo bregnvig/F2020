@@ -48,6 +48,8 @@ export interface IDriverRaceResult {
   fastestLap?: IFastestLap;
 }
 
+export type IDriverGridPosition = Pick<IDriverRaceResult, 'driver' | 'grid'>;
+
 export interface IDriverQualifying {
   driver: IDriver;
   position: number;

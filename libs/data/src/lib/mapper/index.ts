@@ -9,6 +9,7 @@ import { map as raceResult } from './race-result.mapper';
 import { basisMap as basisRace, map as race } from './race.mapper';
 import { map as season } from './season.mapper';
 import { map as position } from './position.mapper';
+import { map as grid } from './grid-position.mapper';
 import { map as radio } from './radio.mapper';
 
 export const mapper = {
@@ -27,4 +28,5 @@ export const mapper = {
   polePosition,
   position,
   radio,
+  grid,
 };

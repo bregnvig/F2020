@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IDriver, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, ITeam, mapper, TeamRadio } from '@f2020/data';
-import { GridPosition, Interval, Lap, PitStop, Position, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, ITeam, mapper, TeamRadio } from '@f2020/data';
+import { Interval, Lap, PitStop, Position, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
@@ -44,15 +44,14 @@ export class LiveResultService {
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
   readonly positionStatus = this.#positionStatus$.asObservable();
-  readonly intervalStatus = this.#intervalStatus$.asObservable();
 
-  #gridPositions?: Observable<GridPosition[]>;
+  #gridPositions?: Observable<IDriverGridPosition[]>;
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const isLiveLive = DateTime.now().toUTC() < latestEndTime;
     if (isLiveLive) {
-      const grid$ = this.#getGrid(race);
+      const grid$ = this.getGrid(race, drivers);
       this.#openF1WSSService.initializeClient();
       return this.#openF1HttpService.getSession(race, 'Race').pipe(
         retry({
@@ -166,7 +165,7 @@ export class LiveResultService {
             return of<Position[]>([]);
           }),
           scan((previous, current) => [...previous, ...current], []),
-          switchMap(positions => this.#getGrid(race).pipe(
+          switchMap(positions => this.getGrid(race, drivers).pipe(
             map(gridPositions => ({ positions, gridPositions })),
           )),
           tap(() => this.#positionStatus$.next({ latestUpdate: DateTime.now() })),
@@ -228,7 +227,7 @@ export class LiveResultService {
   }
 
   #replayResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
-    const grid$ = this.#getGrid(race);
+    const grid$ = this.getGrid(race, drivers);
 
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       switchMap(session => this.#openF1HttpService.getPositionAndLabs(race, session.session_key)),
@@ -273,7 +272,7 @@ export class LiveResultService {
   #replayPositions(race: IRace, drivers: IDriver[]): Observable<IDriverRaceResult[]> {
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       switchMap(session => this.#openF1HttpService.getPositions(session.session_key)),
-      switchMap(positions => this.#getGrid(race).pipe(
+      switchMap(positions => this.getGrid(race, drivers).pipe(
         map(gridPositions => ({ positions, gridPositions })),
       )),
       switchMap(({ positions, gridPositions }) =>
@@ -322,10 +321,11 @@ export class LiveResultService {
     );
   }
 
-  #getGrid(race: IRace): Observable<GridPosition[]> {
+  getGrid(race: IRace, drivers: IDriver[]): Observable<IDriverGridPosition[]> {
     if (!this.#gridPositions) {
       this.#gridPositions = this.#openF1HttpService.getSession(race, 'Qualifying').pipe(
         switchMap(session => this.#openF1HttpService.getStartingGrid(session.session_key)),
+        map(positions => mapper.grid({ positions, drivers })),
         first(),
         shareLatest(),
       );

@@ -1,5 +1,5 @@
-import { GridPosition, Lap } from '@f2020/openf1';
-import { IDriver, IFastestLap } from '../model';
+import { Lap } from '@f2020/openf1';
+import { IDriver, IDriverGridPosition, IFastestLap } from '../model';
 
 export const getRankedTimes = (laps: Lap[]): Record<number, IFastestLap> => {
   const bestTimes = laps
@@ -14,11 +14,11 @@ export const getRankedTimes = (laps: Lap[]): Record<number, IFastestLap> => {
   );
 };
 
-export const getGridPositions = (gridPositions: GridPosition[]): Map<number, number> => {
+export const getGridPositions = (gridPositions: IDriverGridPosition[]): Map<string, number> => {
   return gridPositions.reduce((acc, gridPos) => {
-    acc.set(gridPos.driver_number, gridPos.position);
+    acc.set(gridPos.driver.driverId, gridPos.grid);
     return acc;
-  }, new Map<number, number>());
+  }, new Map<string, number>());
 };
 
 export const getDrivers = (drivers: IDriver[]): Map<number, IDriver> => drivers.reduce((acc, driver) => {

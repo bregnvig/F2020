@@ -46,9 +46,9 @@ export class LivePositionsComponent {
 
   ngOnInit() {
     const positions$ = this.#live.getPositions(this.race(), this.drivers()).pipe(shareLatest());
-    positions$.pipe(
+    this.#live.getGrid(this.race(), this.drivers()).pipe(
       filter(value => value?.length > 0),
-      map(positions => positions.toSorted((a, b) => a.grid - b.grid).map(p => p.driver)),
+      map(gridPositions => gridPositions.map(gp => gp.driver)),
       take(1),
     ).subscribe(initial => {
       this.initialPositions.set(initial);

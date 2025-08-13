@@ -1,6 +1,6 @@
-import { GridPosition, Lap, Position } from '@f2020/openf1';
+import { Lap, Position } from '@f2020/openf1';
 import { arrayUtils, filterUndefined, requiredValue, toMap } from '@f2020/tools';
-import { IDriver, IDriverRaceResult, IRaceBasis } from '../model';
+import { IDriver, IDriverGridPosition, IDriverRaceResult, IRaceBasis } from '../model';
 import { IRaceResult } from './../model';
 import { ChampionshipPoints, getDrivers, getGridPositions, getRankedTimes } from './mapper-utils';
 
@@ -9,7 +9,7 @@ interface OpenF1ResultParams {
   positions: Position[];
   drivers: IDriver[];
   race: IRaceBasis;
-  gridPositions: GridPosition[],
+  gridPositions: IDriverGridPosition[],
 }
 
 
@@ -45,7 +45,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
   const results = [
     ...finalPositions.map((position, index) => {
       const driver = requiredValue(drivers.get(position.driver_number), 'Result driver with driver number', position.driver_number);
-      const grid = requiredValue(gridPositions.get(position.driver_number), 'Grid position', position.driver_number);
+      const grid = requiredValue(gridPositions.get(driver.driverId), 'Grid position', position.driver_number);
       return ({
         driver,
         position: position.position,
@@ -57,7 +57,7 @@ const openF1Map = (source: OpenF1ResultParams): IRaceResult => {
     }),
     ...dnfs.map((driverNumber, index) => {
       const driver = requiredValue(drivers.get(driverNumber), 'Result driver with driver number', driverNumber);
-      const grid = requiredValue(gridPositions.get(driverNumber), 'Grid position', driverNumber);
+      const grid = requiredValue(gridPositions.get(driver.driverId), 'Grid position', driverNumber);
       return ({
         driver,
         position: finalPositions.length + index + 1,

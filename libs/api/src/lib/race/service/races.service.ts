@@ -69,7 +69,9 @@ export class RacesService {
       raceKey: raceKey$,
     }).pipe(
       switchMap(({ raceKey, qualifyKey }) => combineLatest({
-        gridPositions: this.#openF1HttpService.getStartingGrid(qualifyKey),
+        gridPositions: this.#openF1HttpService.getStartingGrid(qualifyKey).pipe(
+          map(positions => mapper.grid({ positions, drivers })),
+        ),
         sessionResults: this.#openF1HttpService.getSessionResult(raceKey),
         laps: this.#openF1HttpService.getLaps(raceKey),
       })),
