@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '33';
+const versionNo = '34';
 
 @Component({
   selector: 'f2020-what-else',
@@ -15,7 +15,7 @@ const versionNo = '33';
 export class WhatElseComponent {
 
   @HostBinding('hidden') isHidden = localStorage.getItem('what-else') === versionNo;
-  icon = icon.farBlockBrick;
+  icon = icon.falRocketLaunch;
   bug = icon.farBug;
 
   dismissMessage() {
