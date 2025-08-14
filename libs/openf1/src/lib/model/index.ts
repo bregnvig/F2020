@@ -4,6 +4,7 @@ export * from './interval.model';
 export * from './lap.model';
 export * from './pitstop.model';
 export * from './position.model';
+export * from './race-control.model';
 export * from './session-result.model';
 export * from './radio.model';
 export * from './season.model';

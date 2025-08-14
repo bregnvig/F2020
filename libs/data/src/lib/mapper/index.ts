@@ -11,6 +11,7 @@ import { map as season } from './season.mapper';
 import { map as position } from './position.mapper';
 import { map as grid } from './grid-position.mapper';
 import { map as radio } from './radio.mapper';
+import { map as raceControl } from './race-control.mapper';
 
 export const mapper = {
   basisRace,
@@ -28,5 +29,6 @@ export const mapper = {
   polePosition,
   position,
   radio,
+  raceControl,
   grid,
 };

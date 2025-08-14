@@ -1,6 +1,7 @@
 export * from './coordinate.model';
 export * from './driver.model';
 export * from './race.model';
+export * from './race-control.model';
 export * from './season.model';
 export * from './player.model';
 export * from './bid.model';

@@ -8,5 +8,6 @@ export const openF1Url = {
   startingGrid: (sessionKey: number) => `https://api.openf1.org/v1/starting_grid?session_key=${sessionKey}`,
   driver: (sessionKey?: number) => `https://api.openf1.org/v1/drivers?session_key=${sessionKey ?? 'latest'}`,
   radio: (sessionKey?: number) => `https://api.openf1.org/v1/team_radio?session_key=${sessionKey ?? 'latest'}`,
+  raceControl: (sessionKey?: number) => `https://api.openf1.org/v1/race_control?session_key=${sessionKey ?? 'latest'}`,
   token: () => `https://api.openf1.org/token`,
 } as const;
