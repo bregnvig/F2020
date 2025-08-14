@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, ITeam, mapper, TeamRadio } from '@f2020/data';
-import { Interval, Lap, PitStop, Position, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, ITeam, mapper, RaceControl, TeamRadio } from '@f2020/data';
+import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
@@ -202,6 +202,30 @@ export class LiveResultService {
       : this.#replayIntervals(race, drivers);
   }
 
+  getRaceControl(race: IRace, drivers: IDriver[]): Observable<RaceControl[]> {
+    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+    const isLiveLive = DateTime.now().toUTC() < latestEndTime;
+
+    return isLiveLive
+      ? this.#openF1HttpService.getSession(race, 'Race').pipe(
+        map(session => requiredValue(session.session_key, 'session_key')),
+        switchMap(sessionKey => combineLatest([
+          this.#openF1HttpService.getRaceControl(sessionKey),
+          this.#openF1WSSService.raceControl$,
+        ]).pipe(
+          map(([messages, update], index) => (index === 0 ? [...messages, update] : [update]).filter(isTruthy)),
+          catchError(error => {
+            console.error(error);
+            return of<OpenF1RaceControl[]>([]);
+          }),
+          scan((previous, current) => [...previous, ...current], []),
+          takeWhile(() => DateTime.local() < latestEndTime),
+        )),
+        map(messages => mapper.raceControl({ messages, drivers })),
+      )
+      : this.#replayRaceControl(race, drivers);
+  }
+
   #startReplay(race: IRace, targetDuration = 60000): void {
     if (this.#replayState$.value?.isActive) {
       return;
@@ -316,6 +340,19 @@ export class LiveResultService {
           map(state => intervals.filter(i => !i.date || DateTime.fromISO(i.date) <= state.currentTime)),
           map(intervals => mapper.intervalMapper({ intervals, drivers })),
           tap(() => this.#intervalStatus$.next({ latestUpdate: DateTime.now() })),
+        ),
+      ),
+    );
+  }
+
+  #replayRaceControl(race: IRace, drivers: IDriver[]): Observable<RaceControl[]> {
+    return this.#openF1HttpService.getSession(race, 'Race').pipe(
+      switchMap(session => this.#openF1HttpService.getRaceControl(session.session_key)),
+      switchMap(messages =>
+        this.#replayState$.pipe(
+          truthy(),
+          map(state => messages.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
+          map(messages => mapper.raceControl({ messages, drivers })),
         ),
       ),
     );
