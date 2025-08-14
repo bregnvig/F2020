@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { RaceControl } from '@f2020/data';
 import { NgOptimizedImage } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -25,10 +25,7 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
       }
 
       <div class="flex-grow flex justify-between min-w-0">
-        <p class="line-clamp-2 break-words me-2">{{ data.message }}</p>
-        <button (click)="dismiss()">
-          <fa-icon [icon]="close"/>
-        </button>
+        <p class="line-clamp-2 break-words">{{ data.message }}</p>
       </div>
 
     </div>
@@ -40,7 +37,6 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 })
 export class RaceControlSnackbarComponent {
   data = inject<RaceControl>(MAT_SNACK_BAR_DATA);
-  #snackBarRef = inject(MatSnackBarRef<RaceControlSnackbarComponent>);
 
   flag = icon.fasFlagCheckered;
   icons: Record<string, [IconPrefix, IconName]> = {
@@ -50,9 +46,4 @@ export class RaceControlSnackbarComponent {
     'CarEvent': icon.farCarCrash,
     'Other': icon.farInfo,
   };
-  close = icon.farTrash;
-
-  dismiss(): void {
-    this.#snackBarRef.dismiss();
-  }
 }
