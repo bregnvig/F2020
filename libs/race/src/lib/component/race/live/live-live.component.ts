@@ -53,7 +53,7 @@ import { LivePositionsComponent } from './positions/live-positions.component';
             <f2020-live-positions #positions class="block mt-3" [race]="race()" [drivers]="drivers()"/>
           </mat-card-content>
         </mat-card>
-        <mat-card class="col-span-2">
+        <mat-card class="lg:col-span-2">
           <mat-card-header>
             <mat-card-title>Holdbeskeder</mat-card-title>
             <mat-card-subtitle>
