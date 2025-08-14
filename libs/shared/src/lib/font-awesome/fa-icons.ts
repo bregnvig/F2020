@@ -50,6 +50,7 @@ type Icon =
   | 'fasAngleUp'
   | 'fasAngleDown'
   | 'farBlockBrick'
+  | 'fasSafetyCar'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -102,4 +103,5 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fasAngleUp: ['fas', 'angle-up'],
   fasAngleDown: ['fas', 'angle-down'],
   farBlockBrick: ['far', 'block-brick'],
+  fasSafetyCar: ['fas', 'car-on'],
 };

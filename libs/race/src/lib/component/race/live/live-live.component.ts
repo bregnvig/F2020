@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, computed, inject, signal, Signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { LiveResultService, OpenF1WSSService, RaceStore } from '@f2020/api';
@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 import { LiveRaceComponent } from './live-race.component';
 import { LiveRadioComponent } from './live-radio.component';
 import { LivePositionsComponent } from './positions/live-positions.component';
+import { RaceControlService } from './race-control';
 
 @Component({
   selector: 'f2020-live-live',
@@ -90,6 +91,7 @@ import { LivePositionsComponent } from './positions/live-positions.component';
   ],
   providers: [
     LiveResultService,
+    RaceControlService,
     OpenF1WSSService,
   ],
 })
@@ -115,4 +117,13 @@ export class LiveLiveComponent {
   bids: Signal<Bid[]> = this.#store.bids as Signal<Bid[]>;
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
   latestUpdate = signal<DateTime | undefined>(undefined);
+
+  constructor() {
+    const raceControlMessages = inject(RaceControlService);
+    effect(() => {
+      const race = this.race();
+      const drivers = this.drivers();
+      race && drivers && raceControlMessages.displayMessages(race, drivers);
+    });
+  }
 }

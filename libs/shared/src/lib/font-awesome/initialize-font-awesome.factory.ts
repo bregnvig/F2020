@@ -33,6 +33,7 @@ import {
   faAngleDown,
   faAngleUp,
   faBars,
+  faCarOn,
   faCloudArrowDown,
   faCloudArrowUp,
   faCoins,
@@ -94,6 +95,7 @@ const fasIcons = [
   faRotateRight,
   faAngleUp,
   faAngleDown,
+  faCarOn,
 ];
 
 const falIcons = [
