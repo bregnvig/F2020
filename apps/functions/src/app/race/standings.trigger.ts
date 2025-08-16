@@ -15,15 +15,16 @@ export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{roun
 
   if (before.state !== 'completed' && after.state === 'completed') {
     const season = await currentSeason();
-    await setDriver(season.id, after).then(results => setStandings(season.id, after, results));
+    const token = requiredValue(await openF1Api.token(), 'Token')?.access_token;
+    await setDriver(token, season.id, after).then(results => setStandings(token, season.id, after, results));
   }
 });
 
-const setStandings = async (seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
+const setStandings = async (token: string, seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
   const db = getFirestore();
   const allDrivers = await db.doc(documentPaths.standing.allDriver(seasonId)).get().then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[]; });
   const unchanged = allDrivers.standing.filter(({ driver }) => !results.some(r => r.driver.driverId === driver.driverId));
-  const sprint = await sprintRace(seasonId, race.circuitId, allDrivers.standing);
+  const sprint = await sprintRace(token, seasonId, race.circuitId, allDrivers.standing);
   const standing: IDriverStanding[] = results.map(r => {
     const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
     const sprintPoints = sprint?.get(previous?.driver.driverId)?.points ?? 0;
@@ -44,29 +45,23 @@ const setStandings = async (seasonId: string, race: IRace, results: IDriverRaceR
   return db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing: [...unchanged, ...standing] });
 };
 
-const setDriver = async (seasonId: string, race: IRace) => {
+const setDriver = async (token: string, seasonId: string, race: IRace) => {
   const db = getFirestore();
 
   const circuitId = requiredValue(race.circuitId, 'Race circuit id');
   const circuit = await db.doc(documentPaths.circuit(circuitId)).get().then(doc => doc.data() as Circuit);
   const drivers = await db.collection(collectionPaths.drivers()).get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
 
-  const raceSession = await openF1Api.session(seasonId, circuitId, 'Race');
-  const qualifySession = await openF1Api.session(seasonId, circuitId, 'Qualifying');
+  const raceSession = await openF1Api.session(token, seasonId, circuitId, 'Race');
+  const qualifySession = await openF1Api.session(token, seasonId, circuitId, 'Qualifying');
   const basicRace = mapper.basisRace(circuit, race.round, seasonId);
+  const gridPositions = mapper.grid({ positions: await openF1Api.startingGrid(token, qualifySession.session_key), drivers });
+  const raceSessionResult = await openF1Api.sessionResults(token, raceSession.session_key);
+  const qualifySessionResult = await openF1Api.sessionResults(token, qualifySession.session_key);
+  const laps = await openF1Api.labs(token, raceSession.session_key);
 
-  const buildResult = async (session: Session, mapperFnName: 'raceResult' | 'qualifyResult') => {
-    const laps = await openF1Api.labs(session.session_key);
-    const positions = await openF1Api.positions(session.session_key);
-    return mapper[mapperFnName]({
-      race: basicRace,
-      laps,
-      drivers: drivers.filter(d => race.drivers.includes(d.driverId)),
-      positions,
-    });
-  };
-  const qualifyResult = await buildResult(qualifySession, 'qualifyResult') as IQualifyResult;
-  const raceResult = await buildResult(raceSession, 'raceResult') as IRaceResult;
+  const qualifyResult = mapper.qualifyResult({ race: basicRace, drivers, sessionResults: qualifySessionResult });
+  const raceResult = mapper.raceResult({ race: basicRace, drivers, gridPositions, laps, sessionResults: raceSessionResult });
   return writeResult(qualifyResult, raceResult, basicRace);
 };
 
@@ -106,12 +101,12 @@ const writeResult = async (qualifyResult: IQualifyResult, raceResult: IRaceResul
   }).then(() => raceResult.results);
 };
 
-const sprintRace = async (seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<Map<string, { win: boolean, points: number; }> | undefined> => {
-  const session = await openF1Api.session(seasonId, circuitId, 'Sprint');
+const sprintRace = async (token: string, seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<Map<string, { win: boolean, points: number; }> | undefined> => {
+  const session = await openF1Api.session(token, seasonId, circuitId, 'Sprint');
 
   if (!session) return undefined;
 
-  const positions = await openF1Api.positions(session.session_key);
+  const positions = await openF1Api.sessionResults(token, session.session_key);
 
   const spritPoints = [8, 7, 6, 5, 4, 3, 2, 1];
   const findDriverId = (driverNumber: number): string => drivers.find(d => d.driver.permanentNumber.includes(driverNumber))?.driver.driverId;

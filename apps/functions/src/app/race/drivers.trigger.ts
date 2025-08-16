@@ -14,7 +14,8 @@ export const updateDriversCollection = onDocumentUpdated('seasons/{seasonId}/rac
   const before: IRace = event.data.before.data() as IRace;
   const after: IRace = event.data.after.data() as IRace;
   if (before.state === 'closed' && after.state === 'completed') {
-    const drivers = (await openF1Api.drivers()
+    const token = await openF1Api.token();
+    const drivers = (await openF1Api.drivers(token.access_token)
       .then((response: Driver[]) => response.map(mapper.driver))
       .then(drivers => drivers.filter(driver => {
         const result = !!driver.code && !!driver.countryCode;
