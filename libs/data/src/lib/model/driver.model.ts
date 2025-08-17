@@ -72,3 +72,12 @@ export interface IPitStop {
   lap: number;
   duration: number;
 }
+
+export interface IStint {
+  driver: IDriver;
+  compound: string;
+  lapStart: number;
+  lapEnd: number;
+  stintNumber: number;
+  tyreAgeAtStart: number;
+}

@@ -1,6 +1,6 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { firestoreWebUtils } from '@f2020/data';
-import { Interval, Lap, PitStop, Position, RaceControl, TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
@@ -43,6 +43,7 @@ const topics = {
   radio: 'v1/team_radio',
   pitStops: 'v1/pit',
   raceControl: 'v1/race_control',
+  stints: 'v1/stints',
 };
 
 @Injectable()
@@ -55,6 +56,7 @@ export class OpenF1WSSService implements OnDestroy {
   #pitStops = new BehaviorSubject<PitStop | undefined>(undefined);
   #radio = new BehaviorSubject<TeamRadio | undefined>(undefined);
   #raceControl = new BehaviorSubject<RaceControl | undefined>(undefined);
+  #stints = new BehaviorSubject<Stint | undefined>(undefined);
   #client: MqttClient | null = null;
 
   #isResetting = false;
@@ -65,6 +67,7 @@ export class OpenF1WSSService implements OnDestroy {
     [topics.radio]: this.#radio,
     [topics.pitStops]: this.#pitStops,
     [topics.raceControl]: this.#raceControl,
+    [topics.stints]: this.#stints,
   };
 
   laps$ = this.#laps.asObservable();
@@ -73,6 +76,7 @@ export class OpenF1WSSService implements OnDestroy {
   pitStops$ = this.#pitStops.asObservable();
   radio$ = this.#radio.asObservable();
   raceControl$ = this.#raceControl.asObservable();
+  stints$ = this.#stints.asObservable();
 
   ngOnDestroy(): void {
     this.#disconnectClient();

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, ITeam, mapper, RaceControl, TeamRadio } from '@f2020/data';
-import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, IStint, ITeam, mapper, RaceControl, TeamRadio } from '@f2020/data';
+import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
@@ -226,6 +226,30 @@ export class LiveResultService {
       : this.#replayRaceControl(race, drivers);
   }
 
+  getStints(race: IRace, drivers: IDriver[]): Observable<IStint[]> {
+    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+    const isLiveLive = DateTime.now().toUTC() < latestEndTime;
+
+    if (isLiveLive) {
+      return this.#openF1HttpService.getSession(race, 'Race').pipe(
+        map(session => requiredValue(session.session_key, 'session_key')),
+        concatMap(sessionKey => combineLatest([
+          this.#openF1HttpService.getStints(sessionKey),
+          this.#openF1WSSService.stints$,
+        ]).pipe(
+          map(([stints, stintUpdate], index) => (index === 0 ? [...stints, stintUpdate] : [stintUpdate]).filter(isTruthy)),
+          catchError(error => {
+            console.error(error);
+            return of<Stint[]>([]);
+          }),
+          scan((previous, current) => [...previous, ...current], []),
+          map(stints => mapper.stints({ stints, drivers })),
+          takeWhile(() => DateTime.local() < latestEndTime),
+        )));
+    }
+    return this.#replayStints(race, drivers);
+  }
+
   #startReplay(race: IRace, targetDuration = 60000): void {
     if (this.#replayState$.value?.isActive) {
       return;
@@ -353,6 +377,20 @@ export class LiveResultService {
           truthy(),
           map(state => messages.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
           map(messages => mapper.raceControl({ messages, drivers })),
+        ),
+      ),
+    );
+  }
+
+  #replayStints(race: IRace, drivers: IDriver[]) {
+    return this.#openF1HttpService.getSession(race, 'Race').pipe(
+      map(session => requiredValue(session.session_key, 'session_key')),
+      switchMap(sessionKey => this.#openF1HttpService.getStints(sessionKey)),
+      switchMap(stints =>
+        this.#replayState$.pipe(
+          truthy(),
+          map(state => stints.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
+          map(stints => mapper.stints({ stints, drivers })),
         ),
       ),
     );

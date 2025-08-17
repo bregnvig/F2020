@@ -9,6 +9,7 @@ export * from './session-result.model';
 export * from './radio.model';
 export * from './season.model';
 export * from './session.model';
+export * from './stint.model';
 export * from './token.model';
 export * from './weather.model';
 
