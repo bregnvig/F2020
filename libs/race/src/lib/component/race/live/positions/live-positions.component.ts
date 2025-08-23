@@ -1,13 +1,15 @@
-import { NgOptimizedImage } from '@angular/common';
-import { Component, inject, input, signal } from '@angular/core';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { LiveResultService } from '@f2020/api';
-import { IDriver, IDriverInterval, IRace } from '@f2020/data';
+import { IDriver, IDriverInterval, IRace, IStint } from '@f2020/data';
 import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { TyreComponent } from './tyre.component';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +23,8 @@ import { filter, map, take } from 'rxjs/operators';
     FaIconComponent,
     MatListItemTitle,
     MatListItemLine,
+    AsyncPipe,
+    TyreComponent,
   ],
   styles: `
     mat-list-item {
@@ -28,7 +32,7 @@ import { filter, map, take } from 'rxjs/operators';
     }
   `,
 })
-export class LivePositionsComponent {
+export class LivePositionsComponent implements OnInit {
 
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
@@ -39,6 +43,8 @@ export class LivePositionsComponent {
   latestUpdate = toSignal(this.#live.positionStatus.pipe(
     map(status => status.latestUpdate),
   ), { initialValue: null });
+  stints$?: Observable<Map<string, IStint>>;
+  currentLap$: Observable<number>;
 
   #originalPosition?: Map<string, number>;
   #currentPosition?: string[];
@@ -46,6 +52,7 @@ export class LivePositionsComponent {
 
   ngOnInit() {
     const positions$ = this.#live.getPositions(this.race(), this.drivers()).pipe(shareLatest());
+    this.currentLap$ = this.#live.currentLap;
     this.#live.getGrid(this.race(), this.drivers()).pipe(
       filter(value => value?.length > 0),
       map(gridPositions => gridPositions.map(gp => gp.driver)),
@@ -63,7 +70,9 @@ export class LivePositionsComponent {
     this.#live.getIntervals(this.race(), this.drivers()).pipe(
       untilDestroyed(this),
     ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));
-
+    this.stints$ = this.#live.getStints(this.race(), this.drivers()).pipe(
+      map(stints => stints.reduce(toMap(stint => stint.driver.driverId), new Map<string, IStint>)),
+    );
   }
 
   abs(number: number) {
@@ -93,5 +102,4 @@ export class LivePositionsComponent {
     const change = -this.currentChange(uid);
     return `translateY(${(change) * 100}%)`;
   }
-
 }

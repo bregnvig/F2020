@@ -4,7 +4,7 @@ import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitS
 import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, ReplaySubject, scan, switchMap, takeWhile, tap, timer } from 'rxjs';
 import { catchError, concatMap, finalize, first, map, retry, take } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { OpenF1WSSService } from './openf1-wss.service';
@@ -44,6 +44,7 @@ export class LiveResultService {
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
   readonly positionStatus = this.#positionStatus$.asObservable();
+  readonly currentLap = new ReplaySubject<number>();
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
 
@@ -73,7 +74,7 @@ export class LiveResultService {
         })),
         catchError(error => {
           this.#resultStatus$.next({ latestUpdate: DateTime.now(), error });
-          return of({ positions: [], laps: [] });
+          return of({ positions: [], laps: [] as Lap[] });
         }),
         scan((previous, current) => ({
           positions: [...previous.positions, ...current.positions ?? []],
@@ -293,6 +294,7 @@ export class LiveResultService {
           map(({ positions, laps, gridPositions, currentTime }) => {
             const { result, ...raceNoResult } = race;
             const latestUpdate = DateTime.fromISO(laps.at(-1)?.date_start ?? currentTime.toISO());
+            this.currentLap.next(laps.at(-1).lap_number);
             return {
               result: mapper.liveRaceResult({ positions, laps, race: raceNoResult, drivers, gridPositions }),
               latestUpdate,
@@ -385,12 +387,29 @@ export class LiveResultService {
   #replayStints(race: IRace, drivers: IDriver[]) {
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       map(session => requiredValue(session.session_key, 'session_key')),
-      switchMap(sessionKey => this.#openF1HttpService.getStints(sessionKey)),
-      switchMap(stints =>
+      switchMap(sessionKey => combineLatest([
+        this.#openF1HttpService.getStints(sessionKey),
+        this.#openF1HttpService.getLaps(sessionKey),
+      ])),
+      switchMap(([stints, laps]) =>
         this.#replayState$.pipe(
           truthy(),
-          map(state => stints.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
-          map(stints => mapper.stints({ stints, drivers })),
+          map(state => {
+            // Filter laps up to current time
+            const currentLaps = laps.filter(l => !l.date_start || DateTime.fromISO(l.date_start) <= state.currentTime);
+
+            // Get the maximum lap number that has been completed at current time
+            const maxLapNumber = Math.max(0, ...currentLaps.map(l => l.lap_number));
+
+            // Filter stints where the lapStart is less than or equal to the current max lap
+            // and if lapEnd exists, the current lap should be within the stint range
+            const visibleStints = stints.filter(stint =>
+              stint.lap_start <= maxLapNumber &&
+              (stint.lap_end === 0 || maxLapNumber <= stint.lap_end),
+            );
+
+            return mapper.stints({ stints: visibleStints, drivers });
+          }),
         ),
       ),
     );

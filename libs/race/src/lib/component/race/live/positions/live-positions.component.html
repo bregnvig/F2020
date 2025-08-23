@@ -1,5 +1,8 @@
 <ng-container>
+  @let currentLap = currentLap$ | async;
+  ZX{{ currentLap }}
   <mat-list>
+    @let stints = stints$ | async;
     @for (driver of initialPositions(); track driver.driverId) {
       <mat-list-item [style.transform]="transform(driver.driverId)">
         <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/red.svg'" [alt]="driver.name">
@@ -16,6 +19,11 @@
         <div matListItemLine>
           <span class="text-xs">{{ interval(driver.driverId) }}</span>
           <span class="text-xs ml-2">{{ gapToLeader(driver.driverId) }}</span>
+          @if (stints?.get(driver.driverId); as stint) {
+            <span class="float-right me-32">
+              <f2020-tyre [tyre]="stint.compound"/> ({{ stint.tyreAgeAtStart + (currentLap - stint.lapStart) }})
+            </span>
+          }
         </div>
       </mat-list-item>
     } @empty {

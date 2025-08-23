@@ -46,7 +46,7 @@ export const RaceStore = signalStore(
     driversStore = inject(DriversStore),
   ) => ({
     bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)) as any,
-    drivers: computed(() => driversStore.drivers().filter(driver => race()?.drivers.includes(driver.driverId))) as any,
+    drivers: computed(() => driversStore?.drivers().filter(driver => race()?.drivers.includes(driver.driverId))) as any ?? [],
   })),
   withMethods((
       store,
@@ -55,7 +55,6 @@ export const RaceStore = signalStore(
       races$ = toObservable(inject(RacesStore).races),
       playerStore = inject(PlayerStore),
       seasonStore = inject(SeasonStore),
-      driversStore = inject(DriversStore),
       teamsService = inject(TeamService),
       snackBar = inject(MatSnackBar),
     ) => ({
@@ -76,7 +75,6 @@ export const RaceStore = signalStore(
             };
           }),
           switchMap(({ race, type }) => {
-            const player = playerStore.player();
             const season = seasonStore.season();
             return ((type === 'participants')
               ? service.getParticipants(season.id, race)

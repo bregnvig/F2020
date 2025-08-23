@@ -72,10 +72,10 @@ export interface IPitStop {
   lap: number;
   duration: number;
 }
-
+export type Tyre = 'HARD' | 'MEDIUM' | 'SOFT' | 'INTERMEDIATE' | 'FULL_WET';
 export interface IStint {
   driver: IDriver;
-  compound: string;
+  compound: Tyre;
   lapStart: number;
   lapEnd: number;
   stintNumber: number;
