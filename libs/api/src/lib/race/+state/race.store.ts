@@ -46,7 +46,7 @@ export const RaceStore = signalStore(
     driversStore = inject(DriversStore),
   ) => ({
     bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)) as any,
-    drivers: computed(() => driversStore?.drivers().filter(driver => race()?.drivers.includes(driver.driverId))) as any ?? [],
+    drivers: computed(() => driversStore?.drivers()?.filter(driver => race()?.drivers.includes(driver.driverId))) as any ?? [],
   })),
   withMethods((
       store,
