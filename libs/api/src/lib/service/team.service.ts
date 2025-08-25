@@ -20,6 +20,7 @@ export class TeamService {
       truthy(),
       first(),
       switchMap(season => collectionData(collection(afs, `seasons/${season.id}/teams`).withConverter(converter.timestamp<ITeam>()))),
+      map(teams => teams as ITeam[]),
       shareReplay(1),
     );
   }

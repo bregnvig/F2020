@@ -27,22 +27,28 @@ export class RacesService {
 
   getRaces(seasonId: string): Observable<IRace[]> {
     return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races`).withConverter(converter.timestamp<IRace>())).pipe(
-      map(races => races.sort((a, b) => a.round - b.round)),
+      map((races: IRace[]) => races.sort((a, b) => a.round - b.round)),
     );
   }
 
   getBids(seasonId: string, race: IRace | string): Observable<Bid[]> {
     const round = typeof race === 'string' ? race : race.round;
-    return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).withConverter(bidConverter));
+    return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).withConverter(bidConverter)).pipe(
+      map(bids => bids as Bid[]),
+    );
   }
 
   getParticipants(seasonId: string, race: IRace | string): Observable<Participant[]> {
     const round = typeof race === 'string' ? race : race.round;
-    return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/participants`).withConverter(bidConverter));
+    return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/participants`).withConverter(bidConverter)).pipe(
+      map(participants => participants as Participant[]),
+    );
   }
 
   getBid(seasonId: string | number, round: number, uid: string): Observable<Bid> {
-    return docData(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter));
+    return docData(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter)).pipe(
+      map(bid => bid as Bid),
+    );
   }
 
   updateRace(seasonId: string, round: number | string, race: Partial<IRace>): Promise<void> {

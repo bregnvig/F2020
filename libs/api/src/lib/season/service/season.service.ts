@@ -17,7 +17,9 @@ export class SeasonService {
   readonly previous$: Observable<ISeason[]> = collectionData(query(
     collection(this.#afs, SeasonService.seasonsURL).withConverter(seasonConverter),
     where('current', '==', false),
-  ));
+  )).pipe(
+    map(seasons => seasons as ISeason[]),
+  );
 
   loadSeason(id: string): Observable<ISeason> {
     return docData(doc(this.#afs, `${SeasonService.seasonsURL}/${id}`).withConverter(seasonConverter)).pipe(
@@ -25,7 +27,7 @@ export class SeasonService {
         if (!season) {
           throw new Error(`No season found with id ${id}`);
         }
-        return season;
+        return season as ISeason;
       }),
     );
   }

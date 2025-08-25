@@ -14,12 +14,14 @@ export class StandingService {
 
   getStandings(seasonId: string | number): Observable<IDriverStanding[]> {
     return docData(doc(this.afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[]; }>())).pipe(
-      map(({ standing }) => standing),
+      map(({ standing }) => standing as IDriverStanding[]),
     );
   }
 
   getDriverResult(seasonId: string | number, resultSeasonId: string | number, driverId: string): Observable<IDriverResult> {
-    return docData(doc(this.afs, `seasons/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`).withConverter(converter.timestamp<IDriverResult>()));
+    return docData(doc(this.afs, `seasons/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`).withConverter(converter.timestamp<IDriverResult>())).pipe(
+      map(result => result as IDriverResult),
+    );
   }
 
 }

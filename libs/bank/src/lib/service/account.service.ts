@@ -4,6 +4,7 @@ import { converter, Transaction } from '@f2020/data';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -40,6 +41,8 @@ export class AccountService {
       orderBy('date', 'desc'),
       limit(numberOfTransactions),
     );
-    return collectionData(transactionQuery);
+    return collectionData(transactionQuery).pipe(
+      map(transactions => transactions as Transaction[]),
+    );
   }
 }

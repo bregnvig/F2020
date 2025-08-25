@@ -4,7 +4,7 @@ import { converter, Player } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { PlayerApiService } from '../../player';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import firebase from 'firebase/compat';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,9 @@ export class PlayersApiService {
   constructor(
     private afs: Firestore,
   ) {
-    this.#players$ = collectionData(collection(this.afs, 'players').withConverter(converter.timestamp<Player>()));
+    this.#players$ = collectionData(collection(this.afs, 'players').withConverter(converter.timestamp<Player>())).pipe(
+      map(players => players as Player[]),
+    );
   }
 
   getPlayers() {

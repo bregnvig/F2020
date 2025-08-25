@@ -1,7 +1,6 @@
 import localeDa from '@angular/common/locales/da';
 import { enableProdMode, importProvidersFrom, inject, LOCALE_ID, provideAppInitializer } from '@angular/core';
 
-import { NgxMatTimepickerModule } from '@alexfriesen/ngx-mat-timepicker';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { provideFirebaseApp } from '@angular/fire/app';
@@ -73,7 +72,6 @@ bootstrapApplication(AppComponent, {
       materialModule,
       FontAwesomeModule,
       ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-      NgxMatTimepickerModule.setLocale('da-DK'),
     ),
     {
       provide: LOCALE_ID,

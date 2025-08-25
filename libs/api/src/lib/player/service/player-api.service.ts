@@ -5,7 +5,7 @@ import { converter, Player } from '@f2020/data';
 import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from 'firebase/auth';
 import { arrayUnion } from 'firebase/firestore';
 import { firstValueFrom, merge, Observable, ReplaySubject } from 'rxjs';
-import { filter, first, switchMap } from 'rxjs/operators';
+import { filter, first, map, switchMap } from 'rxjs/operators';
 import { FCMService } from './fcm.service';
 
 const playerConverter = converter.timestamp<Player>();
@@ -26,6 +26,7 @@ export class PlayerApiService {
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
         switchMap(user => docData(doc(this.afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
+        map(user => user as Player),
       ),
       this.currentUser$.pipe(
         filter(user => !user || !(user?.uid)),
