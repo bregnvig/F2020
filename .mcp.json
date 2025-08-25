@@ -6,6 +6,14 @@
         "-y",
         "@upstash/context7-mcp"
       ]
+    },
+    "angular-cli": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@angular/cli",
+        "mcp"
+      ]
     }
   }
 }
