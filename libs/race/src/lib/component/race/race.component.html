@@ -15,9 +15,6 @@
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [href]="race().url" target="_blank">WIKI</a>
-        @if (race().state === 'waiting' || race().state === 'open') {
-          <a mat-button routerLink="edit">REDIGER</a>
-        }
         <div *shaHasRole="'admin'" class="flex-1 flex justify-between items-center">
           @if (race().state === 'waiting' || race().state === 'open') {
             <a
@@ -27,12 +24,12 @@
             </a>
           }
           @if (race().state === 'closed') {
-            <a
-                mat-button
-                routerLink="qualify">
-              {{ 'Kvalifikation' | uppercase }}
-            </a>
-          }
+          <a
+              mat-button
+              routerLink="qualify">
+            {{ 'Kvalifikation' | uppercase }}
+          </a>
+        }
           <div>
             @if (race().state === 'completed') {
               <div class="flex items-center">
@@ -41,15 +38,14 @@
                   ROLLBACK
                 </button>
               </div>
-            }
-            @if (race().state !== 'completed' && race().state !== 'cancelled') {
-              <div class="flex items-center">
-                <mat-checkbox #confirmedCancellation="matCheckbox"></mat-checkbox>
-                <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
-                  AFLYS
-                </button>
-              </div>
-            }
+            } @if (race().state !== 'completed' && race().state !== 'cancelled') {
+            <div class="flex items-center">
+              <mat-checkbox #confirmedCancellation="matCheckbox"></mat-checkbox>
+              <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
+                AFLYS
+              </button>
+            </div>
+          }
           </div>
         </div>
       </mat-card-actions>
@@ -62,8 +58,8 @@
               @if (isCompleted()) {
                 Resultat
               } @else {
-                Bud
-              }
+              Bud
+            }
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
@@ -77,8 +73,7 @@
             </mat-card-actions>
           }
         </mat-card>
-      }
-      @if (race().updatedBy?.length) {
+      } @if (race().updatedBy?.length) {
         <f2020-race-updated-warning [race]="race()"/>
       }
     }

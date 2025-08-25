@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { DisplayPlayerBidComponent, DisplayResultComponent } from './component/display-bid';
-import { EditRaceComponent } from './component/edit-race/edit-race.component';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';
 import { RaceOutletComponent } from './component/race-outlet/race-outlet.component';
@@ -25,10 +24,6 @@ export const RaceRouting: Routes = [
       {
         path: 'live',
         component: LiveLiveComponent,
-      },
-      {
-        path: 'edit',
-        component: EditRaceComponent,
       },
       {
         path: 'bid',
