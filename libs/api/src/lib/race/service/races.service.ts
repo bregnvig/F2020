@@ -5,7 +5,7 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { openF1Url, PitStop } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
-import { collection } from 'firebase/firestore';
+import { collection }  from '@angular/fire/firestore';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';

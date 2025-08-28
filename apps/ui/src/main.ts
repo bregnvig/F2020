@@ -3,9 +3,11 @@ import { enableProdMode, importProvidersFrom, inject, LOCALE_ID, provideAppIniti
 
 import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
-import { provideFirebaseApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { connectAuthEmulator, getAuth } from '@angular/fire/auth';
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { connectFunctionsEmulator, getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,16 +20,10 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { initializeApp } from 'firebase/app';
-import 'firebase/auth';
-import { connectAuthEmulator, getAuth } from 'firebase/auth';
-import 'firebase/firestore';
-import { connectFirestoreEmulator } from 'firebase/firestore';
 import { Settings } from 'luxon';
-import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
-import { getMessaging, provideMessaging } from '@angular/fire/messaging';
 
 const materialModule = [
   MatSidenavModule,

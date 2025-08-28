@@ -1,9 +1,8 @@
 import { Injectable, isDevMode } from '@angular/core';
-import { doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from '@angular/fire/auth';
+import { arrayUnion, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { converter, Player } from '@f2020/data';
-import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from 'firebase/auth';
-import { arrayUnion } from 'firebase/firestore';
 import { firstValueFrom, merge, Observable, ReplaySubject } from 'rxjs';
 import { filter, first, map, switchMap } from 'rxjs/operators';
 import { FCMService } from './fcm.service';
