@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { collection, collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Bid, converter, firestoreWebUtils, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
+import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { openF1Url, PitStop } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
-import { collection }  from '@angular/fire/firestore';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
 import { OpenF1HttpService } from './openf1-http.service';
+import { converter } from '../../converter';
+import { firestoreWebUtils } from '../../firestore-utils';
 
 const bidConverter = converter.timestamp<Bid>();
 

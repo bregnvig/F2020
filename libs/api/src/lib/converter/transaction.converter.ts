@@ -1,6 +1,6 @@
 import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore';
 import { firestoreWebUtils } from '../firestore-utils';
-import { Transaction } from '../model';
+import { Transaction } from '@f2020/data';
 
 
 export const converter: FirestoreDataConverter<Transaction> = {

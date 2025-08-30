@@ -2,7 +2,7 @@ import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
-import { LiveResultService } from '@f2020/api';
+import { RACE_RESULT_SERVICE, RaceResultService } from '@f2020/api';
 import { IDriver, IDriverInterval, IRace, IStint } from '@f2020/data';
 import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -39,7 +39,7 @@ export class LivePositionsComponent implements OnInit {
 
   initialPositions = signal<IDriver[]>([]);
 
-  #live = inject(LiveResultService);
+  #live = inject(RACE_RESULT_SERVICE);
   latestUpdate = toSignal(this.#live.positionStatus.pipe(
     map(status => status.latestUpdate),
   ), { initialValue: null });

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { doc, docData, Firestore } from '@angular/fire/firestore';
-import { converter, IDriverResult, IDriverStanding } from '@f2020/data';
+import { IDriverResult, IDriverStanding } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { converter } from '@f2020/api';
 
 @Injectable({
   providedIn: 'root',

@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { collection, collectionData, doc, Firestore, setDoc } from '@angular/fire/firestore';
-import { converter, ITeam } from '@f2020/data';
+import { ITeam } from '@f2020/data';
 import { truthy } from '@f2020/tools';
 import { Observable } from 'rxjs';
 import { first, map, shareReplay, switchMap } from 'rxjs/operators';
-import { SeasonStore } from '@f2020/api';
+import { converter, SeasonStore } from '@f2020/api';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({

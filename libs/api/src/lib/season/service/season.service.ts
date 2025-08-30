@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { collection, collectionData, doc, docData, Firestore, query, where } from '@angular/fire/firestore';
-import { converter, ISeason } from '@f2020/data';
+import { ISeason } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { converter } from '../../converter';
 
 const seasonConverter = converter.timestamp<ISeason>();
 

@@ -5,9 +5,13 @@ export * from './lib/players/service/players-api.service';
 export * from './lib/race/+state';
 export * from './lib/race/service/races.service';
 export * from './lib/race/service/live-result.service';
+export * from './lib/race/service/replay-result.service';
+export * from './lib/race/service/race-result.service';
+export * from './lib/race/service/race-result.factory';
 export * from './lib/race/service/openf1-wss.service';
 export * from './lib/race/service/result-builder';
 export * from './lib/season/+state';
 export * from './lib/drivers';
 export * from './lib/service';
+export * from './lib/converter';
 

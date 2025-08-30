@@ -1,9 +1,9 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { firestoreWebUtils } from '@f2020/data';
 import { Interval, Lap, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
+import { firestoreWebUtils } from '../../firestore-utils';
 
 // mqtt-reason-codes.enum.ts
 

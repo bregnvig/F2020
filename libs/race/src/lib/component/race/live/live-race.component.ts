@@ -1,5 +1,5 @@
 import { Component, inject, input, output, signal } from '@angular/core';
-import { buildInterimResult, buildResult, LiveResultService, RacesService, TeamService } from '@f2020/api';
+import { buildInterimResult, buildResult, RACE_RESULT_SERVICE, RaceResultService, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
@@ -39,7 +39,7 @@ export class LiveRaceComponent {
 
   latestUpdate = output<DateTime>();
   #racesService = inject(RacesService);
-  #live = inject(LiveResultService);
+  #live = inject(RACE_RESULT_SERVICE);
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;

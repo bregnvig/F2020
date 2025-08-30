@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { collection, collectionData, Firestore, limit, orderBy, query, Timestamp, where } from '@angular/fire/firestore';
-import { converter, Transaction } from '@f2020/data';
+import { Transaction } from '@f2020/data';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { converter } from '@f2020/api';
 
 
 @Injectable({

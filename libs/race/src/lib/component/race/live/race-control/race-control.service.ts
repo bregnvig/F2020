@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { IDriver, IRace, RaceControl } from '@f2020/data';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
 import { RaceControlSnackbarComponent } from './race-control-snackbar.component';
-import { LiveResultService } from '@f2020/api';
+import { RACE_RESULT_SERVICE } from '@f2020/api';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { withLength } from '@f2020/tools';
 
@@ -11,7 +11,7 @@ import { withLength } from '@f2020/tools';
 @Injectable()
 export class RaceControlService {
   #snackBar = inject(MatSnackBar);
-  #live = inject(LiveResultService);
+  #live = inject(RACE_RESULT_SERVICE);
 
   #displayRaceControlMessage(raceControl: RaceControl): void {
     this.#snackBar.openFromComponent(RaceControlSnackbarComponent, {
