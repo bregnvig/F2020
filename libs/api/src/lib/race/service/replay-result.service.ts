@@ -1,5 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IPitStop, IRace, IRaceResult, IStint, ITeam, mapper, RaceControl, TeamRadio } from '@f2020/data';
+import {
+  IDriver,
+  IDriverGridPosition,
+  IDriverInterval,
+  IDriverRaceResult,
+  IDriverSector,
+  IPitStop,
+  IRace,
+  IRaceResult,
+  IStint,
+  ITeam,
+  mapper,
+  RaceControl,
+  TeamRadio,
+} from '@f2020/data';
 import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
@@ -29,12 +43,17 @@ export class ReplayResultService extends RaceResultService {
   #pitStopStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #positionStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #intervalStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #stintStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #replayState$ = new BehaviorSubject<ReplayState | null>(null);
-  
+
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
   readonly positionStatus = this.#positionStatus$.asObservable();
+  readonly intervalStatus = this.#intervalStatus$.asObservable();
+  readonly stintStatus = this.#stintStatus$.asObservable();
+  readonly raceControlStatus = this.#raceControlStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
@@ -43,7 +62,7 @@ export class ReplayResultService extends RaceResultService {
     if (this.#replayState$.value) {
       return;
     }
-    
+
     // Get session key first
     const session = await firstValueFrom(this.#openF1HttpService.getSession(race, 'Race'));
     const sessionKey = requiredValue(session.session_key, 'session_key');
@@ -100,6 +119,11 @@ export class ReplayResultService extends RaceResultService {
         const { result, ...raceNoResult } = race;
         const latestUpdate = DateTime.fromISO(laps.at(-1)?.date_start ?? currentTime.toISO());
         this.currentLap.next(laps.at(-1)?.lap_number ?? 0);
+        // Update the status with current information
+        this.#resultStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `Lap ${laps.at(-1)?.lap_number ?? 0} - ${laps.length} laps, ${positions.length} positions`,
+        });
         return {
           result: mapper.liveRaceResult({ positions, laps, race: raceNoResult, drivers, gridPositions }),
           latestUpdate,
@@ -113,7 +137,10 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => state.teamRadio.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
       map(messages => mapper.radio({ messages, drivers }).toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
-      tap(() => this.#radioStatus$.next({ latestUpdate: DateTime.now() })),
+      tap(messages => this.#radioStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${messages.length} messages`,
+      })),
     );
   }
 
@@ -122,7 +149,10 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => state.pitStops.filter(p => !p.date || DateTime.fromISO(p.date) <= state.currentTime)),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
-      tap(() => this.#pitStopStatus$.next({ latestUpdate: DateTime.now() })),
+      tap(mappedStops => this.#pitStopStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${mappedStops.length} pit stops`,
+      })),
     );
   }
 
@@ -142,7 +172,10 @@ export class ReplayResultService extends RaceResultService {
       }),
       tap(({ positions, currentTime }) => {
         const latestUpdate = DateTime.fromISO(positions.at(-1)?.date ?? currentTime.toISO());
-        this.#positionStatus$.next({ latestUpdate });
+        this.#positionStatus$.next({
+          latestUpdate,
+          info: `${positions.length} position updates`,
+        });
       }),
       map(({ positions, gridPositions }) => mapper.position({ positions, race, drivers, gridPositions })),
     );
@@ -152,8 +185,11 @@ export class ReplayResultService extends RaceResultService {
     return this.#replayState$.pipe(
       truthy(),
       map(state => state.intervals.filter(i => !i.date || DateTime.fromISO(i.date) <= state.currentTime)),
+      tap(intervals => this.#intervalStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${intervals.length} intervals`,
+      })),
       map(intervals => mapper.intervalMapper({ intervals, drivers })),
-      tap(() => this.#intervalStatus$.next({ latestUpdate: DateTime.now() })),
     );
   }
 
@@ -162,6 +198,10 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => state.raceControl.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
       map(messages => mapper.raceControl({ messages, drivers })),
+      tap(mappedMessages => this.#raceControlStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${mappedMessages.length} race control messages`
+      })),
     );
   }
 
@@ -184,6 +224,10 @@ export class ReplayResultService extends RaceResultService {
 
         return mapper.stints({ stints: visibleStints, drivers });
       }),
+      tap(mappedStints => this.#stintStatus$.next({ 
+        latestUpdate: DateTime.now(),
+        info: `${mappedStints.length} stints`
+      })),
     );
   }
 
@@ -197,5 +241,12 @@ export class ReplayResultService extends RaceResultService {
       );
     }
     return this.#gridPositions;
+  }
+
+  getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
+    return this.#replayState$.pipe(
+      truthy(),
+      map(({ laps }) => mapper.sectors({ laps, drivers })),
+    );
   }
 }

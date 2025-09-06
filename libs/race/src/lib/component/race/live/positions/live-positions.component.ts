@@ -2,8 +2,8 @@ import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
-import { RACE_RESULT_SERVICE, RaceResultService } from '@f2020/api';
-import { IDriver, IDriverInterval, IRace, IStint } from '@f2020/data';
+import { RACE_RESULT_SERVICE } from '@f2020/api';
+import { IDriver, IDriverInterval, IDriverSector, IRace, IStint } from '@f2020/data';
 import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -38,12 +38,13 @@ export class LivePositionsComponent implements OnInit {
   drivers = input.required<IDriver[]>();
 
   initialPositions = signal<IDriver[]>([]);
-
   #live = inject(RACE_RESULT_SERVICE);
+
   latestUpdate = toSignal(this.#live.positionStatus.pipe(
     map(status => status.latestUpdate),
   ), { initialValue: null });
   stints$?: Observable<Map<string, IStint>>;
+  sectors$?: Observable<Map<string, IDriverSector>>;
   currentLap$: Observable<number>;
 
   #originalPosition?: Map<string, number>;
@@ -72,6 +73,9 @@ export class LivePositionsComponent implements OnInit {
     ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));
     this.stints$ = this.#live.getStints(this.race(), this.drivers()).pipe(
       map(stints => stints.reduce(toMap(stint => stint.driver.driverId), new Map<string, IStint>)),
+    );
+    this.sectors$ = this.#live.getSectorStatus(this.race(), this.drivers()).pipe(
+      map(sectors => sectors.reduce(toMap(stint => stint.driver.driverId), new Map<string, IDriverSector>)),
     );
   }
 
@@ -102,4 +106,5 @@ export class LivePositionsComponent implements OnInit {
     const change = -this.currentChange(uid);
     return `translateY(${(change) * 100}%)`;
   }
+
 }

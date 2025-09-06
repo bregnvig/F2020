@@ -1,14 +1,4 @@
-export type SectorColor = 'yellow' | 'green' | 'purple' | 'pitlane' | 'unknown';
 export type SectorStatus = 2048 | 2049 | 2050 | 2051 | 2052 | 2064 | 2068;
-export const SectorColorMap: Record<SectorStatus, SectorColor> = {
-  2048: 'yellow',
-  2049: 'green',
-  2050: 'unknown',
-  2051: 'purple',
-  2052: 'unknown',
-  2064: 'pitlane',
-  2068: 'unknown',
-};
 
 export interface Lap {
   meeting_key: number;

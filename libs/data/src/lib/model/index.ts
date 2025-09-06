@@ -11,3 +11,4 @@ export * from './round-result.model';
 export * from './team.model';
 export * from './circuit.model';
 export * from './team-radio.model';
+export * from './sector.model';

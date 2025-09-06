@@ -13,6 +13,8 @@ import { LiveRaceComponent } from './live-race.component';
 import { LiveRadioComponent } from './live-radio.component';
 import { LivePositionsComponent } from './positions/live-positions.component';
 import { RaceControlService } from './race-control';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { LiveStatusComponent } from './live-status.component';
 
 @Component({
   selector: 'f2020-live-live',
@@ -21,7 +23,7 @@ import { RaceControlService } from './race-control';
       @if (race()) {
         <mat-card>
           <mat-card-header>
-            <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
+            <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode" (click)="openStatus()">
             <mat-card-title>
               @if (isLiveLive()) {
                 Live live
@@ -101,6 +103,7 @@ export class LiveLiveComponent {
   icons = icon;
   #store = inject(RaceStore);
   #live = inject(RACE_RESULT_SERVICE);
+  #bottomSheet = inject(MatBottomSheet);
   radioError = toSignal(this.#live.radioStatus.pipe(
     map(status => status.error?.statusText),
   ));
@@ -118,6 +121,18 @@ export class LiveLiveComponent {
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
   latestUpdate = signal<DateTime | undefined>(undefined);
 
+  #status = toSignal(combineLatest({
+    resultStatus: this.#live.resultStatus,
+    radioStatus: this.#live.radioStatus,
+    pitStopStatus: this.#live.pitStopStatus,
+    positionStatus: this.#live.positionStatus,
+    intervalStatus: this.#live.intervalStatus,
+    stintStatus: this.#live.stintStatus,
+    raceControlStatus: this.#live.raceControlStatus,
+  }).pipe(
+    map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
+  ));
+
   constructor() {
     const raceControlMessages = inject(RaceControlService);
     effect(() => {
@@ -125,5 +140,10 @@ export class LiveLiveComponent {
       const drivers = this.drivers();
       race && drivers && raceControlMessages.displayMessages(race, drivers);
     });
+  }
+
+
+  openStatus() {
+    this.#bottomSheet.open(LiveStatusComponent, { data: this.#status });
   }
 }
