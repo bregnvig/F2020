@@ -10,7 +10,7 @@ import { ISector } from '@f2020/data';
         <!-- Complete Sector View -->
         @if (sectorData.status) {
           <div
-            class="complete-sector transition-all duration-500 ease-in-out rounded-md"
+            class="complete-sector transition-all duration-200 ease-in-out rounded-md"
             [class]="'bg-' + sectorData.status + '-500'"
             [style.width.px]="40"
             [style.height.px]="8">
@@ -26,7 +26,7 @@ import { ISector } from '@f2020/data';
                 [class.rounded-r-md]="$last"
                 [style.width.px]="8"
                 [style.height.px]="8"
-                [style.animation-delay.ms]="$index * 100">
+                [style.animation-delay.ms]="$index * 50">
               </div>
             }
           </div>
