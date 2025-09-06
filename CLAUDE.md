@@ -27,7 +27,8 @@ F2020 is a Formula 1 betting application built with Angular and Firebase. The ap
 
 ### Firebase/Emulator
 
-- `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions --project f1-playground-e1f23`
+-
+`firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions --project f1-playground-e1f23`
 - `npm run kill-ports` - Kill occupied ports
 
 ### Build & Deploy
@@ -322,7 +323,8 @@ export class MyComponent {
 
 // ❌ AVOID: Constructor injection
 export class MyComponent {
-  constructor(private service: MyService, private router: Router, private fb: FormBuilder) {}
+  constructor(private service: MyService, private router: Router, private fb: FormBuilder) {
+  }
 }
 ```
 
@@ -363,4 +365,18 @@ export class MyComponent {
     return this.count * 2;
   }
 }
+```
+
+### Mad & reduce
+
+Prefer mad/reduce for array transformations:
+
+```typescript
+// ✅ PREFERRED: mad/reduce
+const doubled = mad(numbers, (n) => n * 2);
+const sum = reduce(numbers, (acc, n) => acc + n, 0);
+// ❌ AVOID: forEach
+const doubled = numbers.map((n) => n * 2);
+let sum = 0;
+numbers.forEach(n => sum += n);
 ```
