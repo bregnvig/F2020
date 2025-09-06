@@ -50,6 +50,7 @@ export class LiveResultService extends RaceResultService {
   #intervalStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #stintStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
@@ -57,6 +58,7 @@ export class LiveResultService extends RaceResultService {
   readonly intervalStatus = this.#intervalStatus$.asObservable();
   readonly stintStatus = this.#stintStatus$.asObservable();
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
+  readonly sectorStatus = this.#sectorStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
@@ -241,6 +243,10 @@ export class LiveResultService extends RaceResultService {
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
     return this.#getLapsAndPositions(race).pipe(
       map(({ laps }) => mapper.sectors({ laps, drivers })),
+      tap(sectors => this.#sectorStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${sectors.length} driver sectors`,
+      })),
     );
   }
 

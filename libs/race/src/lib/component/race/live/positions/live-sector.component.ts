@@ -4,40 +4,33 @@ import { ISector } from '@f2020/data';
 @Component({
   selector: 'f2020-live-sector',
   template: `
+    <span class="collapse bg-sky-500"></span>
     <div class="sector-container relative overflow-hidden">
       @if (sector(); as sectorData) {
         <!-- Complete Sector View -->
-        @if (sectorData.status && false) {
+        @if (sectorData.status) {
           <div
-            class="complete-sector transition-all duration-500 ease-in-out"
+            class="complete-sector transition-all duration-500 ease-in-out rounded-md"
             [class]="'bg-' + sectorData.status + '-500'"
             [style.width.px]="40"
-            [style.height.px]="8"
-            [style.border-radius.px]="4">
+            [style.height.px]="8">
           </div>
         } @else if (sectorData.mini && sectorData.mini.length > 0) {
           <!-- Mini Sectors View -->
-          <div class="mini-sectors flex gap-1 transition-all duration-500 ease-in-out">
+          <div class="mini-sectors flex gap-0 transition-all duration-500 ease-in-out">
             @for (miniColor of sectorData.mini; track $index) {
               <div
                 class="mini-sector transition-all duration-300 ease-in-out"
-                [class]="'bg-' + miniColor + '-500'"
+                [class]="'bg-' + (miniColor ?? 'sky') + '-500'"
+                [class.rounded-l-md]="$first"
+                [class.rounded-r-md]="$last"
                 [style.width.px]="8"
                 [style.height.px]="8"
-                [style.border-radius.px]="4"
                 [style.animation-delay.ms]="$index * 100">
               </div>
             }
           </div>
         }
-      } @else {
-        <!-- Empty state -->
-        <div
-          class="empty-sector bg-gray-300"
-          [style.width.px]="8"
-          [style.height.px]="8"
-          [style.border-radius.px]="4">
-        </div>
       }
     </div>
   `,

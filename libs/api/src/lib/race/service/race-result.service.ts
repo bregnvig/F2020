@@ -16,6 +16,7 @@ export abstract class RaceResultService {
   abstract readonly intervalStatus: Observable<LiveStatus>;
   abstract readonly stintStatus: Observable<LiveStatus>;
   abstract readonly raceControlStatus: Observable<LiveStatus>;
+  abstract readonly sectorStatus: Observable<LiveStatus>;
   abstract readonly currentLap: BehaviorSubject<number>;
 
   abstract getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null>;

@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TyreComponent } from './tyre.component';
+import { LiveSectorStatusComponent } from './live-sector-status.component';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +26,7 @@ import { TyreComponent } from './tyre.component';
     MatListItemLine,
     AsyncPipe,
     TyreComponent,
+    LiveSectorStatusComponent,
   ],
   styles: `
     mat-list-item {

@@ -129,6 +129,7 @@ export class LiveLiveComponent {
     intervalStatus: this.#live.intervalStatus,
     stintStatus: this.#live.stintStatus,
     raceControlStatus: this.#live.raceControlStatus,
+    sectorStatus: this.#live.sectorStatus,
   }).pipe(
     map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
   ));

@@ -45,6 +45,7 @@ export class ReplayResultService extends RaceResultService {
   #intervalStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #stintStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #replayState$ = new BehaviorSubject<ReplayState | null>(null);
 
   readonly resultStatus = this.#resultStatus$.asObservable();
@@ -54,6 +55,7 @@ export class ReplayResultService extends RaceResultService {
   readonly intervalStatus = this.#intervalStatus$.asObservable();
   readonly stintStatus = this.#stintStatus$.asObservable();
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
+  readonly sectorStatus = this.#sectorStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
@@ -200,7 +202,7 @@ export class ReplayResultService extends RaceResultService {
       map(messages => mapper.raceControl({ messages, drivers })),
       tap(mappedMessages => this.#raceControlStatus$.next({
         latestUpdate: DateTime.now(),
-        info: `${mappedMessages.length} race control messages`
+        info: `${mappedMessages.length} race control messages`,
       })),
     );
   }
@@ -224,9 +226,9 @@ export class ReplayResultService extends RaceResultService {
 
         return mapper.stints({ stints: visibleStints, drivers });
       }),
-      tap(mappedStints => this.#stintStatus$.next({ 
+      tap(mappedStints => this.#stintStatus$.next({
         latestUpdate: DateTime.now(),
-        info: `${mappedStints.length} stints`
+        info: `${mappedStints.length} stints`,
       })),
     );
   }
@@ -246,7 +248,12 @@ export class ReplayResultService extends RaceResultService {
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
     return this.#replayState$.pipe(
       truthy(),
-      map(({ laps }) => mapper.sectors({ laps, drivers })),
+      map(state => state.laps.filter(l => !l.date_start || DateTime.fromISO(l.date_start) <= state.currentTime)),
+      tap(sectors => this.#sectorStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${sectors.length} driver sectors`,
+      })),
+      map(laps => mapper.sectors({ laps, drivers })),
     );
   }
 }
