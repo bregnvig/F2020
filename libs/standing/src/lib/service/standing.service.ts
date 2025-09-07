@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { doc, docData, Firestore } from '@angular/fire/firestore';
+import { converter } from '@f2020/api';
 import { IDriverResult, IDriverStanding } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { converter } from '@f2020/api';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +16,7 @@ export class StandingService {
   getStandings(seasonId: string | number): Observable<IDriverStanding[]> {
     return docData(doc(this.afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[]; }>())).pipe(
       map(({ standing }) => standing as IDriverStanding[]),
+      map(standings => standings.map(s => ({ ...s, points: Object.values(s.pointsByRace).reduce((a, b) => a + b, 0) }))),
     );
   }
 

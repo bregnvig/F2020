@@ -1,5 +1,4 @@
 import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IQualifyResult, IRace, IRaceBasis, IRaceResult, mapper } from '@f2020/data';
-import { Session } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
@@ -33,7 +32,7 @@ const setStandings = async (token: string, seasonId: string, race: IRace, result
       ...previous?.pointsByRace,
       [race.circuitId]: (r.points + sprintPoints) || 0,
     };
-    const points = (previous?.points ?? 0) + r.points + sprintPoints;
+    const points = Object.values(pointsByRace).reduce((a, b) => a + b, 0);
     const wins = (previous?.wins ?? 0) + (r.points === 25 ? 1 : 0) + sprintWin;
     return {
       driver: r.driver,
