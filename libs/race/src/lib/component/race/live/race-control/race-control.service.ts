@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RACE_RESULT_SERVICE } from '@f2020/api';
 import { IDriver, IRace, RaceControl } from '@f2020/data';
+import { withLength } from '@f2020/tools';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
 import { RaceControlSnackbarComponent } from './race-control-snackbar.component';
-import { RACE_RESULT_SERVICE } from '@f2020/api';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { withLength } from '@f2020/tools';
 
 @UntilDestroy()
 @Injectable()
@@ -16,7 +16,7 @@ export class RaceControlService {
   #displayRaceControlMessage(raceControl: RaceControl): void {
     this.#snackBar.openFromComponent(RaceControlSnackbarComponent, {
       data: raceControl,
-      duration: 2000,
+      duration: 4000,
       horizontalPosition: 'right',
       verticalPosition: 'top',
 
