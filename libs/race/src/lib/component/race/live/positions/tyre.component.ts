@@ -8,7 +8,6 @@ const tyreToAsset: Record<Tyre, string> = {
   INTERMEDIATE: 'assets/loading/green.svg',
   MEDIUM: 'assets/loading/yellow.svg',
   SOFT: 'assets/loading/red.svg',
-
 };
 
 @Component({

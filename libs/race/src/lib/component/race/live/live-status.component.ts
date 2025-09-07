@@ -71,7 +71,6 @@ import { LiveStatus } from '@f2020/api';
 export class LiveStatusComponent {
   data: Signal<(LiveStatus & { name: string })[]> = inject(MAT_BOTTOM_SHEET_DATA);
 
-  // Define which columns should be displayed
   displayedColumns: string[] = ['name', 'latestUpdate', 'info', 'error'];
 
   sortedData = computed(() => {
@@ -87,16 +86,6 @@ export class LiveStatusComponent {
       .replace(/([A-Z])/g, ' $1')
       .trim()
       .toLowerCase();
-
-    // Handle special cases and capitalize properly
-    if (formatted === 'race control') {
-      return 'Race Control';
-    }
-    if (formatted === 'pit stop') {
-      return 'Pit Stop';
-    }
-    
-    // Capitalize first letter for other cases
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 }

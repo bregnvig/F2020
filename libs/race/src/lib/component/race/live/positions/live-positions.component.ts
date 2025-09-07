@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TyreComponent } from './tyre.component';
-import { LiveSectorStatusComponent } from './live-sector-status.component';
+import { LiveSectorStatusComponent } from './sector/live-sector-status.component';
 
 @UntilDestroy()
 @Component({
@@ -36,12 +36,12 @@ import { LiveSectorStatusComponent } from './live-sector-status.component';
 })
 export class LivePositionsComponent implements OnInit {
 
+  #live = inject(RACE_RESULT_SERVICE);
+
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
 
   initialPositions = signal<IDriver[]>([]);
-  #live = inject(RACE_RESULT_SERVICE);
-
   latestUpdate = toSignal(this.#live.positionStatus.pipe(
     map(status => status.latestUpdate),
   ), { initialValue: null });

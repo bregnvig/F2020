@@ -123,7 +123,6 @@ import { ISector } from '@f2020/data';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class LiveSectorComponent {
   sector = input.required<ISector | null>();
 }
