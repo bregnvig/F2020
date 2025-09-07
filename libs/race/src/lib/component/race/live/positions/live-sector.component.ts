@@ -24,7 +24,7 @@ import { ISector } from '@f2020/data';
                 [class]="'bg-' + (miniColor ?? 'sky') + '-500'"
                 [class.rounded-l-md]="$first"
                 [class.rounded-r-md]="$last"
-                [style.width.px]="8"
+                [style.width.px]="40 / sectorData.mini.length"
                 [style.height.px]="8"
                 [style.animation-delay.ms]="$index * 50">
               </div>

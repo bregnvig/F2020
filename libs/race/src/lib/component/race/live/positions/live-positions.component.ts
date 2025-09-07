@@ -101,7 +101,7 @@ export class LivePositionsComponent implements OnInit {
     if (typeof interval === 'number' && interval === gapToLeader) return ' ';
     if (typeof interval === 'number' && !gapToLeader) return `Lapped`;
 
-    return typeof gapToLeader === 'number' && gapToLeader !== 0 ? `(+${gapToLeader}s)` : (gapToLeader || ' ');
+    return typeof gapToLeader === 'number' && gapToLeader !== 0 ? `(+${gapToLeader.toFixed(3)}s)` : (gapToLeader || ' ');
   }
 
   transform(uid: string) {

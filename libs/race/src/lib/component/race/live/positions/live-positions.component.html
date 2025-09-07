@@ -23,7 +23,7 @@
             <f2020-live-sector-status [status]="sectors?.get(driver.driverId)"/>
           </span>
           @if (stints?.get(driver.driverId); as stint) {
-            <span class="float-right me-32">
+            <span [style.margin-top.px]="-24" class="float-right me-32">
               <f2020-tyre [tyre]="stint.compound"/>
                 ({{ stint.tyreAgeAtStart + (currentLap - stint.lapStart) }})
             </span>
