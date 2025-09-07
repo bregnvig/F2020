@@ -15,8 +15,9 @@ function raceResultServiceFactory(
   const race = raceStore.race();
 
   if (!race) throw new Error('No race loaded in RaceStore');
+  const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-  const isRaceOpen = race.close > DateTime.now();
+  const isRaceOpen = latestEndTime > DateTime.now().toUTC();
   return isRaceOpen ? liveResultService : replayResultService;
 }
 
