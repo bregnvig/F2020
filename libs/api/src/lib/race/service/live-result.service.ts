@@ -14,7 +14,7 @@ import {
   RaceControl,
   TeamRadio,
 } from '@f2020/data';
-import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, RaceControl as OpenF1RaceControl, TeamRadio as OpenF1TeamRadio, PitStop, Position, Stint } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap } from 'rxjs';
@@ -291,6 +291,7 @@ export class LiveResultService extends RaceResultService {
           positions: [...previous.positions, ...current.positions ?? []],
           laps: mergeLaps(previous.laps, current.laps ?? []),
         })),
+        tap(({ laps }) => this.currentLap.next(laps.at(-1)?.lap_number ?? 0)),
         shareLatest(),
       );
     }
