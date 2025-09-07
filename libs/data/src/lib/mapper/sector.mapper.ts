@@ -1,8 +1,8 @@
 import { Lap } from '@f2020/openf1';
+import { isNotNullish, isTruthy, requiredValue } from '@f2020/tools';
 import { IDriver, SectorColor, SectorColorMap } from '../model';
-import { getDrivers } from './mapper-utils';
-import { isNotNullish, requiredValue } from '@f2020/tools';
 import { IDriverSector } from '../model/sector.model';
+import { getDrivers } from './mapper-utils';
 
 export interface OpenF1SectorParams {
   laps: Lap[];
@@ -31,14 +31,14 @@ const openF1Map = ({ laps, drivers }: OpenF1SectorParams): IDriverSector[] => {
     const current = acc.get(lap.driver_number) || { sector1: undefined, sector2: undefined, sector3: undefined };
 
     return acc.set(lap.driver_number, {
-      sector1: isNotNullish(lap.duration_sector_1) ? 
-        (isNotNullish(current.sector1) ? Math.min(current.sector1, lap.duration_sector_1) : lap.duration_sector_1) : 
+      sector1: isNotNullish(lap.duration_sector_1) ?
+        (isNotNullish(current.sector1) ? Math.min(current.sector1, lap.duration_sector_1) : lap.duration_sector_1) :
         current.sector1,
-      sector2: isNotNullish(lap.duration_sector_2) ? 
-        (isNotNullish(current.sector2) ? Math.min(current.sector2, lap.duration_sector_2) : lap.duration_sector_2) : 
+      sector2: isNotNullish(lap.duration_sector_2) ?
+        (isNotNullish(current.sector2) ? Math.min(current.sector2, lap.duration_sector_2) : lap.duration_sector_2) :
         current.sector2,
-      sector3: isNotNullish(lap.duration_sector_3) ? 
-        (isNotNullish(current.sector3) ? Math.min(current.sector3, lap.duration_sector_3) : lap.duration_sector_3) : 
+      sector3: isNotNullish(lap.duration_sector_3) ?
+        (isNotNullish(current.sector3) ? Math.min(current.sector3, lap.duration_sector_3) : lap.duration_sector_3) :
         current.sector3,
     });
   }, new Map<number, { sector1: number | undefined; sector2: number | undefined; sector3: number | undefined; }>());
@@ -57,15 +57,15 @@ const openF1Map = ({ laps, drivers }: OpenF1SectorParams): IDriverSector[] => {
       driver,
       sector1: {
         status: getSectorColor(lap.duration_sector_1, driverSectors?.sector1, fastestSector1),
-        mini: lap.segments_sector_1?.map(status => SectorColorMap[status]),
+        mini: lap.segments_sector_1?.filter(isTruthy).map(status => SectorColorMap[status]),
       },
       sector2: {
         status: getSectorColor(lap.duration_sector_2, driverSectors?.sector2, fastestSector2),
-        mini: lap.segments_sector_2?.map(status => SectorColorMap[status]),
+        mini: lap.segments_sector_2?.filter(isTruthy).map(status => SectorColorMap[status]),
       },
       sector3: {
         status: getSectorColor(lap.duration_sector_3, driverSectors?.sector3, fastestSector3),
-        mini: lap.segments_sector_3?.map(status => SectorColorMap[status]),
+        mini: lap.segments_sector_3?.filter(isTruthy).map(status => SectorColorMap[status]),
       },
     } as IDriverSector;
   });
