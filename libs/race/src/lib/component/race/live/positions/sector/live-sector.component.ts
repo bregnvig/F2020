@@ -15,8 +15,8 @@ import { ISector } from '@f2020/data';
             [style.width.px]="40"
             [style.height.px]="8">
           </div>
-        } @else if (sectorData.mini && sectorData.mini.length > 0) {
-          <!-- Mini Sectors View -->
+        } 
+        <!-- @else if (sectorData.mini && sectorData.mini.length > 0) {
           <div class="mini-sectors flex gap-0 transition-all duration-500 ease-in-out">
             @for (miniColor of sectorData.mini; track $index) {
               <div
@@ -30,7 +30,7 @@ import { ISector } from '@f2020/data';
               </div>
             }
           </div>
-        }
+        } -->
       }
     </div>
   `,

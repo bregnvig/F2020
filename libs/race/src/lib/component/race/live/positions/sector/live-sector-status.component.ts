@@ -19,4 +19,11 @@ import { LiveSectorComponent } from './live-sector.component';
 
 export class LiveSectorStatusComponent {
   status = input.required<IDriverSector | undefined>();
+  // a = effect(() => {
+  //   const driver = this.status()?.driver;
+  //   if (driver?.driverId === 'ver') {
+  //     console.log(this.status().sector1.mini, this.status().sector2?.mini, this.status().sector3?.mini);
+
+  //   }
+  // });
 }
