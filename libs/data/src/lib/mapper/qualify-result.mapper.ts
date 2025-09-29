@@ -11,7 +11,7 @@ interface OpenF1QualifyParams {
 
 const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
 
-  const sortedResults = [...source.sessionResults].toSorted((a, b) => a.position - b.position);
+  const sortedResults = [...source.sessionResults];
   const drivers = source.drivers.reduce((acc, driver) => {
     driver.permanentNumber.forEach(number => acc.set(number, driver));
     return acc;
