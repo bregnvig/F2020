@@ -1,7 +1,18 @@
 import { Bid } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
-import { collectionPaths, currentSeason, documentPaths, getBookie, getRaceByRound, internalError, logAndCreateError, transferInTransaction, validateAccess } from '../../lib';
+import {
+  collectionPaths,
+  currentSeason,
+  documentPaths,
+  getBookie,
+  getRaceByRound,
+  internalError,
+  logAndCreateError,
+  sendNotification,
+  transferInTransaction,
+  validateAccess,
+} from '../../lib';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 const resetPoints = (bid: Bid): Bid => {
@@ -36,11 +47,16 @@ const buildRollback = async (round: string) => {
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data() as Bid))
     .then(bids => bids.sort((a, b) => b.points - a.points));
-  // .then(bids => bids.map(resetPoints));
 
   const winnerPoints = bids[0]?.points;
   const winners = bids.filter(b => b.points === winnerPoints);
   const winningPrice = Math.floor(bids.length * 20 / winners.length);
+
+  await Promise.all(bids
+    .map(({ player }) => player.tokens)
+    .filter(tokens => tokens?.length)
+    .map(tokens => sendNotification(tokens, 'Fejl i resultatet', `Resultatet for ${race.name} er blevet rullet tilbage, da der var fejl i resultatet😥`)),
+  );
 
   return db.runTransaction(transaction => {
     winners.forEach(winner => {
