@@ -11,7 +11,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
         <span>{{ standing().driver.name }}</span>
         <span class="text-xs flex flex-row">
           @for (_ of wins(); track _) {
-            <fa-icon class="mr-1" [icon]="trophyIcon" size="xs"></fa-icon>
+            <fa-icon class="mr-1" [icon]="trophyIcon" size="xs" />
           }
         </span>
       </span>
@@ -22,10 +22,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
   imports: [FaIconComponent],
 })
 export class StandingListItemComponent {
-
   readonly standing = input.required<IDriverStanding>();
   readonly wins = computed(() => Array(this.standing()?.wins ?? 0).fill(0));
   readonly trophyIcon = icon.farTrophy;
-
-
 }
