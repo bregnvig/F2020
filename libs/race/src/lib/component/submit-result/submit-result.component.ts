@@ -32,7 +32,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
         </button>
       }
       @if (!loaded() || !downloaded()) {
-        <sha-loading/>
+        <sha-loading />
       }
     </div>
   `,
@@ -46,7 +46,7 @@ export class SubmitResultComponent {
 
   resultControl = new FormControl<Bid | null>(null);
   race: Signal<IRace> = this.#store.race;
-  loaded: Signal<boolean> = computed(() => this.#store.loaded() && !!this.#store.result());
+  loaded: Signal<boolean> = computed(() => (this.#store.loaded() && !!this.#store.result()) || !!this.#store.error());
   teams: Signal<ITeam[]> = toSignal(this.#teamsService.teams$);
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
@@ -68,7 +68,6 @@ export class SubmitResultComponent {
       if (result) {
         this.resultControl.patchValue(result);
         this.downloaded.set(true);
-
       }
     });
     effect(() => {
@@ -76,6 +75,7 @@ export class SubmitResultComponent {
       if (error) {
         const errorMessage = error instanceof HttpErrorResponse ? error.message : error.toString();
         this.#snackBar.open(errorMessage, undefined, { duration: 20000 });
+        this.downloaded.set(true);
       }
     });
   }

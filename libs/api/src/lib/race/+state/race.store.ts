@@ -7,8 +7,8 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { DateTime } from 'luxon';
-import { combineLatest, distinctUntilChanged, firstValueFrom, pipe, switchMap, tap } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { combineLatest, distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
+import { catchError, filter, map } from 'rxjs/operators';
 import { DriversStore } from '../../drivers';
 import { PlayerStore } from '../../player';
 import { SeasonStore } from '../../season/+state';
@@ -90,18 +90,27 @@ export const RaceStore = signalStore(
         ),
       ),
       loadResult: async (): Promise<void> => {
+        const reportError = <T>(): OperatorFunction<T, T | null> =>
+          catchError(error => {
+            console.error(error);
+            patchState(store, { error });
+            return of(null);
+          });
         const race = store.race();
         if (race) {
           const result = await firstValueFrom(teamsService.teams$.pipe(
             switchMap(teams => combineLatest([
-              service.getResult(race, store.drivers()),
-              service.getQualify(race, store.drivers()),
-              service.getPitStops(race, store.drivers(), teams),
+              service.getResult(race, store.drivers()).pipe(reportError()),
+              service.getQualify(race, store.drivers()).pipe(reportError()),
+              service.getPitStops(race, store.drivers(), teams).pipe(reportError()),
             ])),
             map(([raceResult, qualify, pitStops]) => {
               return buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
             }),
-          )).catch(error => patchState(store, { error }));
+          )).catch(error => {
+            console.error(error);
+            patchState(store, { error });
+          });
           result && patchState(store, { result });
         }
       },

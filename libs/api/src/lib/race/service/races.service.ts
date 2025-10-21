@@ -82,7 +82,12 @@ export class RacesService {
         sessionResults: this.#openF1HttpService.getSessionResult(raceKey),
         laps: this.#openF1HttpService.getLaps(raceKey),
       })),
-      map(({ sessionResults, gridPositions, laps }) => mapper.raceResult({ gridPositions, sessionResults, race, drivers, laps })),
+      map(({ sessionResults, gridPositions, laps }) => {
+        if (!sessionResults.length) throw new Error('No session results found for race');
+        if (!gridPositions.length) throw new Error('No grid positions found for race');
+        if (!laps.length) throw new Error('No laps found for race');
+        return mapper.raceResult({ gridPositions, sessionResults, race, drivers, laps });
+      }),
     );
   }
 
@@ -90,7 +95,7 @@ export class RacesService {
     return this.#openF1HttpService.getSession(race, 'Qualifying').pipe(
       switchMap(session => this.#openF1HttpService.getSessionResult(session.session_key)),
       map(sessionResults => {
-        if (!sessionResults.length) throw new Error('No session results found');
+        if (!sessionResults.length) throw new Error('No session results found qualifying');
         return mapper.qualifyResult({ sessionResults, race, drivers });
       }),
     );
