@@ -1,3 +1,9 @@
+@keyframes accelerating-spin {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(0deg); }
+  100% { transform: rotate(3600deg); }
+}
+
 div {
   display: flex;
   position: fixed;
@@ -8,7 +14,6 @@ div {
   left: 0;
   // background-color: rgba(0,0,0, 0.2);
   img {
-    animation: fa-spin 2s linear infinite;
-    width: 128px;
+    animation: accelerating-spin 5.1s ease-in infinite;
   }
 }
