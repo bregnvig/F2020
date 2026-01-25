@@ -4,10 +4,11 @@ import { IDriver, mapper } from '@f2020/data';
 import { firebaseApp } from './firebase';
 import { Driver } from '@f2020/openf1';
 import { filterNullish, StringUtils } from '@f2020/tools';
+import { cachedFetch } from './cached-fetch';
 
 export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
   const filter = sessionKey ? `?session_key=${sessionKey}` : '';
-  return fetch(`https://api.openf1.org/v1/drivers${filter}`)
+  return cachedFetch(`https://api.openf1.org/v1/drivers${filter}`)
     .then(response => response.json())
     .then((response: Driver[]) => response.map(mapper.driver))
     .then(drivers => drivers.filter(driver => {
@@ -28,17 +29,20 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
 export const buildDrivers = async (): Promise<number> => {
   const db = firebaseApp.database;
   const drivers = (await getDrivers());
+  const activeDrivers = await getDrivers('latest');
+  const activeDriverIds = new Set(activeDrivers.map(d => d.driverId));
+
   const driverCollection = db.collection('drivers');
   const existingDrivers = await driverCollection.get().then(snapshot => snapshot.docs.map(doc => doc.data()) as IDriver[]);
   const existingDriver = existingDrivers.reduce((acc, d) => ({ ...acc, [StringUtils.normalize(d.name)]: d }), {});
-
   return db.runTransaction(transaction => {
     drivers
       .forEach(driver => {
         const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
         const driverId = existing?.driverId ?? driver.driverId;
-        console.log('Updating driver', driver.code, driverId, driver.teamName, driver.headshotUrl);
-        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId })));
+        const active = activeDriverIds.has(driver.driverId);
+        console.log(`${existing ? 'Updating' : 'Creating'}`, driver.code, driverId, driver.teamName, driver.headshotUrl, active);
+        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId, active })));
       });
     return Promise.resolve(drivers.length);
   });

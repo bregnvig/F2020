@@ -13,6 +13,7 @@ export interface IDriver {
   readonly headshotUrl?: string;
   readonly teamColor?: string;
   readonly teamName?: string;
+  readonly active?: boolean;
 }
 
 export interface IFastestLap {

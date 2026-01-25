@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 
 
 const getCircuits = (): Circuit[] => {
-  return JSON.parse(readFileSync('apps/builder/src/assets/circuits.json').toString());
+  return JSON.parse(readFileSync('assets/circuits.json').toString());
 };
 
 export const buildCircuits = async (): Promise<number> => {

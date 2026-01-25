@@ -1,13 +1,19 @@
 import { environment } from './environment/environment';
 import { buildDrivers } from './app/drivers-openf1';
+import { buildCircuits } from './app/circuits';
+import { buildNewSeason } from './app/season-ics';
+import { initCache } from './app/cached-fetch';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
  * So start the emulator with --project=[project_id]
  */
 
+const purgeCache = process.argv.includes('--purge-cache');
+initCache(purgeCache);
+
 const seasonId = parseInt(environment.season);
-// console.log(`Building season ${seasonId}`);
+console.log(`Building season ${seasonId}`);
 
 // buildDrivers()
 //   .then(count => console.log(`Wrote ${count} drivers`))
@@ -46,13 +52,13 @@ const seasonId = parseInt(environment.season);
 // })();
 /*
 */
-buildDrivers();
-/*
+buildDrivers()
   .then(count => console.log(`Wrote ${count} drivers`))
   .then(() => buildCircuits())
   .then(numberOfCircuits => console.log('Circuits built', numberOfCircuits))
   .then(() => buildNewSeason(seasonId))
   .then(() => console.log('Season built'));
+/*
 */
 
 /*

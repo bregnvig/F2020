@@ -2,44 +2,31 @@ import { readFileSync } from 'fs';
 import { parseIcsCalendar, VCalendar } from 'ts-ics';
 import { firebaseApp } from './firebase';
 import { Circuit, IDriver, IRace, ISeason, mapper } from '@f2020/data';
-import { requiredValue } from '@f2020/tools';
+import { requiredValue, StringUtils } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { getDrivers } from './drivers-openf1';
-import { Meeting, Session, Weather } from '@f2020/openf1';
+import { Weather } from '@f2020/openf1';
 import { firestore } from 'firebase-admin';
 import { WriteResult } from '@google-cloud/firestore';
 import { converter } from './converter';
 import { humanize } from './humanizer';
 import { buildStandings } from './build-standings-openf1';
-import Transaction = firestore.Transaction;
+import { buildResults, MeetingResult } from './build-results';
 
-const nameToF1 = {
-  'mexico city grand prix': 'GRAN PREMIO DE LA CIUDAD DE MÉXICO',
-  'emilia-romagna grand prix': `Gran Premio del Made in Italy e dell'Emilia-Romagna`,
-  'monaco grand prix': `GRAND PRIX DE MONACO`,
-  'spanish grand prix': `GRAN PREMIO DE ESPAÑA`,
-  'canadian grand prix': `GRAND PRIX DU CANADA`,
-  'italian grand prix': `GRAN PREMIO D’ITALIA`,
-  'são paulo grand prix': 'GRANDE PRÊMIO DE SÃO PAULO',
-};
+import { resolveCircuit } from './circuit.resolver';
+import Transaction = firestore.Transaction;
+import { cachedFetch } from './cached-fetch';
 
 export const buildLastYear = async (seasonId: number) => {
-  const meetings: Meeting[] = await fetch(`https://api.openf1.org/v1/meetings?year=${seasonId - 1}`).then(r => r.json());
-  console.log('Building last year', seasonId - 1, 'Number of races:', meetings.length);
+
+  const results: MeetingResult[] = await buildResults(seasonId - 1, seasonId - 1);
+  console.log('Building last year', seasonId - 1, 'Number of races:', results.length);
   const db = firebaseApp.database;
-  const circuits = await db.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
-  const drivers = await db.collection('drivers').get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
 
   const collection = `seasons/${seasonId}/lastYear`;
 
-  const buildRace = async (transaction: Transaction, meeting: Meeting, index: number) => {
-    const sessions: Session[] = await fetch(`https://api.openf1.org/v1/sessions?meeting_key=${meeting.meeting_key}`).then(r => r.json());
-
-    const qualifySession = requiredValue(sessions.find(s => s.session_name === 'Qualifying'), `Qualify session for meeting ${meeting.meeting_key}`);
-    console.log('Qualify', qualifySession.circuit_short_name, qualifySession.circuit_key, qualifySession.meeting_key, qualifySession.session_key);
-    const qualifyLaps = await fetch(`https://api.openf1.org/v1/laps?session_key=${qualifySession.session_key}`).then(r => r.json());
-    const qualifyPositions = await fetch(`https://api.openf1.org/v1/position?session_key=${qualifySession.session_key}`).then(r => r.json());
-    const qualifyWeatherData = await fetch(`https://api.openf1.org/v1/weather?session_key=${qualifySession.session_key}`)
+  const buildRace = async (transaction: Transaction, result: MeetingResult, index: number) => {
+    const qualifyWeatherData = await cachedFetch(`https://api.openf1.org/v1/weather?session_key=${result.meeting.qualifyId}`)
       .then(r => r.json())
       .then((weather: Weather[]) => weather[Math.floor(weather.length / 2)])
       .then(weather => {
@@ -47,35 +34,20 @@ export const buildLastYear = async (seasonId: number) => {
         return rest;
       });
     const qualifyWeather = await humanize.weather(qualifyWeatherData);
-    const circuit = requiredValue(circuits.find(c => c.circuitId === meeting.circuit_key), meeting.circuit_key.toString());
-    const raceSession = requiredValue(sessions.find(s => s.session_name === 'Race'), `Race session for meeting ${meeting.meeting_key}`);
-    console.log('Race', raceSession.meeting_key, raceSession.session_key, qualifyWeather);
-    const raceLaps = await fetch(`https://api.openf1.org/v1/laps?session_key=${raceSession.session_key}`).then(r => r.json());
-    const racePositions = await fetch(`https://api.openf1.org/v1/position?session_key=${raceSession.session_key}`).then(r => r.json());
+    console.log('Qualify', result.meeting.name, result.meeting.circuitKey, result.meeting.qualifyId, qualifyWeather);
+    console.log('Race', result.meeting.name, result.meeting.raceId);
 
-    const qualify = mapper.qualifyResult({
-      race: mapper.basisRace(circuit, index + 1, seasonId - 1),
-      laps: qualifyLaps,
-      drivers,
-      positions: qualifyPositions,
-    });
-    const result = mapper.raceResult({
-      race: mapper.basisRace(circuit, index + 1, seasonId - 1),
-      laps: raceLaps,
-      drivers,
-      positions: racePositions,
-    });
-    transaction.set(db.doc(`${collection}/${circuit.circuitId}`), { qualify, result, qualifyWeather });
-    return new Promise(resolve => setTimeout(() => resolve(qualify.name), 1000));
+    transaction.set(db.doc(`${collection}/${result.meeting.circuitKey}`), { qualify: result.qualify, result: result.race, qualifyWeather });
+    return new Promise(resolve => setTimeout(() => resolve(result.meeting.name), 1000));
   };
 
 
   return db.runTransaction(async transaction => {
 
-    const raceMeetings = meetings.filter(m => !m.meeting_name.toLocaleLowerCase().includes('testing'));
+    const raceMeetings = results.filter(({ meeting }) => !meeting.name.toLocaleLowerCase().includes('testing'));
 
     // Use this when not building all races
-    // raceMeetings.length = 3;
+    raceMeetings.length = 3;
 
     let round = 0;
     while (raceMeetings.length) {
@@ -125,7 +97,7 @@ const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
 };
 
 export const buildNewSeason = async (seasonId: number) => {
-  const icsCalendarString = readFileSync(`apps/builder/src/assets/f${seasonId}.ics`, 'utf8');
+  const icsCalendarString = readFileSync(`assets/f${seasonId}.ics`, 'utf8');
   const calendarParsed: VCalendar = parseIcsCalendar(icsCalendarString);
 
 
@@ -140,24 +112,25 @@ export const buildNewSeason = async (seasonId: number) => {
     return candidates[Math.floor(Math.random() * candidates.length)] ?? drivers[Math.floor(Math.random() * drivers.length)];
   };
 
+  const isTesting = /.*TESTING 20.*/;
   const isPracticeOne = /.*Practice ?1$/;
   const isRace = /.*- Race$/i;
 
-  const calenderRaces = calendarParsed.events
-    .filter(e => isPracticeOne.test(e.summary))
-    .toSorted((a, b) => a.start.date.getTime() - b.start.date.getTime())
-    .map(event => {
-      const raceName = /FORMULA 1(.*) -/.exec(event.summary)?.[1];
-      const race = requiredValue(calendarParsed.events.find(e => isRace.test(e.summary) && /FORMULA 1(.*) - /.exec(e.summary)?.[1] === raceName), raceName);
-      return {
-        circuit: requiredValue(circuits.find(c => {
-          const circuitName = (nameToF1[c.name.toLocaleLowerCase()] ?? c.name).toLocaleLowerCase();
-          return event.location.toLowerCase().includes(circuitName) || event.summary.toLocaleLowerCase().includes(circuitName);
-        }), `Circuit not found for ${event.summary}`),
-        close: DateTime.fromJSDate(event.start.date),
-        raceStart: DateTime.fromJSDate(race.start.date),
-      } as SeasonRace;
-    });
+  const events = calendarParsed.events
+    .filter(e => isPracticeOne.test(e.summary) && !isTesting.test(e.summary))
+    .sort((a, b) => a.start.date.getTime() - b.start.date.getTime());
+
+  const calenderRaces = await events.reduce(async (accPromise, event) => {
+    const acc = await accPromise;
+    const raceName = /FORMULA 1(.*) -/.exec(event.summary)?.[1]?.replace(/\d{4}$/, '').trim();
+    const race = requiredValue(calendarParsed.events.find(e => isRace.test(e.summary) && /FORMULA 1(.*) - /.exec(e.summary)?.[1]?.replace(/\d{4}$/, '').trim() === raceName), raceName);
+    const circuit = await resolveCircuit(event.summary, event.location, circuits);
+    return [...acc, {
+      circuit: { ...circuit, name: StringUtils.titleCase(raceName) },
+      close: DateTime.fromJSDate(event.start.date),
+      raceStart: DateTime.fromJSDate(race.start.date),
+    } as SeasonRace];
+  }, Promise.resolve([] as SeasonRace[]));
 
   let previous: IRace | undefined;
   console.log('Building season', seasonId, calenderRaces.length);
