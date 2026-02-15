@@ -2,7 +2,7 @@ import { IDriver, IRace, mapper } from '@f2020/data';
 import { documentPaths, firestoreUtils, openF1Api } from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { filterNullish, StringUtils } from '@f2020/tools';
+import { filterNullish } from '@f2020/tools';
 import { Driver } from '@f2020/openf1';
 import { logger } from 'firebase-functions';
 
@@ -27,23 +27,24 @@ export const updateDriversCollection = onDocumentUpdated('seasons/{seasonId}/rac
       'driverId', 'in', drivers.map(d => d.driverId),
     );
     const existingDrivers = await driverCollection.get().then(snapshot => snapshot.docs.map(doc => doc.data()) as IDriver[]);
-    const existingDriver = existingDrivers.reduce((acc, d) => ({ ...acc, [StringUtils.normalize(d.name)]: d }), {} as Record<string, IDriver>);
+    const existingById = new Map(existingDrivers.map(d => [d.driverId, d]));
 
     return db.runTransaction(transaction => {
       drivers
         .forEach(driver => {
-          const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
+          const existing = existingById.get(driver.driverId);
           const driverId = existing?.driverId ?? driver.driverId;
-          logger.info('Updating driver', driver.code, driverId, driver.teamName, driver.headshotUrl);
-          if (existing) {
-            const permanentNumber = driver.permanentNumber[0];
-            !existing.permanentNumber.includes(permanentNumber) && existing.permanentNumber.push(driver.permanentNumber[0]);
-          }
+          const driverNumber = driver.permanentNumbers[0];
+          const permanentNumbers = existing?.permanentNumbers ?? [];
+          !permanentNumbers.includes(driverNumber) && permanentNumbers.push(driverNumber);
+          const activeNumber = driverNumber;
+          logger.info('Updating driver', driver.code, driverId, driver.teamName, driver.headshotUrl, `#${activeNumber}`);
           transaction.set(db.doc(documentPaths.driver(driverId)), firestoreUtils.convertTimestamps({
             ...existing,
             ...filterNullish(driver),
             driverId,
-            permanentNumber: existing?.permanentNumber ?? driver.permanentNumber,
+            permanentNumbers,
+            activeNumber,
           }));
         });
       return Promise.resolve(drivers.length);

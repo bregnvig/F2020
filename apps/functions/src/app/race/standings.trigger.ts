@@ -108,7 +108,7 @@ const sprintRace = async (token: string, seasonId: string, circuitId: number, dr
   const positions = await openF1Api.sessionResults(token, session.session_key);
 
   const spritPoints = [8, 7, 6, 5, 4, 3, 2, 1];
-  const findDriverId = (driverNumber: number): string => drivers.find(d => d.driver.permanentNumber.includes(driverNumber))?.driver.driverId;
+  const findDriverId = (driverNumber: number): string => drivers.find(d => d.driver.activeNumber === driverNumber)?.driver.driverId;
 
   return positions.reduce((acc, p) => {
     return acc.set(findDriverId(p.driver_number), { points: spritPoints[p.position - 1] ?? 0, win: p.position === 1 });
