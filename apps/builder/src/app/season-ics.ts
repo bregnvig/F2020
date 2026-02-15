@@ -47,7 +47,7 @@ export const buildLastYear = async (seasonId: number) => {
     const raceMeetings = results.filter(({ meeting }) => !meeting.name.toLocaleLowerCase().includes('testing'));
 
     // For testing  - use this when not building all races
-    raceMeetings.length = 3;
+    // raceMeetings.length = 3;
 
     let round = 0;
     while (raceMeetings.length) {

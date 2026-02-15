@@ -20,7 +20,12 @@
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver?.name">
             <small class="!flex justify-between" matListItemLine>
               <span class="flex-auto uppercase">{{ driverId }}</span>
-              <span class="flex-auto text-end"># {{ driver?.permanentNumber?.join(', ') }}</span>
+              <span class="flex-auto text-end">
+                #{{ driver?.activeNumber }}
+                @if (driver?.permanentNumbers?.length > 1) {
+                  ({{ driver?.permanentNumbers?.join(', ') }})
+                }
+              </span>
             </small>
             <p *shaHasRole="'admin'" matListItemMeta>
               <button mat-icon-button (click)="removeDriver(driverId, team)">
