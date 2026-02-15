@@ -2,6 +2,7 @@ import { IDriver, IRaceBasis } from '../model';
 import { IQualifyResult } from './../model/race.model';
 import { SessionResult } from '@f2020/openf1';
 import { filterUndefined, isTruthy, requiredValue } from '@f2020/tools';
+import { getDrivers } from './mapper-utils';
 
 interface OpenF1QualifyParams {
   sessionResults: SessionResult[];
@@ -12,10 +13,7 @@ interface OpenF1QualifyParams {
 const openF1Map = (source: OpenF1QualifyParams): IQualifyResult => {
 
   const sortedResults = [...source.sessionResults];
-  const drivers = source.drivers.reduce((acc, driver) => {
-    driver.permanentNumber.forEach(number => acc.set(number, driver));
-    return acc;
-  }, new Map<number, IDriver>());
+  const drivers = getDrivers(source.drivers);
 
   return {
     ...source.race,

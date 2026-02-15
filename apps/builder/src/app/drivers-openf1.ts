@@ -19,10 +19,10 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
     .then(drivers => [...drivers.reduce((acc, driver) => {
       const existing = acc.get(driver.code);
       if (existing) {
-        const permanentNumber = driver.permanentNumber[0];
-        !existing.permanentNumber.includes(permanentNumber) && existing.permanentNumber.push(driver.permanentNumber[0]);
+        const permanentNumber = driver.permanentNumbers[0];
+        !existing.permanentNumbers.includes(permanentNumber) && existing.permanentNumbers.push(permanentNumber);
       }
-      return acc.set(driver.code, { ...(existing ?? {}), ...filterNullish(driver), permanentNumber: existing?.permanentNumber ?? driver.permanentNumber } as IDriver);
+      return acc.set(driver.code, { ...(existing ?? {}), ...filterNullish(driver), permanentNumbers: existing?.permanentNumbers ?? driver.permanentNumbers } as IDriver);
     }, new Map<string, IDriver>()).values()]);
 };
 
@@ -30,7 +30,7 @@ export const buildDrivers = async (): Promise<number> => {
   const db = firebaseApp.database;
   const drivers = (await getDrivers());
   const activeDrivers = await getDrivers('latest');
-  const activeDriverIds = new Set(activeDrivers.map(d => d.driverId));
+  const activeDriverMap = new Map(activeDrivers.map(d => [d.driverId, d.permanentNumbers[0]]));
 
   const driverCollection = db.collection('drivers');
   const existingDrivers = await driverCollection.get().then(snapshot => snapshot.docs.map(doc => doc.data()) as IDriver[]);
@@ -38,11 +38,11 @@ export const buildDrivers = async (): Promise<number> => {
   return db.runTransaction(transaction => {
     drivers
       .forEach(driver => {
-        const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumber === driver.permanentNumber && d.code === driver.code);
+        const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumbers === driver.permanentNumbers && d.code === driver.code);
         const driverId = existing?.driverId ?? driver.driverId;
-        const active = activeDriverIds.has(driver.driverId);
-        console.log(`${existing ? 'Updating' : 'Creating'}`, driver.code, driverId, driver.teamName, driver.headshotUrl, active);
-        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId, active })));
+        const activeNumber = activeDriverMap.get(driver.driverId);
+        console.log(`${existing ? 'Updating' : 'Creating'}`, driver.code, driverId, driver.teamName, driver.headshotUrl, activeNumber != null ? `#${activeNumber}` : 'inactive');
+        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId, activeNumber })));
       });
     return Promise.resolve(drivers.length);
   });

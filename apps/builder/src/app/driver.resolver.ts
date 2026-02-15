@@ -20,8 +20,14 @@ export const resolveDriver = async (drivers: IDriver[], gridPosition: GridPositi
     }
   }
 
-  // Filter drivers by the number from the grid position
-  const candidates = drivers.filter(d => d.permanentNumber.includes(driverNumber));
+  // Prioritize driver whose activeNumber matches
+  const activeMatch = drivers.find(d => d.activeNumber === driverNumber);
+  if (activeMatch) {
+    return activeMatch;
+  }
+
+  // Fall back to permanentNumbers lookup
+  const candidates = drivers.filter(d => d.permanentNumbers.includes(driverNumber));
 
   // 1. Try to find via stored mapping
   if (driverMap[driverNumber]) {
@@ -34,14 +40,6 @@ export const resolveDriver = async (drivers: IDriver[], gridPosition: GridPositi
 
   if (candidates.length === 1) {
     return candidates[0];
-  }
-
-  // Prioritize active drivers
-  if (candidates.length > 1) {
-    const activeCandidates = candidates.filter(d => d.active);
-    if (activeCandidates.length === 1) {
-      return activeCandidates[0];
-    }
   }
 
   console.log(`
@@ -70,9 +68,9 @@ export const resolveDriver = async (drivers: IDriver[], gridPosition: GridPositi
     if (candidates.length > 0) {
       console.log(`  Found ${candidates.length} candidates with number ${driverNumber}:`);
       candidates.forEach((d, index) => {
-        const numbers = d.permanentNumber.join(', ');
-        const status = d.active ? 'Active' : 'Inactive';
-        console.log(`${index + 1}. ${d.name} (${d.code}) [${numbers}] - ${status}`);
+        const numbers = d.permanentNumbers.join(', ');
+        const active = d.activeNumber != null ? `Active #${d.activeNumber}` : 'Inactive';
+        console.log(`${index + 1}. ${d.name} (${d.code}) [${numbers}] - ${active}`);
       });
 
       const answer = await question('Select number (or Enter to search all): ');
@@ -103,7 +101,7 @@ Available Drivers:`);
         matches = allDrivers.filter(d =>
           normalize(d.name).includes(term) ||
           d.code?.toLowerCase().includes(term) ||
-          d.permanentNumber.some(n => n.toString().includes(term))
+          d.permanentNumbers.some(n => n.toString().includes(term))
         );
       }
 
@@ -115,7 +113,7 @@ Available Drivers:`);
       console.log(`
 Select a driver for #${driverNumber}:`);
       matches.forEach((d, index) => {
-        const numbers = d.permanentNumber.join(', ');
+        const numbers = d.permanentNumbers.join(', ');
         const hasHeadshot = !!d.headshotUrl ? '📸' : '';
         console.log(`${index + 1}. ${d.name} (${d.code}) [${numbers}] ${hasHeadshot}`);
       });

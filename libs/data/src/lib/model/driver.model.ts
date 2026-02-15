@@ -8,12 +8,12 @@ export interface IDriver {
   readonly code: string;
   readonly nationality?: string;
   readonly countryCode?: string;
-  readonly permanentNumber: number[];
+  readonly permanentNumbers: number[];
+  readonly activeNumber?: number;
   readonly url?: string;
   readonly headshotUrl?: string;
   readonly teamColor?: string;
   readonly teamName?: string;
-  readonly active?: boolean;
 }
 
 export interface IFastestLap {

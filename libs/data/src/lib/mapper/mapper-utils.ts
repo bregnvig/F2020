@@ -21,9 +21,15 @@ export const getGridPositions = (gridPositions: IDriverGridPosition[]): Map<stri
   }, new Map<string, number>());
 };
 
-export const getDrivers = (drivers: IDriver[]): Map<number, IDriver> => drivers.reduce((acc, driver) => {
-  driver.permanentNumber.forEach(number => acc.set(number, driver));
-  return acc;
-}, new Map<number, IDriver>());
+export const getDrivers = (drivers: IDriver[]): Map<number, IDriver> => {
+  const map = drivers.reduce((acc, driver) => {
+    driver.permanentNumbers.forEach(number => acc.set(number, driver));
+    return acc;
+  }, new Map<number, IDriver>());
+  drivers.forEach(driver => {
+    driver.activeNumber != null && map.set(driver.activeNumber, driver);
+  });
+  return map;
+};
 
 export const ChampionshipPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];

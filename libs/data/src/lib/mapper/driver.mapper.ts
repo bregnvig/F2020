@@ -10,7 +10,7 @@ export function driver(d: OpenF1Driver): IDriver {
     countryCode: countryCode3ToCountryCode2[d.country_code] ?? d.country_code ?? '??',
     headshotUrl: d.headshot_url,
     name: StringUtils.titleCase(d.full_name),
-    permanentNumber: [d.driver_number],
+    permanentNumbers: [d.driver_number],
     teamColor: d.team_colour,
     teamName: d.team_name,
   };

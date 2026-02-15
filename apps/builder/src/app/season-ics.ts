@@ -14,8 +14,8 @@ import { buildStandings } from './build-standings-openf1';
 import { buildResults, MeetingResult } from './build-results';
 
 import { resolveCircuit } from './circuit.resolver';
-import Transaction = firestore.Transaction;
 import { cachedFetch } from './cached-fetch';
+import Transaction = firestore.Transaction;
 
 export const buildLastYear = async (seasonId: number) => {
 
@@ -46,7 +46,7 @@ export const buildLastYear = async (seasonId: number) => {
 
     const raceMeetings = results.filter(({ meeting }) => !meeting.name.toLocaleLowerCase().includes('testing'));
 
-    // Use this when not building all races
+    // For testing  - use this when not building all races
     raceMeetings.length = 3;
 
     let round = 0;

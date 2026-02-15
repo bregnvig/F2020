@@ -1,6 +1,7 @@
 import { IDriver, IStint, ITeam, Tyre } from '../model';
 import { Stint } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
+import { getDrivers } from './mapper-utils';
 
 interface OpenF1StintParams {
   stints: Stint[];
@@ -8,10 +9,7 @@ interface OpenF1StintParams {
 }
 
 const openF1Stints = (params: OpenF1StintParams) => {
-  const drivers = params.drivers.reduce((acc, driver) => {
-    driver.permanentNumber.forEach(number => acc.set(number, driver));
-    return acc;
-  }, new Map<number, IDriver>());
+  const drivers = getDrivers(params.drivers);
 
   // Since stints are already sorted, just take the last entry for each driver
   const latestStintsByDriver = params.stints.reduce((acc, stint) => {

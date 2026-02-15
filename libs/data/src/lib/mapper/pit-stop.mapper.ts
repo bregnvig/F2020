@@ -1,6 +1,7 @@
 import { IDriver, IPitStop, ITeam } from '../model';
 import { PitStop } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
+import { getDrivers } from './mapper-utils';
 
 
 interface OpenF1PitstopParams {
@@ -10,10 +11,7 @@ interface OpenF1PitstopParams {
 }
 
 const openF1PitStops = (params: OpenF1PitstopParams) => {
-  const drivers = params.drivers.reduce((acc, driver) => {
-    driver.permanentNumber.forEach(number => acc.set(number, driver));
-    return acc;
-  }, new Map<number, IDriver>());
+  const drivers = getDrivers(params.drivers);
   const teams = params.teams.reduce((acc, team) => {
     team.drivers.forEach(driverId => acc.set(driverId, team));
     return acc;
