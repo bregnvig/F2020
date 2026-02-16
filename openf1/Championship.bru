@@ -1,0 +1,21 @@
+meta {
+  name: Championship
+  type: http
+  seq: 14
+}
+
+get {
+  url: https://api.openf1.org/v1/championship_drivers?session_key=9839&driver_number=4&driver_number=81
+  body: none
+  auth: inherit
+}
+
+params:query {
+  session_key: 9839
+  driver_number: 4
+  driver_number: 81
+}
+
+settings {
+  encodeUrl: false
+}
