@@ -17,7 +17,7 @@ import { RadioMessageComponent } from './radio-message.component';
             <img matListItemAvatar height="40" width="40" [ngSrc]="message.driver.headshotUrl" [alt]="message.driver.name">
             <h4 matListItemTitle>
               <span>{{ message.driver.name }}</span>
-              <f2020-radio-message [url]="message.recordingUrl" />
+              <f2020-radio-message [url]="message.recordingUrl"/>
             </h4>
             <div matListItemLine>
               <audio #audio (ended)="audio.pause()">
@@ -49,7 +49,7 @@ export class LiveRadioComponent {
   drivers = input.required<IDriver[]>();
 
   messages = rxResource({
-    request: () => ({ drivers: this.drivers(), race: this.race() }),
-    loader: ({ request }) => this.#live.getRadio(request.race, request.drivers),
+    params: () => ({ drivers: this.drivers(), race: this.race() }),
+    stream: ({ params }) => this.#live.getRadio(params.race, params.drivers),
   });
 }

@@ -1,5 +1,5 @@
 import localeDa from '@angular/common/locales/da';
-import { enableProdMode, importProvidersFrom, inject, LOCALE_ID, provideAppInitializer } from '@angular/core';
+import { enableProdMode, importProvidersFrom, inject, LOCALE_ID, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 
 import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
@@ -39,7 +39,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ anchorScrolling: 'enabled' })),
+    provideZoneChangeDetection(),provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     provideHttpClient(),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => {

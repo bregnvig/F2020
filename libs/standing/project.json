@@ -4,6 +4,12 @@
   "projectType": "library",
   "sourceRoot": "libs/standing/src",
   "prefix": "f2020",
+  "tags": [],
+  "generators": {
+    "@nx/angular:component": {
+      "style": "scss"
+    }
+  },
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
@@ -12,11 +18,5 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/standing"]
     }
-  },
-  "generators": {
-    "@nx/angular:component": {
-      "style": "scss"
-    }
-  },
-  "tags": []
+  }
 }

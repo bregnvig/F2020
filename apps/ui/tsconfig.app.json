@@ -1,15 +1,12 @@
 {
-  "extends" : "./tsconfig.json",
-  "compilerOptions" : {
-    "outDir" : "../../dist/out-tsc",
-    "types" : [],
-    "target" : "esnext",
-    "useDefineForClassFields" : false
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": [],
+    "target": "esnext",
+    "useDefineForClassFields": false,
+    "moduleResolution": "bundler"
   },
-  "files" : [
-    "src/main.ts"
-  ],
-  "exclude" : [
-    "jest.config.ts"
-  ]
+  "files": ["src/main.ts"],
+  "exclude": ["jest.config.ts"]
 }

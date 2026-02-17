@@ -4,6 +4,12 @@
   "projectType": "library",
   "sourceRoot": "libs/shared/src",
   "prefix": "sha",
+  "tags": [],
+  "generators": {
+    "@nx/angular:component": {
+      "style": "scss"
+    }
+  },
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
@@ -12,11 +18,5 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/shared"]
     }
-  },
-  "generators": {
-    "@nx/angular:component": {
-      "style": "scss"
-    }
-  },
-  "tags": []
+  }
 }
