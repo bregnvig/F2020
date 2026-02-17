@@ -10,7 +10,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/teams"],
       "options": {
-        "jestConfig": "libs/teams/jest.config.ts"
+        "jestConfig": "libs/teams/jest.config.ts",
+        "tsConfig": "libs/teams/tsconfig.spec.json"
       }
     },
     "lint": {

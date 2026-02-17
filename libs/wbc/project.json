@@ -14,7 +14,8 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/wbc/jest.config.ts"
+        "jestConfig": "libs/wbc/jest.config.ts",
+        "tsConfig": "libs/wbc/tsconfig.spec.json"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/wbc"]
     }

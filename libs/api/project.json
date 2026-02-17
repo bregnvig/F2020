@@ -14,7 +14,8 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/jest.config.ts"
+        "jestConfig": "libs/api/jest.config.ts",
+        "tsConfig": "libs/api/tsconfig.spec.json"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api"]
     },

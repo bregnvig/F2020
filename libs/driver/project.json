@@ -10,7 +10,8 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/driver/jest.config.ts"
+        "jestConfig": "libs/driver/jest.config.ts",
+        "tsConfig": "libs/driver/tsconfig.spec.json"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/driver"]
     }

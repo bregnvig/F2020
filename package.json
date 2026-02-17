@@ -43,7 +43,7 @@
     "@angular/common": "21.1.4",
     "@angular/compiler": "21.1.4",
     "@angular/core": "21.1.4",
-    "@angular/fire": "^20.0.1",
+    "@angular/fire": "^21.0.0-rc.0",
     "@angular/forms": "21.1.4",
     "@angular/google-maps": "21.1.4",
     "@angular/material": "21.1.4",
@@ -94,7 +94,6 @@
     "@angular/language-service": "21.1.4",
     "@ngrx/operators": "^21.0.1",
     "@ngrx/signals": "^21.0.1",
-    "@nx/cypress": "22.5.1",
     "@nx/devkit": "22.5.1",
     "@nx/esbuild": "22.5.1",
     "@nx/eslint": "22.5.1",
@@ -108,13 +107,11 @@
     "@types/node": "^24.10.4",
     "@typescript-eslint/eslint-plugin": "7.17.0",
     "@typescript-eslint/parser": "7.17.0",
-    "cypress": "^3.8.2",
     "dotenv": "10.0.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-cypress": "2.15.1",
     "firebase-functions-test": "^0.2.0",
-    "firebase-tools": "^13.34.0",
+    "firebase-tools": "^14.27.0",
     "kill-port": "^2.0.1",
     "killport": "^1.0.2",
     "nx": "22.5.1",
@@ -124,5 +121,16 @@
     "ts-ics": "^1.6.2",
     "ts-node": "10.9.1",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "@swimlane/ngx-charts": {
+      "@angular/cdk": "$@angular/cdk",
+      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic",
+      "@angular/animations": "$@angular/animations",
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core",
+      "@angular/forms": "$@angular/forms",
+      "@angular/platform-browser": "$@angular/platform-browser"
+    }
   }
 }

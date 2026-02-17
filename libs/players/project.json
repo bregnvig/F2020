@@ -14,7 +14,8 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/players/jest.config.ts"
+        "jestConfig": "libs/players/jest.config.ts",
+        "tsConfig": "libs/players/tsconfig.spec.json"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/players"]
     }
