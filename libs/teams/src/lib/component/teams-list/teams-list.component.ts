@@ -25,7 +25,9 @@ export class TeamsListComponent {
   readonly #service = inject(TeamService);
   readonly #snackBar = inject(MatSnackBar);
 
-  teams$ = this.#service.teams$;
+  teams$ = this.#service.teams$.pipe(
+    map(teams => teams.toSorted((a, b) => (b.points ?? 0) - (a.points ?? 0))),
+  );
   icon = icon;
 
   noDrivers = computed(() => !this.#store.drivers()?.length);
