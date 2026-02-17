@@ -1,4 +1,3 @@
-import { NgIfContext } from '@angular/common';
 import { Directive, effect, EmbeddedViewRef, inject, input, TemplateRef, ViewContainerRef } from '@angular/core';
 import { PlayerStore } from '@f2020/api';
 import { ensureArray } from '@f2020/tools';
@@ -9,15 +8,15 @@ import { ensureArray } from '@f2020/tools';
 })
 export class HasRoleDirective {
 
-  #thenViewRef: EmbeddedViewRef<NgIfContext> | null = null;
-  #elseViewRef: EmbeddedViewRef<NgIfContext> | null = null;
+  #thenViewRef: EmbeddedViewRef<any> | null = null;
+  #elseViewRef: EmbeddedViewRef<any> | null = null;
   #condition = false;
 
   roles = input.required<string[], string[] | string>({
     alias: 'shaHasRole',
     transform: value => ensureArray(value),
   });
-  elseTemplateRef = input<TemplateRef<NgIfContext> | null>(null, {
+  elseTemplateRef = input<TemplateRef<any> | null>(null, {
     alias: 'shaHasRoleElse',
   });
 
