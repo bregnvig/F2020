@@ -5,6 +5,8 @@ export const openF1Url = {
   labs: (sessionKey: number) => `https://api.openf1.org/v1/laps?session_key=${sessionKey}`,
   pitStops: (sessionKey: number) => `https://api.openf1.org/v1/pit?session_key=${sessionKey}`,
   sessionResults: (sessionKey: number) => `https://api.openf1.org/v1/session_result?session_key=${sessionKey}`,
+  championshipDrivers: (sessionKey: number) => `https://api.openf1.org/v1/championship_drivers?session_key=${sessionKey}`,
+  championshipTeams: (sessionKey: number) => `https://api.openf1.org/v1/championship_teams?session_key=${sessionKey}`,
   startingGrid: (sessionKey: number) => `https://api.openf1.org/v1/starting_grid?session_key=${sessionKey}`,
   stints: (sessionKey: number) => `https://api.openf1.org/v1/stints?session_key=${sessionKey}`,
   driver: (sessionKey?: number) => `https://api.openf1.org/v1/drivers?session_key=${sessionKey ?? 'latest'}`,

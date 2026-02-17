@@ -11,6 +11,7 @@ export const documentPaths = {
   bid: (seasonId: string | number, raceId: string | number, uid: string) => `${seasonsURL}/${seasonId}/${racesURL}/${raceId}/bids/${uid}`,
   player: (uid: string) => `${playersURL}/${uid}`,
   driver: (driverId: string) => `${driversURL}/${driverId}`,
+  team: (constructorId: string) => `${teamsURL}/${constructorId}`,
   circuit: (uid: number) => `${circuitsURL}/${uid}`,
   race: (seasonId: string | number, raceId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}/${raceId}`,
   standing: {

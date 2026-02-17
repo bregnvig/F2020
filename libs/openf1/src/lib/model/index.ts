@@ -1,3 +1,4 @@
+export * from './championship.model';
 export * from './driver.model';
 export * from './grid-position.model';
 export * from './interval.model';

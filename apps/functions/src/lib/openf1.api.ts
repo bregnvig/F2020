@@ -1,4 +1,4 @@
-import { Driver, GridPosition, Lap, openF1Url, PitStop, Position, Session, SessionResult, TeamRadio, Token } from '@f2020/openf1';
+import { Driver, DriverChampionship, GridPosition, Lap, openF1Url, PitStop, Position, Session, SessionResult, TeamChampionship, TeamRadio, Token } from '@f2020/openf1';
 import axios, { AxiosHeaders } from 'axios';
 import { requiredValue } from '@f2020/tools';
 
@@ -22,6 +22,8 @@ export const openF1Api = {
     .then(sessions => sessions[0]),
 
   sessionResults: async (token: string, sessionKey: number) => _http.get<SessionResult[]>(openF1Url.sessionResults(sessionKey), getHeaders(token)).then(response => response.data),
+  championDriverPoints: async (token: string, sessionKey: number) => _http.get<DriverChampionship[]>(openF1Url.championshipDrivers(sessionKey), getHeaders(token)).then(response => response.data),
+  championTeamsPoints: async (token: string, sessionKey: number) => _http.get<TeamChampionship[]>(openF1Url.championshipTeams(sessionKey), getHeaders(token)).then(response => response.data),
   startingGrid: async (token: string, sessionKey: number) => _http.get<GridPosition[]>(openF1Url.startingGrid(sessionKey), getHeaders(token)).then(response => response.data),
   positions: async (token: string, sessionKey: number) => _http.get<Position[]>(openF1Url.positions(sessionKey), getHeaders(token)).then(response => response.data),
   labs: async (token: string, sessionKey: number) => _http.get<Lap[]>(openF1Url.labs(sessionKey), getHeaders(token)).then(response => response.data),

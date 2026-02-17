@@ -1,8 +1,22 @@
-import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IQualifyResult, IRace, IRaceBasis, IRaceResult, mapper } from '@f2020/data';
+import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
 import { requiredValue } from '@f2020/tools';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { collectionPaths, currentSeason, documentPaths, openF1Api } from '../../lib';
+import { Session } from '@f2020/openf1';
+import { logger } from 'firebase-functions';
+
+interface WeekendInfo {
+  token: string;
+  seasonId: string;
+  circuit: Circuit;
+  drivers: IDriver[];
+  raceSession: Session;
+  qualifySession: Session;
+  raceBasis: IRaceBasis;
+}
+
+const findDriverIdFn = (drivers: IDriverStanding[]) => (driverNumber: number): string => drivers.find(d => d.driver.activeNumber === driverNumber)?.driver.driverId;
 
 /**
  * This trigger fetches the current standing for all drivers and for each driver.
@@ -15,11 +29,14 @@ export const standingTrigger = onDocumentUpdated('seasons/{seasonId}/races/{roun
   if (before.state !== 'completed' && after.state === 'completed') {
     const season = await currentSeason();
     const token = requiredValue(await openF1Api.token(), 'Token')?.access_token;
-    await setDriver(token, season.id, after).then(results => setStandings(token, season.id, after, results));
+    const weekendInfo = await getWeekendInfo(token, season.id, after);
+    await setDriverStatistics(weekendInfo)
+      .then(results => setDriverStandings(token, season.id, after, results))
+      .then(() => setTeamsStanding(weekendInfo));
   }
 });
 
-const setStandings = async (token: string, seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
+const setDriverStandings = async (token: string, seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
   const db = getFirestore();
   const allDrivers = await db.doc(documentPaths.standing.allDriver(seasonId)).get().then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[]; });
   const unchanged = allDrivers.standing.filter(({ driver }) => !results.some(r => r.driver.driverId === driver.driverId));
@@ -44,29 +61,17 @@ const setStandings = async (token: string, seasonId: string, race: IRace, result
   return db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing: [...unchanged, ...standing] });
 };
 
-const setDriver = async (token: string, seasonId: string, race: IRace) => {
+const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
   const db = getFirestore();
-
-  const circuitId = requiredValue(race.circuitId, 'Race circuit id');
-  const circuit = await db.doc(documentPaths.circuit(circuitId)).get().then(doc => doc.data() as Circuit);
-  const drivers = await db.collection(collectionPaths.drivers()).get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
-
-  const raceSession = await openF1Api.session(token, seasonId, circuitId, 'Race');
-  const qualifySession = await openF1Api.session(token, seasonId, circuitId, 'Qualifying');
-  const basicRace = mapper.basisRace(circuit, race.round, seasonId);
+  const { drivers, seasonId, raceBasis, qualifySession, raceSession, token } = weekendInfo;
+  const race = weekendInfo.raceBasis;
   const gridPositions = mapper.grid({ positions: await openF1Api.startingGrid(token, qualifySession.session_key), drivers });
   const raceSessionResult = await openF1Api.sessionResults(token, raceSession.session_key);
   const qualifySessionResult = await openF1Api.sessionResults(token, qualifySession.session_key);
   const laps = await openF1Api.labs(token, raceSession.session_key);
 
-  const qualifyResult = mapper.qualifyResult({ race: basicRace, drivers, sessionResults: qualifySessionResult });
-  const raceResult = mapper.raceResult({ race: basicRace, drivers, gridPositions, laps, sessionResults: raceSessionResult });
-  return writeResult(qualifyResult, raceResult, basicRace);
-};
-
-const writeResult = async (qualifyResult: IQualifyResult, raceResult: IRaceResult, race: IRaceBasis) => {
-  const db = getFirestore();
-  const seasonId = race.season;
+  const qualifyResult = mapper.qualifyResult({ race: raceBasis, drivers, sessionResults: qualifySessionResult });
+  const raceResult = mapper.raceResult({ race: raceBasis, drivers, gridPositions, laps, sessionResults: raceSessionResult });
   const currentResults: Map<string, IDriverResult> = await db.collection(collectionPaths.standings.drivers(seasonId, seasonId)).get().then(snapshot => {
     return snapshot.docs.map(doc => ({ driverId: doc.id, ...doc.data() as IDriverResult })).reduce((acc, r) => acc.set(r.driverId, r), new Map<string, IDriverResult>());
   });
@@ -108,10 +113,62 @@ const sprintRace = async (token: string, seasonId: string, circuitId: number, dr
   const positions = await openF1Api.sessionResults(token, session.session_key);
 
   const spritPoints = [8, 7, 6, 5, 4, 3, 2, 1];
-  const findDriverId = (driverNumber: number): string => drivers.find(d => d.driver.activeNumber === driverNumber)?.driver.driverId;
+  const findDriverId = findDriverIdFn(drivers);
 
   return positions.reduce((acc, p) => {
     return acc.set(findDriverId(p.driver_number), { points: spritPoints[p.position - 1] ?? 0, win: p.position === 1 });
   }, new Map<string, { win: boolean, points: number; }>());
+};
+
+const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) => {
+  const standings = await openF1Api.championTeamsPoints(token, raceSession.session_key);
+
+  const db = getFirestore();
+  const teams = await db.collection(collectionPaths.teams(seasonId)).get().then(({ docs }) => docs.map(doc => doc.data() as ITeam));
+  const nameToTeam = teams.reduce((acc, team) => {
+    acc.set(team.name, team);
+    team.previousNames?.forEach(name => acc.set(name, team));
+    return acc;
+  }, new Map<string, ITeam>());
+  await db.runTransaction(async transaction => {
+    standings.forEach(s => {
+      const team = nameToTeam.get(s.team_name);
+      if (!team) {
+        logger.warn(`${s.team_name} does not exist`);
+        return;
+      }
+      transaction.set(
+        db.doc(documentPaths.team(team.constructorId)),
+        {
+          points: s.points_current,
+        } as Partial<ITeam>,
+        {
+          merge: true,
+        },
+      );
+    });
+  });
+};
+
+const getWeekendInfo = async (token: string, seasonId: string, race: IRace): Promise<WeekendInfo> => {
+  const db = getFirestore();
+
+  const circuitId = requiredValue(race.circuitId, 'Race circuit id');
+  const circuit = await db.doc(documentPaths.circuit(circuitId)).get().then(doc => doc.data() as Circuit);
+  const drivers = await db.collection(collectionPaths.drivers()).get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
+
+  const raceSession = await openF1Api.session(token, seasonId, circuitId, 'Race');
+  const qualifySession = await openF1Api.session(token, seasonId, circuitId, 'Qualifying');
+  const raceBasis = mapper.basisRace(circuit, race.round, seasonId);
+
+  return {
+    token,
+    circuit,
+    drivers,
+    raceSession,
+    qualifySession,
+    raceBasis,
+    seasonId,
+  };
 
 };
