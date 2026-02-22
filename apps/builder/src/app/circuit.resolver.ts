@@ -126,11 +126,16 @@ Available Circuits:`);
         matches = candidates;
       } else {
         const term = normalize(answer);
-        matches = candidates.filter(c =>
-          normalize(c.name).includes(term) ||
-          normalize(c.circuitName).includes(term) ||
-          c.countryCode2.toLowerCase() === term ||
-          c.countryCode3.toLowerCase() === term,
+        const countryCode = Object.keys(countryNameMap).find(
+          (country) => countryNameMap[country].toLowerCase() === term,
+        );
+        matches = candidates.filter(
+          (c) =>
+            normalize(c.name).includes(term) ||
+            normalize(c.circuitName).includes(term) ||
+            c.countryCode2.toLowerCase() === term ||
+            c.countryCode3.toLowerCase() === term ||
+            (countryCode && c.countryCode3 === countryNameMap[countryCode]),
         );
       }
 
