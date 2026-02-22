@@ -20,10 +20,10 @@
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver?.name">
             <small class="!flex justify-between" matListItemLine>
               <span class="flex-auto uppercase">{{ driverId }}</span>
-              <span class="flex-auto text-end">
-                #{{ driver?.activeNumber }}
-                @if (driver?.permanentNumbers?.length > 1) {
-                  ({{ driver?.permanentNumbers?.join(', ') }})
+              @let permanentNumbers = driver?.permanentNumbers?.join(', ');
+              <span class="flex-auto text-end" [title]="permanentNumbers">
+                @if (driver?.activeNumber) {
+                  #{{ driver?.activeNumber }}
                 }
               </span>
             </small>
