@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { collection, collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
-import { openF1Url, PitStop } from '@f2020/openf1';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -104,7 +103,7 @@ export class RacesService {
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       map(session => requiredValue(session.session_key, 'session_key')),
-      switchMap(session => this.#http.get<PitStop[]>(openF1Url.pitStops(session))),
+      switchMap(session => this.#openF1HttpService.getPitStops(session)),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
     );
   }
