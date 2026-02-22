@@ -138,7 +138,7 @@ const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) =
         return;
       }
       transaction.set(
-        db.doc(documentPaths.team(team.constructorId)),
+        db.doc(documentPaths.team(seasonId, team.constructorId)),
         {
           points: s.points_current,
         } as Partial<ITeam>,

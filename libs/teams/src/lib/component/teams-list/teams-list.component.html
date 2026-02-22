@@ -6,7 +6,12 @@
   @if (teams$ | async; as teams) {
     <mat-list>
       @for (team of teams; track team.constructorId; ) {
-        <h2 matSubheader>{{ team.name }}</h2>
+        <h2 matSubheader>
+          {{ team.name }}
+          @if (team.points) {
+            <span class="float-right mr-4"> {{ team.points }} point</span>
+          }
+        </h2>
         @let drivers = allDrivers(team);
         @for (driverId of drivers; track driverId) {
           <mat-list-item>
