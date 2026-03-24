@@ -114,6 +114,10 @@ export class RacesService {
     );
   }
 
+  updateStandings(race: IRace): Promise<unknown> {
+    return httpsCallable(this.#functions, 'standingCall')(race).then(() => true);
+  }
+
   async submitBid(bid: Bid, player: Player): Promise<true> {
     return httpsCallable(this.#functions, 'submitBid')({
       ...bid, player: {

@@ -12,7 +12,7 @@ export * from './mail.service';
 export * from './message.service';
 export * from './reminder.service';
 export * from './openf1.api';
-
+export * from './standings.service';
 
 import { converter as playerConverter } from './auth.converter';
 import { converter as timestampConverter } from './timestamp.converter';

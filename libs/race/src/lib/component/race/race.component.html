@@ -24,28 +24,33 @@
             </a>
           }
           @if (race().state === 'closed') {
-          <a
-              mat-button
-              routerLink="qualify">
-            {{ 'Kvalifikation' | uppercase }}
-          </a>
-        }
+            <a
+                mat-button
+                routerLink="qualify">
+              {{ 'Kvalifikation' | uppercase }}
+            </a>
+          }
           <div>
             @if (race().state === 'completed') {
               <div class="flex items-center">
-                <mat-checkbox #confirmed="matCheckbox"></mat-checkbox>
-                <button mat-button color="warn" [disabled]="!confirmed.checked" (click)="rollbackResult()">
+                <mat-checkbox #confirmedRollback="matCheckbox"/>
+                <button class="mr-2" mat-button color="warn" [disabled]="!confirmedRollback.checked" (click)="rollbackResult()">
                   ROLLBACK
                 </button>
+                <mat-checkbox #confirmedStandings="matCheckbox"/>
+                <button mat-button color="warn" [disabled]="!confirmedStandings.checked" (click)="updateStandings()">
+                  STILLING
+                </button>
               </div>
-            } @if (race().state !== 'completed' && race().state !== 'cancelled') {
-            <div class="flex items-center">
-              <mat-checkbox #confirmedCancellation="matCheckbox"></mat-checkbox>
-              <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
-                AFLYS
-              </button>
-            </div>
-          }
+            }
+            @if (race().state !== 'completed' && race().state !== 'cancelled') {
+              <div class="flex items-center">
+                <mat-checkbox #confirmedCancellation="matCheckbox"></mat-checkbox>
+                <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
+                  AFLYS
+                </button>
+              </div>
+            }
           </div>
         </div>
       </mat-card-actions>
@@ -58,8 +63,8 @@
               @if (isCompleted()) {
                 Resultat
               } @else {
-              Bud
-            }
+                Bud
+              }
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
@@ -73,7 +78,8 @@
             </mat-card-actions>
           }
         </mat-card>
-      } @if (race().updatedBy?.length) {
+      }
+      @if (race().updatedBy?.length) {
         <f2020-race-updated-warning [race]="race()"/>
       }
     }

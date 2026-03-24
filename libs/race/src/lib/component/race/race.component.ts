@@ -1,5 +1,5 @@
 import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, signal, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { PlayerStore, RaceStore } from '@f2020/api';
-import { Bid, IDriver, IRace, isBid, Participant } from '@f2020/data';
+import { Bid, IDriver, IRace, Participant } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
@@ -28,7 +28,6 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
 @UntilDestroy()
 @Component({
   selector: 'f2020-race',
-  styleUrls: ['./race.component.scss'],
   templateUrl: './race.component.html',
   imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FaIconComponent],
 })
@@ -39,23 +38,14 @@ export class RaceComponent {
 
   #store = inject(RaceStore);
 
-  // center: Signal<google.maps.LatLng | undefined>;
   race: Signal<IRace | undefined> = this.#store.race;
   drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
   play: Signal<boolean>;
   clickable: Signal<boolean>;
   bids: Signal<(Bid | Participant)[] | undefined> = this.#store.bids;
   isCompleted = computed(() => this.race().state === 'completed');
-
-  liveBids = computed(() => {
-    const bids = this.bids();
-    return bids?.filter(bid => isBid(bid)).map(bid => ({ ...bid, points: undefined })) ?? [];
-  });
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
-  relive = signal(false);
-
   options: Signal<google.maps.MapOptions>;
-  stopped = signal(true);
 
   constructor() {
     const playerStore = inject(PlayerStore);
@@ -69,6 +59,10 @@ export class RaceComponent {
 
   rollbackResult() {
     this.#store.rollback();
+  }
+
+  updateStandings() {
+    this.#store.standings();
   }
 
   cancelRace() {

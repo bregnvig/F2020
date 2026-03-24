@@ -134,6 +134,7 @@ export const RaceStore = signalStore(
       submitResult: (result: Bid) => service.submitResult(store.race().round, result),
       submitInterimResult: (result: Bid) => service.submitInterimResult(result),
       rollback: () => service.rollbackResult(store.race().round).then(() => snackBar.open(`✔ Resultat for ${store.race().name} er blevet rullet tilbage`, null, { duration: 3000 })),
+      standings: () => service.updateStandings(store.race()).then(() => snackBar.open(`✔ Køre resultat for ${store.race().name} er blevet opdateret`, null, { duration: 3000 })),
       cancel: () => service.cancelRace(store.race().round).then(() => snackBar.open(`✔ ${store.race().name} er blevet aflyst`, null, { duration: 3000 })),
       update: (race: IRace) => service.updateRaceV2(race).then(() => snackBar.open(`✔ ${race.name} er blevet opdateret`, null, { duration: 3000 })),
     }),
