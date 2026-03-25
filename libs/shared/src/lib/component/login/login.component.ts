@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { PlayerApiService, PlayerStore } from '@f2020/api';
 import { isNullish } from '@f2020/tools';
@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'sha-login',
   templateUrl: './login.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./login.component.scss'],
   imports: [
     MatButtonModule,

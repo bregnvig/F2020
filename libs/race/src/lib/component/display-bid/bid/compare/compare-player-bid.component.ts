@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -6,6 +6,7 @@ import { Player } from '@f2020/data';
 
 @Component({
   selector: 'f2020-compare-player-bid',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
       <mat-form-field class="w-full">
         <mat-label>{{ label() }}</mat-label>

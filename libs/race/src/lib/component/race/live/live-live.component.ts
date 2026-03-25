@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { OpenF1WSSService, provideRaceResultService, RACE_RESULT_SERVICE, RaceStore } from '@f2020/api';
@@ -18,6 +18,7 @@ import { LiveStatusComponent } from './live-status.component';
 
 @Component({
   selector: 'f2020-live-live',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <sha-card-page cols="lg:grid-cols-2">
       @if (race()) {

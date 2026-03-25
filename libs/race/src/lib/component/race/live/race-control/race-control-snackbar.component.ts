@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { RaceControl } from '@f2020/data';
 import { NgOptimizedImage } from '@angular/common';
@@ -8,6 +8,7 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'f2020-race-control-snackbar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex-grow flex items-center gap-3 min-w-0">
       @if (data.driver?.headshotUrl) {

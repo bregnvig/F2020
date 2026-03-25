@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +20,7 @@ import { NgOptimizedImage } from '@angular/common';
 @UntilDestroy()
 @Component({
   templateUrl: './edit-player.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, NgOptimizedImage],
 })
 export class EditPlayerComponent implements OnInit {

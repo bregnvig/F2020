@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,15 +8,14 @@ import { RaceStore } from '@f2020/api';
 import { Bid, IRace, Player } from '@f2020/data';
 import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 import { filterNullish } from '@f2020/tools';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { PartialBidWarningComponent } from '../../partial-bid-warning/partial-bid-warning.component';
 import { DisplayBidComponent } from '../display-bid.component';
 import { ComparePlayerBidComponent } from './compare/compare-player-bid.component';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-display-player-bid',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (bid(); as bid) {
       <mat-toolbar color="primary">

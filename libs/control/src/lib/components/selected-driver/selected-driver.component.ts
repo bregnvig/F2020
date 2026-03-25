@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IRace, SelectedDriverValue } from '@f2020/data';
 import { untilDestroyed } from '@ngneat/until-destroy';
@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'f2020-selected-driver',
   templateUrl: './selected-driver.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

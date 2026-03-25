@@ -1,4 +1,4 @@
-import { Component, computed, effect, HostBinding, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostBinding, inject, Signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerStore, SeasonStore } from '@f2020/api';
 import { icon, RelativeToNowPipe } from '@f2020/shared';
@@ -12,6 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'f2020-join-wbc',
   templateUrl: './join-wbc.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule,
     FaIconComponent,

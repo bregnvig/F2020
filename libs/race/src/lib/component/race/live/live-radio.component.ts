@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { DateTimePipe } from '@f2020/shared';
 import { NgOptimizedImage } from '@angular/common';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
@@ -9,6 +9,7 @@ import { RadioMessageComponent } from './radio-message.component';
 
 @Component({
   selector: 'f2020-live-radio',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (messages.value(); as messages) {
       <mat-list>
@@ -49,7 +50,7 @@ export class LiveRadioComponent {
   drivers = input.required<IDriver[]>();
 
   messages = rxResource({
-    request: () => ({ drivers: this.drivers(), race: this.race() }),
-    loader: ({ request }) => this.#live.getRadio(request.race, request.drivers),
+    params: () => ({ drivers: this.drivers(), race: this.race() }),
+    stream: ({ params }) => this.#live.getRadio(params.race, params.drivers),
   });
 }

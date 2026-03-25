@@ -1,7 +1,6 @@
-import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { SeasonStore } from '@f2020/api';
 import { Player } from '@f2020/data';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { WBCGraph, WBCGraphPlayerEntry } from '../../model/wbc-graph.model';
 import { WBCGraphEntry } from './../../model/wbc-graph.model';
 import { NgOptimizedImage } from '@angular/common';
@@ -13,10 +12,10 @@ interface GraphEntry {
   series: WBCGraphPlayerEntry[];
 }
 
-@UntilDestroy()
 @Component({
     selector: 'f2020-wbc-graph',
     templateUrl: './wbc-graph.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./wbc-graph.component.scss'],
     imports: [LineChartModule, MatListModule, NgOptimizedImage]
 })

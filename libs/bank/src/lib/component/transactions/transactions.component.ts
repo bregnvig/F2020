@@ -1,4 +1,4 @@
-import { Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { Player, Transaction } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable, scan, switchMap } from 'rxjs';
@@ -11,6 +11,7 @@ import { AsyncPipe, CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'f2020-transactions',
   templateUrl: './transactions.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [InfiniteScrollDirective, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe, MatListModule],
 })
 export class TransactionsComponent {

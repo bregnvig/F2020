@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { Component, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { IRace } from '@f2020/data';
 import { RaceStatusPipe } from './race-status.pipe';
 import { FlagURLPipe, LoadingComponent } from '@f2020/shared';
@@ -12,6 +12,7 @@ import { RacesStore } from '@f2020/api';
 @Component({
   selector: 'f2020-races',
   templateUrl: './races.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatToolbarModule,
     MatListModule,

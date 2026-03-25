@@ -1,5 +1,5 @@
 import { LowerCasePipe, NgOptimizedImage } from '@angular/common';
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -12,6 +12,7 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
 @Component({
   selector: 'f2020-standing-list',
   templateUrl: './standing-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatToolbarModule,
     MatListModule,

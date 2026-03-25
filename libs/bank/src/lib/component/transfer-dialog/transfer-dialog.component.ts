@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Player } from '@f2020/data';
 import { AccountService } from '../../service';
@@ -13,6 +13,7 @@ import { PlayersStore } from '@f2020/api';
 
 @Component({
   templateUrl: './transfer-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, MatDialogTitle, MatDialogContent, MatFormField, CurrencyPipe, MatSelect, MatOption, MatLabel, MatInput, MatDialogActions, MatButton, MatDialogClose],
 })
 export class TransferDialogComponent {

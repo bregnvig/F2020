@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { LoadingComponent } from '../loading/loading.component';
 import { CardPageComponent } from '../card-page/card-page.component';
 import { PlayerStore } from '@f2020/api';
 
 @Component({
     selector: 'sha-logout',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <sha-card-page>
       <sha-loading></sha-loading>

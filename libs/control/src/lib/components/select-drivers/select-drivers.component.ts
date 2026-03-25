@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, inject, input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
@@ -25,6 +25,7 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
 
 @Component({
   selector: 'f2020-select-drivers',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div [formGroup]="fg" class="flex flex-col">
       @for (_ of drivers.controls; track $index) {

@@ -1,4 +1,4 @@
-import { Component, computed, effect, forwardRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, forwardRef, inject, input } from '@angular/core';
 import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Bid, IRace, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
 import { debounceTime } from 'rxjs/operators';
@@ -18,6 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'f2020-bid',
   templateUrl: './bid.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

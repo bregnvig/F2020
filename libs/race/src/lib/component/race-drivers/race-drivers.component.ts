@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, inject, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +11,6 @@ import { IRace } from '@f2020/data';
 import { AddDriverComponent, DriverNamePipe } from '@f2020/driver';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { first } from 'rxjs/operators';
 
 type Operation = 'removed' | 'added' | 'moved' | 'undo';
@@ -27,11 +26,11 @@ const message = (driverName: string, operation: Operation) => {
   }
 };
 
-@UntilDestroy()
 @Component({
   selector: 'race-drivers',
   templateUrl: './race-drivers.component.html',
   styleUrls: ['./race-drivers.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbarModule, MatListModule, CdkDropList, CdkDrag, MatButtonModule, FaIconComponent, MatIconModule, LoadingComponent, DriverNamePipe],
 })
 export class RaceDriversComponent implements OnInit {

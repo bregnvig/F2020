@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, effect, inject, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,11 +13,10 @@ import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { isNullish } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy } from '@ngneat/until-destroy';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-submit-result',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-toolbar color="primary">
       <span>Result - {{ race()?.name }}</span>
@@ -43,6 +42,7 @@ export class SubmitResultComponent {
   #teamsService = inject(TeamService);
   #store = inject(RaceStore);
   #snackBar = inject(MatSnackBar);
+  #router = inject(Router);
 
   resultControl = new FormControl<Bid | null>(null);
   race: Signal<IRace> = this.#store.race;
@@ -52,8 +52,7 @@ export class SubmitResultComponent {
   validResult: Signal<boolean>;
   downloaded = signal(false);
 
-  constructor(
-    private router: Router) {
+  constructor() {
     const result = toSignal(this.resultControl.valueChanges);
     this.validResult = computed(() => !!(result()?.qualify?.length === 7
       && (result()?.fastestDriver ?? []).filter(Boolean).length === 2
@@ -85,7 +84,7 @@ export class SubmitResultComponent {
       const result = Object.fromEntries(
         Object.entries(this.resultControl.value).map(([key, value]) => [key, Array.isArray(value) ? value.filter(v => !isNullish(v)) : value]),
       ) as Bid;
-      this.#store.submitResult(result).then(() => this.router.navigate(['/']));
+      this.#store.submitResult(result).then(() => this.#router.navigate(['/']));
     }
   }
 }

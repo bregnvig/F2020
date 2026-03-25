@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { buildInterimResult, buildResult, RACE_RESULT_SERVICE, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
@@ -14,6 +14,7 @@ import { DateTime } from 'luxon';
 @Component({
   selector: 'f2020-live-race',
   templateUrl: 'live-race.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListItem,
     MatListItemAvatar,

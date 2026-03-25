@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFabButton, MatIconButton } from '@angular/material/button';
@@ -30,6 +30,7 @@ const noNullsInArray = (control: FormControl<Bid>) => {
 @Component({
   selector: 'f2020-enter-bid',
   templateUrl: './enter-bid.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, FaIconComponent, BidComponent, ReactiveFormsModule, LoadingComponent, MatToolbar, MatIconButton, MatFabButton],
 })
 export class EnterBidComponent {

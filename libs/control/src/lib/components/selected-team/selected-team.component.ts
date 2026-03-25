@@ -1,4 +1,4 @@
-import { Component, computed, forwardRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
 import { FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ITeam, SelectedTeamValue } from '@f2020/data';
 import { AbstractControlComponent } from '../../abstract-control-component';
@@ -7,6 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'f2020-selected-team',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div [formGroup]="fg">
       <f2020-select-driver [driverIds]="driverIds()" label="Kvalifikation"

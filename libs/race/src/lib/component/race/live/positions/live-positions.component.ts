@@ -1,5 +1,5 @@
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { RACE_RESULT_SERVICE } from '@f2020/api';
@@ -16,6 +16,7 @@ import { LiveSectorStatusComponent } from './sector/live-sector-status.component
 @Component({
   selector: 'f2020-live-positions',
   templateUrl: 'live-positions.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatListItem,
     MatListItemAvatar,

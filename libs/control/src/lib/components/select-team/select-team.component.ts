@@ -1,4 +1,4 @@
-import { Component, forwardRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { ITeam } from '@f2020/data';
@@ -10,6 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'f2020-select-team',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-form-field class="w-full">
       <mat-label>{{ label() }}</mat-label>

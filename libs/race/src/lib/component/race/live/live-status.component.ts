@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { DateTimePipe } from '@f2020/shared';
@@ -6,6 +6,7 @@ import { LiveStatus } from '@f2020/api';
 
 @Component({
   selector: 'live-status',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="block max-h-[80vh] overflow-auto p-4">
       <h2 class="text-lg font-semibold mb-4">Live Status Monitor</h2>

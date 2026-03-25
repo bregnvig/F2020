@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, input, viewChild } from '@angular/core';
 import { css, icon } from '@f2020/shared';
 import { DecimalPipe } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -6,6 +6,7 @@ import { MatIconButton } from '@angular/material/button';
 
 @Component({
   selector: 'f2020-radio-message',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <audio #audio (ended)="ended()" (timeupdate)="updateProgress()">
       <source [src]="url()" type="audio/mpeg">

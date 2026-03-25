@@ -1,5 +1,5 @@
 import { PlayerStore } from '@f2020/api';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { WeatherComponent } from '../card/weather/weather.component';
 import { LastYearComponent } from '../card/last-year/last-year.component';
 import { JoinWbcComponent } from '../card/join-wbc/join-wbc.component';
@@ -11,6 +11,7 @@ import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 @Component({
   selector: 'f2020-landing',
   templateUrl: './landing.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent],
 })
 export class LandingComponent {

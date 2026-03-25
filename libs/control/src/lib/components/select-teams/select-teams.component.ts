@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { ITeam } from '@f2020/data';
 import { TeamNamePipe } from '@f2020/shared';
@@ -25,6 +25,7 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
 
 @Component({
   selector: 'f2020-select-teams',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div [formGroup]="fg" class="flex flex-col">
       @for (_ of teamsArray.controls; track $index) {

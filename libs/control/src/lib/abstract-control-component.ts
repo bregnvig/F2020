@@ -1,14 +1,8 @@
 import { Directive } from '@angular/core';
 import { AbstractControl, ControlValueAccessor } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
 
-@UntilDestroy({ arrayName: 'subscriptions' })
 @Directive()
 export abstract class AbstractControlComponent<T> implements ControlValueAccessor {
-
-
-  protected subscriptions: Subscription[] = [];
 
   private queue: any[] = [];
   private _propagateChange: (_: T) => any;

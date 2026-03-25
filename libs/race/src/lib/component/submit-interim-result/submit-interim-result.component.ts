@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,16 +7,15 @@ import { Router } from '@angular/router';
 import { BidComponent } from '@f2020/control';
 import { ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { RaceStore, TeamService } from '@f2020/api';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-submit-interim-result',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-toolbar color="primary">
       <span>Mellem resultat - {{ race()?.name }}</span>

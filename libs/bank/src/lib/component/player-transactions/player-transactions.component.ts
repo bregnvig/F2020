@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, Injector, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Injector, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -15,6 +15,7 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
 
 @Component({
   selector: 'f2020-player-transactions',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (player()) {
       <mat-toolbar color="primary">
@@ -37,44 +38,41 @@ export class PlayerTransactionsComponent implements OnInit {
   player: Signal<Player>;
   #store = inject(PlayersStore);
   #injector = inject(Injector);
-
-  constructor(
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private route: ActivatedRoute) {
-  }
+  #dialog = inject(MatDialog);
+  #snackBar = inject(MatSnackBar);
+  #route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.route.params.pipe(
+    this.#route.params.pipe(
       map<Params, string>(params => params.uid),
     ).subscribe(uid => this.#store.setPlayer(uid));
     this.player = this.#store.player;
   }
 
   openDeposit(player: Player) {
-    this.dialog.open(DepositDialogComponent, {
+    this.#dialog.open(DepositDialogComponent, {
       width: '250px',
       data: { player },
       injector: this.#injector,
     }).afterClosed().pipe(
       switchMap(result => result),
       first(),
-    ).subscribe(amount => this.snackBar.open(`${player.displayName} har fået indsat ${amount}`, null, { duration: 3000 }));
+    ).subscribe(amount => this.#snackBar.open(`${player.displayName} har fået indsat ${amount}`, null, { duration: 3000 }));
   }
 
   openWithdraw(player: Player) {
-    this.dialog.open(WithdrawDialogComponent, {
+    this.#dialog.open(WithdrawDialogComponent, {
       width: '250px',
       data: { player },
       injector: this.#injector,
     }).afterClosed().pipe(
       switchMap(result => result),
       first(),
-    ).subscribe(amount => this.snackBar.open(`${player.displayName} har fået udbetalt ${amount}`, null, { duration: 3000 }));
+    ).subscribe(amount => this.#snackBar.open(`${player.displayName} har fået udbetalt ${amount}`, null, { duration: 3000 }));
   }
 
   openTransfer(player: Player) {
-    this.dialog.open(TransferDialogComponent, {
+    this.#dialog.open(TransferDialogComponent, {
       data: { player },
       injector: this.#injector,
     }).afterClosed().pipe(
@@ -83,6 +81,6 @@ export class PlayerTransactionsComponent implements OnInit {
     ).subscribe(({ amount, to }: {
       amount: number,
       to: Player;
-    }) => this.snackBar.open(`${player.displayName} har overført ${amount} til ${to.displayName}`, null, { duration: 3000 }));
+    }) => this.#snackBar.open(`${player.displayName} har overført ${amount} til ${to.displayName}`, null, { duration: 3000 }));
   }
 }

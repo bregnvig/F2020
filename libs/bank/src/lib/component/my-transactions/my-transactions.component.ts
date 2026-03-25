@@ -1,18 +1,17 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerStore } from '@f2020/api';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TransactionsComponent } from '../transactions/transactions.component';
 import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-dialog.component';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-my-transactions',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col h-full">
       <mat-toolbar color="primary">

@@ -1,5 +1,5 @@
 import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -13,7 +13,6 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
 import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
-import { UntilDestroy } from '@ngneat/until-destroy';
 
 const BaseGoogleMapOptions: google.maps.MapOptions = {
   zoomControl: false,
@@ -25,10 +24,10 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
   mapTypeId: 'roadmap',
 };
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-race',
   templateUrl: './race.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FaIconComponent],
 })
 export class RaceComponent {
