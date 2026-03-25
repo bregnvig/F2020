@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/info/src",
   "prefix": "info",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/info/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/info"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

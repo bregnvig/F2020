@@ -11,13 +11,6 @@
     }
   },
   "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/api/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/api"]
-    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],

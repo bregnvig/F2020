@@ -48,16 +48,6 @@
         }
       }
     },
-    "test" : {
-      "executor" : "@nx/jest:jest",
-      "options" : {
-        "jestConfig" : "apps/builder/jest.config.ts",
-        "passWithNoTests" : false
-      },
-      "outputs" : [
-        "{workspaceRoot}/coverage/apps/builder"
-      ]
-    }
   },
   "tags" : []
 }

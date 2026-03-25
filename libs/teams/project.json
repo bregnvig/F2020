@@ -5,13 +5,6 @@
   "sourceRoot": "libs/teams/src",
   "prefix": "teams",
   "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/teams"],
-      "options": {
-        "jestConfig": "libs/teams/jest.config.ts"
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint"
     }

@@ -1,29 +1,20 @@
 {
-  "extends" : "./tsconfig.json",
-  "compilerOptions" : {
-    "outDir" : "../../dist/out-tsc",
-    "target" : "es2022",
-    "declaration" : true,
-    "inlineSources" : true,
-    "types" : [],
-    "lib" : [
-      "dom",
-      "esnext"
-    ]
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "target": "es2022",
+    "declaration": true,
+    "inlineSources": true,
+    "types": [],
+    "lib": ["dom", "esnext"],
+    "moduleResolution": "bundler"
   },
-  "angularCompilerOptions" : {
-    "skipTemplateCodegen" : true,
-    "strictMetadataEmit" : true,
-    "enableResourceInlining" : true,
-    "strictTemplates" : true
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
+    "enableResourceInlining": true,
+    "strictTemplates": true
   },
-  "exclude" : [
-    "src/test-setup.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "jest.config.ts"
-  ],
-  "include" : [
-    "**/*.ts"
-  ]
+  "exclude": ["src/test-setup.ts", "**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+  "include": ["**/*.ts"]
 }

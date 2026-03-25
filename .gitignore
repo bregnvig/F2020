@@ -82,3 +82,6 @@ firestore-production
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 openf1/environments/*
+
+.claude/worktrees
+.claude/settings.local.json

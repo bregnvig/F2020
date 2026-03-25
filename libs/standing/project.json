@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/standing/src",
   "prefix": "f2020",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/standing/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/standing"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

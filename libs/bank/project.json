@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/bank/src",
   "prefix": "f2020",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/bank/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/bank"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

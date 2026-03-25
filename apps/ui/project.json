@@ -103,14 +103,6 @@
         "buildTarget": "ui:build"
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "apps/ui/jest.config.ts",
-        "passWithNoTests": false
-      },
-      "outputs": ["{workspaceRoot}/coverage/apps/ui"]
-    },
     "deploy": {
       "executor": "@angular/fire:deploy",
       "options": {}

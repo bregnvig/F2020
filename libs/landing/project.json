@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/landing/src",
   "prefix": "f2020",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/landing/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/landing"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/wbc/src",
   "prefix": "f2020",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/wbc/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/wbc"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

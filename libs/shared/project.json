@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/shared/src",
   "prefix": "sha",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/shared/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/shared"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

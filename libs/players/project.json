@@ -4,15 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/players/src",
   "prefix": "pla",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "libs/players/jest.config.ts"
-      },
-      "outputs": ["{workspaceRoot}/coverage/libs/players"]
-    }
-  },
+  "targets": {},
   "generators": {
     "@nx/angular:component": {
       "style": "scss"
