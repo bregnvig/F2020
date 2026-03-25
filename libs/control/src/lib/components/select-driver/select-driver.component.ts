@@ -3,7 +3,7 @@ import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/fo
 import { MatOptionModule } from '@angular/material/core';
 import { ITeam } from '@f2020/data';
 import { DriverPipe } from '@f2020/driver';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,8 +39,15 @@ export class SelectDriverComponent extends AbstractControlComponent<string> impl
   selectControl = new FormControl<string>(null);
   allTeamAndDrivers: [string, string[]][];
 
-  ngOnInit(): void {
+  constructor() {
+    super();
     this.setupStandardControl(this.selectControl);
+    this.selectControl.valueChanges.pipe(
+      takeUntilDestroyed(),
+    ).subscribe(driverId => this.propagateChange(driverId));
+  }
+
+  ngOnInit(): void {
     if (this.teams()) {
       this.allTeamAndDrivers = Array.from(this.driverIds().reduce((acc, driverId) => {
         const team = this.teams().find(t => t.drivers.includes(driverId));
@@ -51,9 +58,6 @@ export class SelectDriverComponent extends AbstractControlComponent<string> impl
         return acc;
       }, new Map<string, string[]>()).entries());
     }
-    this.selectControl.valueChanges.pipe(
-      untilDestroyed(this),
-    ).subscribe(driverId => this.propagateChange(driverId));
   }
 
   writeValue(value: string | null): void {

@@ -70,7 +70,6 @@
     "@fortawesome/pro-light-svg-icons": "^7.2.0",
     "@fortawesome/pro-regular-svg-icons": "^7.2.0",
     "@fortawesome/pro-solid-svg-icons": "^7.2.0",
-    "@ngneat/until-destroy": "^10.0.0",
     "@ngrx/operators": "^21.0.1",
     "@ngrx/signals": "^21.0.1",
     "@nx/angular": "22.6.1",

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersApiService, PlayersStore } from '@f2020/api';
 import { Role } from '@f2020/data';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,13 +17,12 @@ import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgOptimizedImage } from '@angular/common';
 
-@UntilDestroy()
 @Component({
   templateUrl: './edit-player.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, NgOptimizedImage],
 })
-export class EditPlayerComponent implements OnInit {
+export class EditPlayerComponent {
 
   #fb = inject(FormBuilder);
   #router = inject(Router);
@@ -47,12 +46,9 @@ export class EditPlayerComponent implements OnInit {
         bankAdmin: this.player()?.roles.includes('bank-admin') ?? false,
       }, { emitEvent: false });
     });
-  }
-
-  ngOnInit(): void {
     this.route.params.pipe(
       map(params => params['id']),
-      untilDestroyed(this),
+      takeUntilDestroyed(),
     ).subscribe(uid => this.#store.setPlayer(uid));
   }
 

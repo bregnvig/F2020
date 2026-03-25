@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IRace, SelectedDriverValue } from '@f2020/data';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
 import { MatOptionModule } from '@angular/material/core';
@@ -37,19 +37,22 @@ export class SelectedDriverComponent extends AbstractControlComponent<SelectedDr
   fg: FormGroup;
   possiblePositions: number[];
 
-  constructor(private fb: FormBuilder) {
+  #fb = inject(FormBuilder);
+  #destroyRef = inject(DestroyRef);
+
+  constructor() {
     super();
   }
 
   ngOnInit(): void {
     this.possiblePositions = Array.from({ length: this.race().drivers.length }, (_, k) => k + 1);
-    this.fg = this.fb.group({
+    this.fg = this.#fb.group({
       grid: [null, [Validators.required, Validators.min(1), Validators.max(this.race().drivers.length)]],
       finish: [null, [Validators.required, Validators.min(1), Validators.max(this.race().drivers.length)]],
     });
     this.setupStandardControl(this.fg);
     this.fg.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.#destroyRef),
     ).subscribe(value => this.propagateChange(value));
   }
 

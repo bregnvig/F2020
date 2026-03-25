@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, forwardRef, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { IRace, ITeam } from '@f2020/data';
 import { DriverNamePipe } from '@f2020/driver';
 import { ensureArray } from '@f2020/tools';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { SelectDriverComponent } from '../select-driver/select-driver.component';
 
@@ -63,6 +63,7 @@ export class SelectDriversComponent extends AbstractControlComponent<string[]> i
 
   #fb = inject(FormBuilder);
   #driverName = inject(DriverNamePipe);
+  #destroyRef = inject(DestroyRef);
 
   readonly race = input.required<IRace>();
   readonly teams = input.required<ITeam[]>();
@@ -82,7 +83,7 @@ export class SelectDriversComponent extends AbstractControlComponent<string[]> i
     this.fg.setControl('drivers', this.drivers);
 
     this.drivers.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.#destroyRef),
     ).subscribe(value => this.propagateChange(value));
   }
 

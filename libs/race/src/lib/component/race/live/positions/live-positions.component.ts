@@ -1,18 +1,16 @@
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input, OnInit, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { RACE_RESULT_SERVICE } from '@f2020/api';
 import { IDriver, IDriverInterval, IDriverSector, IRace, IStint } from '@f2020/data';
 import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TyreComponent } from './tyre.component';
 import { LiveSectorStatusComponent } from './sector/live-sector-status.component';
 
-@UntilDestroy()
 @Component({
   selector: 'f2020-live-positions',
   templateUrl: 'live-positions.component.html',
@@ -38,6 +36,7 @@ import { LiveSectorStatusComponent } from './sector/live-sector-status.component
 export class LivePositionsComponent implements OnInit {
 
   #live = inject(RACE_RESULT_SERVICE);
+  #destroyRef = inject(DestroyRef);
 
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
@@ -69,10 +68,10 @@ export class LivePositionsComponent implements OnInit {
       map(positions => positions.toSorted((a, b) => a.position - b.position)),
       map(positions => positions.map(p => p.driver.driverId)),
       filter(positions => positions.length === this.initialPositions().length),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.#destroyRef),
     ).subscribe(current => this.#currentPosition = current);
     this.#live.getIntervals(this.race(), this.drivers()).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.#destroyRef),
     ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));
     this.stints$ = this.#live.getStints(this.race(), this.drivers()).pipe(
       map(stints => stints.reduce(toMap(stint => stint.driver.driverId), new Map<string, IStint>)),

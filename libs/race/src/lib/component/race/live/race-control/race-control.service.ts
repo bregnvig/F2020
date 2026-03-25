@@ -1,17 +1,17 @@
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RACE_RESULT_SERVICE } from '@f2020/api';
 import { IDriver, IRace, RaceControl } from '@f2020/data';
 import { withLength } from '@f2020/tools';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
 import { RaceControlSnackbarComponent } from './race-control-snackbar.component';
 
-@UntilDestroy()
 @Injectable()
 export class RaceControlService {
   #snackBar = inject(MatSnackBar);
   #live = inject(RACE_RESULT_SERVICE);
+  #destroyRef = inject(DestroyRef);
 
   #displayRaceControlMessage(raceControl: RaceControl): void {
     this.#snackBar.openFromComponent(RaceControlSnackbarComponent, {
@@ -30,7 +30,7 @@ export class RaceControlService {
       pairwise(),
       filter(([previous, current]) => current.length > previous.length),
       map(([previous, current]) => current.slice(previous.length)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.#destroyRef),
     ).subscribe(messages => messages.forEach(message => this.#displayRaceControlMessage(message)));
   }
 }

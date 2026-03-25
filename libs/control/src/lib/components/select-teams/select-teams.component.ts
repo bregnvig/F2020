@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, forwardRef, inject, input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { ITeam } from '@f2020/data';
 import { TeamNamePipe } from '@f2020/shared';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { SelectTeamComponent } from '../select-team/select-team.component';
 
@@ -64,21 +64,25 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
   readonly noOfTeams = input.required<number>();
   readonly labelFn = input<LabelFn>((index: number) => `Vælg ${index}. hold`);
 
+  #fb = inject(FormBuilder);
+  #teamName = inject(TeamNamePipe);
+  #destroyRef = inject(DestroyRef);
+
   fg: FormGroup;
   teamsArray: FormArray<FormControl<string>>;
 
-  constructor(private fb: FormBuilder, private teamName: TeamNamePipe) {
+  constructor() {
     super();
   }
 
   ngOnInit(): void {
-    this.teamsArray = this.fb.array(Array.from({ length: this.noOfTeams() }, () => [null]), uniqueTeams);
-    this.fg = this.fb.group({
+    this.teamsArray = this.#fb.array(Array.from({ length: this.noOfTeams() }, () => [null]), uniqueTeams);
+    this.fg = this.#fb.group({
       teams: this.teamsArray,
     });
     this.setupStandardControl(this.fg);
     this.teamsArray.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.#destroyRef),
     ).subscribe(value => this.propagateChange(value));
   }
 
@@ -95,7 +99,7 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
   }
 
   errorMessage(index: number): string {
-    return this.teamsArray.errors && this.teamsArray.errors[index] ? (this.teamName.transform(this.teamsArray.at(index).value)) + ' må ikke vælges flere gange' : '';
+    return this.teamsArray.errors && this.teamsArray.errors[index] ? (this.#teamName.transform(this.teamsArray.at(index).value)) + ' må ikke vælges flere gange' : '';
   }
 
 }

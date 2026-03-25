@@ -1,8 +1,5 @@
 import { Directive } from '@angular/core';
 import { AbstractControl, ControlValueAccessor } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
-
-@UntilDestroy()
 @Directive()
 export abstract class AbstractControlComponent<T> implements ControlValueAccessor {
 
