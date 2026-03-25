@@ -10,7 +10,6 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'f2020-last-year',
   templateUrl: './last-year.component.html',
-  styleUrls: ['./last-year.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatCardModule, FaIconComponent, RouterLink, MatButtonModule, PolePositionTimePipe],
 })

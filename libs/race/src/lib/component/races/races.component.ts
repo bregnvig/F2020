@@ -12,7 +12,6 @@ import { RacesStore } from '@f2020/api';
 @Component({
   selector: 'f2020-races',
   templateUrl: './races.component.html',
-  styleUrls: ['./races.component.scss'],
   imports: [
     MatToolbarModule,
     MatListModule,
