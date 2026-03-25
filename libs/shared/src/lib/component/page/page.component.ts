@@ -2,12 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'sha-page',
-    templateUrl: './page.component.html',
+    template: `<div></div>`,
     standalone: true
 })
 export class PageComponent {
-
-  constructor() { }
-
-
 }
