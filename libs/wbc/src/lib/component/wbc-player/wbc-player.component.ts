@@ -30,14 +30,16 @@ const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
 })
 export class WbcPlayerComponent {
 
+  #route = inject(ActivatedRoute);
+
   races: Signal<WBCRacePlayer[]>;
   player: Signal<Player>;
 
-  constructor(private route: ActivatedRoute) {
+  constructor() {
     const store = inject(SeasonStore);
     const wbc = computed(() => store.season()?.wbc?.results);
-    this.races = computed(() => wbc()?.map(racePlayer(this.route.snapshot.params.uid)));
-    this.player = computed(() => wbc()?.map(w => w.players).flat().find(player => player.player.uid === this.route.snapshot.params.uid)?.player);
+    this.races = computed(() => wbc()?.map(racePlayer(this.#route.snapshot.params.uid)));
+    this.player = computed(() => wbc()?.map(w => w.players).flat().find(player => player.player.uid === this.#route.snapshot.params.uid)?.player);
   }
 
 }

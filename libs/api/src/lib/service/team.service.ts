@@ -12,14 +12,16 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class TeamService {
 
-  teams$: Observable<ITeam[]>;
+  #afs = inject(Firestore);
   readonly #store = inject(SeasonStore);
 
-  constructor(private afs: Firestore) {
+  teams$: Observable<ITeam[]>;
+
+  constructor() {
     this.teams$ = toObservable(this.#store.season).pipe(
       truthy(),
       first(),
-      switchMap(season => collectionData(collection(afs, `seasons/${season.id}/teams`).withConverter(converter.timestamp<ITeam>()))),
+      switchMap(season => collectionData(collection(this.#afs, `seasons/${season.id}/teams`).withConverter(converter.timestamp<ITeam>()))),
       map(teams => teams as ITeam[]),
       shareReplay(1),
     );
@@ -32,6 +34,6 @@ export class TeamService {
   }
 
   updateTeam(team: ITeam): Promise<void> {
-    return setDoc(doc(this.afs, `seasons/${this.#store.season().id}/teams/${team.constructorId}`), team);
+    return setDoc(doc(this.#afs, `seasons/${this.#store.season().id}/teams/${team.constructorId}`), team);
   }
 }

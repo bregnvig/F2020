@@ -1,4 +1,4 @@
-import { Injectable, isDevMode } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from '@angular/fire/auth';
 import { arrayUnion, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
@@ -17,15 +17,19 @@ export class PlayerApiService {
 
   static readonly playersURL = 'players';
 
+  #afs = inject(Firestore);
+  #functions = inject(Functions);
+  #fcm = inject(FCMService);
+
   readonly player$: Observable<Player>;
   private currentUser$ = new ReplaySubject<UserInfo | null>(1);
   private auth = getAuth();
 
-  constructor(private afs: Firestore, private functions: Functions, fcm: FCMService) {
+  constructor() {
     this.player$ = merge(
       this.currentUser$.pipe(
         filter(user => !!user?.uid),
-        switchMap(user => docData(doc(this.afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
+        switchMap(user => docData(doc(this.#afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
         map(user => user as Player),
       ),
       this.currentUser$.pipe(
@@ -41,7 +45,7 @@ export class PlayerApiService {
       this.currentUser$.next(user ? ({ ...user }) : undefined);
       if (user) {
         await this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
-        await fcm.setupMessaging().then(
+        await this.#fcm.setupMessaging().then(
           async token => {
             const player = await firstValueFrom(this.player$);
             if (token && !player.tokens?.includes(token)) {
@@ -85,19 +89,19 @@ export class PlayerApiService {
       };
     }
     return this.player$.pipe(
-      switchMap(player => updateDoc(doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`), payload).then(() => player)),
-      switchMap(player => docData(doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`))),
+      switchMap(player => updateDoc(doc(this.#afs, `${PlayerApiService.playersURL}/${player.uid}`), payload).then(() => player)),
+      switchMap(player => docData(doc(this.#afs, `${PlayerApiService.playersURL}/${player.uid}`))),
       first(),
     );
   }
 
   async joinWBC(): Promise<true> {
-    await httpsCallable(this.functions, 'joinWBC')();
+    await httpsCallable(this.#functions, 'joinWBC')();
     return true;
   }
 
   async undoWBC(): Promise<true> {
-    await httpsCallable(this.functions, 'undoWBC')();
+    await httpsCallable(this.#functions, 'undoWBC')();
     return true;
   }
 
@@ -108,7 +112,7 @@ export class PlayerApiService {
       email: player.email,
       photoURL: player.photoURL,
     } as Player;
-    const docRef = doc(this.afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
+    const docRef = doc(this.#afs, `${PlayerApiService.playersURL}/${player.uid}`).withConverter(playerConverter);
     const snapshot = await getDoc(docRef);
     return snapshot.exists() ? updateDoc(docRef, { ..._player }) : setDoc(docRef, _player);
   }

@@ -8,10 +8,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class FCMService {
 
+
   setupMessaging: () => Promise<void | string>;
 
-  constructor(private snackBar: MatSnackBar) {
+  constructor() {
 
+    const snackBar = inject(MatSnackBar);
     if (location.hostname === 'localhost') {
       this.setupMessaging = () => Promise.resolve();
     } else {
@@ -25,7 +27,7 @@ export class FCMService {
             const isAlreadyGranted = Notification.permission === 'granted';
             (isAlreadyGranted
                 ? Promise.resolve()
-                : firstValueFrom(this.snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction())
+                : firstValueFrom(snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction())
             ).then(
               async () => {
                 await navigator.serviceWorker.register('/assets/firebase-messaging-sw.js', {

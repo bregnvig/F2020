@@ -19,17 +19,19 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 })
 export class SidebarComponent {
 
+  #router = inject(Router);
+
   closing = output<void>();
   player = inject(PlayerStore).player;
   seasonId: Signal<string>;
   icon = icon;
 
-  constructor(private router: Router) {
+  constructor() {
     const season = inject(SeasonStore).season;
     this.seasonId = computed(() => season()?.id);
   }
 
   signIn() {
-    this.router.navigate(['login']);
+    this.#router.navigate(['login']);
   }
 }

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import { DateTime } from 'luxon';
 
 @Pipe({
@@ -8,13 +8,12 @@ import { DateTime } from 'luxon';
 })
 export class DateTimePipe implements PipeTransform {
 
-  constructor(private datePipe: DatePipe) {
-  }
+  #datePipe = inject(DatePipe);
 
   transform(value: DateTime, format: string): any {
     if (!value || (value && value.year === 1)) {
       return '';
     }
-    return this.datePipe.transform(+value, format);
+    return this.#datePipe.transform(+value, format);
   }
 }

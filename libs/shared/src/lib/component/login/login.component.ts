@@ -20,26 +20,29 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class LoginComponent {
 
+  #service = inject(PlayerApiService);
+  #router = inject(Router);
+
   icon = icon;
 
   isAuthorizationKnown: Signal<boolean>;
   isUnauthorized: Signal<boolean>;
 
-  constructor(private service: PlayerApiService, private router: Router) {
+  constructor() {
     const store = inject(PlayerStore);
-    effect(() => store.authorized() && this.router.navigate(['']));
+    effect(() => store.authorized() && this.#router.navigate(['']));
     this.isUnauthorized = store.unauthorized;
     this.isAuthorizationKnown = computed(() => !isNullish(store.authorized()));
   }
 
   loginWithGoogle() {
-    this.router.navigate(['/'])
-      .then(() => this.service.signInWithGoogle());
+    this.#router.navigate(['/'])
+      .then(() => this.#service.signInWithGoogle());
   }
 
   loginWithFacebook() {
-    this.router.navigate(['/'])
-      .then(() => this.service.signInWithFacebook());
+    this.#router.navigate(['/'])
+      .then(() => this.#service.signInWithFacebook());
   }
 
 }
