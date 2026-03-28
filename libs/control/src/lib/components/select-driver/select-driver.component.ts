@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, input } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { ITeam } from '@f2020/data';
@@ -30,14 +30,25 @@ import { NgOptimizedImage } from '@angular/common';
     NgOptimizedImage,
   ],
 })
-export class SelectDriverComponent extends AbstractControlComponent<string> implements OnInit {
+export class SelectDriverComponent extends AbstractControlComponent<string> {
 
   readonly driverIds = input.required<string[]>();
   readonly teams = input<ITeam[]>(undefined);
   readonly label = input.required<string>();
   readonly error = input<string>();
-  selectControl = new FormControl<string>(null);
-  allTeamAndDrivers: [string, string[]][];
+  selectControl = new FormControl<string | null>(null);
+  allTeamAndDrivers = computed<[string, string[]][]>(() => {
+    const teams = this.teams();
+    if (!teams?.length) return undefined;
+    return Array.from(this.driverIds().reduce((acc, driverId) => {
+      const team = teams.find(t => t.drivers.includes(driverId));
+      if (!acc.has(team.name)) {
+        acc.set(team.name, []);
+      }
+      acc.get(team.name).push(driverId);
+      return acc;
+    }, new Map<string, string[]>()).entries());
+  });
 
   constructor() {
     super();
@@ -45,19 +56,6 @@ export class SelectDriverComponent extends AbstractControlComponent<string> impl
     this.selectControl.valueChanges.pipe(
       takeUntilDestroyed(),
     ).subscribe(driverId => this.propagateChange(driverId));
-  }
-
-  ngOnInit(): void {
-    if (this.teams()) {
-      this.allTeamAndDrivers = Array.from(this.driverIds().reduce((acc, driverId) => {
-        const team = this.teams().find(t => t.drivers.includes(driverId));
-        if (!acc.has(team.name)) {
-          acc.set(team.name, []);
-        }
-        acc.get(team.name).push(driverId);
-        return acc;
-      }, new Map<string, string[]>()).entries());
-    }
   }
 
   writeValue(value: string | null): void {

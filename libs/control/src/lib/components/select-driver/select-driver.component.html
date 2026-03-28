@@ -2,11 +2,10 @@
   <mat-label>{{ label() }}</mat-label>
   <mat-select [formControl]="selectControl">
     @if (teams()) {
-      @for (teamAndDrivers of allTeamAndDrivers; track teamAndDrivers[0]) {
+      @for (teamAndDrivers of allTeamAndDrivers(); track teamAndDrivers[0]) {
         <mat-optgroup [label]="teamAndDrivers[0]">
           @for (driverId of teamAndDrivers[1]; track driverId) {
             <ng-container>
-
               @let driver = driverId | driver;
               <mat-option [value]="driverId">
                 <div class="flex flex-row">
