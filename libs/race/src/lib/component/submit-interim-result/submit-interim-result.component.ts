@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { BidComponent } from '@f2020/control';
-import { ITeam } from '@f2020/data';
+import { Bid, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { RaceStore, TeamService } from '@f2020/api';
@@ -22,13 +22,13 @@ import { HttpErrorResponse } from '@angular/common/http';
     </mat-toolbar>
     <div class="max-width">
       @if (race()) {
-        <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="interim"/>
+        <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="interim" />
         <button mat-fab aria-label="Indsend delresultat" [disabled]="updating()" (click)="submitResult()">
-          <fa-icon [icon]="uploadIcon" size="lg"/>
+          <fa-icon [icon]="uploadIcon" size="lg" />
         </button>
       }
       @if (!race() || updating() || loading()) {
-        <sha-loading/>
+        <sha-loading />
       }
     </div>
   `,
@@ -41,7 +41,7 @@ export class SubmitInterimResultComponent {
   #snackBar = inject(MatSnackBar);
 
   uploadIcon = icon.farCloudArrowUp;
-  resultControl: FormControl = new FormControl();
+  resultControl: FormControl = new FormControl<Partial<Bid>>(null);
   race = this.#store.race;
   teams: Signal<ITeam[]>;
   updating = signal(false);
