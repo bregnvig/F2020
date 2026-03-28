@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateFn, Routes } from '@angular/router';
 import { DisplayPlayerBidComponent, DisplayResultComponent } from './component/display-bid';
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';
@@ -20,9 +20,10 @@ const raceResolver = () => {
   ));
 };
 
-const loadRace = (route: ActivatedRouteSnapshot) => {
+const loadRace: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const store = inject(RaceStore);
   store.loadRace(route.params['round']);
+  return toObservable(store.loaded).pipe(truthy());
 };
 
 export const RaceRouting: Routes = [
