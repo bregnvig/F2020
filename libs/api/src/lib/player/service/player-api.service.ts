@@ -38,40 +38,40 @@ export class PlayerApiService {
     );
     getRedirectResult(this.auth).then(result => {
       if (result && result.user) {
-        this.updateBaseInformation(result.user).then(() => console.log('Base information updated'));
+        this.updateBaseInformation(result.user).then(() => console.debug('Base information updated'));
       }
     });
     onAuthStateChanged(this.auth, async user => {
       this.currentUser$.next(user ? ({ ...user }) : undefined);
       if (user) {
-        await this.updateBaseInformation(user).then(() => isDevMode() && console.log('Base information updated'));
+        await this.updateBaseInformation(user).then(() => isDevMode() && console.debug('Base information updated'));
         await this.#fcm.setupMessaging().then(
           async token => {
             const player = await firstValueFrom(this.player$);
             if (token && !player.tokens?.includes(token)) {
               await firstValueFrom(this.updatePlayer({ tokens: [token] })).then(
-                () => console.log('Token added', token),
+                () => console.debug('Token added', token),
               );
             }
           },
           error => Notification.permission !== 'denied' && console.error('Unable to setup messaging', error),
         );
       }
-      isDevMode() && console.log(user);
+      isDevMode() && console.debug(user);
     });
   }
 
 
   signInWithGoogle(): Promise<void> {
     return signInWithRedirect(this.auth, new GoogleAuthProvider()).then(
-      _ => console.log('Signed in using google'),
+      _ => console.debug('Signed in using google'),
       error => console.error('Unable to sign in', error),
     );
   }
 
   signInWithFacebook(): Promise<void> {
     return signInWithRedirect(this.auth, new FacebookAuthProvider()).then(
-      _ => console.log('Signed in using facebook'),
+      _ => console.debug('Signed in using facebook'),
       error => console.error('Unable to sign in', error),
     );
   }

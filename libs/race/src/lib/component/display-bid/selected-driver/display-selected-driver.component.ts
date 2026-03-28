@@ -21,7 +21,7 @@ interface SelectedDriverComparison {
   selector: 'f2020-display-selected-driver',
   template: `
     @let driver = selectedDriverComparison();
-    @let comparison = driver.compareGrid && pointsDiffIcon();
+    @let comparison = driver?.compareGrid && pointsDiffIcon();
     <mat-list>
       <mat-list-item>
         <div class="flex justify-between items-center">
@@ -35,7 +35,7 @@ interface SelectedDriverComparison {
             <div class="flex">
               <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
                 @if (comparison.grid[0]; as compIcon) {
-                  <fa-icon [icon]="compIcon"/>
+                  <fa-icon [icon]="compIcon" />
                 }
                 @if (driver.compareGridPoints !== undefined) {
                   {{ driver.compareGridPoints }}
@@ -60,7 +60,7 @@ interface SelectedDriverComparison {
               <div class="flex">
                 <small class="rounded-full py-1 px-3" [ngClass]="comparison.finish[1]">
                   @if (comparison.finish[0]; as compIcon) {
-                    <fa-icon [icon]="compIcon"/>
+                    <fa-icon [icon]="compIcon" />
                   }
                   @if (driver.compareFinishPoints !== undefined) {
                     {{ driver.compareFinishPoints }} -

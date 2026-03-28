@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 const enableDebug = false; // environment.production;
 const debug = (assert: boolean, message: string, ...additionalArgs: any[]) => {
   if (enableDebug && !assert) {
-    console.log(message, ...additionalArgs);
+    console.debug(message, ...additionalArgs);
   }
 };
 

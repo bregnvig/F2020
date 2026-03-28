@@ -22,7 +22,7 @@ export class LiveSectorStatusComponent {
   // a = effect(() => {
   //   const driver = this.status()?.driver;
   //   if (driver?.driverId === 'ver') {
-  //     console.log(this.status().sector1.mini, this.status().sector2?.mini, this.status().sector3?.mini);
+  //     console.debug(this.status().sector1.mini, this.status().sector2?.mini, this.status().sector3?.mini);
 
   //   }
   // });

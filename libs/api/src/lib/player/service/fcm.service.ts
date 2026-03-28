@@ -35,7 +35,7 @@ export class FCMService {
                 }).then(serviceWorkerRegistration => getToken(messaging, {
                   serviceWorkerRegistration,
                 }).then(token => {
-                  isAlreadyGranted && console.log('Already granted', token);
+                  isAlreadyGranted && console.debug('Already granted', token);
                   resolve(isAlreadyGranted ? undefined : token);
                 }).catch(error => reject(error)));
               },
