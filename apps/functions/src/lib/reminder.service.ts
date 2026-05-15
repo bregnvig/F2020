@@ -4,7 +4,7 @@ import { getCurrentRace } from './race.service';
 import { collectionPaths } from './paths';
 import { DateTime } from 'luxon';
 import { requiredValue } from '@f2020/tools';
-import { openai } from './openai.service';
+import { openai, OpenAIModel } from './openai.service';
 
 
 export const playerWithoutBid = async (): Promise<Player[]> => {
@@ -79,7 +79,7 @@ export const notificationMessage = async (race: IRace): Promise<NotificationResp
   try {
     const response = await openai().chat.completions.create({
       // Consider using the standard model name 'gpt-4o' for long-term compatibility
-      model: 'gpt-4o',
+      model: OpenAIModel,
       messages: [
         {
           role: 'system',

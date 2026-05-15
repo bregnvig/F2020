@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { environment } from '../environment/environment';
+import { OpenAIModel } from '../../../functions/src/lib';
 
 const openai = new OpenAI({
   apiKey: environment.openai.apiKey,
@@ -35,7 +36,7 @@ const weather = async (data: Record<string, string | number>): Promise<string> =
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: OpenAIModel,
     messages: [
       {
         role: 'user',

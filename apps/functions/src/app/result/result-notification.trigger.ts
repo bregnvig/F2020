@@ -1,7 +1,7 @@
 import { Bid, ISeason, WBC, WBCResult } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { collectionPaths, openai, sendMail, sendNotification } from '../../lib';
+import { collectionPaths, openai, OpenAIModel, sendMail, sendNotification } from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const wbcPointsToPosition = {
@@ -30,7 +30,7 @@ const userChat = (name: string, raceName: string, wbcPoints: number, bids: Bid[]
 const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcPoints: number, bids: Bid[]): Promise<{ subject: string, body: string }> => {
 
   const response = await openai().chat.completions.create({
-    model: 'gpt-4o',
+    model: OpenAIModel,
     messages: [
       {
         role: 'system',
@@ -68,7 +68,7 @@ const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcP
 const aiGeneratedNotificationMessage = async (playerName: string, raceName: string, index: number): Promise<{ title: string, body: string }> => {
 
   const response = await openai().chat.completions.create({
-    model: 'gpt-4o',
+    model: OpenAIModel,
     messages: [
       {
         role: 'system',
