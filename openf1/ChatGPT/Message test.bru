@@ -1,0 +1,61 @@
+meta {
+  name: Message test
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://api.openai.com/v1/chat/completions
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{ChatGPT}}
+}
+
+body:json {
+  {
+    "model": "gpt-5.5",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Du laver morsomme en morsom smart phone notifikations title og body der beskriver deltagerens første anden eller tredje plads i et F1 væddemål. Du bliver oplyst følgende information navn på deltager, navn på løb, placering. Notifikationen skal være på dansk"
+      },
+      {
+        "role": "user",
+        "content": "Flemming Bregnvig, Lenovo Grand Prix Du Canada, 1"
+      }
+    ],
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "congratulation_schema",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "title": "Titlen på notifikationen",
+              "type": "string"
+            },
+            "body": {
+              "description": "Notifikations beskeden",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "subject",
+            "body"
+          ]
+        }
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
