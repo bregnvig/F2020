@@ -7,7 +7,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { DateTime } from 'luxon';
-import { combineLatest, distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 import { DriversStore } from '../../drivers';
 import { PlayerStore } from '../../player';
@@ -98,20 +98,17 @@ export const RaceStore = signalStore(
           });
         const race = store.race();
         if (race) {
-          const result = await firstValueFrom(teamsService.teams$.pipe(
-            switchMap(teams => combineLatest([
-              service.getResult(race, store.drivers()).pipe(reportError()),
-              service.getQualify(race, store.drivers()).pipe(reportError()),
-              service.getPitStops(race, store.drivers(), teams).pipe(reportError()),
-            ])),
-            map(([raceResult, qualify, pitStops]) => {
-              return buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
-            }),
-          )).catch(error => {
+          try {
+            const raceResult = await firstValueFrom(service.getResult(race, store.drivers()).pipe(reportError()));
+            const qualify = await firstValueFrom(service.getQualify(race, store.drivers()).pipe(reportError()));
+            const teams = await firstValueFrom(teamsService.teams$.pipe(reportError()));
+            const pitStops = await firstValueFrom(service.getPitStops(race, store.drivers(), teams).pipe(reportError()));
+            const result = buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
+            result && patchState(store, { result });
+          } catch (error) {
             console.error(error);
             patchState(store, { error });
-          });
-          result && patchState(store, { result });
+          }
         }
       },
       loadInterimResult: async (): Promise<void> => {
