@@ -8,7 +8,7 @@ import { PlayerStore, RacesService, RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { filterEquals, isNullish, truthy } from '@f2020/tools';
+import { filterEquals, isNullish, requiredValue, truthy } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { firstValueFrom } from 'rxjs';
@@ -45,8 +45,9 @@ export class EnterBidComponent {
   #store = inject(RaceStore);
   #router = inject(Router);
 
-  constructor(teamsService: TeamService, racesService: RacesService) {
-
+  constructor() {
+    const teamsService = inject(TeamService);
+    const racesService = inject(RacesService);
     const playerId = inject(PlayerStore).player().uid;
     this.race = this.#store.race;
     this.teams = toSignal(teamsService.teams$);
@@ -56,7 +57,10 @@ export class EnterBidComponent {
       truthy(),
       switchMap(race => racesService.getBid(race.season, race.round, playerId)),
       map(bid => bid || {}),
-    )).then(yourBid => this.bidControl.reset(yourBid, { emitEvent: false }));
+    )).then(yourBid => {
+      this.bidControl.reset(yourBid, { emitEvent: false });
+      !Object.keys(yourBid).length && this.#store.updateBid(yourBid as Bid);
+    });
 
     effect(() => this.#store.bid()?.submitted && this.bidControl.disable({ emitEvent: false }));
     effect(() => this.#store.error() && this.bidControl.enable({ emitEvent: false }));
@@ -66,12 +70,12 @@ export class EnterBidComponent {
       filter(bid => !bid?.submitted),
       filterEquals(),
     ));
-
     effect(() => this.#store.updateBid(updatedBid()));
   }
 
   submitBid() {
     this.#store.submitBid(this.bidControl.value)
+      .then(() => this.#store.loadRace(requiredValue(this.race()?.round, 'round').toString()))
       .then(() => this.#router.navigate([this.race().season, 'race', this.race().round]))
       .catch(error => {
         this.bidControl.enable({ emitEvent: false });

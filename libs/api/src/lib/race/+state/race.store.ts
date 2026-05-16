@@ -7,7 +7,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { DateTime } from 'luxon';
-import { distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
+import { firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 import { DriversStore } from '../../drivers';
 import { PlayerStore } from '../../player';
@@ -61,7 +61,6 @@ export const RaceStore = signalStore(
       loadRace: rxMethod<string>(
         pipe(
           filter(() => !playerStore.unauthorized()),
-          distinctUntilChanged(),
           tap(() => patchState(store, { loaded: false })),
           switchMap(round => races$.pipe(
             map(races => races?.find(r => r.round.toString(10) === round)),
