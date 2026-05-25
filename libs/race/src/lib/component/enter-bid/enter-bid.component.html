@@ -3,7 +3,7 @@
     <mat-toolbar color="primary">
       <span class="flex-auto">Bud - {{ race().name }}</span>
       <button mat-icon-button routerLink="../edit">
-        <fa-icon [icon]="editIcon"></fa-icon>
+        <fa-icon [icon]="editIcon"/>
       </button>
     </mat-toolbar>
     <f2020-bid [formControl]="bidControl" [race]="race()" [teams]="teams()" type="bid"></f2020-bid>
@@ -14,8 +14,8 @@
       </button>
     }
   } @else {
-    <sha-loading></sha-loading>
+    <sha-loading/>
   }
 } @else {
-  <sha-loading></sha-loading>
+  <sha-loading/>
 }

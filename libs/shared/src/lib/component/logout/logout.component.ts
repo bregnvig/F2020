@@ -8,7 +8,7 @@ import { PlayerStore } from '@f2020/api';
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <sha-card-page>
-      <sha-loading></sha-loading>
+      <sha-loading/>
     </sha-card-page>
   `,
     imports: [CardPageComponent, LoadingComponent]

@@ -17,7 +17,7 @@ import { MatIconButton } from '@angular/material/button';
         <span #duration class="duration text-xs me-2">{{ duration | number: '1.2-2' }}s</span>
       }
       <button mat-icon-button (click)="audio.paused ? audio.play() : audio.pause()">
-        <fa-icon [icon]="audio.paused || audio.ended ? play : pause" [fixedWidth]="true"></fa-icon>
+        <fa-icon [icon]="audio.paused || audio.ended ? play : pause" [fixedWidth]="true"/>
       </button>
     </span>
   `,

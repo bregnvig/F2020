@@ -9,7 +9,7 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
     <button mat-list-item [disabled]="disabled()">
           <span class="flex flex-row items-center">
             <fa-icon class="mr-3" [icon]="icon()" [fixedWidth]="true"/>
-             <ng-content></ng-content>
+             <ng-content/>
           </span>
     </button>`,
   changeDetection: ChangeDetectionStrategy.OnPush,

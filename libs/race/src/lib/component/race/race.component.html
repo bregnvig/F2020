@@ -45,7 +45,7 @@
             }
             @if (race().state !== 'completed' && race().state !== 'cancelled') {
               <div class="flex items-center">
-                <mat-checkbox #confirmedCancellation="matCheckbox"></mat-checkbox>
+                <mat-checkbox #confirmedCancellation="matCheckbox"/>
                 <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
                   AFLYS
                 </button>
@@ -86,13 +86,13 @@
   </sha-card-page>
   @if (play()) {
     <button mat-fab color="primary" aria-label="Deltag i løbet" routerLink="bid">
-      <fa-icon [icon]="plusIcon" size="lg"></fa-icon>
+      <fa-icon [icon]="plusIcon" size="lg"/>
     </button>
   }
   <ng-container *shaHasRole="'admin'">
     @if (race().state === 'closed') {
       <button mat-fab color="primary" aria-label="Upload resultat" routerLink="upload-result">
-        <fa-icon [icon]="downloadIcon" size="lg"></fa-icon>
+        <fa-icon [icon]="downloadIcon" size="lg"/>
       </button>
     }
   </ng-container>

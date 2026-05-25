@@ -2,13 +2,13 @@
   @if (isUnauthorized()) {
     <div class="flex flex-col items-center justify-center h-full gap-5 max-w-3xl md:mx-auto mx-3">
       <button mat-raised-button class="w-full" (click)="loginWithGoogle()">
-        <fa-icon [icon]="icon.fabGoogle" size="2x"></fa-icon>
+        <fa-icon [icon]="icon.fabGoogle" size="2x"/>
       </button>
       <button mat-raised-button class="w-full" (click)="loginWithFacebook()">
-        <fa-icon [icon]="icon.fabFacebookF" size="2x"></fa-icon>
+        <fa-icon [icon]="icon.fabFacebookF" size="2x"/>
       </button>
     </div>
   }
 } @else {
-  <sha-loading></sha-loading>
+  <sha-loading/>
 }

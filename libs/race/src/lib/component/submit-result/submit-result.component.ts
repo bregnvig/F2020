@@ -27,7 +27,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
           <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result"></f2020-bid>
         }
         <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="!validResult()" (click)="submitResult()">
-          <fa-icon [icon]="uploadIcon" size="lg"></fa-icon>
+          <fa-icon [icon]="uploadIcon" size="lg"/>
         </button>
       }
       @if (!loaded() || !downloaded()) {

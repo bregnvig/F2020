@@ -10,22 +10,22 @@
           <h3 matListItemTitle>{{ player.displayName }}</h3>
           <div matListItemMeta>
             @if (isAnonymous(player)) {
-              <fa-icon class="text-white ml-2" [icon]="icon.farCarCrash" size="lg"></fa-icon>
+              <fa-icon class="text-white ml-2" [icon]="icon.farCarCrash" size="lg"/>
             }
             @if (isBankAdmin(player)) {
-              <fa-icon class="text-white ml-2" [icon]="icon.farUniversity" size="lg"></fa-icon>
+              <fa-icon class="text-white ml-2" [icon]="icon.farUniversity" size="lg"/>
             }
             @if (isAdmin(player)) {
-              <fa-icon class="text-white ml-2" [icon]="icon.farGavel" size="lg"></fa-icon>
+              <fa-icon class="text-white ml-2" [icon]="icon.farGavel" size="lg"/>
             }
             @if (isPlayer(player)) {
-              <fa-icon class="text-white ml-2" [icon]="icon.fasUserAstronaut" size="lg"></fa-icon>
+              <fa-icon class="text-white ml-2" [icon]="icon.fasUserAstronaut" size="lg"/>
             }
           </div>
         </mat-list-item>
       }
     </mat-action-list>
   } @else {
-    <sha-loading></sha-loading>
+    <sha-loading/>
   }
 </div>

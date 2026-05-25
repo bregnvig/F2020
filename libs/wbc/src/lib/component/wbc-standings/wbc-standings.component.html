@@ -9,13 +9,13 @@
         <h3 matListItemTitle>{{standing.player.displayName}}</h3>
         <p matListItemLine>{{standing.points}} points</p>
         @if ((participants$ | async)?.includes(standing.player.uid)) {
-          <fa-icon matListItemMeta class="text-white" [icon]="icon"></fa-icon>
+          <fa-icon matListItemMeta class="text-white" [icon]="icon"/>
         }
       </mat-list-item>
     }
   </mat-action-list>
 </div>
 <button mat-fab aria-label="Vis WBC som graf" routerLink="graph">
-  <fa-icon [icon]="chartIcon" size="lg"></fa-icon>
+  <fa-icon [icon]="chartIcon" size="lg"/>
 </button>
 

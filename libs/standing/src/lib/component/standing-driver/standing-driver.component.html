@@ -9,7 +9,7 @@
     <f2020-number-card title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" [icon]="icon.farTrophy"></f2020-number-card>
     <f2020-number-card title="Udgået" [number]="result.retired" [icon]="icon.farCarCrash"></f2020-number-card>
   } @else {
-    <sha-loading></sha-loading>
+    <sha-loading/>
   }
   @if (currentSeasonResult$ | async; as result) {
     <mat-tab-group selectedIndex="1">

@@ -6,7 +6,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 @Component({
   template: `
     <mat-toolbar color="primary">
-      <fa-icon class="mr-2" [icon]="icon" size="2x"></fa-icon> Halvt velkommen
+      <fa-icon class="mr-2" [icon]="icon" size="2x"/> Halvt velkommen
     </mat-toolbar>
     <sha-card-page>
       <h2 class="mt-3">

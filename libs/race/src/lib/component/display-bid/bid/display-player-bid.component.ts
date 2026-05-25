@@ -19,9 +19,9 @@ import { ComparePlayerBidComponent } from './compare/compare-player-bid.componen
   template: `
     @if (bid(); as bid) {
       <mat-toolbar color="primary">
-        <img class="avatar" width="40" height="40" [ngSrc]="bid.player.photoURL" alt="Profil billede"/>
+        <img class="avatar" width="40" height="40" [ngSrc]="bid.player.photoURL" alt="Profil billede" />
         <span class="flex-auto">{{ bid.player.displayName }}</span>
-        <f2020-partial-bid-warning [bid]="bid"></f2020-partial-bid-warning>
+        <f2020-partial-bid-warning [bid]="bid" />
         @if (bid.points !== undefined) {
           {{ bid.points }} point
         }
@@ -30,14 +30,14 @@ import { ComparePlayerBidComponent } from './compare/compare-player-bid.componen
         <div class="max-width py-3">
           <sha-card-page>
             <div class="flex gap-3">
-              <f2020-compare-player-bid class="flex flex-grow" label="Sammenlign med" [players]="players()" (compareWithId)="compareWithIdChanged($event)"/>
+              <f2020-compare-player-bid class="flex flex-grow" label="Sammenlign med" [players]="players()" (compareWithId)="compareWithIdChanged($event)" />
             </div>
           </sha-card-page>
-          <f2020-display-bid [compareWith]="bidToCompare()" [bid]="bid" [race]="race"/>
+          <f2020-display-bid [compareWith]="bidToCompare()" [bid]="bid" [race]="race" />
         </div>
       }
     } @else {
-      <sha-loading></sha-loading>
+      <sha-loading/>
     }
   `,
   imports: [
@@ -63,17 +63,16 @@ export class DisplayPlayerBidComponent {
 
   constructor() {
     const store = inject(RaceStore);
-    const route = inject(ActivatedRoute);
     this.race = store.race;
     this.players = computed(() => store.bids()
       .map((bid: Bid) => bid.player)
       .filter(player => player.uid !== this.bid().player.uid));
-    this.bid = computed(() => store.bids()?.find((bid: Bid) => bid.player.uid === route.snapshot.params.uid));
+    this.bid = computed(() => store.bids()?.find((bid: Bid) => bid.player.uid === this.#route.snapshot.params.uid));
     this.bidToCompare = computed(() => store.bids()?.find(bid => bid.player.uid === this.compareWithId()));
   }
 
-  compareWithIdChanged(compareId: string) {
-    this.#router.navigate([filterNullish({ compareId })], { relativeTo: this.#route, replaceUrl: true });
+  protected compareWithIdChanged(compareId: string) {
+    void this.#router.navigate([filterNullish({ compareId })], { relativeTo: this.#route, replaceUrl: true });
   }
 
 }

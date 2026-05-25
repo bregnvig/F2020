@@ -22,7 +22,7 @@ import { DepositInfoDialogComponent } from './deposit-info-dialog/deposit-info-d
       </mat-toolbar>
       <f2020-transactions class="flex-auto" [player]="player()"/>
       <button mat-fab aria-label="Indsæt penge" color="primary" (click)="showInfo()">
-        <fa-icon [icon]="icon" size="lg"></fa-icon>
+        <fa-icon [icon]="icon" size="lg"/>
       </button>
     </div>
   `,

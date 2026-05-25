@@ -3,16 +3,16 @@
     <a class="font-bold no-underline" routerLink="/">F2026</a>
     <!-- This fills the remaining space of the current row -->
     <button mat-icon-button (click)="sidenav.toggle()">
-      <fa-icon [icon]="bars"></fa-icon>
+      <fa-icon [icon]="bars"/>
     </button>
   </mat-toolbar>
   <mat-sidenav-container class="w-full flex-auto mx-auto">
     <mat-sidenav #sidenav mode="over" position="end" [fixedInViewport]="true">
-      <sha-sidebar (closing)="sidenav.close()"></sha-sidebar>
+      <sha-sidebar (closing)="sidenav.close()"/>
     </mat-sidenav>
     <mat-sidenav-content>
       <div class="flex-auto flex flex-col justify-center justify-items-center">
-        <router-outlet></router-outlet>
+        <router-outlet/>
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>

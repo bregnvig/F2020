@@ -26,7 +26,7 @@ import { LastYearResultComponent } from './last-year-result.component';
     </mat-tab-group>
   </div>
 } @else {
-  <sha-loading></sha-loading>
+  <sha-loading/>
 }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

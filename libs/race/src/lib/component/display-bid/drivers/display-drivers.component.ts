@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
 import { DriverPipe } from '@f2020/driver';
 import { MatListModule } from '@angular/material/list';
 import { NgOptimizedImage } from '@angular/common';
@@ -21,7 +21,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
                   <small>{{ points()[$index] }} points</small>
                 }
               </div>
-              <f2020-display-points-diff [value]="points()?.[$index]" [compareWith]="comparePoints()?.[$index]" [postfix]="(compareWith()?.[$index] | driver)?.code"/>
+              <f2020-display-points-diff [value]="points()?.[$index]" [compareWith]="comparePoints()?.[$index]" [postfix]="(compareWith()?.[$index] | driver)?.code" />
             </div>
           </mat-list-item>
         }
@@ -38,4 +38,6 @@ export class DisplayDriversComponent {
   });
   readonly compareWith = input<string[]>();
   readonly comparePoints = input<number[]>();
+
+  a = effect((() => console.log(this.compareWith())));
 }

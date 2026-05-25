@@ -8,27 +8,27 @@ import { Player } from '@f2020/data';
   selector: 'f2020-compare-player-bid',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-      <mat-form-field class="w-full">
-        <mat-label>{{ label() }}</mat-label>
-        <mat-select #select (selectionChange)="compareWithId.emit($event.value)">
-          @if(select.value) {
-           <mat-option [value]="null">
-              <div class="flex gap-3">
-                <img class="player-avatar rounded-full" src="assets/loading/red.svg" alt="Nulstil" width="24" height="24">
-                <span>Nulstil</span>
-              </div>
-           </mat-option>
-          }
-          @for (player of players(); track player) {
-            <mat-option [value]="player.uid">
-              <div class="flex gap-3">
-                <img class="player-avatar rounded-full" [src]="player.photoURL" [alt]="player.displayName" width="24" height="24">
-                <span>{{ player.displayName }}</span>
-              </div>
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    <mat-form-field class="w-full">
+      <mat-label>{{ label() }}</mat-label>
+      <mat-select #select (selectionChange)="compareWithId.emit($event.value)">
+        @if (select.value) {
+          <mat-option [value]="null">
+            <div class="flex gap-3">
+              <img class="player-avatar rounded-full" src="assets/loading/red.svg" alt="Nulstil" width="24" height="24">
+              <span>Nulstil</span>
+            </div>
+          </mat-option>
+        }
+        @for (player of players(); track player.uid) {
+          <mat-option [value]="player.uid">
+            <div class="flex gap-3">
+              <img class="player-avatar rounded-full" [src]="player.photoURL" [alt]="player.displayName" width="24" height="24">
+              <span>{{ player.displayName }}</span>
+            </div>
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   `,
   styles: [
     `
@@ -38,7 +38,7 @@ import { Player } from '@f2020/data';
           height: 0;
         }
       }
-    `
+    `,
   ],
   imports: [MatSelectModule, MatInputModule, ReactiveFormsModule],
 })

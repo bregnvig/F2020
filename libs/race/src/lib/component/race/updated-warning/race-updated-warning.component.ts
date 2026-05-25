@@ -11,7 +11,7 @@ import { NgOptimizedImage } from '@angular/common';
   template: `
     <mat-card>
       <mat-card-header class="text-yellow-500">
-        <fa-icon mat-card-avatar [icon]="infoIcon" size="2x"></fa-icon>
+        <fa-icon mat-card-avatar [icon]="infoIcon" size="2x"/>
         <mat-card-title>Løbet er blevet opdateret</mat-card-title>
       </mat-card-header>
       <mat-card-content>

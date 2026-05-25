@@ -19,7 +19,7 @@
             <h5 matListItemTitle>
               {{ driver?.name }}
               @if (team.previousDrivers?.includes(driverId)) {
-                <fa-icon [icon]="icon.falTireFlat"></fa-icon>
+                <fa-icon [icon]="icon.falTireFlat"/>
               }
             </h5>
             <img matListItemAvatar height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver?.name">
@@ -34,10 +34,10 @@
             </small>
             <p *shaHasRole="'admin'" matListItemMeta>
               <button mat-icon-button (click)="removeDriver(driverId, team)">
-                <fa-icon [icon]="icon.farTrash"></fa-icon>
+                <fa-icon [icon]="icon.farTrash"/>
               </button>
               <button mat-icon-button (click)="previousDriver(driverId, team)">
-                <fa-icon [icon]="icon.falTireFlat"></fa-icon>
+                <fa-icon [icon]="icon.falTireFlat"/>
               </button>
             </p>
           </mat-list-item>
@@ -45,16 +45,16 @@
         <mat-list-item *shaHasRole="'admin'">
           <p matListItemMeta>
             <button mat-icon-button [disabled]="noDrivers()" (click)="addDriver(team)">
-              <fa-icon [icon]="icon.farPlus"></fa-icon>
+              <fa-icon [icon]="icon.farPlus"/>
             </button>
           </p>
         </mat-list-item>
         @if (!$last) {
-          <mat-divider></mat-divider>
+          <mat-divider/>
         }
       }
     </mat-list>
   } @else {
-    <sha-loading></sha-loading>
+    <sha-loading/>
   }
 </sha-card-page>

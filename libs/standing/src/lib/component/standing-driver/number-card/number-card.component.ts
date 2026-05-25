@@ -9,7 +9,7 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 <mat-card class="flex-auto">
   <mat-card-header>
     <div mat-card-avatar>
-      <fa-icon [icon]="icon()" [fixedWidth]="true" size="2x"></fa-icon>
+      <fa-icon [icon]="icon()" [fixedWidth]="true" size="2x"/>
     </div>
     <mat-card-title>{{title()}}</mat-card-title>
   </mat-card-header>

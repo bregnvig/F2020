@@ -39,7 +39,7 @@ export class DisplayBidComponent {
   compareWith = input<Partial<Bid>>();
 
   constructor() {
-    effect(() => console.debug('Bid', this.bid()));
+    effect(() => console.debug('Bids', this.bid(), this.compareWith()));
   }
 
 }

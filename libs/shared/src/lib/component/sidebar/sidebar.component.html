@@ -10,13 +10,13 @@
   <sha-sidenav-button [disabled]="disabled" [icon]="icon.fasPeopleGroup" [routerLink]="[seasonId(), 'teams']" (click)="closing.emit()">Hold</sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'player'" [disabled]="disabled" [icon]="icon.fasSteeringWheel" [routerLink]="[seasonId(), 'standings']" (click)="closing.emit()">Kører
   </sha-sidenav-button>
-  <mat-divider></mat-divider>
+  <mat-divider/>
   <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasCoins" [routerLink]="['accounts', 'me']" (click)="closing.emit()">
     Konto - {{ player()?.balance }}kr.
   </sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'bank-admin'" [icon]="icon.farPiggyBank" routerLink="accounts" (click)="closing.emit()">Bank</sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'admin'" [icon]="icon.fasUserAstronaut" [routerLink]="['players']" (click)="closing.emit()">Spillere</sha-sidenav-button>
-  <mat-divider></mat-divider>
+  <mat-divider/>
   <sha-sidenav-button [icon]="icon.farUserFriends" [routerLink]="['info', 'about']" (click)="closing.emit()">Om spillet</sha-sidenav-button>
   <sha-sidenav-button [icon]="icon.farBookAlt" [routerLink]="['info', 'rules']" (click)="closing.emit()">Regler</sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.farUser" routerLink="player" (click)="closing.emit()">Profil</sha-sidenav-button>
@@ -25,7 +25,7 @@
     <sha-sidenav-button [icon]="icon.farSignOutAlt" [routerLink]="['logout']" (click)="closing.emit()">Log ud</sha-sidenav-button>
   } @else {
     <button mat-list-item (click)="signIn(); closing.emit()">
-      <fa-icon [icon]="icon.farSignInAlt" [fixedWidth]="true"></fa-icon>
+      <fa-icon [icon]="icon.farSignInAlt" [fixedWidth]="true"/>
       Log ind
     </button>
   }
