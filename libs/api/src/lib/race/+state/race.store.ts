@@ -7,7 +7,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { DateTime } from 'luxon';
-import { firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 import { DriversStore } from '../../drivers';
 import { PlayerStore } from '../../player';
@@ -57,20 +57,27 @@ export const RaceStore = signalStore(
       seasonStore = inject(SeasonStore),
       teamsService = inject(TeamService),
       snackBar = inject(MatSnackBar),
+      submittedBid$ = toObservable(racesStore.yourBid).pipe(
+        map(bid => !!bid?.submitted),
+        distinctUntilChanged(),
+      ),
     ) => ({
       loadRace: rxMethod<string>(
         pipe(
           filter(() => !playerStore.unauthorized()),
           tap(() => patchState(store, { loaded: false })),
-          switchMap(round => races$.pipe(
-            map(races => races?.find(r => r.round.toString(10) === round)),
-          )),
-          truthy(),
-          map(race => {
+          switchMap(round => combineLatest({
+            race: races$.pipe(
+              map(races => races?.find(r => r.round.toString(10) === round)),
+              truthy(),
+            ),
+            isBidSubmitted: submittedBid$,
+          })),
+          map(({ race, isBidSubmitted }) => {
             const closed = race.close < DateTime.now();
             return {
               race,
-              type: closed ? 'closed' : racesStore.yourBid()?.submitted ? 'bids' : 'participants',
+              type: closed ? 'closed' : isBidSubmitted ? 'bids' : 'participants',
             };
           }),
           switchMap(({ race, type }) => {
