@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,7 +10,7 @@ import { Player } from '@f2020/data';
   template: `
     <mat-form-field class="w-full">
       <mat-label>{{ label() }}</mat-label>
-      <mat-select #select (selectionChange)="compareWithId.emit($event.value)">
+      <mat-select #select (selectionChange)="compareWithId.set($event.value)" [value]="compareWithId()">
         @if (select.value) {
           <mat-option [value]="null">
             <div class="flex gap-3">
@@ -43,7 +43,7 @@ import { Player } from '@f2020/data';
   imports: [MatSelectModule, MatInputModule, ReactiveFormsModule],
 })
 export class ComparePlayerBidComponent {
-  compareWithId = output<string>();
+  compareWithId = model<string>();
   players = input.required<Player[]>();
   label = input.required<string>();
 }

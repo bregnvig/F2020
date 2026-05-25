@@ -1,6 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, Signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,7 +7,6 @@ import { RaceStore } from '@f2020/api';
 import { Bid, IRace, Player } from '@f2020/data';
 import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 import { filterNullish } from '@f2020/tools';
-import { map } from 'rxjs';
 import { PartialBidWarningComponent } from '../../partial-bid-warning/partial-bid-warning.component';
 import { DisplayBidComponent } from '../display-bid.component';
 import { ComparePlayerBidComponent } from './compare/compare-player-bid.component';
@@ -30,14 +28,15 @@ import { ComparePlayerBidComponent } from './compare/compare-player-bid.componen
         <div class="max-width py-3">
           <sha-card-page>
             <div class="flex gap-3">
-              <f2020-compare-player-bid class="flex flex-grow" label="Sammenlign med" [players]="players()" (compareWithId)="compareWithIdChanged($event)" />
+              <f2020-compare-player-bid class="flex flex-grow" label="Sammenlign med" [players]="players()" [(compareWithId)]="compareWithId"
+                                        (compareWithIdChange)="compareWithIdChanged($event)" />
             </div>
           </sha-card-page>
           <f2020-display-bid [compareWith]="bidToCompare()" [bid]="bid" [race]="race" />
         </div>
       }
     } @else {
-      <sha-loading/>
+      <sha-loading />
     }
   `,
   imports: [
@@ -57,7 +56,7 @@ export class DisplayPlayerBidComponent {
 
   bid: Signal<Partial<Bid> | undefined>;
   race: Signal<IRace | undefined>;
-  compareWithId = toSignal<string | undefined>(this.#route.params.pipe(map(params => params.compareId)));
+  compareWithId = signal<string | undefined>(this.#route.snapshot.params.compareId);
   players: Signal<Player[]>;
   bidToCompare: Signal<Partial<Bid>>;
 

@@ -7,17 +7,17 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
 @Component({
   selector: 'f2020-display-points-diff',
   template: `
-  @if(diff(); as diff) {
-    <small class="rounded-full py-1 px-3" [ngClass]="diff.css">
-      @if (value() !== undefined && compareWith() !== undefined) {
-        @if (diff.icon) {
-          <fa-icon class="text-sm" [icon]="diff.icon"/>
+    @if (diff(); as diff) {
+      <small class="rounded-full py-1 px-3" [ngClass]="diff.css">
+        @if (value() !== undefined && compareWith() !== undefined) {
+          @if (diff.icon) {
+            <fa-icon class="text-sm" [icon]="diff.icon" />
+          }
+          {{ compareWith() }} -
         }
-        {{ compareWith() }} -
-      }
-      {{ postfix() }}
-    </small>
-  }
+        {{ postfix() }}
+      </small>
+    }
   `,
   imports: [
     FaIconComponent,
@@ -35,8 +35,8 @@ export class DisplayPointsDiffComponent {
   diff = computed<{ icon: [IconPrefix, IconName] | undefined, css: string; }>(() => {
     const value = this.value();
     const compareValue = this.compareWith();
-
-    if (isNullish(value) || isNullish(compareValue)) return undefined;
+    if (!this.postfix()) return undefined;
+    if (isNullish(value) || isNullish(compareValue)) return { icon: undefined, css: 'bg-gray-500' };
 
     if (value < compareValue) {
       return {

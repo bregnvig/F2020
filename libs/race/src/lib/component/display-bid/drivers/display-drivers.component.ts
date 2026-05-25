@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DriverPipe } from '@f2020/driver';
 import { MatListModule } from '@angular/material/list';
 import { NgOptimizedImage } from '@angular/common';
@@ -38,6 +38,4 @@ export class DisplayDriversComponent {
   });
   readonly compareWith = input<string[]>();
   readonly comparePoints = input<number[]>();
-
-  a = effect((() => console.log(this.compareWith())));
 }
