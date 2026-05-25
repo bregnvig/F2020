@@ -27,7 +27,7 @@ export class DriverPipe implements PipeTransform {
       this.previousCode = driverId;
       this.driver = this.drivers.find(d => d.driverId === driverId);
     }
-    return this.driver;
+    return driverId ? this.driver : undefined;
   }
 
 }
