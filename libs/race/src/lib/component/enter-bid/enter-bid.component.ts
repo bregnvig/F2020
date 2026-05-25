@@ -8,7 +8,7 @@ import { PlayerStore, RacesService, RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
-import { filterEquals, isNullish, requiredValue, truthy } from '@f2020/tools';
+import { filterEquals, isNullish, truthy } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { firstValueFrom } from 'rxjs';
@@ -75,7 +75,6 @@ export class EnterBidComponent {
 
   submitBid() {
     this.#store.submitBid(this.bidControl.value)
-      .then(() => this.#store.loadRace(requiredValue(this.race()?.round, 'round').toString()))
       .then(() => this.#router.navigate([this.race().season, 'race', this.race().round]))
       .catch(error => {
         this.bidControl.enable({ emitEvent: false });
