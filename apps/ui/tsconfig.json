@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "jest"
+    ],
     "target": "es2022",
     "moduleResolution": "bundler",
     "module": "preserve"
@@ -11,9 +14,6 @@
   "references": [
     {
       "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
     },
     {
       "path": "./tsconfig.editor.json"
