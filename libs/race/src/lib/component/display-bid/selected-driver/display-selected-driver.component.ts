@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-fontawesome';
-import { icon } from '@f2020/shared';
+import { icon, LoadingComponent } from '@f2020/shared';
 import { NgClass } from '@angular/common';
 import { filterUndefined } from '@f2020/tools';
 import { SelectedDriverValue } from '@f2020/data';
@@ -22,59 +22,63 @@ interface SelectedDriverComparison {
   template: `
     @let driver = selectedDriverComparison();
     @let comparison = driver?.compareGrid && pointsDiffIcon();
-    <mat-list>
-      <mat-list-item>
-        <div class="flex justify-between items-center">
-          <div class="flex flex-col">
-            <span>Startede som nummer {{ driver.grid }}</span>
-            @if (driver.gridPoints !== undefined) {
-              <small class="text-sm">{{ driver.gridPoints }} point</small>
-            }
-          </div>
-          @if (driver.compareGrid) {
-            <div class="flex">
-              <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
-                @if (comparison.grid[0]; as compIcon) {
-                  <fa-icon [icon]="compIcon" />
-                }
-                @if (driver.compareGridPoints !== undefined) {
-                  {{ driver.compareGridPoints }}
-                  -
-                }
-                P{{ driver.compareGrid }}
-              </small>
-            </div>
-          }
-        </div>
-      </mat-list-item>
-      @if (driver.finish) {
-        <mat-list-item class="mt-3">
+    @if (driver) {
+      <mat-list>
+        <mat-list-item>
           <div class="flex justify-between items-center">
             <div class="flex flex-col">
-              <span>Sluttede som nummer {{ driver.finish }}</span>
-              @if (driver.finishPoints !== undefined) {
-                <small class="text-sm">{{ driver.finishPoints }} point</small>
+              <span>Startede som nummer {{ driver.grid }}</span>
+              @if (driver.gridPoints !== undefined) {
+                <small class="text-sm">{{ driver.gridPoints }} point</small>
               }
             </div>
-            @if (driver.compareFinish) {
+            @if (driver.compareGrid) {
               <div class="flex">
-                <small class="rounded-full py-1 px-3" [ngClass]="comparison.finish[1]">
-                  @if (comparison.finish[0]; as compIcon) {
+                <small class="rounded-full py-1 px-3" [ngClass]="comparison.grid[1]">
+                  @if (comparison.grid[0]; as compIcon) {
                     <fa-icon [icon]="compIcon" />
                   }
-                  @if (driver.compareFinishPoints !== undefined) {
-                    {{ driver.compareFinishPoints }} -
+                  @if (driver.compareGridPoints !== undefined) {
+                    {{ driver.compareGridPoints }}
+                    -
                   }
-                  P{{ driver.compareFinish }}
+                  P{{ driver.compareGrid }}
                 </small>
               </div>
             }
           </div>
         </mat-list-item>
-      }
-    </mat-list>
+        @if (driver.finish) {
+          <mat-list-item class="mt-3">
+            <div class="flex justify-between items-center">
+              <div class="flex flex-col">
+                <span>Sluttede som nummer {{ driver.finish }}</span>
+                @if (driver.finishPoints !== undefined) {
+                  <small class="text-sm">{{ driver.finishPoints }} point</small>
+                }
+              </div>
+              @if (driver.compareFinish) {
+                <div class="flex">
+                  <small class="rounded-full py-1 px-3" [ngClass]="comparison.finish[1]">
+                    @if (comparison.finish[0]; as compIcon) {
+                      <fa-icon [icon]="compIcon" />
+                    }
+                    @if (driver.compareFinishPoints !== undefined) {
+                      {{ driver.compareFinishPoints }} -
+                    }
+                    P{{ driver.compareFinish }}
+                  </small>
+                </div>
+              }
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    } @else {
+      <sha-loading />
+    }
   `,
-  imports: [MatListModule, NgClass, FaIconComponent],
+  imports: [MatListModule, NgClass, FaIconComponent, LoadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [`
     :host {
