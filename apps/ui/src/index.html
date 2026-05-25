@@ -40,6 +40,19 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    @media (min-width: 768px) {
+      img.loading {
+        width: auto;
+        height: auto;
+        max-width: 100vw;
+        max-height: 100vh;
+        object-fit: contain;
+      }
     }
   </style>
 </head>
@@ -47,7 +60,7 @@
 <body>
 <div class="mat-typography mat-app-background basic-container">
   <f2020-root>
-    <img class="loading" src="assets/splash.webp" style="width: 100vw; height: 100vh" alt="loading">
+    <img class="loading" src="assets/splash.webp" alt="loading">
   </f2020-root>
 </div>
 <noscript>Please enable JavaScript to continue using this application.</noscript>
