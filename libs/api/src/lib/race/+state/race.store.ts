@@ -7,7 +7,7 @@ import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { DateTime } from 'luxon';
-import { combineLatest, distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, firstValueFrom, of, OperatorFunction, pipe, switchMap, tap, timer } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 import { DriversStore } from '../../drivers';
 import { PlayerStore } from '../../player';
@@ -106,9 +106,9 @@ export const RaceStore = signalStore(
         if (race) {
           try {
             const raceResult = await firstValueFrom(service.getResult(race, store.drivers()).pipe(reportError()));
-            const qualify = await firstValueFrom(service.getQualify(race, store.drivers()).pipe(reportError()));
-            const teams = await firstValueFrom(teamsService.teams$.pipe(reportError()));
-            const pitStops = await firstValueFrom(service.getPitStops(race, store.drivers(), teams).pipe(reportError()));
+            const qualify = await firstValueFrom(timer(200).pipe(switchMap(() => service.getQualify(race, store.drivers())), reportError()));
+            const teams = await firstValueFrom(timer(200).pipe(switchMap(() => teamsService.teams$), reportError()));
+            const pitStops = await firstValueFrom(timer(200).pipe(switchMap(() => service.getPitStops(race, store.drivers(), teams)), reportError()));
             const result = buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
             result && patchState(store, { result });
           } catch (error) {
