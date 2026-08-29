@@ -1,13 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": [
-      "node",
-      "jest"
-    ],
+    "types": ["node", "jest"],
     "target": "es2022",
     "moduleResolution": "bundler",
-    "module": "preserve"
+    "module": "preserve",
+    "ignoreDeprecations": "6.0"
   },
   "files": [],
   "include": [],

@@ -4,10 +4,10 @@
   "projectType": "library",
   "sourceRoot": "libs/teams/src",
   "prefix": "teams",
+  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": []
+  }
 }

@@ -16,7 +16,8 @@
     "noFallthroughCasesInSwitch": true,
     "target": "es2022",
     "moduleResolution": "bundler",
-    "module": "preserve"
+    "module": "preserve",
+    "ignoreDeprecations": "6.0"
   },
   "angularCompilerOptions": {
     "strictInjectionParameters": true,

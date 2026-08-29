@@ -1,22 +1,22 @@
 {
-  "name" : "openf1",
-  "$schema" : "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot" : "libs/openf1/src",
-  "projectType" : "library",
-  "tags" : [],
-  "targets" : {
-    "build" : {
-      "executor" : "@nx/js:tsc",
-      "outputs" : ["{options.outputPath}"],
-      "options" : {
-        "outputPath" : "dist/libs/openf1",
-        "main" : "libs/openf1/src/index.ts",
-        "tsConfig" : "libs/openf1/tsconfig.lib.json"
+  "name": "openf1",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/openf1/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/openf1",
+        "main": "libs/openf1/src/index.ts",
+        "tsConfig": "libs/openf1/tsconfig.lib.json"
       }
     },
-    "lint" : {
-      "executor" : "@nx/eslint:lint",
-      "outputs" : ["{options.outputFile}"]
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     }
   }
 }
