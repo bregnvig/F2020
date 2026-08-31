@@ -1,2 +1,6 @@
 [tools]
 node = "24"
+java = "21"
+
+[env]
+METADATA_SERVER_DETECTION = "none"
