@@ -16,7 +16,7 @@
       <mat-card-actions>
         <a mat-button [href]="race().url" target="_blank">WIKI</a>
         <div *shaHasRole="'admin'" class="flex-1 flex justify-between items-center">
-          @if (race().state === 'waiting' || race().state === 'open') {
+          @if (race().state !== 'completed') {
             <a
                 mat-button
                 routerLink="drivers">
