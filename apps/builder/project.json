@@ -1,53 +1,52 @@
 {
-  "name" : "builder",
-  "$schema" : "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot" : "apps/builder/src",
-  "projectType" : "application",
-  "prefix" : "builder",
-  "generators" : {},
-  "targets" : {
-    "build" : {
-      "executor" : "@nx/webpack:webpack",
-      "options" : {
-        "webpackConfig" : "apps/builder/webpack.config.js",
-        "outputPath" : "dist/apps/builder",
-        "main" : "apps/builder/src/main.ts",
-        "tsConfig" : "apps/builder/tsconfig.app.json",
-        "assets" : [
-          "apps/builder/src/assets"
-        ],
-        "buildLibsFromSource" : true,
-        "target" : "node",
-        "compiler" : "tsc"
+  "name": "builder",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/builder/src",
+  "projectType": "application",
+  "prefix": "builder",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/builder",
+        "main": "apps/builder/src/main.ts",
+        "tsConfig": "apps/builder/tsconfig.app.json",
+        "assets": ["apps/builder/src/assets"],
+        "generatePackageJson": true,
+        "platform": "node",
+        "bundle": true,
+        "thirdParty": false,
+        "dependenciesFieldType": "dependencies",
+        "target": "node22",
+        "format": ["esm"],
+        "esbuildOptions": {
+          "logLevel": "info"
+        }
       },
-      "configurations" : {
-        "production" : {
-          "optimization" : true,
-          "extractLicenses" : true,
-          "inspect" : false,
-          "fileReplacements" : [
+      "configurations": {
+        "production": {
+          "minify": true,
+          "fileReplacements": [
             {
-              "replace" : "apps/builder/src/environments/environment.ts",
-              "with" : "apps/builder/src/environments/environment.prod.ts"
+              "replace": "apps/builder/src/environment/environment.ts",
+              "with": "apps/builder/src/environment/environment.prod.ts"
             }
           ]
         }
-      },
-      "outputs" : [
-        "{options.outputPath}"
-      ]
-    },
-    "serve" : {
-      "executor" : "@nx/js:node",
-      "options" : {
-        "buildTarget" : "builder:build"
-      },
-      "configurations" : {
-        "production" : {
-          "buildTarget" : "builder:build:production"
-        }
       }
     },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "builder:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "builder:build:production"
+        }
+      }
+    }
   },
-  "tags" : []
+  "tags": []
 }
