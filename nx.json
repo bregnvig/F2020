@@ -86,11 +86,11 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/angular.json", "{workspaceRoot}/tslint.json", "{workspaceRoot}/nx.json", "{workspaceRoot}/tsconfig.base.json"],
+    "sharedGlobals": ["{workspaceRoot}/nx.json", "{workspaceRoot}/tsconfig.base.json"],
     "production": ["default", "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)", "!{projectRoot}/eslint.config.mjs"]
   },
   "parallel": 1,
-  "defaultBase": "master",
+  "defaultBase": "develop",
   "analytics": true,
   "neverConnectToCloud": true
 }

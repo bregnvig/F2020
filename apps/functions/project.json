@@ -1,45 +1,43 @@
 {
-  "name" : "functions",
-  "$schema" : "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot" : "apps/functions/src",
-  "projectType" : "application",
-  "targets" : {
-    "build" : {
-      "executor" : "@nx/esbuild:esbuild",
-      "outputs" : ["{options.outputPath}"],
-      "options" : {
-        "outputPath" : "dist/apps/functions",
-        "main" : "apps/functions/src/main.ts",
-        "tsConfig" : "apps/functions/tsconfig.app.json",
-        "assets" : [
-          "apps/functions/src/assets"
-        ],
-        "generatePackageJson" : true,
-        "platform" : "node",
-        "bundle" : true,
-        "thirdParty" : false,
-        "dependenciesFieldType" : "dependencies",
-        "target" : "node22",
-        "format" : ["esm"],
-        "esbuildOptions" : {
-          "logLevel" : "info"
+  "name": "functions",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/functions/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/functions",
+        "main": "apps/functions/src/main.ts",
+        "tsConfig": "apps/functions/tsconfig.app.json",
+        "assets": ["apps/functions/src/assets"],
+        "generatePackageJson": true,
+        "platform": "node",
+        "bundle": true,
+        "thirdParty": false,
+        "dependenciesFieldType": "dependencies",
+        "target": "node22",
+        "format": ["esm"],
+        "esbuildOptions": {
+          "logLevel": "info"
         }
       }
     },
-    "lint" : {
-      "executor" : "@nx/eslint:lint",
-      "outputs" : ["{options.outputFile}"],
-      "options" : {
-        "lintFilePatterns" : ["apps/functions/**/*.ts"]
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/functions/**/*.ts"]
       }
     },
-    "deploy" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "command" : "nx run firebase:deploy --only functions:functions"
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run firebase:deploy --only functions:functions"
       },
-      "dependsOn" : ["build"]
+      "dependsOn": ["build"]
     }
   },
-  "tags" : ["firebase:function", "firebase:name:functions", "firebase:dep:firebase"]
+  "tags": ["firebase:function", "firebase:name:functions", "firebase:dep:firebase"]
 }

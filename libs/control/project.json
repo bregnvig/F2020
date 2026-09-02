@@ -4,10 +4,15 @@
   "projectType": "library",
   "sourceRoot": "libs/control/src",
   "prefix": "f2020",
-  "targets": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
   "generators": {
     "@nx/angular:component": {
-      "styleext": "scss"
+      "style": "scss"
     }
   },
   "tags": []

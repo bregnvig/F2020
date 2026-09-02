@@ -20,6 +20,10 @@
         "tsConfig": "libs/api/tsconfig.lib.json",
         "assets": []
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     }
   }
 }

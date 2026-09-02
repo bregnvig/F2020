@@ -4,7 +4,12 @@
   "projectType": "library",
   "sourceRoot": "libs/players/src",
   "prefix": "pla",
-  "targets": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
   "generators": {
     "@nx/angular:component": {
       "style": "scss"

@@ -4,7 +4,11 @@
   "projectType": "library",
   "sourceRoot": "libs/driver/src",
   "prefix": "f2020",
-  "targets": {},
-  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
   "tags": []
 }

@@ -1,84 +1,64 @@
 {
-  "name" : "firebase",
-  "$schema" : "../../node_modules/nx/schemas/project-schema.json",
-  "projectType" : "application",
-  "targets" : {
-    "build" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "commands" : [
-          "cp apps/functions/environment/.env dist/apps/functions",
-          "echo Build succeeded."
-        ]
+  "name": "firebase",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["cp apps/functions/environment/.env dist/apps/functions", "echo Build succeeded."]
       }
     },
-    "watch" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "command" : "nx run-many --targets=build --projects=tag:firebase:dep:firebase --parallel=100 --watch"
+    "watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run-many --targets=build --projects=tag:firebase:dep:firebase --parallel=100 --watch"
       }
     },
-    "lint" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "command" : "nx run-many --targets=lint --projects=tag:firebase:dep:firebase --parallel=100"
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run-many --targets=lint --projects=tag:firebase:dep:firebase --parallel=100"
       }
     },
-    "firebase" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "command" : "firebase --config=firebase.json"
+    "firebase": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "firebase --config=firebase.json"
       },
-      "configurations" : {
-        "production" : {
-          "command" : "firebase --config=firebase.json"
+      "configurations": {
+        "production": {
+          "command": "firebase --config=firebase.json"
         }
       }
     },
-    "killports" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "command" : "kill-port --port 9099,5001,8080,9000,5000,8085,9199,9299,4000,4400,4500"
+    "killports": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "kill-port --port 9099,5001,8080,9000,5000,8085,9199,9299,4000,4400,4500"
       }
     },
-    "getconfig" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "command" : "nx run firebase:firebase functions:config:get > apps/firebase/environment/.runtimeconfig.json"
+    "emulate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run firebase:firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json  --import=./saved-data --export-on-exit=./saved-data"],
+        "parallel": false
       }
     },
-    "emulate" : {
-      "executor" : "nx:run-commands",
-      "options" : {
-        "commands" : [
-          "nx run firebase:firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json  --import=./saved-data --export-on-exit=./saved-data"
-        ],
-        "parallel" : false
+    "serve": {
+      "executor": "@simondotm/nx-firebase:serve",
+      "options": {
+        "commands": ["nx run firebase:watch", "nx run firebase:emulate"]
       }
     },
-    "serve" : {
-      "executor" : "@simondotm/nx-firebase:serve",
-      "options" : {
-        "commands" : [
-          "nx run firebase:watch"
-        ]
-      }
-    },
-    "deploy" : {
-      "executor" : "nx:run-commands",
-      "dependsOn" : [
-        "build"
-      ],
-      "options" : {
-        "command" : "nx run firebase:firebase deploy"
+    "deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "nx run firebase:firebase deploy"
       }
     }
   },
-  "tags" : [
-    "firebase:app",
-    "firebase:name:firebase"
-  ],
-  "implicitDependencies" : [
-    "functions"
-  ]
+  "tags": ["firebase:app", "firebase:name:firebase"],
+  "implicitDependencies": ["functions"]
 }

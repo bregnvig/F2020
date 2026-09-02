@@ -10,7 +10,7 @@
     "serve:firebase": "nx run firebase:watch",
     "start": "ng serve ui --liveReload false",
     "build-with-stats": "nx build --stats-json",
-    "lint": "nx workspace-lint && ng lint",
+    "lint": "nx run-many --target=lint --all",
     "kill-ports": "npx kill-port --port 9229,9099,5001,8080,9000,5000,8085,9199,9299,4000,4400,4500",
     "deploy:all": "npm run deploy:hosting && npm run deploy:functions && npm run deploy:rules",
     "deploy:hosting": "firebase use production && nx build ui --configuration=production && firebase deploy --only hosting",
