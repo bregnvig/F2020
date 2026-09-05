@@ -35,7 +35,7 @@ To run UI run `npx nx serve ui`
 
 # Project Firebase
 
-## Use v20 for both running and exporting data
+## Use v24 for both running and exporting data
 
 ---
 
