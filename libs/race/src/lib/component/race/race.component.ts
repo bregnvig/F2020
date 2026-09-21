@@ -42,8 +42,8 @@ export class RaceComponent {
   play: Signal<boolean>;
   clickable: Signal<boolean>;
   bids: Signal<(Bid | Participant)[] | undefined> = this.#store.bids;
-  isCompleted = computed(() => this.race().state === 'completed');
-  isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
+  isCompleted = computed(() => this.race()?.state === 'completed');
+  isLiveLive = computed(() => this.race()?.raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
   options: Signal<google.maps.MapOptions>;
 
   constructor() {
