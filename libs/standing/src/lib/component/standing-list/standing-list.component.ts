@@ -30,7 +30,8 @@ export class StandingListComponent {
 
   standings: Signal<IDriverStanding[]>;
 
-  constructor(snackBar: MatSnackBar) {
+  constructor() {
+    const snackBar = inject(MatSnackBar);
     const store = inject(StandingStore);
     store.loadStandings();
     this.standings = computed(() => [...(store.standings() ?? [])].sort((a, b) => b.points - a.points || a.driver.name.localeCompare(b.driver.name)));

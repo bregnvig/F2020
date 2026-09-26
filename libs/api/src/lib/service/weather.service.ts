@@ -34,7 +34,8 @@ export class WeatherService {
 
   readonly weather = this.#weather.asReadonly();
 
-  constructor(http: HttpClient) {
+  constructor() {
+    const http = inject(HttpClient);
     const store = inject(RacesStore);
     effect(() => {
       const race = store.currentRace();

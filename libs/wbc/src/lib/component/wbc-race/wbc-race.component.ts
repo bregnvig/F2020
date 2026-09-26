@@ -19,7 +19,8 @@ export class WbcRaceComponent {
 
   result: Signal<WBCResult>;
 
-  constructor(route: ActivatedRoute) {
+  constructor() {
+    const route = inject(ActivatedRoute);
     const store = inject(SeasonStore);
     const round = toSignal(route.params.pipe(map<Params, string>(params => params.round)));
     this.result = computed(() => store.season().wbc?.results.find(result => result.round === parseInt(round(), 10)));

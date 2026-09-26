@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { interval, Observable } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
@@ -15,7 +15,8 @@ export class VersionService {
 
   versionOK$: Observable<boolean>;
 
-  constructor(functions: Functions) {
+  constructor() {
+    const functions = inject(Functions);
     this.versionOK$ = interval(5000).pipe(
       switchMap(() => httpsCallable(functions, 'version')()),
       first(),

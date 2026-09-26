@@ -13,7 +13,8 @@ export class DriverPipe implements PipeTransform {
   #driver: IDriver;
   #drivers: IDriver[];
 
-  constructor(changeDetectorRef: ChangeDetectorRef) {
+  constructor() {
+    const changeDetectorRef = inject(ChangeDetectorRef);
     const store = inject(DriversStore);
     effect(() => {
       this.#drivers = store.drivers();

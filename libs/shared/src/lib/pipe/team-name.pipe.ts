@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
+import { ChangeDetectorRef, inject, Pipe, PipeTransform } from '@angular/core';
 import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
 
@@ -13,7 +13,9 @@ export class TeamNamePipe implements PipeTransform {
   #team?: ITeam;
   #teams?: ITeam[];
 
-  constructor(service: TeamService, changeDetectorRef: ChangeDetectorRef) {
+  constructor() {
+    const service = inject(TeamService);
+    const changeDetectorRef = inject(ChangeDetectorRef);
     service.teams$.subscribe(teams => {
       this.#teams = teams;
       changeDetectorRef.markForCheck();

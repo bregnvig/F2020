@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
 import { Player, Transaction } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable, scan, switchMap } from 'rxjs';
@@ -22,7 +22,8 @@ export class TransactionsComponent {
   });
   #lastDate$ = new BehaviorSubject<DateTime>(DateTime.local());
 
-  constructor(service: AccountService) {
+  constructor() {
+    const service = inject(AccountService);
     effect(() => {
       const player = this.player();
       player && (this.transactions$ = this.#lastDate$.pipe(

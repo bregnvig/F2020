@@ -47,10 +47,9 @@ export class StandingDriverComponent {
 
   icon = icon;
 
-  constructor(
-    route: ActivatedRoute,
-    service: StandingService,
-  ) {
+  constructor() {
+    const route = inject(ActivatedRoute);
+    const service = inject(StandingService);
     const store = inject(SeasonStore);
     this.driverId$ = route.params.pipe(map(params => params.driverId));
     const currentYear$ = toObservable(store.season).pipe(
