@@ -9,25 +9,25 @@ import { DriversStore } from '@f2020/api';
 })
 export class DriverNamePipe implements PipeTransform {
 
-  private previousCode: string;
-  private name: string;
-  private drivers: IDriver[];
+  #previousCode: string;
+  #name: string;
+  #drivers: IDriver[];
 
   constructor(changeDetectorRef: ChangeDetectorRef) {
     const store = inject(DriversStore);
     effect(() => {
-      this.drivers = store.drivers();
+      this.#drivers = store.drivers();
       changeDetectorRef.markForCheck();
     });
   }
 
   transform(driverId: string, ...args: unknown[]): unknown {
 
-    if (driverId && driverId !== this.previousCode && this.drivers?.length) {
-      this.previousCode = driverId;
-      this.name = this.drivers.find(d => d.driverId === driverId)?.name ?? driverId;
+    if (driverId && driverId !== this.#previousCode && this.#drivers?.length) {
+      this.#previousCode = driverId;
+      this.#name = this.#drivers.find(d => d.driverId === driverId)?.name ?? driverId;
     }
-    return this.name ?? driverId;
+    return this.#name ?? driverId;
   }
 
 }

@@ -9,6 +9,8 @@ import { ensureArray } from '@f2020/tools';
 })
 export class HasRoleDirective {
 
+  #templateRef = inject<TemplateRef<any>>(TemplateRef);
+  #viewContainer = inject(ViewContainerRef);
   #thenViewRef: EmbeddedViewRef<NgIfContext> | null = null;
   #elseViewRef: EmbeddedViewRef<NgIfContext> | null = null;
   #condition = false;
@@ -22,9 +24,7 @@ export class HasRoleDirective {
   });
 
 
-  constructor(
-    private templateRef: TemplateRef<any>,
-    private viewContainer: ViewContainerRef) {
+  constructor() {
     const { player } = inject(PlayerStore);
     effect(() => {
       this.#condition = (player()?.roles || []).some(r => this.roles().some(role => role === r));
@@ -40,16 +40,16 @@ export class HasRoleDirective {
   #updateView() {
     if (this.#condition) {
       if (!this.#thenViewRef) {
-        this.viewContainer.clear();
+        this.#viewContainer.clear();
         this.#elseViewRef = null;
-        this.#thenViewRef = this.viewContainer.createEmbeddedView(this.templateRef);
+        this.#thenViewRef = this.#viewContainer.createEmbeddedView(this.#templateRef);
       }
     } else {
       if (!this.#elseViewRef) {
-        this.viewContainer.clear();
+        this.#viewContainer.clear();
         this.#thenViewRef = null;
         if (this.elseTemplateRef()) {
-          this.#elseViewRef = this.viewContainer.createEmbeddedView(this.elseTemplateRef());
+          this.#elseViewRef = this.#viewContainer.createEmbeddedView(this.elseTemplateRef());
         }
       }
     }

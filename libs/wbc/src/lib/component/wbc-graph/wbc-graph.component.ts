@@ -25,7 +25,7 @@ export class WbcGraphComponent {
   activeEntries: Signal<GraphEntry[]>;
   playerEntries: Signal<WBCGraphEntry[]>;
 
-  private selected = signal<string[]>(JSON.parse(localStorage.getItem('selectedWBCPlayers')) ?? []);
+  #selected = signal<string[]>(JSON.parse(localStorage.getItem('selectedWBCPlayers')) ?? []);
 
   constructor() {
     const store = inject(SeasonStore);
@@ -34,15 +34,15 @@ export class WbcGraphComponent {
       name: e.player.displayName,
       series: e.entries,
     })));
-    this.activeEntries = computed(() => this.data()?.filter(e => this.selected().includes(e.name)));
-    effect(() => localStorage.setItem('selectedWBCPlayers', JSON.stringify(this.selected())));
+    this.activeEntries = computed(() => this.data()?.filter(e => this.#selected().includes(e.name)));
+    effect(() => localStorage.setItem('selectedWBCPlayers', JSON.stringify(this.#selected())));
     this.playerEntries = computed(() => [...graph()?.entries ?? []].sort((a, b) => b.points - a.points));
   }
 
   toggle(player: Player) {
-    this.selected.set(this.selected().some(name => name === player.displayName)
-      ? this.selected().filter(name => name !== player.displayName)
-      : [...this.selected(), player.displayName],
+    this.#selected.set(this.#selected().some(name => name === player.displayName)
+      ? this.#selected().filter(name => name !== player.displayName)
+      : [...this.#selected(), player.displayName],
     );
   }
 

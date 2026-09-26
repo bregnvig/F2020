@@ -22,29 +22,29 @@ export class PlayerApiService {
   #fcm = inject(FCMService);
 
   readonly player$: Observable<Player>;
-  private currentUser$ = new ReplaySubject<UserInfo | null>(1);
-  private auth = getAuth();
+  #currentUser$ = new ReplaySubject<UserInfo | null>(1);
+  #auth = getAuth();
 
   constructor() {
     this.player$ = merge(
-      this.currentUser$.pipe(
+      this.#currentUser$.pipe(
         filter(user => !!user?.uid),
         switchMap(user => docData(doc(this.#afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
         map(user => user as Player),
       ),
-      this.currentUser$.pipe(
+      this.#currentUser$.pipe(
         filter(user => !user || !(user?.uid)),
       ),
     );
-    getRedirectResult(this.auth).then(result => {
+    getRedirectResult(this.#auth).then(result => {
       if (result && result.user) {
-        this.updateBaseInformation(result.user).then(() => console.debug('Base information updated'));
+        this.#updateBaseInformation(result.user).then(() => console.debug('Base information updated'));
       }
     });
-    onAuthStateChanged(this.auth, async user => {
-      this.currentUser$.next(user ? ({ ...user }) : undefined);
+    onAuthStateChanged(this.#auth, async user => {
+      this.#currentUser$.next(user ? ({ ...user }) : undefined);
       if (user) {
-        await this.updateBaseInformation(user).then(() => isDevMode() && console.debug('Base information updated'));
+        await this.#updateBaseInformation(user).then(() => isDevMode() && console.debug('Base information updated'));
         await this.#fcm.setupMessaging().then(
           async token => {
             const player = await firstValueFrom(this.player$);
@@ -63,21 +63,21 @@ export class PlayerApiService {
 
 
   signInWithGoogle(): Promise<void> {
-    return signInWithRedirect(this.auth, new GoogleAuthProvider()).then(
+    return signInWithRedirect(this.#auth, new GoogleAuthProvider()).then(
       _ => console.debug('Signed in using google'),
       error => console.error('Unable to sign in', error),
     );
   }
 
   signInWithFacebook(): Promise<void> {
-    return signInWithRedirect(this.auth, new FacebookAuthProvider()).then(
+    return signInWithRedirect(this.#auth, new FacebookAuthProvider()).then(
       _ => console.debug('Signed in using facebook'),
       error => console.error('Unable to sign in', error),
     );
   }
 
   signOut(): Promise<void> {
-    return signOut(this.auth);
+    return signOut(this.#auth);
   }
 
   updatePlayer(partialPlayer: Partial<Player>): Observable<Partial<Player>> {
@@ -105,7 +105,7 @@ export class PlayerApiService {
     return true;
   }
 
-  private async updateBaseInformation(player: Player): Promise<void> {
+  async #updateBaseInformation(player: Player): Promise<void> {
     const _player = {
       uid: player.uid,
       displayName: player.displayName,

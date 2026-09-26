@@ -22,7 +22,7 @@ export class VersionService {
       map(result => result.data),
       map((expected: IVersion) => ({
         expected,
-        actual: this.getVersion()
+        actual: this.#getVersion()
       })),
       map(versions => {
         const uiOK = versions.actual.ui === versions.expected.ui;
@@ -36,7 +36,7 @@ export class VersionService {
     localStorage.setItem('version', JSON.stringify(version));
   }
 
-  private getVersion(): IVersion {
+  #getVersion(): IVersion {
     return JSON.parse(localStorage.getItem('version')) || {};
   }
 }

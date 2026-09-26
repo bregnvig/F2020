@@ -3,10 +3,10 @@ import { AbstractControl, ControlValueAccessor } from '@angular/forms';
 @Directive()
 export abstract class AbstractControlComponent<T> implements ControlValueAccessor {
 
-  private queue: any[] = [];
-  private _propagateChange: (_: T) => any;
-  private _propagateTouched: (_?: any) => any;
-  private readonly _uniqueId: string;
+  #queue: any[] = [];
+  #_propagateChange: (_: T) => any;
+  #_propagateTouched: (_?: any) => any;
+  readonly #_uniqueId: string;
 
   #setDisabledState: (_: boolean) => void;
   #markAllTouched: () => void;
@@ -18,17 +18,17 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
   }
 
   registerOnChange(fn: any): void {
-    this._propagateChange = fn;
-    if (this.queue.length) {
+    this.#_propagateChange = fn;
+    if (this.#queue.length) {
       let value;
-      while (value = this.queue.shift()) {
+      while (value = this.#queue.shift()) {
         this.propagateChange(value);
       }
     }
   }
 
   registerOnTouched(fn: any): void {
-    this._propagateTouched = fn;
+    this.#_propagateTouched = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -41,16 +41,16 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
 
 
   protected propagateChange(_: any): void {
-    if (this._propagateChange) {
-      this._propagateChange(_);
+    if (this.#_propagateChange) {
+      this.#_propagateChange(_);
     } else {
-      this.queue.push(_);
+      this.#queue.push(_);
     }
   }
 
   protected propagateTouched(): void {
-    if (this._propagateTouched) {
-      this._propagateTouched();
+    if (this.#_propagateTouched) {
+      this.#_propagateTouched();
     }
   }
 

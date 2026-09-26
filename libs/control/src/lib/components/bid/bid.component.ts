@@ -97,10 +97,10 @@ export class BidComponent extends AbstractControlComponent<Bid> {
 
   setDisabledState(isDisabled: boolean) {
     isDisabled ? this.fg.disable() : this.fg.enable();
-    this.disableByType();
+    this.#disableByType();
   }
 
-  private disableByType() {
+  #disableByType() {
     this.race().selectedTeam && this.fg.controls.selectedTeam.enable();
     if (this.isInterim()) {
       ['slowestPitStop', 'firstCrash', 'fastestDriver', 'podium'].forEach(name => this.fg.controls[name].disable());

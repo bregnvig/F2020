@@ -23,6 +23,8 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class JoinWbcComponent {
 
+  #snackBar = inject(MatSnackBar);
+
   @HostBinding('hidden') isHidden = true;
   latestWBCJoinDate: Signal<DateTime>;
   stillTimeToJoin: Signal<boolean>;
@@ -31,8 +33,7 @@ export class JoinWbcComponent {
   icon = icon.fasStar;
   readonly playerStore = inject(PlayerStore);
 
-  constructor(
-    private snackBar: MatSnackBar) {
+  constructor() {
     this.loading = this.playerStore.updatingWBC;
     const seasonStore = inject(SeasonStore);
     this.latestWBCJoinDate = computed(() => seasonStore.season()?.wbc?.latestWBCJoinDate);
@@ -51,7 +52,7 @@ export class JoinWbcComponent {
 
   joinWBC() {
     this.playerStore.joinWBC()
-      .then(() => firstValueFrom(this.snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', { duration: 5000 }).onAction()))
+      .then(() => firstValueFrom(this.#snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', { duration: 5000 }).onAction()))
       .then(() => this.playerStore.undoWBC());
   }
 

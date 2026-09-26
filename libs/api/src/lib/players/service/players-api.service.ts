@@ -12,13 +12,12 @@ import { converter } from '../../converter';
 })
 export class PlayersApiService {
 
+  #afs = inject(Firestore);
   #functions = inject(Functions);
   readonly #players$: Observable<Player[]>;
 
-  constructor(
-    private afs: Firestore,
-  ) {
-    this.#players$ = collectionData(collection(this.afs, 'players').withConverter(converter.timestamp<Player>())).pipe(
+  constructor() {
+    this.#players$ = collectionData(collection(this.#afs, 'players').withConverter(converter.timestamp<Player>())).pipe(
       map(players => players as Player[]),
     );
   }
@@ -28,7 +27,7 @@ export class PlayersApiService {
   }
 
   updatePlayer(uid: string, player: Partial<Player>): Promise<void> {
-    return updateDoc(doc(this.afs, `${PlayerApiService.playersURL}/${uid}`), player);
+    return updateDoc(doc(this.#afs, `${PlayerApiService.playersURL}/${uid}`), player);
   }
 
   deletePlayer(uid: string): Promise<true> {

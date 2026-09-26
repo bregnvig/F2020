@@ -27,6 +27,9 @@ export class EditPlayerComponent {
   #fb = inject(FormBuilder);
   #router = inject(Router);
   #store = inject(PlayersStore);
+  #route = inject(ActivatedRoute);
+  #service = inject(PlayersApiService);
+  #snackBar = inject(MatSnackBar);
   player = this.#store.player;
   fg = this.#fb.group({
     player: this.#fb.nonNullable.control<boolean>(false),
@@ -34,11 +37,7 @@ export class EditPlayerComponent {
     bankAdmin: this.#fb.nonNullable.control<boolean>(false),
   });
 
-  constructor(
-    private route: ActivatedRoute,
-    private service: PlayersApiService,
-    private snackBar: MatSnackBar,
-  ) {
+  constructor() {
     effect(() => {
       this.fg.reset({
         player: this.player()?.roles.includes('player') ?? false,
@@ -46,7 +45,7 @@ export class EditPlayerComponent {
         bankAdmin: this.player()?.roles.includes('bank-admin') ?? false,
       }, { emitEvent: false });
     });
-    this.route.params.pipe(
+    this.#route.params.pipe(
       map(params => params['id']),
       takeUntilDestroyed(),
     ).subscribe(uid => this.#store.setPlayer(uid));
@@ -55,15 +54,15 @@ export class EditPlayerComponent {
   updateRoles() {
     const value = Object.values(this.fg.value);
     const roles: Role[] = (['player', 'admin', 'bank-admin'] as Role[]).filter((_, index) => value[index]);
-    this.service.updatePlayer(this.player().uid, { roles: roles.length ? roles : ['anonymous'] }).then(
-      () => this.snackBar.open('Roller opdateret', null, { duration: 2000 }),
+    this.#service.updatePlayer(this.player().uid, { roles: roles.length ? roles : ['anonymous'] }).then(
+      () => this.#snackBar.open('Roller opdateret', null, { duration: 2000 }),
     );
   }
 
   deletePlayer() {
-    this.service.deletePlayer(this.player().uid)
+    this.#service.deletePlayer(this.player().uid)
       .then(() => this.#router.navigate(['/players']))
-      .then(() => this.snackBar.open('Spiller slettet', null, { duration: 2000 }));
+      .then(() => this.#snackBar.open('Spiller slettet', null, { duration: 2000 }));
   }
 
 }

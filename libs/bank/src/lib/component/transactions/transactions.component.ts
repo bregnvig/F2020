@@ -20,12 +20,12 @@ export class TransactionsComponent {
   player = input.required<string, Player>({
     transform: value => value?.uid,
   });
-  private lastDate$ = new BehaviorSubject<DateTime>(DateTime.local());
+  #lastDate$ = new BehaviorSubject<DateTime>(DateTime.local());
 
   constructor(service: AccountService) {
     effect(() => {
       const player = this.player();
-      player && (this.transactions$ = this.lastDate$.pipe(
+      player && (this.transactions$ = this.#lastDate$.pipe(
           switchMap(lastDate => service.getTransactions(player, lastDate, 20)),
           scan((acc, transactions) => [...acc, ...transactions], []),
         )
@@ -38,6 +38,6 @@ export class TransactionsComponent {
   }
 
   loadMore(transaction: Transaction) {
-    this.lastDate$.next(transaction.date);
+    this.#lastDate$.next(transaction.date);
   }
 }
