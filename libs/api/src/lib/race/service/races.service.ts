@@ -19,11 +19,8 @@ const bidConverter = converter.timestamp<Bid>();
 export class RacesService {
 
   #firestore = inject(Firestore);
-  #http = inject(HttpClient);
   #functions = inject(Functions);
-
   #openF1HttpService = inject(OpenF1HttpService);
-
 
   getRaces(seasonId: string): Observable<IRace[]> {
     return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races`).withConverter(converter.timestamp<IRace>())).pipe(
