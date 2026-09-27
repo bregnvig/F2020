@@ -15,12 +15,12 @@
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [href]="race().url" target="_blank">WIKI</a>
-        <div *shaHasRole="'admin'" class="flex-1 flex justify-between items-center">
+        <div *shaHasRole="'admin'" class="flex-1 flex items-center">
           @if (race().state !== 'completed') {
             <a
                 mat-button
-                routerLink="drivers">
-              DRIVERS
+                routerLink="teams">
+              HOLD
             </a>
           }
           @if (race().state === 'closed') {
@@ -78,9 +78,6 @@
             </mat-card-actions>
           }
         </mat-card>
-      }
-      @if (race().updatedBy?.length) {
-        <f2020-race-updated-warning [race]="race()"/>
       }
     }
   </sha-card-page>

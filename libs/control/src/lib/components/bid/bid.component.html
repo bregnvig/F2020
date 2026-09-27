@@ -11,7 +11,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (notBid() ? 1 : 0)" [race]="race()" [teams]="teams()"></f2020-select-drivers>
+          <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (notBid() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()"/>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #fastestDriver>
@@ -24,8 +24,8 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (notBid() ? 1 : 0)" [race]="race()" [teams]="teams()"
-                                [labelFn]="fastestLapLabelFn"></f2020-select-drivers>
+          <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (notBid() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()"
+                                [labelFn]="fastestLapLabelFn"/>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #podium>
@@ -38,8 +38,8 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult() ? 1 : 0)" [race]="race()" [teams]="teams()"
-                                [labelFn]="podiumLabelFn"></f2020-select-drivers>
+          <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()"
+                                [labelFn]="podiumLabelFn"/>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #selectedDriver>
@@ -99,8 +99,8 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult() ? 2 : 0)" [race]="race()" [teams]="teams()"
-                                [labelFn]="firstCrashLabelFn"></f2020-select-drivers>
+          <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult() ? 2 : 0)" [drivers]="drivers()" [teams]="teams()"
+                                [labelFn]="firstCrashLabelFn"/>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #time>

@@ -19,19 +19,13 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
-import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Settings } from 'luxon';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
 
-const materialModule = [
-  MatSidenavModule,
-  MatIconModule,
-  MatToolbarModule,
-  MatSnackBarModule,
-  MatButtonModule,
-];
+const materialModule = [MatSidenavModule, MatIconModule, MatToolbarModule, MatSnackBarModule, MatButtonModule];
 
 if (environment.production) {
   enableProdMode();
@@ -39,7 +33,8 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZonelessChangeDetection(), provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ anchorScrolling: 'enabled' })),
+    provideZonelessChangeDetection(),
+    provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     provideHttpClient(),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => {
@@ -61,14 +56,7 @@ bootstrapApplication(AppComponent, {
       return functions;
     }),
     provideMessaging(() => getMessaging()),
-    importProvidersFrom(
-      BrowserModule,
-      ServiceWorkerModule,
-      GoogleMapsModule,
-      materialModule,
-      FontAwesomeModule,
-      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    ),
+    importProvidersFrom(BrowserModule, ServiceWorkerModule, GoogleMapsModule, materialModule, ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })),
     {
       provide: LOCALE_ID,
       useValue: 'da',
@@ -76,16 +64,17 @@ bootstrapApplication(AppComponent, {
     DatePipe,
     DateTimePipe,
     provideAppInitializer(() => {
-      const initializerFn = (initializeFontAwesomeFactory)(inject(FaIconLibrary));
+      const initializerFn = initializeFontAwesomeFactory(inject(FaIconLibrary));
       return initializerFn();
     }),
     provideAnimations(),
   ],
-}).then(async () => {
-  if ('serviceWorker' in navigator && environment.production) {
-    await navigator.serviceWorker.register('ngsw-worker.js');
-  }
-  Settings.defaultLocale = 'da';
-  registerLocaleData(localeDa);
-
-}).catch(err => console.log(err));
+})
+  .then(async () => {
+    if ('serviceWorker' in navigator && environment.production) {
+      await navigator.serviceWorker.register('ngsw-worker.js');
+    }
+    Settings.defaultLocale = 'da';
+    registerLocaleData(localeDa);
+  })
+  .catch((err) => console.log(err));

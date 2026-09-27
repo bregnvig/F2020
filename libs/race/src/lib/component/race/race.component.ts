@@ -12,7 +12,6 @@ import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, L
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
-import { RaceUpdatedWarningComponent } from './updated-warning/race-updated-warning.component';
 
 const BaseGoogleMapOptions: google.maps.MapOptions = {
   zoomControl: false,
@@ -28,10 +27,25 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
   selector: 'f2020-race',
   templateUrl: './race.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UpperCasePipe, CardPageComponent, MatCardModule, GoogleMapsModule, MatButtonModule, RouterLink, HasRoleDirective, MatCheckboxModule, BidsComponent, RaceUpdatedWarningComponent, MatIconModule, LoadingComponent, FlagURLPipe, DateTimePipe, NgOptimizedImage, FaIconComponent],
+  imports: [
+    UpperCasePipe,
+    CardPageComponent,
+    MatCardModule,
+    GoogleMapsModule,
+    MatButtonModule,
+    RouterLink,
+    HasRoleDirective,
+    MatCheckboxModule,
+    BidsComponent,
+    MatIconModule,
+    LoadingComponent,
+    FlagURLPipe,
+    DateTimePipe,
+    NgOptimizedImage,
+    FaIconComponent,
+  ],
 })
 export class RaceComponent {
-
   downloadIcon = icon.farCloudArrowDown;
   plusIcon = icon.farPlus;
 
@@ -50,8 +64,7 @@ export class RaceComponent {
     const playerStore = inject(PlayerStore);
     this.options = computed(() => ({ ...BaseGoogleMapOptions, center: { lat: this.race()?.location.lat, lng: this.race()?.location.lng } }));
     this.play = computed(() => {
-      return this.race()?.close > DateTime.local()
-        && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);
+      return this.race()?.close > DateTime.local() && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);
     });
     this.clickable = computed(() => !this.play());
   }

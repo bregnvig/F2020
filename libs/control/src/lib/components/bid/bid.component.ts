@@ -31,13 +31,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       multi: true,
     },
   ],
-  imports: [CardPageComponent, ReactiveFormsModule, MatExpansionModule, DriverCodesComponent, SelectDriversComponent, SelectedDriverComponent, SelectedTeamComponent, SelectTeamsComponent, PolePositionTimeComponent, PolePositionTimePipe, TeamNamePipe, DriverNamePipe],
+  imports: [
+    CardPageComponent,
+    ReactiveFormsModule,
+    MatExpansionModule,
+    DriverCodesComponent,
+    SelectDriversComponent,
+    SelectedDriverComponent,
+    SelectedTeamComponent,
+    SelectTeamsComponent,
+    PolePositionTimeComponent,
+    PolePositionTimePipe,
+    TeamNamePipe,
+    DriverNamePipe,
+  ],
 })
 export class BidComponent extends AbstractControlComponent<Bid> {
-
   #fb = inject(FormBuilder);
 
   race = input.required<IRace>();
+  drivers = computed(() => this.race().drivers);
   teams = input.required<ITeam[]>();
   type = input.required<'bid' | 'result' | 'interim'>();
   isInterim = computed(() => this.type() === 'interim');
@@ -62,26 +75,26 @@ export class BidComponent extends AbstractControlComponent<Bid> {
 
   constructor() {
     super();
-    this.fg.valueChanges.pipe(
-      debounceTime(300),
-      takeUntilDestroyed(),
-    ).subscribe(value => this.propagateChange(value));
+    this.fg.valueChanges.pipe(debounceTime(300), takeUntilDestroyed()).subscribe(value => this.propagateChange(value));
     effect(() => this.isBid() && this.fg.controls.firstCrash.setValidators(Validators.required));
   }
 
   writeValue(value: Bid): void {
     if (value) {
-      this.fg.reset({
-        qualify: null,
-        fastestDriver: null,
-        podium: null,
-        selectedDriver: null,
-        selectedTeam: null,
-        firstCrash: null,
-        slowestPitStop: null,
-        polePositionTime: null,
-        ...value,
-      }, { emitEvent: false });
+      this.fg.reset(
+        {
+          qualify: null,
+          fastestDriver: null,
+          podium: null,
+          selectedDriver: null,
+          selectedTeam: null,
+          firstCrash: null,
+          slowestPitStop: null,
+          polePositionTime: null,
+          ...value,
+        },
+        { emitEvent: false },
+      );
     } else {
       this.fg.reset({}, { emitEvent: false });
     }
@@ -106,5 +119,4 @@ export class BidComponent extends AbstractControlComponent<Bid> {
       ['slowestPitStop', 'firstCrash', 'fastestDriver', 'podium'].forEach(name => this.fg.controls[name].disable());
     }
   }
-
 }

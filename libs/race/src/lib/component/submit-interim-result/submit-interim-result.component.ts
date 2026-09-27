@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,7 +35,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FaIconComponent],
 })
 export class SubmitInterimResultComponent {
-
   #store = inject(RaceStore);
   #router = inject(Router);
   #snackBar = inject(MatSnackBar);
@@ -47,8 +46,12 @@ export class SubmitInterimResultComponent {
   updating = signal(false);
   loading = signal(true);
 
-  constructor(teamsService: TeamService) {
-    this.teams = toSignal(teamsService.teams$);
+  constructor() {
+    const seasonTeams = toSignal(inject(TeamService).teams$);
+    this.teams = computed(() => {
+      const race = this.race();
+      return race ? race.teams ?? seasonTeams() : [];
+    });
     this.#store.loadInterimResult();
     effect(() => {
       const interimResult = this.#store.interimResult();

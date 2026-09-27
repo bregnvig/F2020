@@ -15,9 +15,7 @@ import { firstValueFrom } from 'rxjs';
 
 const raceResolver = () => {
   const store = inject(RaceStore);
-  return firstValueFrom(toObservable(store.race).pipe(
-    truthy(),
-  ));
+  return firstValueFrom(toObservable(store.race).pipe(truthy()));
 };
 
 const loadRace: CanActivateFn = (route: ActivatedRouteSnapshot) => {
@@ -35,9 +33,7 @@ export const RaceRouting: Routes = [
     path: ':round',
     component: RaceOutletComponent,
     providers: [RaceStore],
-    canActivate: [
-      loadRace,
-    ],
+    canActivate: [loadRace],
     children: [
       {
         path: '',
@@ -77,7 +73,7 @@ export const RaceRouting: Routes = [
         },
       },
       {
-        path: 'drivers',
+        path: 'teams',
         component: RaceDriversComponent,
       },
     ],

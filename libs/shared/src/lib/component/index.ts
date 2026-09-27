@@ -4,3 +4,4 @@ export * from './loading/loading.component';
 export * from './login/login.component';
 export * from './logout/logout.component';
 export * from './sidebar/sidebar.component';
+export * from './teams/teams-list';

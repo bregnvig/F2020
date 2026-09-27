@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
-import { RaceStore, TeamService } from '@f2020/api';
+import { RaceStore } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
@@ -27,7 +27,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
           <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result"></f2020-bid>
         }
         <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="!validResult()" (click)="submitResult()">
-          <fa-icon [icon]="uploadIcon" size="lg"/>
+          <fa-icon [icon]="uploadIcon" size="lg" />
         </button>
       }
       @if (!loaded() || !downloaded()) {
@@ -38,8 +38,6 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
   imports: [MatToolbarModule, BidComponent, ReactiveFormsModule, MatButtonModule, MatIconModule, LoadingComponent, FaIconComponent],
 })
 export class SubmitResultComponent {
-
-  #teamsService = inject(TeamService);
   #store = inject(RaceStore);
   #snackBar = inject(MatSnackBar);
   #router = inject(Router);
@@ -47,21 +45,27 @@ export class SubmitResultComponent {
   resultControl = new FormControl<Bid | null>(null);
   race: Signal<IRace> = this.#store.race;
   loaded: Signal<boolean> = computed(() => (this.#store.loaded() && !!this.#store.result()) || !!this.#store.error());
-  teams: Signal<ITeam[]> = toSignal(this.#teamsService.teams$);
+  teams: Signal<ITeam[]> = this.#store.teams;
   uploadIcon = icon.farCloudArrowUp;
   validResult: Signal<boolean>;
   downloaded = signal(false);
 
   constructor() {
     const result = toSignal(this.resultControl.valueChanges);
-    this.validResult = computed(() => !!(result()?.qualify?.length === 7
-      && (result()?.fastestDriver ?? []).filter(Boolean).length === 2
-      && (result()?.podium ?? []).filter(Boolean).length === 4
-      && result()?.selectedDriver && result()?.selectedDriver.grid && result()?.selectedDriver.finish
-      && (result()?.slowestPitStop ?? []).filter(Boolean).length === 2
-      && result()?.polePositionTime),
+    this.validResult = computed(
+      () =>
+        !!(
+          result()?.qualify?.length === 7 &&
+          (result()?.fastestDriver ?? []).filter(Boolean).length === 2 &&
+          (result()?.podium ?? []).filter(Boolean).length === 4 &&
+          result()?.selectedDriver &&
+          result()?.selectedDriver.grid &&
+          result()?.selectedDriver.finish &&
+          (result()?.slowestPitStop ?? []).filter(Boolean).length === 2 &&
+          result()?.polePositionTime
+        ),
     );
-    this.#store.loadResult();
+    void this.#store.loadResult();
     effect(() => {
       const result = this.#store.result();
       if (result) {

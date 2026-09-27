@@ -1,8 +1,8 @@
 import { computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Bid, IDriver, IRace, Participant } from '@f2020/data';
-import { truthy } from '@f2020/tools';
+import { Bid, IDriver, IRace, ITeam, Participant } from '@f2020/data';
+import { requiredValue, truthy } from '@f2020/tools';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -21,7 +21,9 @@ export interface RaceState {
   race: IRace | undefined;
   bids: Participant[] | Bid[] | undefined;
   bid?: Bid;
+  /** @deprecated Use teams **/
   drivers?: IDriver[];
+  teams?: ITeam[];
   interimResult: Partial<Bid> | undefined;
   result: Bid | undefined;
   loaded: boolean; // has the Races list been loaded
@@ -37,18 +39,15 @@ const initialState: RaceState = {
   error: undefined,
 };
 
-// @ts-ignore
 export const RaceStore = signalStore(
   withState(initialState),
-  withComputed((
-    { bids, race },
-    playerStore = inject(PlayerStore),
-    driversStore = inject(DriversStore),
-  ) => ({
-    bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)) as any,
-    drivers: computed(() => driversStore?.drivers()?.filter(driver => race()?.drivers.includes(driver.driverId))) as any ?? [],
+  withComputed(({ bids, race }, playerStore = inject(PlayerStore), driversStore = inject(DriversStore), teams = inject(TeamService).teams) => ({
+    bid: computed(() => bids()?.find(bid => bid.player.uid === playerStore.player()?.uid)),
+    drivers: computed(() => driversStore?.drivers()?.filter(driver => race()?.drivers.includes(driver.driverId)) ?? []),
+    teams: computed(() => race()?.teams ?? teams()),
   })),
-  withMethods((
+  withMethods(
+    (
       store,
       service = inject(RacesService),
       racesStore = inject(RacesStore),
@@ -66,13 +65,15 @@ export const RaceStore = signalStore(
         pipe(
           filter(() => !playerStore.unauthorized()),
           tap(() => patchState(store, { loaded: false })),
-          switchMap(round => combineLatest({
-            race: races$.pipe(
-              map(races => races?.find(r => r.round.toString(10) === round)),
-              truthy(),
-            ),
-            isBidSubmitted: submittedBid$,
-          })),
+          switchMap(round =>
+            combineLatest({
+              race: races$.pipe(
+                map(races => races?.find(r => r.round.toString(10) === round)),
+                truthy(),
+              ),
+              isBidSubmitted: submittedBid$,
+            }),
+          ),
           map(({ race, isBidSubmitted }) => {
             const closed = race.close < DateTime.now();
             return {
@@ -82,11 +83,11 @@ export const RaceStore = signalStore(
           }),
           switchMap(({ race, type }) => {
             const season = seasonStore.season();
-            return ((type === 'participants')
-              ? service.getParticipants(season.id, race)
-              : service.getBids(season.id, race).pipe(
-                map(bids => bids.filter(bid => type !== 'closed' || bid.submitted)),
-              )).pipe(
+            return (
+              type === 'participants'
+                ? service.getParticipants(season.id, race)
+                : service.getBids(season.id, race).pipe(map(bids => bids.filter(bid => type !== 'closed' || bid.submitted)))
+            ).pipe(
               tapResponse({
                 next: bids => patchState(store, { race, bids, loaded: true, error: undefined }),
                 error: error => patchState(store, { error: error?.toString() }),
@@ -106,9 +107,19 @@ export const RaceStore = signalStore(
         if (race) {
           try {
             const raceResult = await firstValueFrom(service.getResult(race, store.drivers()).pipe(reportError()));
-            const qualify = await firstValueFrom(timer(200).pipe(switchMap(() => service.getQualify(race, store.drivers())), reportError()));
-            const teams = await firstValueFrom(timer(200).pipe(switchMap(() => teamsService.teams$), reportError()));
-            const pitStops = await firstValueFrom(timer(200).pipe(switchMap(() => service.getPitStops(race, store.drivers(), teams)), reportError()));
+            const qualify = await firstValueFrom(
+              timer(200).pipe(
+                switchMap(() => service.getQualify(race, store.drivers())),
+                reportError(),
+              ),
+            );
+            const teams = requiredValue(store.teams(), 'Teams)';
+            const pitStops = await firstValueFrom(
+              timer(200).pipe(
+                switchMap(() => service.getPitStops(race, store.drivers(), teams)),
+                reportError(),
+              ),
+            );
             const result = buildResult(raceResult, qualify, pitStops, race.selectedDriver, race.selectedTeam);
             result && patchState(store, { result });
           } catch (error) {
@@ -120,13 +131,12 @@ export const RaceStore = signalStore(
       loadInterimResult: async (): Promise<void> => {
         const race = store.race();
         if (race) {
-          const interimResult = await firstValueFrom(service.getQualify(race, store.drivers()).pipe(
-            map(qualify => buildInterimResult(qualify, race.selectedDriver, race.selectedTeam)),
-          )).catch(error => patchState(store, { error, loaded: true }));
+          const interimResult = await firstValueFrom(
+            service.getQualify(race, store.drivers()).pipe(map(qualify => buildInterimResult(qualify, race.selectedDriver, race.selectedTeam))),
+          ).catch(error => patchState(store, { error, loaded: true }));
           interimResult && patchState(store, { interimResult });
         }
       },
-      updateDrivers: (drivers: string[]) => service.updateRace(seasonStore.season().id, store.race().round, { drivers }),
       updateBid: (bid: Bid) => {
         if (bid && seasonStore.season() && playerStore.player()) {
           return service.updateBid(seasonStore.season().id, store.race().round, playerStore.player(), bid);
@@ -136,11 +146,12 @@ export const RaceStore = signalStore(
       submitBid: (bid: Bid) => service.submitBid(bid, playerStore.player()),
       submitResult: (result: Bid) => service.submitResult(store.race().round, result),
       submitInterimResult: (result: Bid) => service.submitInterimResult(result),
-      rollback: () => service.rollbackResult(store.race().round).then(() => snackBar.open(`✔ Resultat for ${store.race().name} er blevet rullet tilbage`, null, { duration: 3000 })),
+      rollback: () =>
+        service.rollbackResult(store.race().round).then(() => snackBar.open(`✔ Resultat for ${store.race().name} er blevet rullet tilbage`, null, { duration: 3000 })),
       standings: () => service.updateStandings(store.race()).then(() => snackBar.open(`✔ Køre resultat for ${store.race().name} er blevet opdateret`, null, { duration: 3000 })),
       cancel: () => service.cancelRace(store.race().round).then(() => snackBar.open(`✔ ${store.race().name} er blevet aflyst`, null, { duration: 3000 })),
-      update: (race: IRace) => service.updateRaceV2(race).then(() => snackBar.open(`✔ ${race.name} er blevet opdateret`, null, { duration: 3000 })),
+      update: (race: IRace, suppressToast = false) =>
+        service.updateRaceV2(race).then(() => !suppressToast && snackBar.open(`✔ ${race.name} er blevet opdateret`, null, { duration: 3000 })),
     }),
   ),
 );
-
