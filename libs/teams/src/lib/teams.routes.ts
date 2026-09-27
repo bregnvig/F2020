@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { TeamsListComponent } from './component/teams-list/teams-list.component';
+import { SeasonTeams } from './component/season-teams/season-teams';
 
 export const TeamsRoutes: Routes = [
   {
     path: '',
-    component: TeamsListComponent,
+    component: SeasonTeams,
   },
 ];
