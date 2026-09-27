@@ -1,12 +1,12 @@
 <mat-toolbar color="primary">
-  <span>Hold</span>
+  <span>{{ header() }}</span>
 </mat-toolbar>
 <sha-card-page>
 
-  @if (teams$ | async; as teams) {
+  @if (teams(); as teams) {
     <mat-list>
       @for (team of teams; track team.constructorId; ) {
-        <h2 matSubheader>
+        <h2 [class.!mt-2]="!$first" matSubheader>
           {{ team.name }}
           @if (team.points) {
             <span class="float-right mr-4"> {{ team.points }} point</span>
@@ -50,7 +50,7 @@
           </p>
         </mat-list-item>
         @if (!$last) {
-          <mat-divider/>
+          <mat-divider class="mt-2"/>
         }
       }
     </mat-list>
