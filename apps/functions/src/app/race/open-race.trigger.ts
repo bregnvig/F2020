@@ -18,7 +18,7 @@ export const openRace = onDocumentUpdated('seasons/{seasonId}/races/{round}', as
       .collection(collectionPaths.races(season.id!))
       .where('state', '==', 'open')
       .get()
-      .then(snapshot => snapshot.empty)
+      .then(snapshot => snapshot.empty),
   );
 
   if ((noOpenRaces && before.state === 'closed' && after.state === 'completed') || (after.state === 'cancelled' && requiredStateToOpenCancelled.includes(before.state))) {
@@ -36,7 +36,7 @@ export const openRace = onDocumentUpdated('seasons/{seasonId}/races/{round}', as
             log(`Opening ${nextRace.name}`);
             return updateRace(nextRace.season, nextRace.round, { state: 'open' });
           }
-        })
+        }),
     );
   }
 });
@@ -48,7 +48,7 @@ const getSelectedDriver = (countryCode: string, drivers: IDriver[]) => {
 
 const createRaceTeams = (drivers: IDriver[], teams: ITeam[]): ITeam[] => {
   const teamDrivers = Object.groupBy(drivers, d => d.teamName);
-  return teams.map(t => ({
+  return teams.filter(t => teamDrivers[t.name]).map(t => ({
     ...t,
     previousDrivers: [],
     drivers: teamDrivers[t.name].map(d => d.driverId),
