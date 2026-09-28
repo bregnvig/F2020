@@ -54,7 +54,6 @@ export const RaceStore = signalStore(
       races$ = toObservable(inject(RacesStore).races),
       playerStore = inject(PlayerStore),
       seasonStore = inject(SeasonStore),
-      teamsService = inject(TeamService),
       snackBar = inject(MatSnackBar),
       submittedBid$ = toObservable(racesStore.yourBid).pipe(
         map(bid => !!bid?.submitted),
@@ -113,7 +112,7 @@ export const RaceStore = signalStore(
                 reportError(),
               ),
             );
-            const teams = requiredValue(store.teams(), 'Teams)';
+            const teams = requiredValue(store.teams(), 'Teams');
             const pitStops = await firstValueFrom(
               timer(200).pipe(
                 switchMap(() => service.getPitStops(race, store.drivers(), teams)),

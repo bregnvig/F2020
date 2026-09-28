@@ -45,7 +45,6 @@ export class EnterBidComponent {
     const racesService = inject(RacesService);
     const playerId = inject(PlayerStore).player().uid;
     this.race = this.#store.race;
-    const seasonTeams = toSignal(teamsService.teams$);
     this.teams = this.#store.teams;
     this.isOpen = computed(() => this.#store.race()?.close >= DateTime.local());
 
