@@ -34,8 +34,7 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
             [teams]="teams()"
             [label]="labelFn()($index + 1)"
             [error]="errorMessage($index)"
-            [formControlName]="$index">
-          </f2020-select-team>
+            [formControlName]="$index" />
         </ng-container>
       }
     </div>

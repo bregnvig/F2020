@@ -18,10 +18,10 @@ import { LastYearResultComponent } from './last-year-result.component';
   <div class="max-w-3xl mx-auto">
     <mat-tab-group>
       <mat-tab label="Kvalifikation">
-        <f2020-last-year-qualify [qualifyResult]="round().qualify"></f2020-last-year-qualify>
+        <f2020-last-year-qualify [qualifyResult]="round().qualify" />
       </mat-tab>
       <mat-tab label="Resultat">
-        <f2020-last-year-result [raceResult]="round().result"></f2020-last-year-result>
+        <f2020-last-year-result [raceResult]="round().result" />
       </mat-tab>
     </mat-tab-group>
   </div>

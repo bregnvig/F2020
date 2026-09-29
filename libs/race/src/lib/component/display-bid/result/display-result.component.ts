@@ -15,7 +15,7 @@ import { DisplayBidComponent } from '../display-bid.component';
         <span class="ml-2" matListItemTitle>Resultat {{ race().name }}</span>
       </mat-toolbar>
       <div class="py-3">
-        <f2020-display-bid [bid]="race().result" [race]="race()"></f2020-display-bid>
+        <f2020-display-bid [bid]="race().result" [race]="race()" />
       </div>
     } @else {
       <sha-loading/>

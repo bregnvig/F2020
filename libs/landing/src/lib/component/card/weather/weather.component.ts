@@ -18,7 +18,7 @@ import { MatCardModule } from '@angular/material/card';
           <div class="flex flex-col md:flex-row md:justify-around">
             @for (day of days(); track day.date.toISODate()) {
               <div>
-                <f2020-weather-day [day]="day"></f2020-weather-day>
+                <f2020-weather-day [day]="day" />
               </div>
             }
           </div>

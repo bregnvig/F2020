@@ -22,7 +22,7 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
         <span class="flex-auto">{{ player().displayName }}</span><span>{{ player().balance | currency: 'DKK' }}</span>
       </mat-toolbar>
     }
-    <f2020-transactions [player]="player()"></f2020-transactions>
+    <f2020-transactions [player]="player()" />
     @if (player()) {
       <mat-toolbar class="fixed bottom-0 flex flex-row">
         <button class="my-auto flex-auto" mat-button (click)="openDeposit(player())">Indsæt</button>

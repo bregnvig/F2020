@@ -24,7 +24,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
     <div class="max-width">
       @if (loaded()) {
         @if (race()) {
-          <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result"></f2020-bid>
+          <f2020-bid [formControl]="resultControl" [race]="race()" [teams]="teams()" type="result" />
         }
         <button mat-fab color="primary" aria-label="Indsend resultat" [disabled]="!validResult()" (click)="submitResult()">
           <fa-icon [icon]="uploadIcon" size="lg" />

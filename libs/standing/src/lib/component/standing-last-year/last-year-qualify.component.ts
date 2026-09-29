@@ -15,7 +15,7 @@ import { NgOptimizedImage } from '@angular/common';
           <h5 matListItemTitle class="flex flex-row justify-between">{{ result.driver.name }}</h5>
           <p matListItemMeta class="!text-base !text-white">{{ result.position }}</p>
           <p matListItemLine>
-            <f2020-qualifying-times [qualifying]="result"></f2020-qualifying-times>
+            <f2020-qualifying-times [qualifying]="result" />
           </p>
         </mat-list-item>
       }

@@ -6,7 +6,7 @@
           <mat-panel-title>Kvalifikation</mat-panel-title>
           @if (!qualifyPanel.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('qualify').value"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="fg.get('qualify').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -19,7 +19,7 @@
           <mat-panel-title>Hurtigste kører</mat-panel-title>
           @if (!fastestDriver.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('fastestDriver').value"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="fg.get('fastestDriver').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -33,7 +33,7 @@
           <mat-panel-title>Podium</mat-panel-title>
           @if (!podium.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('podium').value"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="fg.get('podium').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -53,7 +53,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-selected-driver formControlName="selectedDriver" [race]="race()"></f2020-selected-driver>
+          <f2020-selected-driver formControlName="selectedDriver" [race]="race()" />
         </div>
       </mat-expansion-panel>
       @if (race().selectedTeam; as team) {
@@ -62,12 +62,12 @@
             <mat-panel-title>Hvem er bedst for {{ team.name }}</mat-panel-title>
             @if (!selectedTeam.expanded) {
               <mat-panel-description>
-                <f2020-driver-codes [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]"></f2020-driver-codes>
+                <f2020-driver-codes [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]" />
               </mat-panel-description>
             }
           </mat-expansion-panel-header>
           <div>
-            <f2020-selected-team formControlName="selectedTeam" [team]="team"></f2020-selected-team>
+            <f2020-selected-team formControlName="selectedTeam" [team]="team" />
           </div>
         </mat-expansion-panel>
       }
@@ -81,12 +81,12 @@
                   <span>, </span>
                 }{{ team | teamName }}
               }
-              <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-teams formControlName="slowestPitStop" [teams]="teams()" [noOfTeams]="1 + (isResult() ? 1 : 0)"></f2020-select-teams>
+          <f2020-select-teams formControlName="slowestPitStop" [teams]="teams()" [noOfTeams]="1 + (isResult() ? 1 : 0)" />
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #firstCrash>
@@ -94,7 +94,7 @@
           <mat-panel-title>Første udgået</mat-panel-title>
           @if (!firstCrash.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('firstCrash').value"></f2020-driver-codes>
+              <f2020-driver-codes [driverIds]="fg.get('firstCrash').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -113,7 +113,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-pole-position-time formControlName="polePositionTime"></f2020-pole-position-time>
+          <f2020-pole-position-time formControlName="polePositionTime" />
         </div>
       </mat-expansion-panel>
     </mat-accordion>
