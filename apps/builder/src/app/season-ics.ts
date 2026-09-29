@@ -6,7 +6,7 @@ import { requiredValue, StringUtils } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { getDrivers } from './drivers-openf1';
 import { Weather } from '@f2020/openf1';
-import { firestore } from 'firebase-admin';
+import { Transaction } from 'firebase-admin/firestore';
 import { WriteResult } from '@google-cloud/firestore';
 import { converter } from './converter';
 import { humanize } from './humanizer';
@@ -15,7 +15,6 @@ import { buildResults, MeetingResult } from './build-results';
 
 import { resolveCircuit } from './circuit.resolver';
 import { cachedFetch } from './cached-fetch';
-import Transaction = firestore.Transaction;
 
 export const buildLastYear = async (seasonId: number) => {
 

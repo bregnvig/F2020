@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import { readCollection } from './write-document';
 
-import { firestore } from 'firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 import { firebaseApp } from './firebase';
 
 const plainCollections = [
@@ -56,7 +56,7 @@ function convertTimestampsInPlace(obj) {
         '_nanoseconds' in currentObj[key]
       ) {
         // Convert to Firestore Timestamp in-place
-        currentObj[key] = new firestore.Timestamp(
+        currentObj[key] = new Timestamp(
           currentObj[key]._seconds,
           currentObj[key]._nanoseconds,
         );

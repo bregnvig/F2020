@@ -1,12 +1,12 @@
 import { IRace } from '@f2020/data';
-import { firestore } from 'firebase-admin';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { firestoreUtils } from './firestore-utils';
 export const converter = {
-  toFirestore(race: IRace): firestore.DocumentData {
+  toFirestore(race: IRace): DocumentData {
     return firestoreUtils.convertDateTimes(race);
   },
   fromFirestore(
-    snapshot: firestore.QueryDocumentSnapshot,
+    snapshot: QueryDocumentSnapshot,
   ): IRace {
     const data = snapshot.data()!;
     return firestoreUtils.convertTimestamps(data);

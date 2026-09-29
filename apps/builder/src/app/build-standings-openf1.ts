@@ -1,9 +1,8 @@
 import { firebaseApp } from './firebase';
 import { IDriverQualifying, IDriverRaceResult, IQualifyResult, IRaceResult } from '@f2020/data';
 import { requiredValue } from '@f2020/tools';
-import { firestore } from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { buildResults } from './build-results';
-import FieldValue = firestore.FieldValue;
 
 export const buildStandings = async (seasonId: number, year: number) => {
 
