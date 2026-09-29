@@ -13,11 +13,33 @@ const baseOptions: google.maps.MapOptions = {
   mapTypeId: 'roadmap',
 };
 
+/** A wide dark line under the track, so it stands out on any part of the map */
+const outlineOptions: google.maps.PolylineOptions = {
+  strokeColor: '#212121',
+  strokeOpacity: 0.9,
+  strokeWeight: 10,
+  clickable: false,
+  zIndex: 1,
+};
+
 const trackOptions: google.maps.PolylineOptions = {
   strokeColor: '#e15e00',
-  strokeOpacity: 0.7,
+  strokeOpacity: 0.9,
   strokeWeight: 6,
   clickable: false,
+  zIndex: 2,
+  // Arrows in the racing direction. The symbol points up, which the map rotates to follow the line
+  icons: [{
+    icon: {
+      path: 'M 0,-2 L 1.5,1.5 L -1.5,1.5 Z',
+      fillColor: '#ffffff',
+      fillOpacity: 1,
+      strokeWeight: 0,
+      scale: 2.5,
+    },
+    offset: '40px',
+    repeat: '120px',
+  }],
 };
 
 const sameCenter = (a: google.maps.MapOptions, b: google.maps.MapOptions) =>
@@ -36,6 +58,7 @@ const sameCenter = (a: google.maps.MapOptions, b: google.maps.MapOptions) =>
       [options]="options()"
       (mapInitialized)="googleMap.set($event)">
       @if (track.hasValue()) {
+        <map-polyline [path]="track.value()" [options]="outlineOptions" />
         <map-polyline [path]="track.value()" [options]="trackOptions" />
       }
     </google-map>
@@ -49,6 +72,7 @@ const sameCenter = (a: google.maps.MapOptions, b: google.maps.MapOptions) =>
 export class RaceMapComponent {
   race = input.required<IRace>();
 
+  protected outlineOptions = outlineOptions;
   protected trackOptions = trackOptions;
   // Only changes when the location does, as every change to the options resets the center and zoom of the map
   protected options = computed(

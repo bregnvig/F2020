@@ -12,11 +12,18 @@ interface TrackFeature {
   geometry: { type: 'LineString', coordinates: [number, number][] };
 }
 
+/**
+ * Circuits whose outline in the dataset runs against the racing direction, so the direction arrows would point backwards.
+ * Found by comparing the winding of each outline with OpenF1 car positions. Marina Bay is raced anticlockwise.
+ */
+const reversedTracks = new Set([61]);
+
 const round = (value: number) => Math.round(value * 1e6) / 1e6;
 
 /**
  * Writes the outline of every circuit with a trackId to `{outDir}/{circuitId}.json`, as an array of { lat, lng }.
- * The UI draws it as a polyline on the race map. The outline is closed, so the polyline forms a loop.
+ * The UI draws it as a polyline on the race map. The outline is closed, so the polyline forms a loop,
+ * and runs in the racing direction, so the map can show direction arrows along it.
  */
 export const buildTracks = async (outDir: string): Promise<number> => {
   const circuits: Circuit[] = JSON.parse(readFileSync(assetPath('circuits.json')).toString());
@@ -33,6 +40,7 @@ export const buildTracks = async (outDir: string): Promise<number> => {
       return count;
     }
     const path: Coordinate[] = feature.geometry.coordinates.map(([lng, lat]) => ({ lat: round(lat), lng: round(lng) }));
+    reversedTracks.has(circuit.circuitId) && path.reverse();
     const [first, last] = [path[0], path.at(-1)];
     if (first.lat !== last.lat || first.lng !== last.lng) {
       path.push(first);
