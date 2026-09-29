@@ -1,16 +1,5 @@
 [
   {
-    "circuitId": 63,
-    "circuitName": "Albert Park Circuit",
-    "name": "Bahrain Grand Prix",
-    "countryCode2": "AU",
-    "countryCode3": "AUS",
-    "location": {
-      "lat": -37.8497,
-      "lng": 144.968
-    }
-  },
-  {
     "circuitId": 39,
     "circuitName": "Autodromo Nazionale di Monza",
     "name": "Italian Grand Prix",
@@ -19,7 +8,8 @@
     "location": {
       "lat": 45.6156,
       "lng": 9.2811
-    }
+    },
+    "trackId": "it-1922"
   },
   {
     "circuitId": 22,
@@ -30,7 +20,8 @@
     "location": {
       "lat": 43.7347,
       "lng": 7.4206
-    }
+    },
+    "trackId": "mc-1929"
   },
   {
     "circuitId": 2,
@@ -41,7 +32,8 @@
     "location": {
       "lat": 52.0786,
       "lng": -1.0169
-    }
+    },
+    "trackId": "gb-1948"
   },
   {
     "circuitId": 7,
@@ -52,7 +44,8 @@
     "location": {
       "lat": 50.4372,
       "lng": 5.9714
-    }
+    },
+    "trackId": "be-1925"
   },
   {
     "circuitId": 46,
@@ -63,7 +56,8 @@
     "location": {
       "lat": 34.8431,
       "lng": 136.541
-    }
+    },
+    "trackId": "jp-1962"
   },
   {
     "circuitId": 9,
@@ -74,7 +68,8 @@
     "location": {
       "lat": 30.1328,
       "lng": -97.6411
-    }
+    },
+    "trackId": "us-2012"
   },
   {
     "circuitId": 70,
@@ -85,7 +80,8 @@
     "location": {
       "lat": 24.4672,
       "lng": 54.6031
-    }
+    },
+    "trackId": "ae-2009"
   },
   {
     "circuitId": 63,
@@ -96,7 +92,8 @@
     "location": {
       "lat": 26.0325,
       "lng": 50.5106
-    }
+    },
+    "trackId": "bh-2002"
   },
   {
     "circuitId": 4,
@@ -107,7 +104,8 @@
     "location": {
       "lat": 47.5789,
       "lng": 19.2486
-    }
+    },
+    "trackId": "hu-1986"
   },
   {
     "circuitId": 19,
@@ -118,7 +116,8 @@
     "location": {
       "lat": 47.2197,
       "lng": 14.7647
-    }
+    },
+    "trackId": "at-1969"
   },
   {
     "circuitId": 23,
@@ -129,7 +128,8 @@
     "location": {
       "lat": 45.5,
       "lng": -73.5228
-    }
+    },
+    "trackId": "ca-1978"
   },
   {
     "circuitId": 6,
@@ -140,7 +140,8 @@
     "location": {
       "lat": 49.3278,
       "lng": 8.5658
-    }
+    },
+    "trackId": "de-1932"
   },
   {
     "circuitId": 5,
@@ -151,18 +152,8 @@
     "location": {
       "lat": 50.3356,
       "lng": 6.9475
-    }
-  },
-  {
-    "circuitId": 144,
-    "circuitName": "Sochi Autodrom",
-    "name": "Russian Grand Prix",
-    "countryCode2": "RU",
-    "countryCode3": "RUS",
-    "location": {
-      "lat": 43.4057,
-      "lng": 39.9578
-    }
+    },
+    "trackId": "de-1927"
   },
   {
     "circuitId": 14,
@@ -173,7 +164,8 @@
     "location": {
       "lat": -23.7036,
       "lng": -46.6997
-    }
+    },
+    "trackId": "br-1940"
   },
   {
     "circuitId": 61,
@@ -184,7 +176,8 @@
     "location": {
       "lat": 1.2914,
       "lng": 103.864
-    }
+    },
+    "trackId": "sg-2008"
   },
   {
     "circuitId": 149,
@@ -193,9 +186,10 @@
     "countryCode2": "SA",
     "countryCode3": "SAU",
     "location": {
-      "lat": 21.4858,
-      "lng": 39.1925
-    }
+      "lat": 21.6377,
+      "lng": 39.1037
+    },
+    "trackId": "sa-2021"
   },
   {
     "circuitId": 151,
@@ -206,7 +200,8 @@
     "location": {
       "lat": 25.958,
       "lng": -80.2389
-    }
+    },
+    "trackId": "us-2022"
   },
   {
     "circuitId": 144,
@@ -217,7 +212,8 @@
     "location": {
       "lat": 40.3725,
       "lng": 49.8533
-    }
+    },
+    "trackId": "az-2016"
   },
   {
     "circuitId": 15,
@@ -228,7 +224,8 @@
     "location": {
       "lat": 41.57,
       "lng": 2.2611
-    }
+    },
+    "trackId": "es-1991"
   },
   {
     "circuitId": 55,
@@ -239,7 +236,8 @@
     "location": {
       "lat": 52.3889,
       "lng": 4.5408
-    }
+    },
+    "trackId": "nl-1948"
   },
   {
     "circuitId": 152,
@@ -248,9 +246,10 @@
     "countryCode2": "US",
     "countryCode3": "USA",
     "location": {
-      "lat": 36.1699,
-      "lng": -115.1398
-    }
+      "lat": 36.1167,
+      "lng": -115.1666
+    },
+    "trackId": "us-2023"
   },
   {
     "circuitId": 150,
@@ -261,7 +260,8 @@
     "location": {
       "lat": 25.49,
       "lng": 51.4542
-    }
+    },
+    "trackId": "qa-2004"
   },
   {
     "circuitId": 65,
@@ -272,7 +272,8 @@
     "location": {
       "lat": 19.4061,
       "lng": -99.0925
-    }
+    },
+    "trackId": "mx-1962"
   },
   {
     "circuitId": 10,
@@ -283,7 +284,8 @@
     "location": {
       "lat": -37.8497,
       "lng": 144.968
-    }
+    },
+    "trackId": "au-1953"
   },
   {
     "circuitId": 49,
@@ -294,7 +296,8 @@
     "location": {
       "lat": 31.3389,
       "lng": 121.22
-    }
+    },
+    "trackId": "cn-2004"
   },
   {
     "circuitId": 40,
@@ -305,7 +308,8 @@
     "location": {
       "lat": 44.3439,
       "lng": 11.7167
-    }
+    },
+    "trackId": "it-1953"
   },
   {
     "circuitId": 153,
@@ -316,7 +320,8 @@
     "location": {
       "lat": 40.4669,
       "lng": -3.6192
-    }
+    },
+    "trackId": "es-2026"
   },
   {
     "circuitId": 12,
@@ -327,6 +332,7 @@
     "location": {
       "lat": 2.7606,
       "lng": 101.7381
-    }
+    },
+    "trackId": "my-1999"
   }
 ]

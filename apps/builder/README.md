@@ -56,6 +56,14 @@ npx nx serve builder                                    # dry run: prints what w
 npx nx serve builder --args=--write --watch=false       # writes circuits and races, then exits
 ```
 
+### Track outlines for the race map
+
+```sh
+npx nx serve builder --args=--tracks --watch=false
+```
+
+This writes the outline of every circuit in `src/assets/circuits.json` to `apps/ui/src/assets/tracks/{circuitId}.json`, which the race page draws on the map. The outlines come from [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits) (MIT). Each circuit's `trackId` is its id in that dataset. It doesn't touch Firestore. Rerun it when you add a circuit, and commit the generated files.
+
 ### Against the emulator
 
 The Admin SDK only uses the emulator when `FIRESTORE_EMULATOR_HOST` is set. **Without it, the builder writes to the real Firebase project from the service-account key.**

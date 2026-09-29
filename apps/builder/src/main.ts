@@ -5,6 +5,9 @@ import { buildNewSeason } from './app/season-ics';
 import { initCache } from './app/cached-fetch';
 import { updateSeasonFromCalendar } from './app/update-season';
 import { assetPath } from './app/assets';
+import { buildTracks } from './app/tracks';
+import { join } from 'path';
+import { existsSync } from 'fs';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -61,15 +64,26 @@ buildDrivers()
   .then(() => console.log('Season built'));
 */
 
-// Rebuild the races after the last started race from an updated calendar. Dry run unless --write is passed.
-const write = process.argv.includes('--write');
-(write ? buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits)) : Promise.resolve())
-  .then(() => updateSeasonFromCalendar(seasonId, assetPath(`f${seasonId}.ics`), write))
-  .then(() => console.log('Season updated'))
-  .catch(error => {
-    console.error('Season update failed', error);
-    process.exitCode = 1;
-  });
+if (process.argv.includes('--tracks')) {
+  // Write the track outlines for the race map into the UI's assets. Run from the workspace root, as nx serve does.
+  const uiAssets = join(process.cwd(), 'apps/ui/src/assets');
+  (existsSync(uiAssets) ? buildTracks(join(uiAssets, 'tracks')) : Promise.reject(`${uiAssets} not found. Run from the workspace root`))
+    .then(count => console.log(`Wrote ${count} tracks`))
+    .catch(error => {
+      console.error('Building tracks failed', error);
+      process.exitCode = 1;
+    });
+} else {
+  // Rebuild the races after the last started race from an updated calendar. Dry run unless --write is passed.
+  const write = process.argv.includes('--write');
+  (write ? buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits)) : Promise.resolve())
+    .then(() => updateSeasonFromCalendar(seasonId, assetPath(`f${seasonId}.ics`), write))
+    .then(() => console.log('Season updated'))
+    .catch(error => {
+      console.error('Season update failed', error);
+      process.exitCode = 1;
+    });
+}
 
 /*
 */

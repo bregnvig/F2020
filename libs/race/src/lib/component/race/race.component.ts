@@ -1,6 +1,5 @@
 import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
-import { GoogleMapsModule } from '@angular/google-maps';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,16 +11,7 @@ import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, L
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { BidsComponent } from '../bids/bids.component';
-
-const BaseGoogleMapOptions: google.maps.MapOptions = {
-  zoomControl: false,
-  scrollwheel: false,
-  fullscreenControl: false,
-  streetViewControl: true,
-  mapTypeControl: false,
-  zoom: 15,
-  mapTypeId: 'roadmap',
-};
+import { RaceMapComponent } from './map/race-map.component';
 
 @Component({
   selector: 'f2020-race',
@@ -31,7 +21,6 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
     UpperCasePipe,
     CardPageComponent,
     MatCardModule,
-    GoogleMapsModule,
     MatButtonModule,
     RouterLink,
     HasRoleDirective,
@@ -43,6 +32,7 @@ const BaseGoogleMapOptions: google.maps.MapOptions = {
     DateTimePipe,
     NgOptimizedImage,
     FaIconComponent,
+    RaceMapComponent,
   ],
 })
 export class RaceComponent {
@@ -58,11 +48,9 @@ export class RaceComponent {
   bids: Signal<(Bid | Participant)[] | undefined> = this.#store.bids;
   isCompleted = computed(() => this.race()?.state === 'completed');
   isLiveLive = computed(() => this.race()?.raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
-  options: Signal<google.maps.MapOptions>;
 
   constructor() {
     const playerStore = inject(PlayerStore);
-    this.options = computed(() => ({ ...BaseGoogleMapOptions, center: { lat: this.race()?.location.lat, lng: this.race()?.location.lng } }));
     this.play = computed(() => {
       return this.race()?.close > DateTime.local() && !(this.bids() ?? []).some(bid => bid.player.uid === playerStore.player()?.uid && bid.submitted);
     });
