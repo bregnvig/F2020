@@ -1,9 +1,9 @@
-@if (lastYear()) {
-  <mat-card class="max-w-3xl">
-    <mat-card-header>
-      <fa-icon mat-card-avatar [icon]="icon" size="2x"/>
-      <mat-card-title>Sidste år</mat-card-title>
-    </mat-card-header>
+<mat-card class="max-w-3xl">
+  <mat-card-header>
+    <fa-icon mat-card-avatar [icon]="icon" size="2x"/>
+    <mat-card-title>Sidste år</mat-card-title>
+  </mat-card-header>
+  @if (lastYear()) {
     <mat-card-content>
       <p>
         Sidste år endte
@@ -24,5 +24,15 @@
         SE MERE
       </a>
     </mat-card-actions>
-  </mat-card>
-}
+  } @else {
+    <mat-card-content>
+      Der var ikke noget løb her sidste år! Men måske der har været et
+      @if (url(); as url) {
+        <a [href]="url" target="_blank">løb</a>
+      } @else {
+        løb
+      }
+      her i fortiden?🧐
+    </mat-card-content>
+  }
+</mat-card>

@@ -54,6 +54,7 @@ export const updateSeasonFromCalendar = async (seasonId: number, icsFile: string
     }
     const mapped = mapper.race(cr.circuit, undefined, {
       raceStart: cr.raceStart,
+      url: cr.url,
       state: 'waiting',
       close: cr.close,
       round,
