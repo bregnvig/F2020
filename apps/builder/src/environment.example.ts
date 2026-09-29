@@ -1,11 +1,10 @@
 /**
- * Template for apps/builder/src/environment/environment.ts (and environment.prod.ts), which are git-ignored.
- * Copy this file into apps/builder/src/environment/ and fill in the values. Never commit the real files.
+ * Template for apps/builder/src/environment/environment.ts, which is git-ignored.
+ * Copy this file to apps/builder/src/environment/environment.ts and fill in the values. Never commit the real files.
  */
 import { ServiceAccount } from 'firebase-admin/app';
 
 export const environment: {
-  production: boolean;
   /** Season to build, e.g. '2026'. Parsed with parseInt in main.ts */
   season: string;
   /**
@@ -21,7 +20,6 @@ export const environment: {
     project: string;
   };
 } = {
-  production: false,
   season: '2026',
   firebase: {
     type: 'service_account',

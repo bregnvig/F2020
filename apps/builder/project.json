@@ -23,28 +23,12 @@
         "esbuildOptions": {
           "logLevel": "info"
         }
-      },
-      "configurations": {
-        "production": {
-          "minify": true,
-          "fileReplacements": [
-            {
-              "replace": "apps/builder/src/environment/environment.ts",
-              "with": "apps/builder/src/environment/environment.prod.ts"
-            }
-          ]
-        }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "builder:build"
-      },
-      "configurations": {
-        "production": {
-          "buildTarget": "builder:build:production"
-        }
       }
     },
     "lint": {

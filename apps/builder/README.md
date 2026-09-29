@@ -27,11 +27,13 @@ npx nx serve builder --args="--purge-cache"
 
 ## Configuration
 
-Copy `src/environment.example.ts` to `src/environment/environment.ts`, and to `environment.prod.ts` for the production configuration, then fill in:
+Copy `src/environment.example.ts` to `src/environment/environment.ts` and fill in:
 
 - `season`: the season to build, e.g. `'2026'`
 - `firebase`: a service-account key. Get it from Firebase console → Project settings → Service accounts → Generate new private key.
 - `openai`: `apiKey`, `organization` and `project`
+
+`environment.ts` is the only environment file the builder uses. To target another Firebase project, change the service-account key in it.
 
 The `src/environment/` folder is git-ignored. Never commit the real files.
 
@@ -56,11 +58,10 @@ If the project IDs don't match, the data is written to a different emulator name
 
 ### Against a real project
 
-Make sure `FIRESTORE_EMULATOR_HOST` is **not** set (`unset FIRESTORE_EMULATOR_HOST`). Then run:
+Put the service-account key of the target project in `environment.ts`. Make sure `FIRESTORE_EMULATOR_HOST` is **not** set (`unset FIRESTORE_EMULATOR_HOST`). Then run:
 
 ```sh
-npx nx serve builder                           # development environment.ts
-npx nx serve builder --configuration=production  # environment.prod.ts
+npx nx serve builder
 ```
 
 ## Data model
