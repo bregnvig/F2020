@@ -4,7 +4,7 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import { IRace } from '@f2020/data';
 
 const baseOptions: google.maps.MapOptions = {
-  zoomControl: false,
+  zoomControl: true,
   scrollwheel: false,
   fullscreenControl: false,
   streetViewControl: true,
