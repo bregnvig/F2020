@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { collection, collectionData, Firestore, limit, orderBy, query, Timestamp, where } from '@angular/fire/firestore';
 import { Transaction } from '@f2020/data';
 import { Functions, httpsCallable } from '@angular/fire/functions';
@@ -8,9 +8,7 @@ import { map } from 'rxjs/operators';
 import { converter } from '@f2020/api';
 
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AccountService {
 
   static readonly transactionsURL = 'transactions';

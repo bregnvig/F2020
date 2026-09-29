@@ -1,11 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { getToken, Messaging } from '@angular/fire/messaging';
 import { firstValueFrom } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class FCMService {
 
 

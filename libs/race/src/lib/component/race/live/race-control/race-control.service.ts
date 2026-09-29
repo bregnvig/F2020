@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RACE_RESULT_SERVICE } from '@f2020/api';
@@ -7,7 +7,7 @@ import { withLength } from '@f2020/tools';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
 import { RaceControlSnackbarComponent } from './race-control-snackbar.component';
 
-@Injectable()
+@Service({ autoProvided: false })
 export class RaceControlService {
   #snackBar = inject(MatSnackBar);
   #live = inject(RACE_RESULT_SERVICE);

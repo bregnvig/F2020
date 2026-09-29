@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Service, OnDestroy } from '@angular/core';
 import { Interval, Lap, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -46,7 +46,7 @@ const topics = {
   stints: 'v1/stints',
 };
 
-@Injectable()
+@Service({ autoProvided: false })
 export class OpenF1WSSService implements OnDestroy {
 
   #openF1Http = inject(OpenF1HttpService);

@@ -1,4 +1,4 @@
-import { inject, Injectable, isDevMode } from '@angular/core';
+import { inject, Service, isDevMode } from '@angular/core';
 import { FacebookAuthProvider, getAuth, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signInWithRedirect, signOut, UserInfo } from '@angular/fire/auth';
 import { arrayUnion, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
@@ -10,9 +10,7 @@ import { converter } from '../../converter';
 
 const playerConverter = converter.timestamp<Player>();
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PlayerApiService {
 
   static readonly playersURL = 'players';

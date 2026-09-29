@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { IRace } from '@f2020/data';
 import { GridPosition, Interval, Lap, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
@@ -11,9 +11,7 @@ const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-
 const sessionCache = new Map<string, Observable<Session>>();
 const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class OpenF1HttpService {
   #functions = inject(Functions);
   #http = inject(HttpClient);

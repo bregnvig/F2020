@@ -1,10 +1,10 @@
 import { Observable } from 'rxjs';
-import { inject, Injectable } from "@angular/core";
+import { inject, Service } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { GithubContributor } from '../model/github.model';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Service({ autoProvided: false })
 export class GithubService {
 
   #http = inject(HttpClient);

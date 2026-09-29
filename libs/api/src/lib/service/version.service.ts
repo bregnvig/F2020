@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Service } from "@angular/core";
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { interval, Observable } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
@@ -8,9 +8,7 @@ export interface IVersion {
   api?: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class VersionService {
 
   versionOK$: Observable<boolean>;

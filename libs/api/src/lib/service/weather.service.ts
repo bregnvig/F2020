@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { effect, inject, Service, signal, WritableSignal } from '@angular/core';
 import { Coordinate } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { map } from 'rxjs/operators';
@@ -25,9 +25,7 @@ export interface WeatherDay {
   description: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class WeatherService {
 
   #weather: WritableSignal<WeatherDay[]> = signal([]);

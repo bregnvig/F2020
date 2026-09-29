@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import {
   IDriver,
   IDriverGridPosition,
@@ -38,7 +38,7 @@ const mergeLaps = (previousLaps: Lap[], currentLaps: Lap[]) => {
   );
 };
 
-@Injectable()
+@Service({ autoProvided: false })
 export class LiveResultService extends RaceResultService {
   #openF1HttpService = inject(OpenF1HttpService);
   #openF1WSSService = inject(OpenF1WSSService);

@@ -1,12 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { collection, collectionData, Firestore } from '@angular/fire/firestore';
 import { IDriver } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map, share } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DriverService {
 
   readonly drivers$: Observable<IDriver[]>;

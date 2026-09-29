@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { collection, collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
@@ -13,9 +13,7 @@ import { firestoreWebUtils } from '../../firestore-utils';
 
 const bidConverter = converter.timestamp<Bid>();
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class RacesService {
 
   #firestore = inject(Firestore);

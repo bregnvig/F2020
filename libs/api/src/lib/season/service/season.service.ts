@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { collection, collectionData, doc, docData, Firestore, query, where } from '@angular/fire/firestore';
 import { ISeason } from '@f2020/data';
 import { Observable } from 'rxjs';
@@ -7,9 +7,7 @@ import { converter } from '../../converter';
 
 const seasonConverter = converter.timestamp<ISeason>();
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class SeasonService {
 
   static readonly seasonsURL = 'seasons';

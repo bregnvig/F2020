@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { collection, collectionData, doc, Firestore, updateDoc } from '@angular/fire/firestore';
 import { Player } from '@f2020/data';
 import { Observable } from 'rxjs';
@@ -7,9 +7,7 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 import { map } from 'rxjs/operators';
 import { converter } from '../../converter';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PlayersApiService {
 
   #afs = inject(Firestore);
