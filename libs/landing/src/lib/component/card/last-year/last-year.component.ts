@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { RacesStore } from '@f2020/api';
 import { RoundResult } from '@f2020/data';
 import { icon, PolePositionTimePipe } from '@f2020/shared';
@@ -21,6 +21,7 @@ export class LastYearComponent {
 
   constructor() {
     const store = inject(RacesStore);
+    effect(() => store.currentRace() && store.loadLastYear());
     this.url = computed(() => store.currentRace()?.url);
     this.lastYear = store.lastYear;
   }
