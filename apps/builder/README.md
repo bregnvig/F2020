@@ -39,7 +39,22 @@ The `src/environment/` folder is git-ignored. Never commit the real files.
 
 ## Running
 
-What gets built is decided in `src/main.ts`. By default it builds drivers, circuits and then the season from `environment.season`.
+What gets built is decided in `src/main.ts`. Right now it updates the remaining races of the season from an updated calendar. The full season build (drivers, circuits, season, last year and standings) is commented out.
+
+### Updating the remaining races of a season
+
+`update-season.ts` reads `src/assets/f{{season}}-updated.ics`. It finds the last race in Firestore that has started, and rewrites the calendar races after it from the next round onwards. Existing races with those round numbers are overwritten, and leftover rounds after the new last round are deleted.
+
+- It refuses to overwrite races that are `closed`, `completed` or `cancelled`, and to delete races that aren't `waiting` or that have bids.
+- An `open` race gets the new circuit and dates, but keeps its state, drivers, teams, selections and bids.
+- The season document, teams, last year and standings are left untouched.
+
+It's a dry run unless you pass `--write`:
+
+```sh
+npx nx serve builder                                    # dry run: prints what would change
+npx nx serve builder --args=--write --watch=false       # writes circuits and races, then exits
+```
 
 ### Against the emulator
 

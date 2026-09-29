@@ -1,9 +1,5 @@
-import { readFileSync } from 'fs';
-import { parseIcsCalendar, VCalendar } from 'ts-ics';
 import { firebaseApp } from './firebase';
 import { Circuit, IDriver, IRace, ISeason, mapper } from '@f2020/data';
-import { requiredValue, StringUtils } from '@f2020/tools';
-import { DateTime } from 'luxon';
 import { getDrivers } from './drivers-openf1';
 import { Weather } from '@f2020/openf1';
 import { Transaction } from 'firebase-admin/firestore';
@@ -12,8 +8,8 @@ import { converter } from './converter';
 import { humanize } from './humanizer';
 import { buildStandings } from './build-standings-openf1';
 import { buildResults, MeetingResult } from './build-results';
-
-import { resolveCircuit } from './circuit.resolver';
+import { readCalendarRaces } from './calendar';
+import { assetPath } from './assets';
 import { cachedFetch } from './cached-fetch';
 
 export const buildLastYear = async (seasonId: number) => {
@@ -56,12 +52,6 @@ export const buildLastYear = async (seasonId: number) => {
   });
 };
 
-interface SeasonRace {
-  circuit: Circuit,
-  close: DateTime,
-  raceStart: DateTime,
-}
-
 const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
   console.log('Building teams', drivers.length);
   const allDrivers = await getDrivers().then(
@@ -96,10 +86,6 @@ const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
 };
 
 export const buildNewSeason = async (seasonId: number) => {
-  const icsCalendarString = readFileSync(`assets/f${seasonId}.ics`, 'utf8');
-  const calendarParsed: VCalendar = parseIcsCalendar(icsCalendarString);
-
-
   const circuits = await firebaseApp.database.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
   const drivers = await getDrivers('latest').then(async latest => {
     const existing = await firebaseApp.database.collection('drivers').get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
@@ -111,25 +97,7 @@ export const buildNewSeason = async (seasonId: number) => {
     return candidates[Math.floor(Math.random() * candidates.length)] ?? drivers[Math.floor(Math.random() * drivers.length)];
   };
 
-  const isTesting = /.*TESTING 20.*/;
-  const isPracticeOne = /.*Practice ?1$/;
-  const isRace = /.*- Race$/i;
-
-  const events = calendarParsed.events
-    .filter(e => isPracticeOne.test(e.summary) && !isTesting.test(e.summary))
-    .sort((a, b) => a.start.date.getTime() - b.start.date.getTime());
-
-  const calenderRaces = await events.reduce(async (accPromise, event) => {
-    const acc = await accPromise;
-    const raceName = /FORMULA 1(.*) -/.exec(event.summary)?.[1]?.replace(/\d{4}$/, '').trim();
-    const race = requiredValue(calendarParsed.events.find(e => isRace.test(e.summary) && /FORMULA 1(.*) - /.exec(e.summary)?.[1]?.replace(/\d{4}$/, '').trim() === raceName), raceName);
-    const circuit = await resolveCircuit(event.summary, event.location, circuits);
-    return [...acc, {
-      circuit: { ...circuit, name: StringUtils.titleCase(raceName) },
-      close: DateTime.fromJSDate(event.start.date),
-      raceStart: DateTime.fromJSDate(race.start.date),
-    } as SeasonRace];
-  }, Promise.resolve([] as SeasonRace[]));
+  const calenderRaces = await readCalendarRaces(assetPath(`f${seasonId}.ics`), circuits);
 
   let previous: IRace | undefined;
   console.log('Building season', seasonId, calenderRaces.length);

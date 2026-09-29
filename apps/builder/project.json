@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/builder",
         "main": "apps/builder/src/main.ts",
         "tsConfig": "apps/builder/tsconfig.app.json",
-        "assets": ["apps/builder/src/assets"],
+        "assets": [{ "input": "apps/builder/src/assets", "glob": "**/*", "output": "assets" }],
         "generatePackageJson": true,
         "platform": "node",
         "bundle": true,

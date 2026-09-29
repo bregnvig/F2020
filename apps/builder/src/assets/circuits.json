@@ -317,5 +317,16 @@
       "lat": 40.4669,
       "lng": -3.6192
     }
+  },
+  {
+    "circuitId": 12,
+    "circuitName": "Sepang International Circuit",
+    "name": "Malaysian Grand Prix",
+    "countryCode2": "MY",
+    "countryCode3": "MYS",
+    "location": {
+      "lat": 2.7606,
+      "lng": 101.7381
+    }
   }
 ]

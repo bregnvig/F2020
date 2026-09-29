@@ -21,6 +21,7 @@ const countryNameMap: Record<string, string> = {
   'hungary': 'HUN',
   'italy': 'ITA',
   'japan': 'JPN',
+  'malaysia': 'MYS',
   'mexico': 'MEX',
   'monaco': 'MCO',
   'netherlands': 'NLD',
@@ -62,8 +63,13 @@ export const resolveCircuit = async (summary: string, location: string, circuits
   }
 
   // 2. Try automatic resolution
+  // Only consider circuits in the event's country, when it is known. Otherwise a race such as
+  // "Bahrain Grand Prix in Malaysia" matches the Bahrain circuit by name.
+  const countryCircuits = circuits.filter(c => c.countryCode3 === countryNameMap[locationNormalized]);
+  const candidates = countryCircuits.length ? countryCircuits : circuits;
+
   // Pass 1: Strong match - race name or location contains circuit name or race name
-  let found = circuits.find(c => {
+  let found = candidates.find(c => {
     const name = normalize(c.name);
     const circuitName = normalize(c.circuitName);
     return raceName.includes(name) || locationNormalized.includes(name) ||
@@ -72,7 +78,7 @@ export const resolveCircuit = async (summary: string, location: string, circuits
 
   // Pass 2: Weaker match - circuit name or race name contains location (e.g. Location "Monaco" in "Monaco Grand Prix")
   if (!found && locationNormalized.length > 2) {
-    found = circuits.find(c => {
+    found = candidates.find(c => {
       const name = normalize(c.name);
       const circuitName = normalize(c.circuitName);
       return name.includes(locationNormalized) || circuitName.includes(locationNormalized);

@@ -2,10 +2,11 @@
 import { Circuit } from '@f2020/data';
 import { firebaseApp } from './firebase';
 import { readFileSync } from 'fs';
+import { assetPath } from './assets';
 
 
 const getCircuits = (): Circuit[] => {
-  return JSON.parse(readFileSync('assets/circuits.json').toString());
+  return JSON.parse(readFileSync(assetPath('circuits.json')).toString());
 };
 
 export const buildCircuits = async (): Promise<number> => {

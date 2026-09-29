@@ -3,6 +3,8 @@ import { buildDrivers } from './app/drivers-openf1';
 import { buildCircuits } from './app/circuits';
 import { buildNewSeason } from './app/season-ics';
 import { initCache } from './app/cached-fetch';
+import { updateSeasonFromCalendar } from './app/update-season';
+import { assetPath } from './app/assets';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -51,15 +53,23 @@ console.log(`Building season ${seasonId}`);
 // await writeFirestore().then(() => console.log('Copied'));
 // })();
 /*
-*/
 buildDrivers()
   .then(count => console.log(`Wrote ${count} drivers`))
   .then(() => buildCircuits())
   .then(numberOfCircuits => console.log('Circuits built', numberOfCircuits))
   .then(() => buildNewSeason(seasonId))
   .then(() => console.log('Season built'));
-/*
 */
+
+// Rebuild the races after the last started race from an updated calendar. Dry run unless --write is passed.
+const write = process.argv.includes('--write');
+(write ? buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits)) : Promise.resolve())
+  .then(() => updateSeasonFromCalendar(seasonId, assetPath(`f${seasonId}-updated.ics`), write))
+  .then(() => console.log('Season updated'))
+  .catch(error => {
+    console.error('Season update failed', error);
+    process.exitCode = 1;
+  });
 
 /*
 */
