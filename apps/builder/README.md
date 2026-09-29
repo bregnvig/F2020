@@ -43,7 +43,7 @@ What gets built is decided in `src/main.ts`. Right now it updates the remaining 
 
 ### Updating the remaining races of a season
 
-`update-season.ts` reads `src/assets/f{{season}}-updated.ics`. It finds the last race in Firestore that has started, and rewrites the calendar races after it from the next round onwards. Existing races with those round numbers are overwritten, and leftover rounds after the new last round are deleted.
+`update-season.ts` reads `src/assets/f{{season}}.ics`. Replace that file with the latest calendar from F1 before running it. It finds the last race in Firestore that has started, and rewrites the calendar races after it from the next round onwards. Existing races with those round numbers are overwritten, and leftover rounds after the new last round are deleted.
 
 - It refuses to overwrite races that are `closed`, `completed` or `cancelled`, and to delete races that aren't `waiting` or that have bids.
 - An `open` race gets the new circuit and dates, but keeps its state, drivers, teams, selections and bids.

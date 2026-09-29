@@ -64,7 +64,7 @@ buildDrivers()
 // Rebuild the races after the last started race from an updated calendar. Dry run unless --write is passed.
 const write = process.argv.includes('--write');
 (write ? buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits)) : Promise.resolve())
-  .then(() => updateSeasonFromCalendar(seasonId, assetPath(`f${seasonId}-updated.ics`), write))
+  .then(() => updateSeasonFromCalendar(seasonId, assetPath(`f${seasonId}.ics`), write))
   .then(() => console.log('Season updated'))
   .catch(error => {
     console.error('Season update failed', error);
