@@ -34,7 +34,7 @@ export class FCMService {
                   serviceWorkerRegistration,
                 }).then(token => {
                   isAlreadyGranted && console.debug('Already granted', token);
-                  resolve(isAlreadyGranted ? undefined : token);
+                  resolve(token);
                 }).catch(error => reject(error)));
               },
             );
