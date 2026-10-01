@@ -17,35 +17,34 @@ interface WeekendInfo {
   raceBasis: IRaceBasis;
 }
 
-const findDriverIdFn = (drivers: IDriverStanding[]) =>
-  (driverNumber: number): string =>
-    drivers.find(d => d.driver.activeNumber === driverNumber)?.driver.driverId;
+const findDriverFn = (drivers: IDriver[]) =>
+  (driverNumber: number): IDriver | undefined =>
+    drivers.find(d => d.activeNumber === driverNumber);
 
 export const setStandings = async (race: IRace) => {
   const season = await currentSeason();
   const token = requiredValue(await openF1Api.token(), 'Token')?.access_token;
   const weekendInfo = await getWeekendInfo(token, season.id, race);
   await setDriverStatistics(weekendInfo)
-    .then(results => setDriverStandings(token, season.id, race, results))
+    .then(results => setDriverStandings(weekendInfo, race, results))
     .then(() => setTeamsStanding(weekendInfo));
 };
 
-const setDriverStandings = async (token: string, seasonId: string, race: IRace, results: IDriverRaceResult[]) => {
+const setDriverStandings = async ({ token, seasonId, drivers, raceSession }: WeekendInfo, race: IRace, results: IDriverRaceResult[]) => {
   const db = getFirestore();
   const allDrivers = await db
     .doc(documentPaths.standing.allDriver(seasonId))
     .get()
     .then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
-  const sprintWinner = await sprintRaceWinner(token, seasonId, race.circuitId, allDrivers.standing);
-  const newDriverStanding = await driverStandings(token, seasonId, race.circuitId, allDrivers.standing);
-  const raceWinner = newDriverStanding.find(s => s.win)?.driverId;
-  const standing: IDriverStanding[] = results.map(r => {
-    const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
-    const newStanding = newDriverStanding.find(({ driverId }) => driverId === r.driver.driverId);
-    const wins = (previous?.wins ?? 0) + (previous.driver.driverId === sprintWinner ? 1 : 0) + (previous.driver.driverId === raceWinner ? 1 : 0);
+  const sprintWinner = await sprintRaceWinner(token, seasonId, race.circuitId, drivers);
+  const raceWinner = results.find(r => r.position === 1)?.driver.driverId;
+  const championship = await driverStandings(token, raceSession, drivers);
+  const standing: IDriverStanding[] = championship.map(({ driver, points }) => {
+    const previous = allDrivers.standing.find(s => s.driver.driverId === driver.driverId);
+    const wins = (previous?.wins ?? 0) + (driver.driverId === sprintWinner ? 1 : 0) + (driver.driverId === raceWinner ? 1 : 0);
     return {
-      driver: r.driver,
-      points: newStanding.points,
+      driver,
+      points,
       wins,
     };
   });
@@ -96,7 +95,7 @@ const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
     .then(() => raceResult.results);
 };
 
-const sprintRaceWinner = async (token: string, seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<string | undefined> => {
+const sprintRaceWinner = async (token: string, seasonId: string, circuitId: number, drivers: IDriver[]): Promise<string | undefined> => {
   let session: Session = undefined;
   try {
     session = await openF1Api.session(token, seasonId, circuitId, 'Sprint');
@@ -106,37 +105,25 @@ const sprintRaceWinner = async (token: string, seasonId: string, circuitId: numb
 
   if (!session) return undefined;
 
-  const positions = await openF1Api.championDriverPoints(token, session.session_key);
+  const results = await openF1Api.sessionResults(token, session.session_key);
+  const winner = results.find(r => r.position === 1);
 
-  const findDriverId = findDriverIdFn(drivers);
-
-  return findDriverId(positions.find(p => p.points_current - p.points_start === 8).driver_number);
+  return winner ? findDriverFn(drivers)(winner.driver_number)?.driverId : undefined;
 };
 
-const driverStandings = async (token: string, seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<{
-  driverId: string,
-  points: number,
-  win: boolean
-}[] | undefined> => {
-  let session: Session = undefined;
-  try {
-    session = await openF1Api.session(token, seasonId, circuitId, 'Race');
-  } catch {
-    // Ignore
-  }
+const driverStandings = async (token: string, raceSession: Session, drivers: IDriver[]): Promise<{ driver: IDriver; points: number }[]> => {
+  const positions = await openF1Api.championDriverPoints(token, raceSession.session_key);
+  const findDriver = findDriverFn(drivers);
 
-  if (!session) throw new Error(`Unable to find driver point for circuit id ${circuitId}`);
-
-  const positions = await openF1Api.championDriverPoints(token, session.session_key);
-
-  const findDriverId = findDriverIdFn(drivers);
-
-  return positions.map(p => ({
-    driverId: findDriverId(p.driver_number),
-    points: p.points_current,
-    position: p.position_current,
-    win: p.points_current - p.points_start === 25,
-  }));
+  return positions
+    .map(p => ({ driver: findDriver(p.driver_number), points: p.points_current, driverNumber: p.driver_number }))
+    .filter(({ driver, driverNumber }) => {
+      if (!driver) {
+        logger.warn(`No driver with number ${driverNumber}`);
+      }
+      return !!driver;
+    })
+    .map(({ driver, points }) => ({ driver, points }));
 };
 
 const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) => {

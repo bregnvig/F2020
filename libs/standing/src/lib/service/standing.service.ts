@@ -13,7 +13,6 @@ export class StandingService {
   getStandings(seasonId: string | number): Observable<IDriverStanding[]> {
     return docData(doc(this.#afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[]; }>())).pipe(
       map(({ standing }) => standing as IDriverStanding[]),
-      map(standings => standings.map(s => ({ ...s, points: Object.values(s.pointsByRace).reduce((a, b) => a + b, 0) }))),
     );
   }
 
