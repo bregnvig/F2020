@@ -36,26 +36,20 @@ const setDriverStandings = async (token: string, seasonId: string, race: IRace, 
     .doc(documentPaths.standing.allDriver(seasonId))
     .get()
     .then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
-  const unchanged = allDrivers.standing.filter(({ driver }) => !results.some(r => r.driver.driverId === driver.driverId));
-  const sprint = await sprintRace(token, seasonId, race.circuitId, allDrivers.standing);
+  const sprintWinner = await sprintRaceWinner(token, seasonId, race.circuitId, allDrivers.standing);
+  const newDriverStanding = await driverStandings(token, seasonId, race.circuitId, allDrivers.standing);
+  const raceWinner = newDriverStanding.find(s => s.win)?.driverId;
   const standing: IDriverStanding[] = results.map(r => {
     const previous = allDrivers.standing.find(({ driver }) => driver.driverId === r.driver.driverId);
-    const sprintPoints = sprint?.get(previous?.driver.driverId)?.points ?? 0;
-    const sprintWin = sprint?.get(previous?.driver.driverId)?.win ?? false ? 1 : 0;
-    const pointsByRace = {
-      ...previous?.pointsByRace,
-      [race.circuitId]: r.points + sprintPoints || 0,
-    };
-    const points = Object.values(pointsByRace).reduce((a, b) => a + b, 0);
-    const wins = (previous?.wins ?? 0) + (r.points === 25 ? 1 : 0) + sprintWin;
+    const newStanding = newDriverStanding.find(({ driverId }) => driverId === r.driver.driverId);
+    const wins = (previous?.wins ?? 0) + (previous.driver.driverId === sprintWinner ? 1 : 0) + (previous.driver.driverId === raceWinner ? 1 : 0);
     return {
       driver: r.driver,
-      pointsByRace,
-      points,
+      points: newStanding.points,
       wins,
     };
   });
-  return db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing: [...unchanged, ...standing] });
+  return db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing });
 };
 
 const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
@@ -102,7 +96,7 @@ const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
     .then(() => raceResult.results);
 };
 
-const sprintRace = async (token: string, seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<Map<string, { win: boolean; points: number }> | undefined> => {
+const sprintRaceWinner = async (token: string, seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<string | undefined> => {
   let session: Session = undefined;
   try {
     session = await openF1Api.session(token, seasonId, circuitId, 'Sprint');
@@ -112,14 +106,37 @@ const sprintRace = async (token: string, seasonId: string, circuitId: number, dr
 
   if (!session) return undefined;
 
-  const positions = await openF1Api.sessionResults(token, session.session_key);
+  const positions = await openF1Api.championDriverPoints(token, session.session_key);
 
-  const spritPoints = [8, 7, 6, 5, 4, 3, 2, 1];
   const findDriverId = findDriverIdFn(drivers);
 
-  return positions.reduce((acc, p) => {
-    return acc.set(findDriverId(p.driver_number), { points: spritPoints[p.position - 1] ?? 0, win: p.position === 1 });
-  }, new Map<string, { win: boolean; points: number }>());
+  return findDriverId(positions.find(p => p.points_current - p.points_start === 8).driver_number);
+};
+
+const driverStandings = async (token: string, seasonId: string, circuitId: number, drivers: IDriverStanding[]): Promise<{
+  driverId: string,
+  points: number,
+  win: boolean
+}[] | undefined> => {
+  let session: Session = undefined;
+  try {
+    session = await openF1Api.session(token, seasonId, circuitId, 'Race');
+  } catch {
+    // Ignore
+  }
+
+  if (!session) throw new Error(`Unable to find driver point for circuit id ${circuitId}`);
+
+  const positions = await openF1Api.championDriverPoints(token, session.session_key);
+
+  const findDriverId = findDriverIdFn(drivers);
+
+  return positions.map(p => ({
+    driverId: findDriverId(p.driver_number),
+    points: p.points_current,
+    position: p.position_current,
+    win: p.points_current - p.points_start === 25,
+  }));
 };
 
 const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) => {

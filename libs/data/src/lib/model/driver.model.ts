@@ -26,7 +26,6 @@ export interface IFastestLap {
 export interface IDriverStanding {
   wins: number;
   points: number;
-  pointsByRace: Record<number, number>;
   driver: IDriver;
 }
 
@@ -73,7 +72,9 @@ export interface IPitStop {
   lap: number;
   duration: number;
 }
+
 export type Tyre = 'HARD' | 'MEDIUM' | 'SOFT' | 'INTERMEDIATE' | 'FULL_WET';
+
 export interface IStint {
   driver: IDriver;
   compound: Tyre;
