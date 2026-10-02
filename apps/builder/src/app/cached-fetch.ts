@@ -26,8 +26,8 @@ export const cachedFetch = async (url: string): Promise<{ json: () => Promise<an
     };
   }
 
-  console.log(`Fetching (with 5s delay): ${url}`);
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  console.log(`Fetching (with 1s delay): ${url}`);
+  await new Promise(resolve => setTimeout(resolve, 1000));
   const response = await fetch(url);
   if (!response.ok) {
      throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
