@@ -8,13 +8,16 @@ import { assetPath } from './app/assets';
 import { buildTracks } from './app/tracks';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { fixDriverStandings } from './app/fix-driver-standings';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
  * So start the emulator with --project=[project_id]
  */
 
-const purgeCache = process.argv.includes('--purge-cache');
+// nx serve passes --args="--a --b" as one argument, so split it into separate flags
+const args = process.argv.flatMap(arg => arg.split(/\s+/));
+const purgeCache = args.includes('--purge-cache');
 initCache(purgeCache);
 
 const seasonId = parseInt(environment.season);
@@ -64,7 +67,14 @@ buildDrivers()
   .then(() => console.log('Season built'));
 */
 
-if (process.argv.includes('--tracks')) {
+if (args.includes('--fix-driver-standings')) {
+  // Rebuild the driver standing from OpenF1. Dry run unless --write is passed.
+  fixDriverStandings(seasonId, args.includes('--write'))
+    .catch(error => {
+      console.error('Fixing driver standings failed', error);
+      process.exitCode = 1;
+    });
+} else if (args.includes('--tracks')) {
   // Write the track outlines for the race map into the UI's assets. Run from the workspace root, as nx serve does.
   const uiAssets = join(process.cwd(), 'apps/ui/src/assets');
   (existsSync(uiAssets) ? buildTracks(join(uiAssets, 'tracks')) : Promise.reject(`${uiAssets} not found. Run from the workspace root`))
@@ -75,7 +85,7 @@ if (process.argv.includes('--tracks')) {
     });
 } else {
   // Rebuild the races after the last started race from an updated calendar. Dry run unless --write is passed.
-  const write = process.argv.includes('--write');
+  const write = args.includes('--write');
   (write ? buildCircuits().then(numberOfCircuits => console.log('Circuits built', numberOfCircuits)) : Promise.resolve())
     .then(() => updateSeasonFromCalendar(seasonId, assetPath(`f${seasonId}.ics`), write))
     .then(() => console.log('Season updated'))

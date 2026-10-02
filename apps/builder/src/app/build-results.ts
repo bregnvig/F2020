@@ -74,7 +74,7 @@ export const buildResults = async (seasonId: number, year: number): Promise<Meet
       race: basisRace,
       sessionResults: qualifySessionResult,
     });
-    return new Promise(resolve => setTimeout(() => resolve({ meeting, race: raceResult, qualify: qualifyResult }), 500));
+    return new Promise(resolve => setTimeout(() => resolve({ meeting, race: raceResult, qualify: qualifyResult }), 1000));
   };
 
   return meetings.reduce(async (accPromise, race) => {
