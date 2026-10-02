@@ -5,16 +5,16 @@ meta {
 }
 
 get {
-  url: https://api.openf1.org/v1/championship_drivers?session_key=9839
+  url: https://api.openf1.org/v1/championship_drivers?session_key=11240
   body: none
   auth: inherit
 }
 
 params:query {
-  session_key: 9839
+  session_key: 11240
+  ~session_key: latest
   ~driver_number: 4
   ~driver_number: 81
-  ~session_key: 11234
 }
 
 settings {

@@ -5,15 +5,16 @@ meta {
 }
 
 get {
-  url: https://api.openf1.org/v1/sessions?year=2025&circuit_key=49&session_name=Sprint
+  url: https://api.openf1.org/v1/sessions?year=2026&country_code=CHN
   body: none
   auth: none
 }
 
 params:query {
-  year: 2025
-  circuit_key: 49
-  session_name: Sprint
+  year: 2026
+  country_code: CHN
+  ~circuit_key: 49
+  ~session_name: Sprint
   ~session_key: 9644
   ~meeting_key: 1249
 }
