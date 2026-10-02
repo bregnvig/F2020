@@ -64,6 +64,15 @@ npx nx serve builder --args=--tracks --watch=false
 
 This writes the outline of every circuit in `src/assets/circuits.json` to `apps/ui/src/assets/tracks/{circuitId}.json`, which the race page draws on the map. The outlines come from [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits) (MIT). Each circuit's `trackId` is its id in that dataset. It doesn't touch Firestore. Rerun it when you add a circuit, and commit the generated files.
 
+### Fixing the driver standings
+
+```sh
+npx nx serve builder --args=--fix-driver-standings --watch=false            # dry run: prints the standing
+npx nx serve builder --args="--fix-driver-standings --write" --watch=false  # writes it
+```
+
+This rebuilds `seasons/{season}/standings/all-drivers` from OpenF1. Points come from the championship after the last `completed` race in Firestore. Wins are counted from the race and sprint winners of the completed races. Run it with `--purge-cache` if OpenF1 has changed results since they were cached.
+
 ### Against the emulator
 
 The Admin SDK only uses the emulator when `FIRESTORE_EMULATOR_HOST` is set. **Without it, the builder writes to the real Firebase project from the service-account key.**
