@@ -1,4 +1,4 @@
-import { Circuit, driverResult, IDriver, IDriverResult, IQualifyResult, IRace, IRaceResult, mapper } from '@f2020/data';
+import { Circuit, driverQualifying, driverResult, IDriver, IDriverResult, IQualifyResult, IRace, IRaceResult, mapper } from '@f2020/data';
 import { GridPosition, Lap, SessionResult } from '@f2020/openf1';
 import { firebaseApp } from './firebase';
 import { converter } from './converter';
@@ -62,10 +62,9 @@ const reloadFromOpenF1 = async (seasonId: number): Promise<Map<string, DriverRou
 
     raceResult.results.forEach(r => {
       const current = byDriver.get(r.driver.driverId) ?? { races: [], qualify: [] };
-      const q = qualifyResult.results.filter(qr => qr.driver.driverId === r.driver.driverId);
       byDriver.set(r.driver.driverId, {
         races: [...current.races, { ...basis, results: [r] } as IRaceResult],
-        qualify: [...current.qualify, { ...basis, results: q } as IQualifyResult],
+        qualify: [...current.qualify, { ...basis, results: [driverQualifying(qualifyResult, r.driver)] } as IQualifyResult],
       });
     });
   }

@@ -1,8 +1,8 @@
-import { Circuit, driverResult, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
+import { Circuit, driverQualifying, driverResult, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { collectionPaths, documentPaths } from './paths';
 import { openF1Api } from './openf1.api';
-import { isTruthy, requiredValue } from '@f2020/tools';
+import { requiredValue } from '@f2020/tools';
 import { Session } from '@f2020/openf1';
 import { logger } from 'firebase-functions';
 import { currentSeason } from './season.service';
@@ -72,13 +72,12 @@ const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
     .runTransaction(async transaction => {
       raceResult.results.forEach((r: IDriverRaceResult) => {
         const current = currentResults.get(r.driver.driverId);
-        const q = [qualifyResult.results.find(qr => qr.driver.driverId === r.driver.driverId)].filter(isTruthy);
         // A re-run of the round replaces the stored result of that round
         const races = race.round === 1 ? [] : (current?.races ?? []).filter(cr => cr.round !== race.round);
         const qualify = race.round === 1 ? [] : (current?.qualify ?? []).filter(cq => cq.round !== race.round);
         transaction.set(
           db.doc(documentPaths.standing.driver(seasonId, seasonId, r.driver.driverId)),
-          driverResult([...races, { ...race, results: [r] }], [...qualify, { ...race, results: q }]),
+          driverResult([...races, { ...race, results: [r] }], [...qualify, { ...race, results: [driverQualifying(qualifyResult, r.driver)] }]),
           { merge: true },
         );
       });

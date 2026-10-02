@@ -32,4 +32,15 @@ export const getDrivers = (drivers: IDriver[]): Map<number, IDriver> => {
   return map;
 };
 
+/**
+ * Finds the driver with the number, or warns and returns undefined, so one unknown driver doesn't break a whole result.
+ */
+export const findDriver = (drivers: Map<number, IDriver>, driverNumber: number, context: string): IDriver | undefined => {
+  const driver = drivers.get(driverNumber);
+  if (!driver) {
+    console.warn(`${context}: no driver with number ${driverNumber}. Skipped`);
+  }
+  return driver;
+};
+
 export const ChampionshipPoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];

@@ -1,7 +1,7 @@
 import { GridPosition } from '@f2020/openf1';
-import { requiredValue } from '@f2020/tools';
+import { isTruthy } from '@f2020/tools';
 import { IDriver, IDriverGridPosition } from '../model';
-import { getDrivers } from './mapper-utils';
+import { findDriver, getDrivers } from './mapper-utils';
 
 interface OpenF1GridPositionParams {
   positions: GridPosition[];
@@ -9,16 +9,18 @@ interface OpenF1GridPositionParams {
 }
 
 const openF1Map = (source: OpenF1GridPositionParams): IDriverGridPosition[] => {
-
   const drivers = getDrivers(source.drivers);
 
-  return source.positions.map(position => {
-    const driver = requiredValue(drivers.get(position.driver_number), 'Result driver with driver number', position.driver_number);
-    return ({
-      driver,
-      grid: position.position,
-    }) as IDriverGridPosition;
-  });
+  return source.positions
+    .map(position => {
+      const driver = findDriver(drivers, position.driver_number, 'Starting grid');
+      if (!driver) return undefined;
+      return {
+        driver,
+        grid: position.position,
+      } as IDriverGridPosition;
+    })
+    .filter(isTruthy);
 };
 
 export function map(source: OpenF1GridPositionParams): IDriverGridPosition[] {

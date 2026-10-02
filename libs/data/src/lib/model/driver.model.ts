@@ -67,11 +67,18 @@ export interface IDriverRaceResult {
   fastestLap?: IFastestLap;
 }
 
+/**
+ * The qualifying of the driver. OpenF1 leaves out drivers who didn't set a time, so they get an entry without position and time.
+ */
+export const driverQualifying = (qualify: IQualifyResult, driver: IDriver): IDriverQualifying =>
+  qualify.results.find(q => q.driver.driverId === driver.driverId) ?? { driver };
+
 export type IDriverGridPosition = Pick<IDriverRaceResult, 'driver' | 'grid'>;
 
 export interface IDriverQualifying {
   driver: IDriver;
-  position: number;
+  /** Missing when the driver didn't set a time */
+  position?: number;
   q1?: number;
   q2?: number;
   q3?: number;
