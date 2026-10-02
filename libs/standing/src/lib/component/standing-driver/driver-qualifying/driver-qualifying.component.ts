@@ -5,20 +5,20 @@ import { QualifyingTimesComponent } from './qualifying-times/qualifying-times.co
 import { MatListModule } from '@angular/material/list';
 
 @Component({
-    selector: 'f2020-driver-qualifying',
-    template: `
+  selector: 'f2020-driver-qualifying',
+  template: `
     <mat-list>
       @for (result of qualifyResults(); track $index) {
         <mat-list-item>
           <h3 matListItemTitle>{{ result.name }}</h3>
           <span matListItemLine><f2020-qualifying-times [qualifying]="result.results[0]" /></span>
-          <span class="focus-meta" matListItemMeta>{{ result.results[0].position }}</span>
+          <span class="focus-meta" matListItemMeta>{{ result.results[0]?.position ?? 'Ikke deltaget' }}</span>
         </mat-list-item>
       }
     </mat-list>
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatListModule, QualifyingTimesComponent]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatListModule, QualifyingTimesComponent],
 })
 export class DriverQualifyingComponent {
   qualifyResults = input.required<IQualifyResult[]>();
