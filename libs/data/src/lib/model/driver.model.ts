@@ -41,10 +41,14 @@ export const finished = (status?: string): boolean => 'Gennemført' === status;
 
 /**
  * Builds the driver result from all the races and qualifyings of a driver. Each round must appear only once.
+ * The averages only count races with a position, since OpenF1 has no position for drivers who aren't classified.
  */
 export const driverResult = (races: IRaceResult[], qualify: IQualifyResult[]): IDriverResult => {
   const results = races.map(r => r.results[0]).filter(r => !!r);
-  const average = (fn: (r: IDriverRaceResult) => number) => (results.length ? results.reduce((acc, r) => acc + fn(r), 0) / results.length : 0);
+  const average = (fn: (r: IDriverRaceResult) => number | null | undefined) => {
+    const values = results.map(fn).filter((n): n is number => typeof n === 'number');
+    return values.length ? values.reduce((acc, n) => acc + n, 0) / values.length : 0;
+  };
   return {
     races,
     qualify,

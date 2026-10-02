@@ -80,7 +80,18 @@ npx nx serve builder --args=--fix-driver-results --watch=false            # dry 
 npx nx serve builder --args="--fix-driver-results --write" --watch=false  # writes them
 ```
 
-This recalculates every `seasons/{season}/standings/drivers/{season}/{driverId}` from the races and qualifyings already stored on it. Duplicated rounds are removed (the last one wins), and `retired`, `averageFinishPosition` and `averageGridPosition` are recalculated. It doesn't call OpenF1.
+This recalculates `retired`, `averageFinishPosition` and `averageGridPosition` of every `seasons/{season}/standings/drivers/{season}/{driverId}`. The averages only count races where the driver has a position, i.e. was classified.
+
+By default it uses the races and qualifyings already stored on each document, with duplicated rounds removed (the last one wins). It doesn't call OpenF1.
+
+Pass `--reload` to map the race and qualifying of every `completed` race in Firestore from OpenF1 again, the same way the result function does. Use it when the stored results are wrong, e.g. a status mapped before a mapper fix:
+
+```sh
+npx nx serve builder --args="--fix-driver-results --reload" --watch=false          # dry run
+npx nx serve builder --args="--fix-driver-results --reload --write" --watch=false  # writes them
+```
+
+Drivers that have a document but no result in OpenF1 are left untouched.
 
 ### Against the emulator
 

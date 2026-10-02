@@ -27,6 +27,8 @@ const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
     if (sessionResult.dnf) status = 'Ikke fuldført';
     else if (sessionResult.dns) status = 'Ikke startet';
     else if (sessionResult.dsq) status = 'Diskvalificeret';
+    // OpenF1 doesn't always flag drivers without a position. No laps means the driver never started
+    else if (sessionResult.position == null) status = sessionResult.number_of_laps ? 'Ikke klassificeret' : 'Ikke startet';
 
     return filterUndefined<IDriverRaceResult>({
       driver,

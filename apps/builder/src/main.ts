@@ -76,8 +76,8 @@ if (args.includes('--fix-driver-standings')) {
       process.exitCode = 1;
     });
 } else if (args.includes('--fix-driver-results')) {
-  // Recalculate retired and average positions of the driver results. Dry run unless --write is passed.
-  fixDriverResults(seasonId, args.includes('--write'))
+  // Recalculate retired and average positions of the driver results, from OpenF1 with --reload. Dry run unless --write is passed.
+  fixDriverResults(seasonId, args.includes('--write'), args.includes('--reload'))
     .catch(error => {
       console.error('Fixing driver results failed', error);
       process.exitCode = 1;

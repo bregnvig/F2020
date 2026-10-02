@@ -6,13 +6,13 @@ import { converter } from './converter';
 import { cachedFetch } from './cached-fetch';
 import { racesURL } from './season-ics';
 
-const fetchJson = <T>(url: string): Promise<T> => cachedFetch(url).then(r => r.json());
+export const fetchJson = <T>(url: string): Promise<T> => cachedFetch(url).then(r => r.json());
 
 /**
  * Finds the session of the race weekend. A circuit can host more than one race a year, so the session
  * starting closest to the race start is picked.
  */
-const findSession = async (year: number, race: IRace, sessionName: 'Race' | 'Sprint'): Promise<Session | undefined> => {
+export const findSession = async (year: number, race: IRace, sessionName: 'Race' | 'Sprint' | 'Qualifying'): Promise<Session | undefined> => {
   // OpenF1 answers 404 when no session matches, e.g. a weekend without a sprint
   const sessions = await fetchJson<Session[]>(`https://api.openf1.org/v1/sessions?year=${year}&circuit_key=${race.circuitId}&session_name=${sessionName}`)
     .catch(() => [] as Session[]);
