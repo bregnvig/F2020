@@ -11,7 +11,25 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
 
 @Component({
   selector: 'f2020-standing-list',
-  templateUrl: './standing-list.component.html',
+  template: `
+    <mat-toolbar color="primary">
+      <span>Stilling</span>
+    </mat-toolbar>
+    <div class="max-w-3xl mx-auto">
+      @if (standings()) {
+        <mat-action-list>
+          @for (standing of standings(); track standing) {
+            <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
+              <img matListItemAvatar height="40" width="40" [ngSrc]="standing.driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="standing.driver.name">
+              <f2020-standing-list-item [standing]="standing" />
+            </button>
+          }
+        </mat-action-list>
+      } @else {
+        <sha-loading />
+      }
+    </div>
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatToolbarModule,
@@ -28,7 +46,7 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
 })
 export class StandingListComponent {
 
-  standings: Signal<IDriverStanding[]>;
+  protected standings: Signal<IDriverStanding[]>;
 
   constructor() {
     const snackBar = inject(MatSnackBar);
