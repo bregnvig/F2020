@@ -73,6 +73,15 @@ npx nx serve builder --args="--fix-driver-standings --write" --watch=false  # wr
 
 This rebuilds `seasons/{season}/standings/all-drivers` from OpenF1. Points come from the championship after the last `completed` race in Firestore. Wins are counted from the race and sprint winners of the completed races. Run it with `--purge-cache` if OpenF1 has changed results since they were cached.
 
+### Fixing the driver results
+
+```sh
+npx nx serve builder --args=--fix-driver-results --watch=false            # dry run: prints old → new values
+npx nx serve builder --args="--fix-driver-results --write" --watch=false  # writes them
+```
+
+This recalculates every `seasons/{season}/standings/drivers/{season}/{driverId}` from the races and qualifyings already stored on it. Duplicated rounds are removed (the last one wins), and `retired`, `averageFinishPosition` and `averageGridPosition` are recalculated. It doesn't call OpenF1.
+
 ### Against the emulator
 
 The Admin SDK only uses the emulator when `FIRESTORE_EMULATOR_HOST` is set. **Without it, the builder writes to the real Firebase project from the service-account key.**

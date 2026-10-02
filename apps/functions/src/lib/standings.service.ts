@@ -1,5 +1,5 @@
-import { Circuit, finished, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
-import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { Circuit, driverResult, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
+import { getFirestore } from 'firebase-admin/firestore';
 import { collectionPaths, documentPaths } from './paths';
 import { openF1Api } from './openf1.api';
 import { isTruthy, requiredValue } from '@f2020/tools';
@@ -73,21 +73,12 @@ const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
       raceResult.results.forEach((r: IDriverRaceResult) => {
         const current = currentResults.get(r.driver.driverId);
         const q = [qualifyResult.results.find(qr => qr.driver.driverId === r.driver.driverId)].filter(isTruthy);
-        const currentRaceResult = current?.races.find(r => r.round === race.round);
-        const addRetirement = !finished(r.status) && finished(currentRaceResult?.results[0].status ?? 'Finished');
-        const noOfRacesCompleted = (current?.races.length ?? 0) + 1;
-        const averageFinishPosition =
-          ((current?.races.filter(r => r !== currentRaceResult).reduce((acc, r) => acc + r.results[0].position, 0) ?? 0) + r.position) / noOfRacesCompleted;
-        const averageGridPosition = ((current?.races.filter(r => r !== currentRaceResult).reduce((acc, r) => acc + r.results[0].grid, 0) ?? 0) + r.grid) / noOfRacesCompleted;
+        // A re-run of the round replaces the stored result of that round
+        const races = race.round === 1 ? [] : (current?.races ?? []).filter(cr => cr.round !== race.round);
+        const qualify = race.round === 1 ? [] : (current?.qualify ?? []).filter(cq => cq.round !== race.round);
         transaction.set(
           db.doc(documentPaths.standing.driver(seasonId, seasonId, r.driver.driverId)),
-          {
-            races: race.round === 1 ? [{ ...race, results: [r] }] : FieldValue.arrayUnion({ ...race, results: [r] }),
-            qualify: race.round === 1 ? [{ ...race, results: q }] : FieldValue.arrayUnion({ ...race, results: q }),
-            retired: addRetirement ? (current?.retired ?? 0) + 1 : current?.retired ?? 0,
-            averageFinishPosition,
-            averageGridPosition,
-          } as IDriverResult,
+          driverResult([...races, { ...race, results: [r] }], [...qualify, { ...race, results: q }]),
           { merge: true },
         );
       });

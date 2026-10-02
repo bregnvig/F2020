@@ -37,7 +37,22 @@ export interface IDriverResult {
   qualify: IQualifyResult[];
 }
 
-export const finished = (status?: string): boolean => /(\+[0-9] Lap)|(Gennemført)/.test(status ?? '');
+export const finished = (status?: string): boolean => 'Gennemført' === status;
+
+/**
+ * Builds the driver result from all the races and qualifyings of a driver. Each round must appear only once.
+ */
+export const driverResult = (races: IRaceResult[], qualify: IQualifyResult[]): IDriverResult => {
+  const results = races.map(r => r.results[0]).filter(r => !!r);
+  const average = (fn: (r: IDriverRaceResult) => number) => (results.length ? results.reduce((acc, r) => acc + fn(r), 0) / results.length : 0);
+  return {
+    races,
+    qualify,
+    retired: results.filter(r => !finished(r.status)).length,
+    averageFinishPosition: average(r => r.position),
+    averageGridPosition: average(r => r.grid),
+  };
+};
 
 export interface IDriverRaceResult {
   driver: IDriver;

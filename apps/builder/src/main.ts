@@ -9,6 +9,7 @@ import { buildTracks } from './app/tracks';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { fixDriverStandings } from './app/fix-driver-standings';
+import { fixDriverResults } from './app/fix-driver-results';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -72,6 +73,13 @@ if (args.includes('--fix-driver-standings')) {
   fixDriverStandings(seasonId, args.includes('--write'))
     .catch(error => {
       console.error('Fixing driver standings failed', error);
+      process.exitCode = 1;
+    });
+} else if (args.includes('--fix-driver-results')) {
+  // Recalculate retired and average positions of the driver results. Dry run unless --write is passed.
+  fixDriverResults(seasonId, args.includes('--write'))
+    .catch(error => {
+      console.error('Fixing driver results failed', error);
       process.exitCode = 1;
     });
 } else if (args.includes('--tracks')) {
