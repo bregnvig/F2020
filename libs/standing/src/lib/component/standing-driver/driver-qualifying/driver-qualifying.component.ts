@@ -12,7 +12,7 @@ import { MatListModule } from '@angular/material/list';
         <mat-list-item>
           <h3 matListItemTitle>{{ result.name }}</h3>
           <span matListItemLine><f2020-qualifying-times [qualifying]="result.results[0]" /></span>
-          <span class="focus-meta" matListItemMeta>{{ result.results[0]?.position ?? 'Ikke deltaget' }}</span>
+          <span class="focus-meta" matListItemMeta>{{ result.results[0]?.position ?? 'Ingen tid' }}</span>
         </mat-list-item>
       }
     </mat-list>
