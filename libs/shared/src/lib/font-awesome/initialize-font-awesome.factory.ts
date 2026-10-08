@@ -1,5 +1,5 @@
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { faApple, faCss3, faFacebookF, faFirefoxBrowser, faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { faApple, faClaude, faCss3, faFacebookF, faFirefoxBrowser, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { faRocketLaunch, faTireFlat } from '@fortawesome/pro-light-svg-icons';
 import {
   faBlockBrick,
@@ -111,6 +111,7 @@ const fabIcons = [
   faApple,
   faCss3,
   faFirefoxBrowser,
+  faClaude,
 ];
 
 export function initializeFontAwesomeFactory(faIconLibrary: FaIconLibrary) {
