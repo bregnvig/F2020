@@ -1,7 +1,8 @@
 @if (race()) {
   @if (teams()) {
     <mat-toolbar color="primary">
-      <span class="flex-auto">Bud - {{ race().name }}</span>
+      <img class="avatar" height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
+      <span class="flex-auto">{{ race().name }}</span>
       <button mat-icon-button routerLink="../edit">
         <fa-icon [icon]="editIcon"/>
       </button>

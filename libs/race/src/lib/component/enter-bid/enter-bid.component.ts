@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -7,7 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 import { PlayerStore, RacesService, RaceStore, TeamService } from '@f2020/api';
 import { BidComponent } from '@f2020/control';
 import { Bid, IRace, ITeam } from '@f2020/data';
-import { icon, LoadingComponent } from '@f2020/shared';
+import { FlagURLPipe, icon, LoadingComponent } from '@f2020/shared';
 import { filterEquals, isNullish, truthy } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
@@ -27,7 +28,7 @@ const noNullsInArray = (control: FormControl<Bid>) => {
   selector: 'f2020-enter-bid',
   templateUrl: './enter-bid.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, FaIconComponent, BidComponent, ReactiveFormsModule, LoadingComponent, MatToolbar, MatIconButton, MatFabButton],
+  imports: [RouterLink, FaIconComponent, BidComponent, ReactiveFormsModule, LoadingComponent, MatToolbar, MatIconButton, MatFabButton, NgOptimizedImage, FlagURLPipe],
 })
 export class EnterBidComponent {
   bidControl: FormControl = new FormControl<Bid>(null, noNullsInArray);
