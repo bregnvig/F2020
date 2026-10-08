@@ -3,7 +3,13 @@
   <mat-select [formControl]="selectControl">
     @if (teams()) {
       @for (teamAndDrivers of allTeamAndDrivers(); track teamAndDrivers[0]) {
-        <mat-optgroup [label]="teamAndDrivers[0]">
+        <mat-optgroup>
+          <span class="inline-flex items-center gap-2">
+            @if (seasonId(); as seasonId) {
+              <sha-team-logo [seasonId]="seasonId" [name]="teamAndDrivers[0]" [size]="24"/>
+            }
+            {{ teamAndDrivers[0] }}
+          </span>
           @for (driverId of teamAndDrivers[1]; track driverId) {
             <ng-container>
               @let driver = driverId | driver;

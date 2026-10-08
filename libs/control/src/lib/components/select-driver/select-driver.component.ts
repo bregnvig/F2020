@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, forwardRef, inject, input } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
+import { SeasonStore } from '@f2020/api';
 import { ITeam } from '@f2020/data';
+import { TeamLogoComponent } from '@f2020/shared';
 import { DriverPipe } from '@f2020/driver';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControlComponent } from '../../abstract-control-component';
@@ -28,15 +30,19 @@ import { NgOptimizedImage } from '@angular/common';
     MatOptionModule,
     DriverPipe,
     NgOptimizedImage,
+    TeamLogoComponent,
   ],
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> {
+
+  readonly #season = inject(SeasonStore).season;
 
   readonly driverIds = input.required<string[]>();
   readonly teams = input<ITeam[]>(undefined);
   readonly label = input.required<string>();
   readonly error = input<string>();
   selectControl = new FormControl<string | null>(null);
+  protected readonly seasonId = computed(() => this.#season()?.id);
   allTeamAndDrivers = computed<[string, string[]][]>(() => {
     const teams = this.teams();
     if (!teams?.length) return undefined;
