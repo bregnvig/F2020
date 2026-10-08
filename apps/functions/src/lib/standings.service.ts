@@ -1,4 +1,4 @@
-import { Circuit, driverQualifying, driverResult, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
+import { championshipPoints, Circuit, driverQualifying, driverResult, IDriver, IDriverRaceResult, IDriverResult, IDriverStanding, IRace, IRaceBasis, ITeam, mapper } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { collectionPaths, documentPaths } from './paths';
 import { openF1Api } from './openf1.api';
@@ -39,12 +39,12 @@ const setDriverStandings = async ({ token, seasonId, drivers, raceSession }: Wee
   const sprintWinner = await sprintRaceWinner(token, seasonId, race.circuitId, drivers);
   const raceWinner = results.find(r => r.position === 1)?.driver.driverId;
   const championship = await driverStandings(token, raceSession, drivers);
-  const standing: IDriverStanding[] = championship.map(({ driver, points }) => {
+  const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => {
     const previous = allDrivers.standing.find(s => s.driver.driverId === driver.driverId);
     const wins = (previous?.wins ?? 0) + (driver.driverId === sprintWinner ? 1 : 0) + (driver.driverId === raceWinner ? 1 : 0);
     return {
       driver,
-      points,
+      ...points,
       wins,
     };
   });
@@ -101,19 +101,21 @@ const sprintRaceWinner = async (token: string, seasonId: string, circuitId: numb
   return winner ? findDriverFn(drivers)(winner.driver_number)?.driverId : undefined;
 };
 
-const driverStandings = async (token: string, raceSession: Session, drivers: IDriver[]): Promise<{ driver: IDriver; points: number }[]> => {
+type DriverPoints = Omit<IDriverStanding, 'wins'>;
+
+const driverStandings = async (token: string, raceSession: Session, drivers: IDriver[]): Promise<DriverPoints[]> => {
   const positions = await openF1Api.championDriverPoints(token, raceSession.session_key);
   const findDriver = findDriverFn(drivers);
 
   return positions
-    .map(p => ({ driver: findDriver(p.driver_number), points: p.points_current, driverNumber: p.driver_number }))
-    .filter(({ driver, driverNumber }) => {
+    .map(p => ({ driver: findDriver(p.driver_number), championship: p }))
+    .filter(({ driver, championship }) => {
       if (!driver) {
-        logger.warn(`No driver with number ${driverNumber}`);
+        logger.warn(`No driver with number ${championship.driver_number}`);
       }
       return !!driver;
     })
-    .map(({ driver, points }) => ({ driver, points }));
+    .map(({ driver, championship }) => ({ driver, ...championshipPoints(championship) }));
 };
 
 const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) => {
@@ -137,9 +139,7 @@ const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) =
       }
       transaction.set(
         db.doc(documentPaths.team(seasonId, team.constructorId)),
-        {
-          points: s.points_current,
-        } as Partial<ITeam>,
+        championshipPoints(s) as Partial<ITeam>,
         {
           merge: true,
         },

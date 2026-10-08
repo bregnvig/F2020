@@ -1,5 +1,5 @@
 import { PlayerStore } from '@f2020/api';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { WeatherComponent } from '../card/weather/weather.component';
 import { LastYearComponent } from '../card/last-year/last-year.component';
 import { JoinWbcComponent } from '../card/join-wbc/join-wbc.component';
@@ -7,15 +7,25 @@ import { PreviousRaceComponent } from '../card/previous-race/previous-race.compo
 import { RememberToPlayComponent } from '../card/remember-to-play/remember-to-play.component';
 import { WhatElseComponent } from '../card/what-else/what-else.component';
 import { CardPageComponent, LoadingComponent } from '@f2020/shared';
+import { hiddenLandingCards, LandingCard } from '@f2020/data';
+import { DriverChampionshipComponent } from '../card/championship/driver-championship.component';
+import { TeamChampionshipComponent } from '../card/championship/team-championship.component';
+import { WbcChampionshipComponent } from '../card/championship/wbc-championship.component';
 
 @Component({
   selector: 'f2020-landing',
   templateUrl: './landing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent],
+  imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, DriverChampionshipComponent, TeamChampionshipComponent, WbcChampionshipComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent],
 })
 export class LandingComponent {
 
   player = inject(PlayerStore).player;
+
+  #hidden = computed(() => hiddenLandingCards(this.player()));
+
+  protected shown(card: LandingCard) {
+    return !this.#hidden().includes(card);
+  }
 
 }

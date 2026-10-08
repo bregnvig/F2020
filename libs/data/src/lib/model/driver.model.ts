@@ -1,6 +1,7 @@
 import { IQualifyResult, IRaceResult } from './race.model';
 import { ITeam } from './team.model';
 import { Gap } from '@f2020/openf1';
+import { IChampionshipPoints } from './championship.model';
 
 export interface IDriver {
   readonly name: string;
@@ -23,9 +24,8 @@ export interface IFastestLap {
   averageSpeed?: number;
 }
 
-export interface IDriverStanding {
+export interface IDriverStanding extends IChampionshipPoints {
   wins: number;
-  points: number;
   driver: IDriver;
 }
 

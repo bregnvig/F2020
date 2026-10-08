@@ -6,7 +6,7 @@
   <sha-sidenav-button *shaHasRole="'player'" [icon]="icon.fasHome" routerLink="/" (click)="closing.emit()">Forside</sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'player'" [disabled]="disabled" [icon]="icon.fasFlagCheckered" [routerLink]="[seasonId(), 'race']" (click)="closing.emit()">Løb
   </sha-sidenav-button>
-  <sha-sidenav-button *shaHasRole="'player'" [disabled]="disabled" [icon]="icon.farTrophy" [routerLink]="[seasonId(), 'wbc']" (click)="closing.emit()">WBC</sha-sidenav-button>
+  <sha-sidenav-button *shaHasRole="'player'" [disabled]="disabled" [icon]="icon.farRankingStar" [routerLink]="[seasonId(), 'wbc']" (click)="closing.emit()">WBC</sha-sidenav-button>
   <sha-sidenav-button [disabled]="disabled" [icon]="icon.fasPeopleGroup" [routerLink]="[seasonId(), 'teams']" (click)="closing.emit()">Hold</sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'player'" [disabled]="disabled" [icon]="icon.fasSteeringWheel" [routerLink]="[seasonId(), 'standings']" (click)="closing.emit()">Kører
   </sha-sidenav-button>

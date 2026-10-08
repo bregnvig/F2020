@@ -10,6 +10,7 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 import { fixDriverStandings } from './app/fix-driver-standings';
 import { fixDriverResults } from './app/fix-driver-results';
+import { fixTeamStandings } from './app/fix-team-standings';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -69,10 +70,17 @@ buildDrivers()
 */
 
 if (args.includes('--fix-driver-standings')) {
-  // Rebuild the driver standing from OpenF1. Dry run unless --write is passed.
-  fixDriverStandings(seasonId, args.includes('--write'))
+  // Rebuild the driver standing from OpenF1. Dry run unless --write is passed. --keep-wins keeps the stored wins and only fetches the last race.
+  fixDriverStandings(seasonId, args.includes('--write'), args.includes('--keep-wins'))
     .catch(error => {
       console.error('Fixing driver standings failed', error);
+      process.exitCode = 1;
+    });
+} else if (args.includes('--fix-team-standings')) {
+  // Update the team points and positions from OpenF1. Dry run unless --write is passed.
+  fixTeamStandings(seasonId, args.includes('--write'))
+    .catch(error => {
+      console.error('Fixing team standings failed', error);
       process.exitCode = 1;
     });
 } else if (args.includes('--fix-driver-results')) {

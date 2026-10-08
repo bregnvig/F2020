@@ -1,11 +1,32 @@
 @if (player()) {
   <sha-card-page>
-    <f2020-what-else/>
-    <f2020-remember-to-play/>
-    <f2020-previous-race/>
-    <f2020-join-wbc/>
-    <f2020-last-year/>
-    <f2020-weather/>
+    @if (shown('what-else')) {
+      <f2020-what-else/>
+    }
+    @if (shown('remember-to-play')) {
+      <f2020-remember-to-play/>
+    }
+    @if (shown('previous-race')) {
+      <f2020-previous-race/>
+    }
+    @if (shown('wbc')) {
+      <f2020-wbc-championship/>
+    }
+    @if (shown('drivers')) {
+      <f2020-driver-championship/>
+    }
+    @if (shown('teams')) {
+      <f2020-team-championship/>
+    }
+    @if (shown('join-wbc')) {
+      <f2020-join-wbc/>
+    }
+    @if (shown('last-year')) {
+      <f2020-last-year/>
+    }
+    @if (shown('weather')) {
+      <f2020-weather/>
+    }
   </sha-card-page>
 } @else {
   <sha-loading/>

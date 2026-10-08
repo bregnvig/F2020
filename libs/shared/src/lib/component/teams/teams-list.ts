@@ -6,12 +6,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { TeamService } from '@f2020/api';
+import { SeasonStore, TeamService } from '@f2020/api';
 import { IDriver, IRace, ITeam } from '@f2020/data';
 import { AddDriverComponent, DriverPipe } from '@f2020/driver';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { first, map, switchMap } from 'rxjs';
 import { CardPageComponent, HasRoleDirective, LoadingComponent } from '..';
+import { TeamLogoComponent } from '../team-logo/team-logo.component';
 import { icon } from '../../font-awesome';
 
 @Component({
@@ -30,12 +31,14 @@ import { icon } from '../../font-awesome';
     LoadingComponent,
     DriverPipe,
     NgOptimizedImage,
+    TeamLogoComponent,
   ],
 })
 export class TeamsList {
   readonly #dialog = inject(MatDialog);
   readonly #service = inject(TeamService);
   readonly #snackBar = inject(MatSnackBar);
+  readonly #season = inject(SeasonStore).season;
   race = input<IRace | undefined>(undefined);
   header = computed(() => (this.race() ? `Hold - ${this.race().name}` : 'Hold'));
   teams = input.required<ITeam[], ITeam[]>({
@@ -43,6 +46,7 @@ export class TeamsList {
   });
   drivers = input.required<IDriver[]>();
   protected icon = icon;
+  protected readonly seasonId = computed(() => this.#season()?.id);
 
   protected noDrivers = computed(() => !this.drivers()?.length);
 

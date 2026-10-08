@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SeasonStore } from '@f2020/api';
+import { SeasonStore, StandingService } from '@f2020/api';
 import { IDriverResult } from '@f2020/data';
 import { CardPageComponent, icon, LoadingComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { StandingService } from '../../service/standing.service';
 import { DriverPipe } from '@f2020/driver';
 import { DriverResultComponent } from './driver-result/driver-result.component';
 import { DriverQualifyingComponent } from './driver-qualifying/driver-qualifying.component';

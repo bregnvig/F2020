@@ -1,22 +1,43 @@
 <mat-toolbar color="primary">
   Profil
 </mat-toolbar>
-<div class="max-width">
-  <mat-toolbar>Påmindelser</mat-toolbar>
-  <mat-list>
-    <mat-list-item>
+<sha-card-page>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Påmindelser</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
       <mat-slide-toggle [checked]="receiveReminders()" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
-    </mat-list-item>
-  </mat-list>
-  <mat-toolbar class="mt-3">
-    Giv besked når der spilles
-  </mat-toolbar>
-  <mat-selection-list (selectionChange)="selectionChanged($event)">
-    @for (player of players(); track player) {
-      <mat-list-option [selected]="player[1]" [value]="player[0].uid">
-        <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName">
-        <h3 matListItemTitle>{{ player[0].displayName }}</h3>
-      </mat-list-option>
-    }
-  </mat-selection-list>
-</div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Forside</mat-card-title>
+      <mat-card-subtitle>Vælg hvilke kort der vises på forsiden. Vælges ingen, vises alle</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-selection-list (selectionChange)="landingCardsChanged($event)">
+        @for (card of landingCards(); track card.card) {
+          <mat-list-option [selected]="card.shown" [value]="card.card">
+            {{ card.title }}
+          </mat-list-option>
+        }
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Giv besked når der spilles</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-selection-list (selectionChange)="selectionChanged($event)">
+        @for (player of players(); track player[0].uid) {
+          <mat-list-option [selected]="player[1]" [value]="player[0].uid">
+            <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName">
+            <h3 matListItemTitle>{{ player[0].displayName }}</h3>
+          </mat-list-option>
+        }
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+</sha-card-page>

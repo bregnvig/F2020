@@ -6,10 +6,13 @@
   @if (teams(); as teams) {
     <mat-list>
       @for (team of teams; track team.constructorId; ) {
-        <h2 [class.!mt-2]="!$first" matSubheader>
-          {{ team.name }}
+        <h2 class="!flex items-center gap-3" [class.!mt-2]="!$first" matSubheader>
+          @if (seasonId(); as seasonId) {
+            <sha-team-logo [seasonId]="seasonId" [name]="team.name" [size]="32"/>
+          }
+          <span class="grow">{{ team.name }}</span>
           @if (team.points) {
-            <span class="float-right mr-4"> {{ team.points }} point</span>
+            <span class="mr-4"> {{ team.points }} point</span>
           }
         </h2>
         @let drivers = allDrivers(team);

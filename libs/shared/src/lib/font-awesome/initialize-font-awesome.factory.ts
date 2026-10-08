@@ -19,6 +19,7 @@ import {
   faPiggyBank,
   faPlay,
   faPlus,
+  faRankingStar,
   faSignInAlt,
   faSignOutAlt,
   faSunCloud,
@@ -77,6 +78,7 @@ const farIcons = [
   faPause,
   faCircleDot,
   faBlockBrick,
+  faRankingStar,
 ];
 
 const fasIcons = [

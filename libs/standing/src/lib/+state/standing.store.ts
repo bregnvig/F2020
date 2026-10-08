@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
-import { SeasonStore } from '@f2020/api';
+import { SeasonStore, StandingService } from '@f2020/api';
 import { IDriverStanding } from '@f2020/data';
-import { StandingService } from '../service/standing.service';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';

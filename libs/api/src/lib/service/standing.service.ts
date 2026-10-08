@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { doc, docData, Firestore } from '@angular/fire/firestore';
-import { converter } from '@f2020/api';
+import { converter } from '../converter';
 import { IDriverResult, IDriverStanding } from '@f2020/data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
