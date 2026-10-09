@@ -47,7 +47,7 @@ export interface ChampionshipEntry {
                 }
                 {{ entry.points }} point
               </span>
-              <span class="w-16 text-right">
+              <span class="hidden sm:block w-16 text-right">
                 <sha-position-change [change]="entry.change" />
               </span>
             </span>
