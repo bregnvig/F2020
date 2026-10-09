@@ -6,7 +6,7 @@ F2020 is a Formula 1 betting application built with Angular and Firebase. The ap
 
 ## Tech Stack
 
-- **Frontend**: Angular 19, Angular Material, TailwindCSS
+- **Frontend**: Angular 22, Angular Material, TailwindCSS, TypeScript 6
 - **Backend**: Firebase (Firestore, Functions, Cloud Messaging)
 - **Build System**: Nx monorepo
 - **APIs**: OpenF1 for live F1 data
@@ -24,6 +24,14 @@ F2020 is a Formula 1 betting application built with Angular and Firebase. The ap
 - `npm test` - Run tests
 - `npm run lint` - Run linting
 - `npm run format` - Format code
+
+### Builder
+
+Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--write` is passed.
+
+- `--fix-driver-standings` - Rebuild `standings/all-drivers` from OpenF1. Add `--keep-wins` to keep the stored wins and only fetch the last race
+- `--fix-team-standings` - Update points and positions of the teams from OpenF1
+- `--fix-driver-results` - Recalculate the driver results, from OpenF1 with `--reload`
 
 ### Firebase/Emulator
 
@@ -64,7 +72,57 @@ F2020 is a Formula 1 betting application built with Angular and Firebase. The ap
 - WebSocket connections for real-time updates
 - Angular standalone components pattern
 
+## Domain Notes
+
+- **UI text is Danish**, code and comments are English
+- **Dark theme**: the app uses the prebuilt `pink-bluegrey` Material theme. Black logos disappear on it, so logos are shown in a white circle
+- **Championship points**: drivers (`IDriverStanding`) and teams (`ITeam`) extend `IChampionshipPoints` with `points`, `position`,
+  `previousPoints` and `previousPosition`. They come from the OpenF1 championship endpoints, where `points_start` and `position_start`
+  are before the race weekend. Map them with `championshipPoints()` and get places moved with `positionChange()` (positive is up).
+  Show places moved with `<sha-position-change>`
+- **WBC standings** are not stored. They are summed from `season.wbc.results`
+
+### Images from formula1.com
+
+OpenF1 has no team images, and returns a grey silhouette with status 200 for drivers without a headshot (e.g. new drivers),
+so an image error never fires. formula1.com has a media library with fixed paths, which are kept in one place,
+`libs/shared/src/lib/formula1-media.ts`. It is not an official API, so always keep a fallback.
+
+- **Always use `<sha-driver-headshot [driver]>` for driver images.** It tries the face cropped from the formula1.com photo of the
+  season, then the OpenF1 `headshotUrl`, then a placeholder. It fills its host, so put `matListItemAvatar` or the `avatar` class on it
+- **Always use `<sha-team-logo [seasonId] [name]>` for team images.** It falls back to the first letter of the team
+- Paths use the team name as OpenF1 has it, in lower case without spaces (`Haas F1 Team` is `haasf1team`), and the driver reference
+  (`lannor01`) found in the OpenF1 headshot URL
+
+### Landing Page Cards
+
+Players choose which cards to show in their profile. To add a card:
+
+1. Add its id to `LandingCard` and an entry to `landingCards` in `player.model.ts`, in the order it is shown
+2. Wrap it in `@if (shown('<id>'))` in `landing.component.html`
+3. Let the card hide itself with `host: { '[hidden]': ... }` when it has nothing to show, and keep "not loaded yet" apart from "empty"
+
+`hiddenLandingCards` stores the hidden cards, so new cards are shown by default. When every card is hidden, all are shown.
+
+### Notifications
+
+`sendNotification(tokens, title, body, { badge, link, data })` in `apps/functions/src/lib/message.service.ts` always sends
+`webpush.fcmOptions.link`. Without a link the Firebase service worker ignores a click. Give notifications about a race
+`raceLink(season, round)`, and other pages `appLink(...)`. Without `link` the notification opens the home page.
+
+### Library Boundaries
+
+Feature libraries loaded by the router (e.g. `@f2020/standing`) must not be imported statically by other libraries. Put shared
+services in `@f2020/api` and shared components in `@f2020/shared`.
+
 ## Angular Coding Standards
+
+**Always follow the latest recommendations for Angular and TypeScript/JavaScript.** When the recommendations change, new code follows
+the new recommendation, even when older code in the codebase does not. Existing code is changed only when it is being worked on anyway.
+Check the current Angular best practices (the `angular-cli` MCP `get_best_practices`) when in doubt.
+
+- **File names**: Angular 22 drops the type suffix, so new components are named e.g. `team-logo.ts`, not `team-logo.component.ts`
+- **Template-only members** are `protected`, class-only members `#private`, inputs and outputs public
 
 ### Functional API (Preferred)
 
