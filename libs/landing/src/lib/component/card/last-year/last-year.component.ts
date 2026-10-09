@@ -12,17 +12,23 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './last-year.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatCardModule, FaIconComponent, RouterLink, MatButtonModule, PolePositionTimePipe],
+  host: {
+    '[hidden]': 'loading()',
+  },
 })
 export class LastYearComponent {
 
   lastYear: Signal<RoundResult>;
   icon = icon.farCalendar;
   url: Signal<string | undefined>;
+  loading: Signal<boolean>;
 
   constructor() {
     const store = inject(RacesStore);
     effect(() => store.currentRace() && store.loadLastYear());
     this.url = computed(() => store.currentRace()?.url);
     this.lastYear = store.lastYear;
+    // Without a current race there is nothing to load
+    this.loading = computed(() => !!store.currentRace() && !store.lastYearLoaded());
   }
 }

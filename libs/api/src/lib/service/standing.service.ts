@@ -12,7 +12,7 @@ export class StandingService {
 
   getStandings(seasonId: string | number): Observable<IDriverStanding[]> {
     return docData(doc(this.#afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[]; }>())).pipe(
-      map(({ standing }) => standing as IDriverStanding[]),
+      map(doc => (doc?.standing ?? []) as IDriverStanding[]),
     );
   }
 

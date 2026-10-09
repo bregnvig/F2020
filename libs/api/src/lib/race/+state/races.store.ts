@@ -17,6 +17,8 @@ interface RacesState {
   error: string | undefined; // last none error (if any)
   yourBid: Partial<Bid> | undefined;
   lastYear: RoundResult | undefined,
+  /** Tells apart a last year still loading from no race last year */
+  lastYearLoaded: boolean,
 }
 
 const initialState: RacesState = {
@@ -26,6 +28,7 @@ const initialState: RacesState = {
   error: undefined,
   yourBid: undefined,
   lastYear: undefined,
+  lastYearLoaded: false,
 };
 
 const findCurrentRace = (races: IRace[] | undefined): IRace | undefined => races?.find(r => r.state === 'open' || r.state === 'closed');
@@ -85,7 +88,7 @@ export const RacesStore = signalStore(
               : of(undefined)
           ).pipe(
             tapResponse({
-              next: lastYear => patchState(store, { lastYear }),
+              next: lastYear => patchState(store, { lastYear, lastYearLoaded: true }),
               error: error => patchState(store, { error: error?.toString() }),
             }),
           );
