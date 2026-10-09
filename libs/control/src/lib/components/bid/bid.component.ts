@@ -10,7 +10,8 @@ import { SelectTeamsComponent } from '../select-teams/select-teams.component';
 import { SelectedTeamComponent } from '../selected-team/selected-team.component';
 import { SelectedDriverComponent } from '../selected-driver/selected-driver.component';
 import { SelectDriversComponent } from '../select-drivers/select-drivers.component';
-import { DriverCodesComponent } from '../driver-codes/driver-codes.component';
+import { DriverHeadshotsComponent } from '../driver-headshots/driver-headshots';
+import { TeamLogosComponent } from '../team-logos/team-logos';
 
 import { MatExpansionModule } from '@angular/material/expansion';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -18,6 +19,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'f2020-bid',
   templateUrl: './bid.component.html',
+  styles: `
+    mat-accordion {
+      --mat-expansion-header-collapsed-state-height: 64px;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -35,7 +41,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CardPageComponent,
     ReactiveFormsModule,
     MatExpansionModule,
-    DriverCodesComponent,
+    DriverHeadshotsComponent,
+    TeamLogosComponent,
     SelectDriversComponent,
     SelectedDriverComponent,
     SelectedTeamComponent,

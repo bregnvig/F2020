@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
-import { DriverCodesComponent } from '@f2020/control';
+import { DriverHeadshotsComponent, TeamLogosComponent } from '@f2020/control';
 import { Bid, IRace } from '@f2020/data';
-import { CardPageComponent, LoadingComponent, PolePositionTimePipe, TeamNamePipe } from '@f2020/shared';
+import { CardPageComponent, LoadingComponent, PolePositionTimePipe } from '@f2020/shared';
 import { DisplayDriversComponent } from './drivers/display-drivers.component';
 import { DriverNamePipe, DriverPipe } from '@f2020/driver';
 import { DisplayTeamsComponent } from './teams/display-teams.component';
@@ -13,10 +13,16 @@ import { DisplaySelectedDriverComponent } from './selected-driver/display-select
 @Component({
   selector: 'f2020-display-bid',
   templateUrl: './display-bid.component.html',
+  styles: `
+    mat-accordion {
+      --mat-expansion-header-collapsed-state-height: 64px;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CardPageComponent,
-    DriverCodesComponent,
+    DriverHeadshotsComponent,
+    TeamLogosComponent,
     DisplayDriversComponent,
     MatListModule,
     MatAccordion,
@@ -25,7 +31,6 @@ import { DisplaySelectedDriverComponent } from './selected-driver/display-select
     MatExpansionPanelHeader,
     MatExpansionPanelDescription,
     DriverNamePipe,
-    TeamNamePipe,
     DisplayTeamsComponent,
     PolePositionTimePipe,
     DriverPipe,

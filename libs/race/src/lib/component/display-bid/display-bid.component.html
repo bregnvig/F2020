@@ -6,7 +6,7 @@
           <mat-panel-title>Kvalifikation</mat-panel-title>
           @if (!qualifyPanel.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="bid().qualify"/>
+              <f2020-driver-headshots [driverIds]="bid().qualify"/>
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -20,7 +20,7 @@
             <mat-panel-title>Hurtigste kører</mat-panel-title>
             @if (!fastestDriver.expanded) {
               <mat-panel-description>
-                <f2020-driver-codes [driverIds]="bid().fastestDriver"/>
+                <f2020-driver-headshots [driverIds]="bid().fastestDriver"/>
               </mat-panel-description>
             }
           </mat-expansion-panel-header>
@@ -40,7 +40,7 @@
             <mat-panel-title>Podium</mat-panel-title>
             @if (!podium.expanded) {
               <mat-panel-description>
-                <f2020-driver-codes [driverIds]="bid().podium"/>
+                <f2020-driver-headshots [driverIds]="bid().podium"/>
               </mat-panel-description>
             }
           </mat-expansion-panel-header>
@@ -71,7 +71,7 @@
             <mat-panel-title>Hvem er bedst for {{ race()?.selectedTeam.name }}</mat-panel-title>
             @if (!selectedTeam.expanded) {
               <mat-panel-description>
-                <f2020-driver-codes [driverIds]="[bid().selectedTeam.qualify, bid().selectedTeam.result]"/>
+                <f2020-driver-headshots [driverIds]="[bid().selectedTeam.qualify, bid().selectedTeam.result]"/>
               </mat-panel-description>
             }
           </mat-expansion-panel-header>
@@ -103,13 +103,7 @@
             <mat-panel-title>Langsomste pitstop</mat-panel-title>
             @if (!slowestPitStop.expanded) {
               <mat-panel-description>
-                @for (constructorId of bid().slowestPitStop; track constructorId; let last = $last) {
-                  <span>
-            {{ constructorId | teamName }}@if (!last) {
-                    <span>, </span>
-                  }
-          </span>
-                }
+                <f2020-team-logos [constructorIds]="bid().slowestPitStop"/>
               </mat-panel-description>
             }
           </mat-expansion-panel-header>
@@ -129,7 +123,7 @@
             <mat-panel-title>Første udgået</mat-panel-title>
             @if (!firstCrash.expanded) {
               <mat-panel-description>
-                <f2020-driver-codes [driverIds]="bid().firstCrash"/>
+                <f2020-driver-headshots [driverIds]="bid().firstCrash"/>
               </mat-panel-description>
             }
           </mat-expansion-panel-header>

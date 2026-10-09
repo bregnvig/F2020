@@ -6,7 +6,7 @@
           <mat-panel-title>Kvalifikation</mat-panel-title>
           @if (!qualifyPanel.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('qualify').value" />
+              <f2020-driver-headshots [driverIds]="fg.get('qualify').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -19,7 +19,7 @@
           <mat-panel-title>Hurtigste kører</mat-panel-title>
           @if (!fastestDriver.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('fastestDriver').value" />
+              <f2020-driver-headshots [driverIds]="fg.get('fastestDriver').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -33,7 +33,7 @@
           <mat-panel-title>Podium</mat-panel-title>
           @if (!podium.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('podium').value" />
+              <f2020-driver-headshots [driverIds]="fg.get('podium').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -62,7 +62,7 @@
             <mat-panel-title>Hvem er bedst for {{ team.name }}</mat-panel-title>
             @if (!selectedTeam.expanded) {
               <mat-panel-description>
-                <f2020-driver-codes [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]" />
+                <f2020-driver-headshots [driverIds]="[fg.get('selectedTeam').value.qualify, fg.get('selectedTeam').value.result]" />
               </mat-panel-description>
             }
           </mat-expansion-panel-header>
@@ -81,7 +81,7 @@
                   <span>, </span>
                 }{{ team | teamName }}
               }
-              <f2020-driver-codes [driverIds]="fg.get('slowestPitStop').value" />
+              <f2020-team-logos [constructorIds]="fg.get('slowestPitStop').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
@@ -94,7 +94,7 @@
           <mat-panel-title>Første udgået</mat-panel-title>
           @if (!firstCrash.expanded) {
             <mat-panel-description>
-              <f2020-driver-codes [driverIds]="fg.get('firstCrash').value" />
+              <f2020-driver-headshots [driverIds]="fg.get('firstCrash').value" />
             </mat-panel-description>
           }
         </mat-expansion-panel-header>
