@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { TeamNamePipe } from '@f2020/shared';
+import { SeasonStore } from '@f2020/api';
+import { TeamLogoComponent, TeamNamePipe } from '@f2020/shared';
 import { DisplayPointsDiffComponent } from '../diff/display-points-diff.component';
 
 @Component({
@@ -11,6 +12,9 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
         @let team = id | teamName;
         @if (team) {
           <mat-list-item>
+            @if (seasonId(); as seasonId) {
+              <sha-team-logo matListItemAvatar [seasonId]="seasonId" [name]="team"/>
+            }
             <div class="flex justify-between items-center w-full">
               <div class="flex flex-col text-sm font-medium">
                 <span>{{ team }}</span>
@@ -32,13 +36,17 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
     MatListModule,
     TeamNamePipe,
     DisplayPointsDiffComponent,
-
+    TeamLogoComponent,
   ],
 })
 export class DisplayTeamsComponent {
+  readonly #season = inject(SeasonStore).season;
+
   readonly constructorIds = input.required<string[]>();
   readonly points = input<number[]>();
   readonly compareWith = input<string[]>();
   readonly comparePoints = input<number[]>();
+
+  protected readonly seasonId = computed(() => this.#season()?.id);
 
 }
