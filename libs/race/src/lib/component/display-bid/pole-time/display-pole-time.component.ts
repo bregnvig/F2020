@@ -12,9 +12,11 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
           <div class="flex justify-between items-center">
             <div class="flex flex-col">
               <small>{{ polePositionTime() | polePositionTime }}</small>
-              <small class="text-gray-300">{{ polePositionTimeDiff() }} ms fra pole tiden</small>
+              @if (polePositionTimeDiff() != null) {
+                <small class="text-gray-300">{{ polePositionTimeDiff() }} ms fra pole tiden</small>
+              }
             </div>
-            @if (comparePolePositionTimeDiff()) {
+            @if (comparePolePositionTimeDiff() != null) {
               <f2020-display-points-diff [value]="polePositionTimeDiff()" [compareWith]="comparePolePositionTimeDiff()" flipValues postfix="ms"/>
             } @else if (comparePolePositionTime()) {
               <small class="rounded-full py-1 px-3 bg-gray-500">
