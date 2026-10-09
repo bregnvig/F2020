@@ -5,7 +5,7 @@
     @let sectors = sectors$ | async;
     @for (driver of initialPositions(); track driver.driverId) {
       <mat-list-item [style.transform]="transform(driver.driverId)">
-        <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/red.svg'" [alt]="driver.name">
+        <sha-driver-headshot matListItemAvatar [driver]="driver" placeholder="assets/loading/red.svg"/>
         <div matListItemTitle>
           <span>{{ driver.name }}</span>
           @let change = currentChange(driver.driverId);

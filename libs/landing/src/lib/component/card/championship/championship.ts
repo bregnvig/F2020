@@ -1,12 +1,7 @@
-import { inject } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { SeasonStore, StandingService } from '@f2020/api';
 import { IChampionshipPoints, positionChange } from '@f2020/data';
-import { truthy } from '@f2020/tools';
-import { switchMap } from 'rxjs/operators';
-import { ChampionshipEntry } from './championship-list.component';
+import { ChampionshipEntry } from './championship-list';
 
-type EntryInfo = Pick<ChampionshipEntry, 'id' | 'name' | 'image' | 'logo'>;
+type EntryInfo = Pick<ChampionshipEntry, 'id' | 'name' | 'driver' | 'image' | 'logo'>;
 
 export const topEntries = <T extends IChampionshipPoints>(items: T[], info: (item: T) => EntryInfo, count = 5): ChampionshipEntry[] =>
   items
@@ -20,13 +15,3 @@ export const topEntries = <T extends IChampionshipPoints>(items: T[], info: (ite
       change: positionChange(item),
     }));
 
-/**
- * The driver standings of the current season. Must be called in an injection context.
- */
-export const injectDriverStandings = () => {
-  const service = inject(StandingService);
-  return toSignal(toObservable(inject(SeasonStore).season).pipe(
-    truthy(),
-    switchMap(season => service.getStandings(season.id)),
-  ), { initialValue: [] });
-};

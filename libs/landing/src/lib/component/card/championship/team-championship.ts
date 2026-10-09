@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { SeasonStore, TeamService } from '@f2020/api';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { ChampionshipListComponent } from './championship-list.component';
+import { ChampionshipListComponent } from './championship-list';
 import { topEntries } from './championship';
 
 @Component({

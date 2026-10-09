@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { IRaceResult } from '@f2020/data';
 
 import { MatListModule } from '@angular/material/list';
-import { NgOptimizedImage } from '@angular/common';
+import { DriverHeadshotComponent } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-last-year-result',
@@ -10,7 +10,7 @@ import { NgOptimizedImage } from '@angular/common';
     <mat-list>
       @for (result of raceResult().results; track result.driver.driverId) {
         <mat-list-item>
-          <img matListItemAvatar height="40" width="40" [ngSrc]="result.driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="result.driver.name">
+          <sha-driver-headshot matListItemAvatar [driver]="result.driver"/>
           <h5 matListItemTitle>{{ result.driver.name }}</h5>
           <p matListItemMeta class="!text-base !text-white">{{ result.points }}</p>
           <p matListItemLine>{{ result.status }}</p>
@@ -19,7 +19,7 @@ import { NgOptimizedImage } from '@angular/common';
     </mat-list>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatListModule, NgOptimizedImage],
+  imports: [MatListModule, DriverHeadshotComponent],
 })
 export class LastYearResultComponent {
   readonly raceResult = input.required<IRaceResult>();

@@ -1,6 +1,6 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
-import { teamLogoUrl } from '@f2020/data';
+import { teamLogoUrl } from '../../formula1-media';
 
 /**
  * The team logo in a white circle. Shows the first letter of the team name when the logo fails to load.

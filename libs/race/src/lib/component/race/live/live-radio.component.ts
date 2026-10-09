@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { DateTimePipe } from '@f2020/shared';
-import { NgOptimizedImage } from '@angular/common';
+import { DateTimePipe, DriverHeadshotComponent } from '@f2020/shared';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RACE_RESULT_SERVICE } from '@f2020/api';
@@ -15,7 +14,7 @@ import { RadioMessageComponent } from './radio-message.component';
       <mat-list>
         @for (message of messages; track $index) {
           <mat-list-item>
-            <img matListItemAvatar height="40" width="40" [ngSrc]="message.driver.headshotUrl" [alt]="message.driver.name">
+            <sha-driver-headshot matListItemAvatar [driver]="message.driver"/>
             <h4 matListItemTitle>
               <span>{{ message.driver.name }}</span>
               <f2020-radio-message [url]="message.recordingUrl" />
@@ -39,7 +38,7 @@ import { RadioMessageComponent } from './radio-message.component';
     MatListItemAvatar,
     MatListItemLine,
     MatListItemTitle,
-    NgOptimizedImage,
+    DriverHeadshotComponent,
     RadioMessageComponent,
   ],
 })

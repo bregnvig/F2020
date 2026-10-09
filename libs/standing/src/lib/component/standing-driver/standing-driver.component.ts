@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SeasonStore, StandingService } from '@f2020/api';
 import { IDriverResult } from '@f2020/data';
-import { CardPageComponent, icon, LoadingComponent } from '@f2020/shared';
+import { CardPageComponent, DriverHeadshotComponent, icon, LoadingComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { DriverResultComponent } from './driver-result/driver-result.component';
 import { DriverQualifyingComponent } from './driver-qualifying/driver-qualifying.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NumberCardComponent } from './number-card/number-card.component';
-import { AsyncPipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
@@ -30,7 +30,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
     LoadingComponent,
     AsyncPipe,
     DecimalPipe,
-    NgOptimizedImage,
+    DriverHeadshotComponent,
     DriverPipe,
   ],
 })

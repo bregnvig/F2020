@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DriverPipe } from '@f2020/driver';
 import { MatListModule } from '@angular/material/list';
-import { NgOptimizedImage } from '@angular/common';
 import { isNullish, nullish } from '@f2020/tools';
 import { DisplayPointsDiffComponent } from '../diff/display-points-diff.component';
+import { DriverHeadshotComponent } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-display-drivers',
@@ -13,7 +13,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
         @let driver = id | driver;
         @if (driver) {
           <mat-list-item>
-            <img matListItemAvatar height="40" width="40" [ngSrc]="driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver.name">
+            <sha-driver-headshot matListItemAvatar [driver]="driver"/>
             <div class="flex w-full justify-between items-center">
               <div class="flex flex-col">
                 <span>{{ driver.name }}</span>
@@ -29,7 +29,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
     </mat-list>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatListModule, NgOptimizedImage, DriverPipe, DisplayPointsDiffComponent],
+  imports: [MatListModule, DriverHeadshotComponent, DriverPipe, DisplayPointsDiffComponent],
 })
 export class DisplayDriversComponent {
   readonly driverIds = input.required<string[]>();

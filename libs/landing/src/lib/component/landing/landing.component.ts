@@ -8,9 +8,9 @@ import { RememberToPlayComponent } from '../card/remember-to-play/remember-to-pl
 import { WhatElseComponent } from '../card/what-else/what-else.component';
 import { CardPageComponent, LoadingComponent } from '@f2020/shared';
 import { hiddenLandingCards, LandingCard } from '@f2020/data';
-import { DriverChampionshipComponent } from '../card/championship/driver-championship.component';
-import { TeamChampionshipComponent } from '../card/championship/team-championship.component';
-import { WbcChampionshipComponent } from '../card/championship/wbc-championship.component';
+import { DriverChampionshipComponent } from '../card/championship/driver-championship';
+import { TeamChampionshipComponent } from '../card/championship/team-championship';
+import { WbcChampionshipComponent } from '../card/championship/wbc-championship';
 
 @Component({
   selector: 'f2020-landing',

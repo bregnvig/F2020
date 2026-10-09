@@ -6,7 +6,7 @@ import { SeasonStore } from '@f2020/api';
 import { IChampionshipPoints, Player, WBCResult } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { ChampionshipListComponent } from './championship-list.component';
+import { ChampionshipListComponent } from './championship-list';
 import { topEntries } from './championship';
 
 interface WBCStanding extends IChampionshipPoints {

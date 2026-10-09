@@ -1,11 +1,11 @@
-import { LowerCasePipe, NgOptimizedImage } from '@angular/common';
+import { LowerCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { IDriverStanding } from '@f2020/data';
-import { LoadingComponent } from '@f2020/shared';
+import { DriverHeadshotComponent, LoadingComponent } from '@f2020/shared';
 import { StandingStore } from '../../+state/standing.store';
 import { StandingListItemComponent } from './standing-list-item/standing-list-item.component';
 
@@ -20,7 +20,7 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
         <mat-action-list>
           @for (standing of standings(); track standing) {
             <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
-              <img matListItemAvatar height="40" width="40" [ngSrc]="standing.driver.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="standing.driver.name">
+              <sha-driver-headshot matListItemAvatar [driver]="standing.driver"/>
               <f2020-standing-list-item [standing]="standing" />
             </button>
           }
@@ -38,7 +38,7 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
     StandingListItemComponent,
     LoadingComponent,
     LowerCasePipe,
-    NgOptimizedImage,
+    DriverHeadshotComponent,
   ],
   providers: [
     StandingStore,

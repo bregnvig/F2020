@@ -1,11 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+import { SeasonStore, StandingService } from '@f2020/api';
 import { icon } from '@f2020/shared';
+import { truthy } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { ChampionshipListComponent } from './championship-list.component';
-import { injectDriverStandings, topEntries } from './championship';
+import { switchMap } from 'rxjs/operators';
+import { ChampionshipListComponent } from './championship-list';
+import { topEntries } from './championship';
 
 @Component({
   selector: 'f2020-driver-championship',
@@ -30,12 +34,16 @@ import { injectDriverStandings, topEntries } from './championship';
   },
 })
 export class DriverChampionshipComponent {
-  #standings = injectDriverStandings();
+  #service = inject(StandingService);
+  #standings = toSignal(toObservable(inject(SeasonStore).season).pipe(
+    truthy(),
+    switchMap(season => this.#service.getStandings(season.id)),
+  ), { initialValue: [] });
 
   protected readonly icon = icon.fasSteeringWheel;
   protected readonly entries = computed(() => topEntries(this.#standings() ?? [], ({ driver }) => ({
     id: driver.driverId,
     name: driver.name,
-    image: { url: driver.headshotUrl },
+    driver,
   })));
 }

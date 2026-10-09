@@ -15,7 +15,7 @@
               @let driver = driverId | driver;
               <mat-option [value]="driverId">
                 <div class="flex flex-row">
-                  <img class="avatar" height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/red.svg'" [alt]="driver?.name">
+                  <sha-driver-headshot class="avatar" [driver]="driver" placeholder="assets/loading/red.svg"/>
                   <span class="my-auto">{{ driver?.name }}</span>
                 </div>
               </mat-option>

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
@@ -10,6 +10,7 @@ import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TyreComponent } from './tyre.component';
 import { LiveSectorStatusComponent } from './sector/live-sector-status.component';
+import { DriverHeadshotComponent } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-live-positions',
@@ -18,7 +19,7 @@ import { LiveSectorStatusComponent } from './sector/live-sector-status.component
   imports: [
     MatListItem,
     MatListItemAvatar,
-    NgOptimizedImage,
+    DriverHeadshotComponent,
     MatList,
     FaIconComponent,
     MatListItemTitle,

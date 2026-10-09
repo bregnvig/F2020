@@ -1,4 +1,3 @@
-import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -12,7 +11,8 @@ import { AddDriverComponent, DriverPipe } from '@f2020/driver';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { first, map, switchMap } from 'rxjs';
 import { CardPageComponent, HasRoleDirective, LoadingComponent } from '..';
-import { TeamLogoComponent } from '../team-logo/team-logo.component';
+import { TeamLogoComponent } from '../team-logo/team-logo';
+import { DriverHeadshotComponent } from '../driver-headshot/driver-headshot';
 import { icon } from '../../font-awesome';
 
 @Component({
@@ -30,7 +30,7 @@ import { icon } from '../../font-awesome';
     MatDividerModule,
     LoadingComponent,
     DriverPipe,
-    NgOptimizedImage,
+    DriverHeadshotComponent,
     TeamLogoComponent,
   ],
 })

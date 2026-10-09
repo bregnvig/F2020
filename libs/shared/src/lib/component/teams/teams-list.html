@@ -25,7 +25,7 @@
                 <fa-icon [icon]="icon.falTireFlat"/>
               }
             </h5>
-            <img matListItemAvatar height="40" width="40" [ngSrc]="driver?.headshotUrl ?? 'assets/loading/yellow.svg'" [alt]="driver?.name">
+            <sha-driver-headshot matListItemAvatar [driver]="driver"/>
             <small class="!flex justify-between" matListItemLine>
               <span class="flex-auto uppercase">{{ driverId }}</span>
               @let permanentNumbers = driver?.permanentNumbers?.join(', ');

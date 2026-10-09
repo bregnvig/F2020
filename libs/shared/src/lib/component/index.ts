@@ -5,5 +5,6 @@ export * from './login/login.component';
 export * from './logout/logout.component';
 export * from './sidebar/sidebar.component';
 export * from './teams/teams-list';
-export * from './position-change/position-change.component';
-export * from './team-logo/team-logo.component';
+export * from './position-change/position-change';
+export * from './team-logo/team-logo';
+export * from './driver-headshot/driver-headshot';

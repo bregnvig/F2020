@@ -3,14 +3,13 @@ import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/fo
 import { MatOptionModule } from '@angular/material/core';
 import { SeasonStore } from '@f2020/api';
 import { ITeam } from '@f2020/data';
-import { TeamLogoComponent } from '@f2020/shared';
+import { DriverHeadshotComponent, TeamLogoComponent } from '@f2020/shared';
 import { DriverPipe } from '@f2020/driver';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControlComponent } from '../../abstract-control-component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'f2020-select-driver',
@@ -29,7 +28,7 @@ import { NgOptimizedImage } from '@angular/common';
     ReactiveFormsModule,
     MatOptionModule,
     DriverPipe,
-    NgOptimizedImage,
+    DriverHeadshotComponent,
     TeamLogoComponent,
   ],
 })
