@@ -9,6 +9,12 @@
     @if (shown('previous-race')) {
       <f2020-previous-race/>
     }
+    @if (shown('join-wbc')) {
+      <f2020-join-wbc/>
+    }
+    @if (shown('last-year')) {
+      <f2020-last-year/>
+    }
     @if (shown('wbc')) {
       <f2020-wbc-championship/>
     }
@@ -17,12 +23,6 @@
     }
     @if (shown('teams')) {
       <f2020-team-championship/>
-    }
-    @if (shown('join-wbc')) {
-      <f2020-join-wbc/>
-    }
-    @if (shown('last-year')) {
-      <f2020-last-year/>
     }
     @if (shown('weather')) {
       <f2020-weather/>
