@@ -1,7 +1,7 @@
 import { IRace, Player, RaceUpdatedBy } from '@f2020/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
-import { currentSeason, documentPaths, firestoreUtils, getRaceByRound, getUser, internalError, logAndCreateError, PlayerImpl, sendNotification, validateAccess } from '../../lib';
+import { currentSeason, documentPaths, firestoreUtils, getRaceByRound, getUser, internalError, logAndCreateError, PlayerImpl, raceLink, sendNotification, validateAccess } from '../../lib';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 export const updateRace = onCall(async (request: CallableRequest<IRace>) => {
@@ -41,10 +41,10 @@ const update = async (race: IRace, player: PlayerImpl): Promise<any> => {
       ...payload,
       updatedBy: FieldValue.arrayUnion({ ...updatedBy }),
     })))
-    .then(() => notifyAdmin(updatedBy, race.name));
+    .then(() => notifyAdmin(updatedBy, race.name, raceLink(firestoreRace.season, firestoreRace.round)));
 };
 
-const notifyAdmin = async (updatedBy: Partial<RaceUpdatedBy>, raceName: string): Promise<void[]> => {
+const notifyAdmin = async (updatedBy: Partial<RaceUpdatedBy>, raceName: string, link: string): Promise<void[]> => {
 
   const db = getFirestore();
   const admins = (await db.collection('players').where('roles', 'array-contains', 'admin').get()).docs.map(d => d.data()) as Player[];
@@ -53,6 +53,6 @@ const notifyAdmin = async (updatedBy: Partial<RaceUpdatedBy>, raceName: string):
 
   return Promise.all(admins
     .filter(a => a.tokens && a.tokens.length)
-    .map(a => sendNotification(a.tokens!, `${raceName} er blevet opdateret`, `${updatedBy.player.displayName} har opdateret løb!${driver}${close}`)),
+    .map(a => sendNotification(a.tokens!, `${raceName} er blevet opdateret`, `${updatedBy.player.displayName} har opdateret løb!${driver}${close}`, { link })),
   );
 };

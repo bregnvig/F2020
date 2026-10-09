@@ -1,7 +1,7 @@
 import { Bid, ISeason, WBC, WBCResult } from '@f2020/data';
 import { log } from 'firebase-functions/logger';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { collectionPaths, openai, OpenAIModel, sendMail, sendNotification } from '../../lib';
+import { appLink, collectionPaths, openai, OpenAIModel, sendMail, sendNotification } from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const wbcPointsToPosition = {
@@ -148,7 +148,7 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
           log(`Mail result :(${msg})`);
         });
         if (element.player.tokens?.length) {
-          await sendNotification(element.player.tokens, notification.title, notification.body, badge).then(msg => {
+          await sendNotification(element.player.tokens, notification.title, notification.body, { badge, link: appLink(season.id, 'wbc', 'race', result.round) }).then(msg => {
             log(`Notification result :(${msg})`);
           });
         }

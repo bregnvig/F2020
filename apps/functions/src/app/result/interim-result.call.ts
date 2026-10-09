@@ -2,7 +2,7 @@ import { Bid, calculateInterimResult, IRace, Player, validateInterimResult } fro
 import { getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
-import { collectionPaths, currentSeason, documentPaths, getCurrentRace, internalError, logAndCreateError, sendMail, sendNotification, validateAccess } from '../../lib';
+import { collectionPaths, currentSeason, documentPaths, getCurrentRace, internalError, logAndCreateError, raceLink, sendMail, sendNotification, validateAccess } from '../../lib';
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[]): string => {
   const lis = results.map(r => `<li>${r.player?.displayName}: ${r.points} point</li>`);
@@ -67,7 +67,7 @@ const buildResult = async (result: Partial<Bid>) => {
       await sendMail(player.email, `Så er der mellemresultat for ${race.name}`, mailBody(player, race, calculatedResults));
       if (player.tokens && player.tokens.length) {
         log(`Should send notification to ${player.displayName}`);
-        await sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults));
+        await sendNotification(player.tokens, `Mellemresultat for ${race.name}`, messageBody(player, calculatedResults), { link: raceLink(race.season, race.round) });
       } else {
         log('No tokens to send notifications to');
       }

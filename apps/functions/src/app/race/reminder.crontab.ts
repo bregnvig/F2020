@@ -1,7 +1,7 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { DateTime } from 'luxon';
 import { finalNotificationMessage, getCurrentRace, mailBody, notificationMessage, playerWithoutBid, sendMail } from '../../lib';
-import { sendNotification } from './../../lib';
+import { raceLink, sendNotification } from './../../lib';
 import { logger } from 'firebase-functions';
 
 // This will be run every day every hours at 11 minutes past the hour Europe/Copenhagen!
@@ -25,7 +25,7 @@ export const mailReminderCrontab = onSchedule({
           if (player.tokens && player.tokens.length) {
             logger.info(`Should send notification to ${player.displayName}`);
             result.push(
-              sendNotification(player.tokens, notificationSubject, notificationBody),
+              sendNotification(player.tokens, notificationSubject, notificationBody, { link: raceLink(race.season, race.round) }),
             );
           }
           return Promise.all(result);
@@ -35,7 +35,7 @@ export const mailReminderCrontab = onSchedule({
         await Promise.all(players.map(player => {
           if (player.tokens && player.tokens.length) {
             logger.info(`Should send final reminder notification to ${player.displayName}`);
-            return sendNotification(player.tokens, `Tik tok tiden går`, finalNotificationMessage(race));
+            return sendNotification(player.tokens, `Tik tok tiden går`, finalNotificationMessage(race), { link: raceLink(race.season, race.round) });
           }
         }));
       } else {

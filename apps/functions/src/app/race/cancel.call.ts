@@ -10,6 +10,7 @@ import {
   getRaceByRound,
   internalError,
   logAndCreateError,
+  raceLink,
   sendNotification,
   transferInTransaction,
   validateAccess,
@@ -69,5 +70,5 @@ const sendNotifications = async (race: IRace) => {
     .get()
     .then(snapshot => snapshot.docs.map(d => d.data() as Player))
     .then(players => players.filter(player => player.tokens?.length));
-  return Promise.all(players.map(player => sendNotification(player.tokens, `${race.name} aflyst😥`, `${race.name} er blevet aflyst af FIA og der kan derfor ikke spilles på løbet`)));
+  return Promise.all(players.map(player => sendNotification(player.tokens, `${race.name} aflyst😥`, `${race.name} er blevet aflyst af FIA og der kan derfor ikke spilles på løbet`, { link: raceLink(race.season, race.round) })));
 };

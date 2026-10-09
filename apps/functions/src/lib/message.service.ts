@@ -17,9 +17,25 @@ const removeStaleTokens = async (staleTokens: string[]): Promise<void> => {
   }));
 };
 
-export const sendNotification = async (tokens: string[], title: string, body: string, badge = 'https://f1.bregnvig.dk/assets/messaging/badge.v2.png', data?: {
-  [key: string]: string;
-}): Promise<void> => {
+const appUrl = 'https://f1.bregnvig.dk';
+
+/** Link to a page of the app, e.g. appLink(2026, 'race', 5) */
+export const appLink = (...path: (string | number)[]): string => [appUrl, ...path].join('/');
+
+export const raceLink = (seasonId: string | number, round: string | number): string => appLink(seasonId, 'race', round);
+
+interface NotificationOptions {
+  badge?: string;
+  /** The page opened when the notification is clicked. Without it a click does nothing */
+  link?: string;
+  data?: { [key: string]: string };
+}
+
+export const sendNotification = async (tokens: string[], title: string, body: string, {
+  badge = appLink('assets/messaging/badge.v2.png'),
+  link = appUrl,
+  data,
+}: NotificationOptions = {}): Promise<void> => {
   try {
     const response = await getMessaging().sendEachForMulticast({
       data,
@@ -31,7 +47,10 @@ export const sendNotification = async (tokens: string[], title: string, body: st
       webpush: {
         notification: {
           badge,
-          icon: 'https://f1.bregnvig.dk/assets/icons/icon-192x192.png',
+          icon: appLink('assets/icons/icon-192x192.png'),
+        },
+        fcmOptions: {
+          link,
         },
       },
     });

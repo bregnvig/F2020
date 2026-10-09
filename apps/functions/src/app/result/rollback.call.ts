@@ -9,6 +9,7 @@ import {
   getRaceByRound,
   internalError,
   logAndCreateError,
+  raceLink,
   sendNotification,
   transferInTransaction,
   validateAccess,
@@ -55,7 +56,7 @@ const buildRollback = async (round: string) => {
   await Promise.all(bids
     .map(({ player }) => player.tokens)
     .filter(tokens => tokens?.length)
-    .map(tokens => sendNotification(tokens, 'Fejl i resultatet', `Resultatet for ${race.name} er blevet rullet tilbage, da der var fejl i resultatet😥`)),
+    .map(tokens => sendNotification(tokens, 'Fejl i resultatet', `Resultatet for ${race.name} er blevet rullet tilbage, da der var fejl i resultatet😥`, { link: raceLink(race.season, race.round) })),
   );
 
   return db.runTransaction(transaction => {

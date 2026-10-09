@@ -3,7 +3,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { DateTime } from 'luxon';
 import { documentPaths, getCurrentRace, playerWithoutBid } from '../../lib';
 import { converter } from '../../lib/timestamp.converter';
-import { sendNotification } from './../../lib';
+import { raceLink, sendNotification } from './../../lib';
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 
 const messageBody = (race: IRace, player: Player): string =>
@@ -26,7 +26,7 @@ const almostTimeReminder = async (race: IRace, player: Player) => {
     .filter(p => p.tokens?.length)
     .filter(p => !p.almostTimeReminder || (p.almostTimeReminder.diffNow('hours').hours > 24));
 
-  players.forEach(p => sendNotification(p.tokens, `${Math.floor(race.close.diffNow('minutes').minutes)} minutter tilbage`, messageBody(race, player)));
+  players.forEach(p => sendNotification(p.tokens, `${Math.floor(race.close.diffNow('minutes').minutes)} minutter tilbage`, messageBody(race, player), { link: raceLink(race.season, race.round) }));
 
   const db = getFirestore();
 

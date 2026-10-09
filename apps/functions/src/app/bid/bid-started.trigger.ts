@@ -1,6 +1,6 @@
 import { Bid, Player } from '@f2020/data';
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
-import { collectionPaths, currentSeason, documentPaths, getCurrentRace, sendNotification } from '../../lib';
+import { collectionPaths, currentSeason, documentPaths, getCurrentRace, raceLink, sendNotification } from '../../lib';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 
 export const newBidTrigger = onDocumentCreated('seasons/{seasonId}/races/{raceId}/bids/{userId}', async event => {
@@ -21,7 +21,7 @@ export const newBidTrigger = onDocumentCreated('seasons/{seasonId}/races/{raceId
   const race = await getCurrentRace('open');
 
   return Promise.all([
-    ...players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`)),
+    ...players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`, { link: raceLink(season.id, race.round) })),
     db.runTransaction(transaction => {
       const doc = db.doc(documentPaths.participant(season.id, race.round, bid.player.uid)) as DocumentReference<{ player: Player, submitted: false; }>;
       transaction.set(doc, { player: bid.player, submitted: false });
