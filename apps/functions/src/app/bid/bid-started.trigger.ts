@@ -1,6 +1,6 @@
 import { Bid, Player } from '@f2020/data';
 import { DocumentReference, getFirestore } from 'firebase-admin/firestore';
-import { collectionPaths, currentSeason, documentPaths, getCurrentRace, raceLink, sendNotification } from '../../lib';
+import { bidLink, collectionPaths, currentSeason, documentPaths, getCurrentRace, raceLink, sendNotification } from '../../lib';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 
 export const newBidTrigger = onDocumentCreated('seasons/{seasonId}/races/{raceId}/bids/{userId}', async event => {
@@ -19,9 +19,16 @@ export const newBidTrigger = onDocumentCreated('seasons/{seasonId}/races/{raceId
 
   const season = await currentSeason();
   const race = await getCurrentRace('open');
+  // The bids are stored by uid. Players who have submitted can follow the bid, the others are sent to the race
+  const submitted: Set<string> = await db.collection(collectionPaths.bids(season.id, race.round))
+    .where('submitted', '==', true)
+    .select()
+    .get()
+    .then(snapshot => new Set(snapshot.docs.map(d => d.id)));
+  const link = (p: Player) => submitted.has(p.uid) ? bidLink(season.id, race.round, bid.player.uid) : raceLink(season.id, race.round);
 
   return Promise.all([
-    ...players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`, { link: raceLink(season.id, race.round) })),
+    ...players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`, { link: link(p) })),
     db.runTransaction(transaction => {
       const doc = db.doc(documentPaths.participant(season.id, race.round, bid.player.uid)) as DocumentReference<{ player: Player, submitted: false; }>;
       transaction.set(doc, { player: bid.player, submitted: false });

@@ -24,6 +24,8 @@ export const appLink = (...path: (string | number)[]): string => [appUrl, ...pat
 
 export const raceLink = (seasonId: string | number, round: string | number): string => appLink(seasonId, 'race', round);
 
+export const bidLink = (seasonId: string | number, round: string | number, uid: string): string => appLink(seasonId, 'race', round, 'bid', uid);
+
 interface NotificationOptions {
   badge?: string;
   /** The page opened when the notification is clicked. Without it a click does nothing */
