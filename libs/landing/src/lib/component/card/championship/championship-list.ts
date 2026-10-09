@@ -7,9 +7,7 @@ import { DriverHeadshotComponent, PositionChangeComponent, TeamLogoComponent } f
 export interface ChampionshipEntry {
   id: string;
   name: string;
-  /** Headshot shown in front of the name */
   driver?: IDriver;
-  /** Photo shown in front of the name */
   image?: {
     url?: string;
   };
@@ -30,12 +28,12 @@ export interface ChampionshipEntry {
     <mat-list>
       @for (entry of entries(); track entry.id) {
         <mat-list-item>
-          <span class="flex flex-row justify-between items-center gap-2">
-            <span class="flex flex-row items-center gap-3">
+          <span class="flex flex-row justify-between items-center gap-2 py-2">
+            <span class="flex flex-row items-center gap-4">
               @if (entry.driver; as driver) {
-                <sha-driver-headshot [driver]="driver"/>
+                <sha-driver-headshot [driver]="driver" />
               } @else if (entry.logo; as logo) {
-                <sha-team-logo [seasonId]="logo.seasonId" [name]="entry.name"/>
+                <sha-team-logo [seasonId]="logo.seasonId" [name]="entry.name" />
               } @else if (entry.image; as image) {
                 <img class="rounded-full shrink-0" height="40" width="40" [ngSrc]="failedImages().has(entry.id) ? placeholder : image.url ?? placeholder"
                      [alt]="entry.name" (error)="imageFailed(entry.id)">
@@ -50,7 +48,7 @@ export interface ChampionshipEntry {
                 {{ entry.points }} point
               </span>
               <span class="w-16 text-right">
-                <sha-position-change [change]="entry.change"/>
+                <sha-position-change [change]="entry.change" />
               </span>
             </span>
           </span>

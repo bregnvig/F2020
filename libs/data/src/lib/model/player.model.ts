@@ -10,11 +10,11 @@ export const landingCards: { card: LandingCard; title: string }[] = [
   { card: 'what-else', title: 'Hvad er nyt' },
   { card: 'remember-to-play', title: 'Husk at spille' },
   { card: 'previous-race', title: 'Seneste resultat' },
+  { card: 'join-wbc', title: 'Deltag i WBC' },
+  { card: 'last-year', title: 'Sidste år' },
   { card: 'wbc', title: 'WBC' },
   { card: 'drivers', title: 'Kørermesterskabet' },
   { card: 'teams', title: 'Konstruktørmesterskabet' },
-  { card: 'join-wbc', title: 'Deltag i WBC' },
-  { card: 'last-year', title: 'Sidste år' },
   { card: 'weather', title: 'Vejret' },
 ];
 
