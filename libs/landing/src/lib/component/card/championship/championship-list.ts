@@ -28,7 +28,7 @@ export interface ChampionshipEntry {
     <mat-list>
       @for (entry of entries(); track entry.id) {
         <mat-list-item>
-          <span class="flex flex-row justify-between items-center gap-2 py-2">
+          <span class="flex flex-row justify-between items-center gap-2">
             <span class="flex flex-row items-center gap-4">
               @if (entry.driver; as driver) {
                 <sha-driver-headshot [driver]="driver" />
@@ -55,6 +55,11 @@ export interface ChampionshipEntry {
         </mat-list-item>
       }
     </mat-list>
+  `,
+  styles: `
+    mat-list {
+      --mat-list-list-item-one-line-container-height: 56px;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatListModule, NgOptimizedImage, DriverHeadshotComponent, PositionChangeComponent, TeamLogoComponent],
