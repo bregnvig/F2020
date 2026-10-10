@@ -43,3 +43,20 @@ export interface IRaceResult extends IRaceBasis {
 export interface IQualifyResult extends IRaceBasis {
   results: IDriverQualifying[];
 }
+
+export type QualifyPhase = 1 | 2 | 3;
+
+export interface ILiveDriverQualifying extends IDriverQualifying {
+  /** The part of the qualifying where the driver was knocked out */
+  knockedOutIn?: 1 | 2;
+  /** Milliseconds behind the fastest driver in the same part */
+  gap?: number;
+}
+
+/** A qualifying while it is being driven. `duration` is the best lap in the part the driver is in */
+export interface ILiveQualifyResult extends IQualifyResult {
+  results: ILiveDriverQualifying[];
+  phase: QualifyPhase;
+  /** True between the parts, e.g. after Q1 and before Q2 */
+  phaseFinished: boolean;
+}

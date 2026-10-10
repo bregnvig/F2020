@@ -40,8 +40,9 @@ export const buildResult = (race: IRaceResult | null, qualify: IQualifyResult | 
 export const buildInterimResult = (qualify: IQualifyResult, selectedDriver: string, team: ITeam): Partial<Bid> => {
   const qualifyResult = qualify.results.slice(0, 7).map(getDriverId);
   const driver = qualify.results.find(r => r.driver.driverId === selectedDriver);
+  // During a live qualifying the selected driver may not be in the results yet
   const selectedDriverResult: Partial<SelectedDriverValue> = {
-    grid: driver.position,
+    grid: driver?.position,
   };
   const selectedTeamResult: Partial<SelectedTeamValue> = {
     qualify: qualify.results.find(r => team?.drivers.some(d => d === r.driver.driverId))?.driver.driverId,
@@ -50,6 +51,6 @@ export const buildInterimResult = (qualify: IQualifyResult, selectedDriver: stri
     qualify: qualifyResult,
     selectedDriver: selectedDriverResult,
     selectedTeam: selectedTeamResult,
-    polePositionTime: qualify.results[0].q3,
+    polePositionTime: qualify.results[0]?.q3,
   };
 };

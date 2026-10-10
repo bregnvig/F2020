@@ -2,7 +2,7 @@ import { inject, InjectionToken, Provider } from '@angular/core';
 import { DateTime } from 'luxon';
 import { RaceStore } from '../+state';
 import { LiveResultService } from './live-result.service';
-import { RaceResultService } from './race-result.service';
+import { LiveSessionProvider, RaceResultService } from './race-result.service';
 import { ReplayResultService } from './replay-result.service';
 
 export const RaceResultProvider = new InjectionToken<RaceResultService>('RaceResultService');
@@ -34,5 +34,6 @@ export function provideRaceResultService(): Provider[] {
         return raceResultServiceFactory(liveResultService, replayResultService, raceStore);
       },
     },
+    { provide: LiveSessionProvider, useExisting: RaceResultProvider },
   ];
 }

@@ -1,11 +1,12 @@
 import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { PlayerStore, RaceStore } from '@f2020/api';
+import { isQualifyLive, isQualifyStarted, PlayerStore, RacesService, RaceStore } from '@f2020/api';
 import { Bid, IDriver, IRace, Participant } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, HasRoleDirective, icon, LoadingComponent } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -40,6 +41,7 @@ export class RaceComponent {
   plusIcon = icon.farPlus;
 
   #store = inject(RaceStore);
+  #racesService = inject(RacesService);
 
   race: Signal<IRace | undefined> = this.#store.race;
   drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
@@ -48,6 +50,20 @@ export class RaceComponent {
   bids: Signal<(Bid | Participant)[] | undefined> = this.#store.bids;
   isCompleted = computed(() => this.race()?.state === 'completed');
   isLiveLive = computed(() => this.race()?.raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
+  #qualifySession = rxResource({
+    // The qualifying is after the race closes
+    params: () => {
+      const race = this.race();
+      return race && race.close < DateTime.local() && race.state !== 'cancelled' ? race : undefined;
+    },
+    stream: ({ params }) => this.#racesService.getQualifySession(params),
+  });
+  /** The link to the qualifying, from an hour before it starts */
+  protected readonly qualifyLink = computed(() => {
+    const session = this.#qualifySession.hasValue() ? this.#qualifySession.value() : undefined;
+    if (!session || !isQualifyStarted(session)) return undefined;
+    return isQualifyLive(session) ? 'Live kvalifikation' : 'Genoplev kvalifikationen';
+  });
 
   constructor() {
     const playerStore = inject(PlayerStore);

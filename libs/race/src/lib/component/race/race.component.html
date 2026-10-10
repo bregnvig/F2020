@@ -66,11 +66,18 @@
           <mat-card-content>
             <f2020-bids [bids]="bids()" [disabled]="!clickable()" [result]="race().result"/>
           </mat-card-content>
-          @if (race().state === 'completed' || isLiveLive()) {
+          @if (race().state === 'completed' || isLiveLive() || qualifyLink()) {
             <mat-card-actions>
-              <a mat-button routerLink="live">
-                <span class="uppercase">{{ isLiveLive() ? 'Live' : 'Genoplev løbet' }}</span>
-              </a>
+              @if (qualifyLink(); as qualifyLink) {
+                <a mat-button routerLink="live/qualify">
+                  <span class="uppercase">{{ qualifyLink }}</span>
+                </a>
+              }
+              @if (race().state === 'completed' || isLiveLive()) {
+                <a mat-button routerLink="live">
+                  <span class="uppercase">{{ isLiveLive() ? 'Live' : 'Genoplev løbet' }}</span>
+                </a>
+              }
             </mat-card-actions>
           }
         </mat-card>

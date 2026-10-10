@@ -3,11 +3,11 @@ import { DisplayPlayerBidComponent, DisplayResultComponent } from './component/d
 import { EnterBidComponent } from './component/enter-bid/enter-bid.component';
 import { RaceDriversComponent } from './component/race-drivers/race-drivers.component';
 import { RaceOutletComponent } from './component/race-outlet/race-outlet.component';
-import { LiveLiveComponent, RaceComponent } from './component/race';
+import { LiveLiveComponent, LiveQualifyComponent, RaceComponent } from './component/race';
 import { RacesComponent } from './component/races/races.component';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
-import { RaceStore } from '@f2020/api';
+import { qualifySessionData, qualifySessionResolver, RaceStore } from '@f2020/api';
 import { inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { truthy } from '@f2020/tools';
@@ -44,6 +44,14 @@ export const RaceRouting: Routes = [
         component: LiveLiveComponent,
         resolve: {
           race: raceResolver,
+        },
+      },
+      {
+        path: 'live/qualify',
+        component: LiveQualifyComponent,
+        resolve: {
+          race: raceResolver,
+          [qualifySessionData]: qualifySessionResolver,
         },
       },
       {

@@ -7,6 +7,7 @@ import { requiredValue, unfreeze } from '@f2020/tools';
 import { combineLatest, Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
+import { Session } from '@f2020/openf1';
 import { OpenF1HttpService } from './openf1-http.service';
 import { converter } from '../../converter';
 import { firestoreWebUtils } from '../../firestore-utils';
@@ -93,6 +94,11 @@ export class RacesService {
         return mapper.qualifyResult({ sessionResults, race, drivers });
       }),
     );
+  }
+
+  /** The OpenF1 session of the qualifying, which has its start and end */
+  getQualifySession(race: IRace): Observable<Session> {
+    return this.#openF1HttpService.getSession(race, 'Qualifying');
   }
 
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {

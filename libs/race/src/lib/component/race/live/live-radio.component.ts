@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { DateTimePipe, DriverHeadshotComponent } from '@f2020/shared';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RaceResultProvider } from '@f2020/api';
+import { LiveSessionProvider } from '@f2020/api';
 import { IDriver, IRace } from '@f2020/data';
 import { RadioMessageComponent } from './radio-message.component';
 
@@ -44,7 +44,7 @@ import { RadioMessageComponent } from './radio-message.component';
 })
 
 export class LiveRadioComponent {
-  #live = inject(RaceResultProvider);
+  #live = inject(LiveSessionProvider);
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
 

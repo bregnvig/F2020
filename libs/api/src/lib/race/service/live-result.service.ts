@@ -21,31 +21,13 @@ import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWh
 import { catchError, concatMap, first, map, retry } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { OpenF1WSSService } from './openf1-wss.service';
+import { historyRetry, latestByDriver, mergeLaps, withLiveUpdates } from './live-utils';
 import { LiveStatus, RaceResultService } from './race-result.service';
 
 interface LapsAndPositions {
   positions: Position[];
   laps: Lap[];
 }
-
-const historyRetry = { count: 3, delay: 5000 };
-
-const mergeLaps = (previousLaps: Lap[], currentLaps: Lap[]) => {
-  const lapMap = new Map(previousLaps.map(lap => [`${lap.lap_number}-${lap.driver_number}`, lap]));
-
-  return Array.from(
-    currentLaps.reduce((map, lap) =>
-      map.set(`${lap.lap_number}-${lap.driver_number}`, lap), lapMap,
-    ).values(),
-  );
-};
-
-/** Keeps the latest entry of each driver, as the mappers only use that */
-const latestByDriver = <T extends { driver_number: number }>(isNewer: (current: T, previous: T) => boolean = () => true) =>
-  (previous: Map<number, T>, current: T[]) => current.reduce((map, item) => {
-    const existing = map.get(item.driver_number);
-    return !existing || isNewer(item, existing) ? map.set(item.driver_number, item) : map;
-  }, new Map(previous));
 
 @Service({ autoProvided: false })
 export class LiveResultService extends RaceResultService {
@@ -98,7 +80,7 @@ export class LiveResultService extends RaceResultService {
 
     return this.#raceSessionKey(race).pipe(
       tap(() => this.#radioStatus$.next({ latestUpdate: DateTime.now(), error: undefined })),
-      concatMap(sessionKey => this.#withLiveUpdates(
+      concatMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getTeamRadio(race, sessionKey),
         this.#openF1WSSService.radio$,
         this.#radioStatus$,
@@ -118,7 +100,7 @@ export class LiveResultService extends RaceResultService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
     return this.#raceSessionKey(race).pipe(
-      concatMap(sessionKey => this.#withLiveUpdates(
+      concatMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getPitStops(sessionKey),
         this.#openF1WSSService.pitStops$,
         this.#pitStopStatus$,
@@ -137,7 +119,7 @@ export class LiveResultService extends RaceResultService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
     return this.#raceSessionKey(race).pipe(
-      switchMap(sessionKey => this.#withLiveUpdates(
+      switchMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getPositions(sessionKey),
         this.#openF1WSSService.positions$,
         this.#positionStatus$,
@@ -161,7 +143,7 @@ export class LiveResultService extends RaceResultService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
     return this.#raceSessionKey(race).pipe(
-      switchMap(sessionKey => this.#withLiveUpdates(
+      switchMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getIntervals(sessionKey),
         this.#openF1WSSService.intervals$,
         this.#intervalStatus$,
@@ -182,7 +164,7 @@ export class LiveResultService extends RaceResultService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
     return this.#raceSessionKey(race).pipe(
-      switchMap(sessionKey => this.#withLiveUpdates(
+      switchMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getRaceControl(sessionKey),
         this.#openF1WSSService.raceControl$,
         this.#raceControlStatus$,
@@ -202,7 +184,7 @@ export class LiveResultService extends RaceResultService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
     return this.#raceSessionKey(race).pipe(
-      concatMap(sessionKey => this.#withLiveUpdates(
+      concatMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getStints(sessionKey),
         this.#openF1WSSService.stints$,
         this.#stintStatus$,
@@ -244,26 +226,6 @@ export class LiveResultService extends RaceResultService {
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       retry(historyRetry),
       map(session => requiredValue(session.session_key, 'session_key')),
-    );
-  }
-
-  /**
-   * Combines the history from the HTTP API with the live updates. A failed history is retried and then reported in the status,
-   * while the live updates keep coming
-   */
-  #withLiveUpdates<T>(history$: Observable<T[]>, live$: Observable<T | undefined>, status$: BehaviorSubject<LiveStatus>): Observable<T[]> {
-    return combineLatest([
-      history$.pipe(
-        retry(historyRetry),
-        catchError(error => {
-          console.error(error);
-          status$.next({ latestUpdate: DateTime.now(), error });
-          return of<T[]>([]);
-        }),
-      ),
-      live$,
-    ]).pipe(
-      map(([history, update], index) => (index === 0 ? [...history, update] : [update]).filter(isTruthy)),
     );
   }
 
