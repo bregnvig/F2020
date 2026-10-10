@@ -1,9 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
-import { buildInterimResult } from '@f2020/api';
-import { Bid, calculateInterimResult, ILiveQualifyResult, IRace } from '@f2020/data';
-import { PositionChangeComponent } from '@f2020/shared';
+import { Bid, buildInterimResult, calculateInterimResult, ILiveQualifyResult, IRace } from '@f2020/data';
 
 @Component({
   selector: 'f2020-live-qualify-bids',
@@ -12,12 +10,7 @@ import { PositionChangeComponent } from '@f2020/shared';
       @for (entry of entries(); track entry.bid.player.uid) {
         <mat-list-item [style.transform]="'translateY(' + entry.offset * 100 + '%)'">
           <img matListItemAvatar height="40" width="40" [ngSrc]="entry.bid.player.photoURL" [alt]="entry.bid.player.displayName">
-          <div matListItemTitle>
-            <span class="inline-flex w-full flex-row justify-between items-center gap-2">
-              <span>{{ entry.bid.player.displayName }}</span>
-              <sha-position-change [change]="entry.change" />
-            </span>
-          </div>
+          <div matListItemTitle>{{ entry.bid.player.displayName }}</div>
           <div matListItemLine>{{ entry.bid.points }} point</div>
         </mat-list-item>
       } @empty {
@@ -31,7 +24,7 @@ import { PositionChangeComponent } from '@f2020/shared';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatList, MatListItem, MatListItemAvatar, MatListItemTitle, MatListItemLine, NgOptimizedImage, PositionChangeComponent],
+  imports: [MatList, MatListItem, MatListItemAvatar, MatListItemTitle, MatListItemLine, NgOptimizedImage],
 })
 export class LiveQualifyBidsComponent {
   race = input.required<IRace>();
@@ -61,7 +54,7 @@ export class LiveQualifyBidsComponent {
       .filter(uid => current.has(uid))
       .map((uid, index) => {
         const { bid, index: currentIndex } = current.get(uid)!;
-        return { bid, offset: currentIndex - index, change: index - currentIndex };
+        return { bid, offset: currentIndex - index };
       });
   });
 }
