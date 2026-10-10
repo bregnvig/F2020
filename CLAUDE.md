@@ -46,6 +46,8 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
 - `npm run deploy:hosting` - Deploy hosting only
 - `npm run deploy:functions` - Deploy functions only
 
+The user deploys. Never run the deploy scripts, and don't ask or offer to deploy.
+
 ## Project Structure
 
 - `apps/ui/` - Angular frontend application
