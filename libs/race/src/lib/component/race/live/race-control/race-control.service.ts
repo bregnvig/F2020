@@ -1,7 +1,7 @@
 import { DestroyRef, inject, Service } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RACE_RESULT_SERVICE } from '@f2020/api';
+import { RaceResultProvider } from '@f2020/api';
 import { IDriver, IRace, RaceControl } from '@f2020/data';
 import { withLength } from '@f2020/tools';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { RaceControlSnackbarComponent } from './race-control-snackbar.component'
 @Service({ autoProvided: false })
 export class RaceControlService {
   #snackBar = inject(MatSnackBar);
-  #live = inject(RACE_RESULT_SERVICE);
+  #live = inject(RaceResultProvider);
   #destroyRef = inject(DestroyRef);
 
   #displayRaceControlMessage(raceControl: RaceControl): void {

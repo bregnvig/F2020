@@ -5,7 +5,7 @@ import { LiveResultService } from './live-result.service';
 import { RaceResultService } from './race-result.service';
 import { ReplayResultService } from './replay-result.service';
 
-export const RACE_RESULT_SERVICE = new InjectionToken<RaceResultService>('RaceResultService');
+export const RaceResultProvider = new InjectionToken<RaceResultService>('RaceResultService');
 
 function raceResultServiceFactory(
   liveResultService: LiveResultService,
@@ -26,7 +26,7 @@ export function provideRaceResultService(): Provider[] {
     LiveResultService,
     ReplayResultService,
     {
-      provide: RACE_RESULT_SERVICE,
+      provide: RaceResultProvider,
       useFactory: () => {
         const liveResultService = inject(LiveResultService);
         const replayResultService = inject(ReplayResultService);

@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
-import { RACE_RESULT_SERVICE } from '@f2020/api';
+import { RaceResultProvider } from '@f2020/api';
 import { IDriver, IDriverInterval, IDriverSector, IRace, IStint } from '@f2020/data';
 import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -36,7 +36,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
 })
 export class LivePositionsComponent implements OnInit {
 
-  #live = inject(RACE_RESULT_SERVICE);
+  #live = inject(RaceResultProvider);
   #destroyRef = inject(DestroyRef);
 
   race = input.required<IRace>();

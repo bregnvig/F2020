@@ -2,7 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { OpenF1WSSService, provideRaceResultService, RACE_RESULT_SERVICE, RaceStore } from '@f2020/api';
+import { OpenF1WSSService, provideRaceResultService, RaceResultProvider, RaceStore } from '@f2020/api';
 import { Bid, IDriver } from '@f2020/data';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -103,7 +103,7 @@ export class LiveLiveComponent {
 
   icons = icon;
   #store = inject(RaceStore);
-  #live = inject(RACE_RESULT_SERVICE);
+  #live = inject(RaceResultProvider);
   #bottomSheet = inject(MatBottomSheet);
   radioError = toSignal(this.#live.radioStatus.pipe(
     map(status => status.error?.statusText),

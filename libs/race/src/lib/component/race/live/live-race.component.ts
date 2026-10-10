@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { buildInterimResult, buildResult, RACE_RESULT_SERVICE, RacesService, TeamService } from '@f2020/api';
+import { buildInterimResult, buildResult, RaceResultProvider, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, retry, switchMap, tap } from 'rxjs';
 import { Bid, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
@@ -40,7 +40,7 @@ export class LiveRaceComponent implements OnInit {
   latestUpdate = output<DateTime>();
   #destroyRef = inject(DestroyRef);
   #racesService = inject(RacesService);
-  #live = inject(RACE_RESULT_SERVICE);
+  #live = inject(RaceResultProvider);
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;

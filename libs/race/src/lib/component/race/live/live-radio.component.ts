@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { DateTimePipe, DriverHeadshotComponent } from '@f2020/shared';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RACE_RESULT_SERVICE } from '@f2020/api';
+import { RaceResultProvider } from '@f2020/api';
 import { IDriver, IRace } from '@f2020/data';
 import { RadioMessageComponent } from './radio-message.component';
 
@@ -14,7 +14,7 @@ import { RadioMessageComponent } from './radio-message.component';
       <mat-list>
         @for (message of messages; track $index) {
           <mat-list-item>
-            <sha-driver-headshot matListItemAvatar [driver]="message.driver"/>
+            <sha-driver-headshot matListItemAvatar [driver]="message.driver" />
             <h4 matListItemTitle>
               <span>{{ message.driver.name }}</span>
               <f2020-radio-message [url]="message.recordingUrl" />
@@ -44,7 +44,7 @@ import { RadioMessageComponent } from './radio-message.component';
 })
 
 export class LiveRadioComponent {
-  #live = inject(RACE_RESULT_SERVICE);
+  #live = inject(RaceResultProvider);
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
 
