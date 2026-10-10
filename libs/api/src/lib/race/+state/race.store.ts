@@ -1,7 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Bid, IDriver, IRace, ITeam, Participant } from '@f2020/data';
+import { Bid, buildInterimResult, buildResult, IDriver, IRace, ITeam, Participant } from '@f2020/data';
 import { requiredValue, truthy } from '@f2020/tools';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
@@ -14,7 +14,6 @@ import { PlayerStore } from '../../player';
 import { SeasonStore } from '../../season/+state';
 import { TeamService } from '../../service';
 import { RacesService } from '../service/races.service';
-import { buildInterimResult, buildResult } from '../service/result-builder';
 import { RacesStore } from './races.store';
 
 export interface RaceState {

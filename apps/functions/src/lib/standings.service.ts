@@ -213,7 +213,7 @@ const getWeekendInfo = async (token: string, seasonId: string, race: IRace): Pro
   };
 };
 
-const getDrivers = () => getFirestore()
+export const getDrivers = () => getFirestore()
   .collection(collectionPaths.drivers())
   .get()
   .then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));

@@ -48,7 +48,7 @@ const openF1ApiUrl = 'https://api.openf1.org/v1/';
 let cachedToken: { token: string; expires: number } | undefined;
 
 /** The token lasts an hour, so it is reused until a minute before it expires */
-const serverToken = async (): Promise<string> => {
+export const serverToken = async (): Promise<string> => {
   if (!cachedToken || cachedToken.expires < Date.now() + 60_000) {
     const token = await openF1Api.token();
     cachedToken = { token: token.access_token, expires: Date.now() + parseInt(token.expires_in) * 1000 };

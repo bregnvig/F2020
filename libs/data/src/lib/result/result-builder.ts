@@ -1,4 +1,4 @@
-import { Bid, finished, IDriverQualifying, IDriverRaceResult, IPitStop, IQualifyResult, IRaceResult, ITeam, SelectedDriverValue, SelectedTeamValue } from '@f2020/data';
+import { Bid, finished, IDriverQualifying, IDriverRaceResult, IPitStop, IQualifyResult, IRaceResult, ITeam, SelectedDriverValue, SelectedTeamValue } from '../model';
 
 const getDriverId = (result: IDriverRaceResult | IDriverQualifying) => result.driver.driverId;
 
@@ -10,18 +10,18 @@ export const buildResult = (race: IRaceResult | null, qualify: IQualifyResult | 
 
   const fastestDriverResult = [...raceResult]
     .filter(result => !!result.fastestLap)
-    .sort((a, b) => (a.fastestLap.rank ?? 100) - (b.fastestLap.rank ?? 100))
+    .sort((a, b) => (a.fastestLap?.rank ?? 100) - (b.fastestLap?.rank ?? 100))
     .slice(0, 2)
     .map(getDriverId);
   const podiumResult = raceResult.slice(0, 4).map(getDriverId) ?? [];
   const driver = raceResult.find(r => r.driver.driverId === selectedDriver);
-  const selectedDriverResult: SelectedDriverValue = driver && race
+  const selectedDriverResult: SelectedDriverValue | null = driver && race
     ? {
       grid: driver?.grid || raceResult.length,
       finish: raceResult.indexOf(driver) !== -1 ? raceResult.indexOf(driver) + 1 : 1,
     } : null;
-  const selectedTeamResult: SelectedTeamValue = {
-    qualify: selectedTeam && qualify ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId)).driver.driverId : undefined,
+  const selectedTeamResult: Partial<SelectedTeamValue> = {
+    qualify: selectedTeam && qualify ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId))?.driver.driverId : undefined,
     result: selectedTeam && race ? raceResult.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId))?.driver.driverId : undefined,
   };
   const firstCrashResult = [...raceResult].reverse().filter(r => !finished(r.status)).slice(0, 3).map(getDriverId);

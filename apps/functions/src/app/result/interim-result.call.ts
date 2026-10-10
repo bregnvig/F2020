@@ -2,7 +2,7 @@ import { Bid, calculateInterimResult, IRace, Player, validateInterimResult } fro
 import { getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
-import { aiGeneratedRoast, collectionPaths, currentSeason, documentPaths, escapeHtml, getCurrentRace, internalError, logAndCreateError, raceLink, resultMail, Roast, roastSections, sendMail, sendNotification, standingsTable, validateAccess } from '../../lib';
+import { aiGeneratedRoast, collectionPaths, documentPaths, escapeHtml, getCurrentRace, internalError, logAndCreateError, raceLink, resultMail, Roast, roastSections, sendMail, sendNotification, standingsTable, validateAccess } from '../../lib';
 
 /** Driver ids are e.g. max_verstappen */
 const driverName = (driverId?: string) => driverId?.replace(/_/g, ' ') ?? 'ingen';
@@ -26,17 +26,16 @@ const messageBody = (player: Player, results: Partial<Bid>[]): string => {
 
 export const submitInterimResult = onCall(async (request: CallableRequest<Bid>) => {
   return validateAccess(request.auth?.uid, 'admin')
-    .then(() => buildResult(request.data))
+    .then(() => getCurrentRace('closed'))
+    .then(race => createInterimResult(race, request.data))
     .then(() => true)
     .catch(internalError);
 });
 
-const buildResult = async (result: Partial<Bid>) => {
-  const season = await currentSeason();
-  const race = await getCurrentRace('closed');
-
-  if (!season || !race) {
-    throw logAndCreateError('not-found', 'Season or race', season?.name, race?.name);
+/** Stores the interim result of the race and the points it gives each bid, and mails the players */
+export const createInterimResult = async (race: IRace | undefined, result: Partial<Bid>) => {
+  if (!race) {
+    throw logAndCreateError('not-found', 'Closed race');
   }
 
   try {

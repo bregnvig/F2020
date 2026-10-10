@@ -12,7 +12,6 @@ export * from './lib/race/service/qualify-result.service';
 export * from './lib/race/service/qualify-result.factory';
 export * from './lib/race/service/qualify-session';
 export * from './lib/race/service/openf1-wss.service';
-export * from './lib/race/service/result-builder';
 export * from './lib/season/+state';
 export * from './lib/drivers';
 export * from './lib/service';
