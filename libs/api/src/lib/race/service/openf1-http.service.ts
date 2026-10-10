@@ -5,7 +5,7 @@ import { IRace } from '@f2020/data';
 import { GridPosition, Interval, Lap, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { catchError, combineLatest, defer, map, MonoTypeOperatorFunction, Observable, of, pipe, retry, shareReplay, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, defer, map, MonoTypeOperatorFunction, Observable, of, pipe, retry, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 // The season is part of the key, as a circuit is raced every year
 const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-${race.season}-${race.circuitId}`;
@@ -32,7 +32,7 @@ export class OpenF1HttpService {
       const session$ = session
         ? of(session)
         : this.#ready.pipe(
-          switchMap(() => this.#http.get<Session[]>(openF1Url.session(race.season, race.circuitId, sessionName), { headers: this.#headers })),
+          switchMap(() => this.#getList<Session>(openF1Url.session(race.season, race.circuitId, sessionName))),
           this.retryWithNewToken(),
           map(sessions => requiredValue(sessions[0], 'Session')),
           tap(session => localStorage.setItem(key, JSON.stringify(session))),
@@ -49,8 +49,8 @@ export class OpenF1HttpService {
     const lapsQuery = `&date_start<=${latestEndTime.toISO(toISOOptions)}`;
     return this.#ready.pipe(
       switchMap(() => combineLatest({
-        positions: this.#http.get<Position[]>(openF1Url.positions(sessionKey) + positionQuery, { headers: this.#headers }),
-        laps: this.#http.get<Lap[]>(openF1Url.labs(sessionKey) + lapsQuery, { headers: this.#headers }),
+        positions: this.#getList<Position>(openF1Url.positions(sessionKey) + positionQuery),
+        laps: this.#getList<Lap>(openF1Url.labs(sessionKey) + lapsQuery),
       })),
       this.retryWithNewToken(),
     );
@@ -58,28 +58,28 @@ export class OpenF1HttpService {
 
   getPositions(sessionKey: number): Observable<Position[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<Position[]>(openF1Url.positions(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<Position>(openF1Url.positions(sessionKey))),
       this.retryWithNewToken(),
     );
   }
 
   getLaps(sessionKey: number): Observable<Lap[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<Lap[]>(openF1Url.labs(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<Lap>(openF1Url.labs(sessionKey))),
       this.retryWithNewToken(),
     );
   }
 
   getSessionResult(sessionKey: number): Observable<SessionResult[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<SessionResult[]>(openF1Url.sessionResults(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<SessionResult>(openF1Url.sessionResults(sessionKey))),
       this.retryWithNewToken(),
     );
   }
 
   getStartingGrid(sessionKey: number): Observable<GridPosition[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<GridPosition[]>(openF1Url.startingGrid(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<GridPosition>(openF1Url.startingGrid(sessionKey))),
       this.retryWithNewToken(),
     );
   }
@@ -88,36 +88,43 @@ export class OpenF1HttpService {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const positionQuery = `&date<=${latestEndTime.toISO(toISOOptions)}` + (positionAfter ? `&date_start>=${positionAfter.toISO(toISOOptions)}` : '');
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<OpenF1TeamRadio[]>(openF1Url.radio(sessionKey) + positionQuery, { headers: this.#headers })),
+      switchMap(() => this.#getList<OpenF1TeamRadio>(openF1Url.radio(sessionKey) + positionQuery)),
       this.retryWithNewToken(),
     );
   }
 
   getPitStops(sessionKey: number) {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<PitStop[]>(openF1Url.pitStops(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<PitStop>(openF1Url.pitStops(sessionKey))),
       this.retryWithNewToken(),
     );
   }
 
   getIntervals(sessionKey: number): Observable<Interval[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<Interval[]>(openF1Url.intervals(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<Interval>(openF1Url.intervals(sessionKey))),
       this.retryWithNewToken(),
     );
   }
 
   getRaceControl(sessionKey: number): Observable<RaceControl[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<RaceControl[]>(openF1Url.raceControl(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<RaceControl>(openF1Url.raceControl(sessionKey))),
       this.retryWithNewToken(),
     );
   }
 
   getStints(sessionKey: number): Observable<Stint[]> {
     return this.#ready.pipe(
-      switchMap(() => this.#http.get<Stint[]>(openF1Url.stints(sessionKey), { headers: this.#headers })),
+      switchMap(() => this.#getList<Stint>(openF1Url.stints(sessionKey))),
       this.retryWithNewToken(),
+    );
+  }
+
+  /** OpenF1 answers 404 when it has no data, e.g. no team radio in a session */
+  #getList<T>(url: string): Observable<T[]> {
+    return this.#http.get<T[]>(url, { headers: this.#headers }).pipe(
+      catchError(error => error instanceof HttpErrorResponse && error.status === 404 ? of<T[]>([]) : throwError(() => error)),
     );
   }
 
