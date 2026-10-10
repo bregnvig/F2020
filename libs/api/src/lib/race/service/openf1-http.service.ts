@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, MonoTypeOperatorFunction, Observable, of, pipe, retry, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 // The season is part of the key, as a circuit is raced every year
-const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-${race.season}-${race.circuitId}`;
+const sessionKey = (race: IRace, session: 'Race' | 'Qualifying' | 'Sprint') => `${session}-${race.season}-${race.circuitId}`;
 const sessionCache = new Map<string, Observable<Session>>();
 const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
 
@@ -25,7 +25,7 @@ export class OpenF1HttpService {
   );
   #token?: Observable<string>;
 
-  getSession(race: IRace, sessionName: 'Race' | 'Qualifying'): Observable<Session> {
+  getSession(race: IRace, sessionName: 'Race' | 'Qualifying' | 'Sprint'): Observable<Session> {
     const key = sessionKey(race, sessionName);
     if (!sessionCache.has(key)) {
       const session = JSON.parse(localStorage.getItem(key)) as Session | null;

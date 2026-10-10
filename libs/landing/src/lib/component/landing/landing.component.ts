@@ -6,7 +6,8 @@ import { JoinWbcComponent } from '../card/join-wbc/join-wbc.component';
 import { PreviousRaceComponent } from '../card/previous-race/previous-race.component';
 import { RememberToPlayComponent } from '../card/remember-to-play/remember-to-play.component';
 import { WhatElseComponent } from '../card/what-else/what-else.component';
-import { CardPageComponent, LoadingComponent } from '@f2020/shared';
+import { CardPageComponent, HasRoleDirective, LoadingComponent } from '@f2020/shared';
+import { SprintStandingsComponent } from '../card/sprint-standings/sprint-standings';
 import { hiddenLandingCards, LandingCard } from '@f2020/data';
 import { DriverChampionshipComponent } from '../card/championship/driver-championship';
 import { TeamChampionshipComponent } from '../card/championship/team-championship';
@@ -16,7 +17,7 @@ import { WbcChampionshipComponent } from '../card/championship/wbc-championship'
   selector: 'f2020-landing',
   templateUrl: './landing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, DriverChampionshipComponent, TeamChampionshipComponent, WbcChampionshipComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent],
+  imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, DriverChampionshipComponent, TeamChampionshipComponent, WbcChampionshipComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent, HasRoleDirective, SprintStandingsComponent],
 })
 export class LandingComponent {
 

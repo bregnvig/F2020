@@ -4,7 +4,7 @@ import { collection, collectionData, doc, docData, Firestore, getDoc, setDoc, up
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { requiredValue, unfreeze } from '@f2020/tools';
-import { combineLatest, Observable, switchMap } from 'rxjs';
+import { catchError, combineLatest, Observable, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeasonService } from '../../season/service/season.service';
 import { Session } from '@f2020/openf1';
@@ -101,6 +101,13 @@ export class RacesService {
     return this.#openF1HttpService.getSession(race, 'Qualifying');
   }
 
+  /** The OpenF1 session of the sprint. Undefined on a weekend without a sprint */
+  getSprintSession(race: IRace): Observable<Session | undefined> {
+    return this.#openF1HttpService.getSession(race, 'Sprint').pipe(
+      catchError(() => of(undefined)),
+    );
+  }
+
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     return this.#openF1HttpService.getSession(race, 'Race').pipe(
       map(session => requiredValue(session.session_key, 'session_key')),
@@ -117,6 +124,11 @@ export class RacesService {
 
   updateStandings(race: IRace): Promise<unknown> {
     return httpsCallable(this.#functions, 'standingCall')(race).then(() => true);
+  }
+
+  /** Updates the driver and team standings after the sprint */
+  updateSprintStandings(race: IRace): Promise<unknown> {
+    return httpsCallable(this.#functions, 'sprintStandingCall')(race).then(() => true);
   }
 
   async submitBid(bid: Bid, player: Player): Promise<true> {
