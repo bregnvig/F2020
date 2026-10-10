@@ -7,7 +7,8 @@ import { requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, MonoTypeOperatorFunction, Observable, of, pipe, retry, shareReplay, switchMap, tap } from 'rxjs';
 
-const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-${race.circuitId}`;
+// The season is part of the key, as a circuit is raced every year
+const sessionKey = (race: IRace, session: 'Race' | 'Qualifying') => `${session}-${race.season}-${race.circuitId}`;
 const sessionCache = new Map<string, Observable<Session>>();
 const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
 
