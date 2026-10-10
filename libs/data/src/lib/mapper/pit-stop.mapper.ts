@@ -1,6 +1,6 @@
 import { IDriver, IPitStop, ITeam } from '../model';
 import { PitStop } from '@f2020/openf1';
-import { requiredValue } from '@f2020/tools';
+import { requiredValue, toMap } from '@f2020/tools';
 import { getDrivers } from './mapper-utils';
 
 
@@ -17,7 +17,13 @@ const openF1PitStops = (params: OpenF1PitstopParams) => {
     return acc;
   }, new Map<string, ITeam>());
 
-  return params.pitStops.map(pitStop => {
+  // A pit stop can arrive more than once, e.g. from both the history and the live updates. Keep the latest, and skip
+  // the ones without a duration, which would otherwise be the fastest pit stop
+  const pitStops = params.pitStops
+    .filter(pitStop => pitStop.pit_duration != null)
+    .reduce(toMap<PitStop, string>(pitStop => `${pitStop.driver_number}-${pitStop.lap_number}`), new Map<string, PitStop>());
+
+  return [...pitStops.values()].map(pitStop => {
     const driver = requiredValue(drivers.get(pitStop.driver_number), 'Pit stop driver with driver number', pitStop.driver_number);
     return ({
       driver,

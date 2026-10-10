@@ -14,7 +14,7 @@ import {
   RaceControl,
   TeamRadio,
 } from '@f2020/data';
-import { Interval, Lap, RaceControl as OpenF1RaceControl, TeamRadio as OpenF1TeamRadio, PitStop, Position, Stint } from '@f2020/openf1';
+import { Interval, Lap, RaceControl as OpenF1RaceControl, PitStop, Position, Stint } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, Observable, of, scan, switchMap, takeWhile, tap } from 'rxjs';
@@ -28,6 +28,8 @@ interface LapsAndPositions {
   laps: Lap[];
 }
 
+const historyRetry = { count: 3, delay: 5000 };
+
 const mergeLaps = (previousLaps: Lap[], currentLaps: Lap[]) => {
   const lapMap = new Map(previousLaps.map(lap => [`${lap.lap_number}-${lap.driver_number}`, lap]));
 
@@ -37,6 +39,13 @@ const mergeLaps = (previousLaps: Lap[], currentLaps: Lap[]) => {
     ).values(),
   );
 };
+
+/** Keeps the latest entry of each driver, as the mappers only use that */
+const latestByDriver = <T extends { driver_number: number }>(isNewer: (current: T, previous: T) => boolean = () => true) =>
+  (previous: Map<number, T>, current: T[]) => current.reduce((map, item) => {
+    const existing = map.get(item.driver_number);
+    return !existing || isNewer(item, existing) ? map.set(item.driver_number, item) : map;
+  }, new Map(previous));
 
 @Service({ autoProvided: false })
 export class LiveResultService extends RaceResultService {
@@ -87,18 +96,12 @@ export class LiveResultService extends RaceResultService {
   getRadio(race: IRace, drivers: IDriver[]): Observable<TeamRadio[] | null> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      map(session => requiredValue(session.session_key, 'session_key')),
+    return this.#raceSessionKey(race).pipe(
       tap(() => this.#radioStatus$.next({ latestUpdate: DateTime.now(), error: undefined })),
-      concatMap(sessionKey => combineLatest([
+      concatMap(sessionKey => this.#withLiveUpdates(
         this.#openF1HttpService.getTeamRadio(race, sessionKey),
         this.#openF1WSSService.radio$,
-      ]).pipe(
-        map(([radioMessages, radioUpdate], index) => (index === 0 ? [...radioMessages, radioUpdate] : [radioUpdate]).filter(isTruthy)),
-        catchError(error => {
-          this.#radioStatus$.next({ latestUpdate: DateTime.now(), error });
-          return of<OpenF1TeamRadio[]>([]);
-        }),
+        this.#radioStatus$,
       )),
       takeWhile(() => DateTime.local() < latestEndTime),
       map(messages => mapper.radio({ messages, drivers })),
@@ -114,19 +117,13 @@ export class LiveResultService extends RaceResultService {
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      map(session => requiredValue(session.session_key, 'session_key')),
-      concatMap(sessionKey => combineLatest([
+    return this.#raceSessionKey(race).pipe(
+      concatMap(sessionKey => this.#withLiveUpdates(
         this.#openF1HttpService.getPitStops(sessionKey),
         this.#openF1WSSService.pitStops$,
-      ]).pipe(
-        map(([pitStops, pitStopUpdate], index) => (index === 0 ? [...pitStops, pitStopUpdate] : [pitStopUpdate]).filter(isTruthy)),
-        catchError(error => {
-          console.error(error);
-          this.#pitStopStatus$.next({ error, latestUpdate: DateTime.now() });
-          return of<PitStop[]>([]);
-        }),
-        scan((previous, current) => [...previous, ...current], []),
+        this.#pitStopStatus$,
+      ).pipe(
+        scan((previous, current) => [...previous, ...current], [] as PitStop[]),
         map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
         tap(mappedStops => this.#pitStopStatus$.next({
           latestUpdate: DateTime.now(),
@@ -139,25 +136,20 @@ export class LiveResultService extends RaceResultService {
   getPositions(race: IRace, drivers: IDriver[]): Observable<IDriverRaceResult[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      map(session => requiredValue(session.session_key, 'session_key')),
-      switchMap(sessionKey => combineLatest([
+    return this.#raceSessionKey(race).pipe(
+      switchMap(sessionKey => this.#withLiveUpdates(
         this.#openF1HttpService.getPositions(sessionKey),
         this.#openF1WSSService.positions$,
-      ]).pipe(
-        map(([positions, update], index) => (index === 0 ? [...positions, update] : [update]).filter(isTruthy)),
-        catchError(error => {
-          console.error(error);
-          this.#positionStatus$.next({ error, latestUpdate: DateTime.now() });
-          return of<Position[]>([]);
-        }),
-        scan((previous, current) => [...previous, ...current], []),
+        this.#positionStatus$,
+      ).pipe(
+        scan(latestByDriver<Position>(), new Map<number, Position>()),
+        map(positions => [...positions.values()]),
         switchMap(positions => this.getGrid(race, drivers).pipe(
           map(gridPositions => ({ positions, gridPositions })),
         )),
         tap(({ positions }) => this.#positionStatus$.next({
           latestUpdate: DateTime.now(),
-          info: `${positions.length} position updates`,
+          info: `${positions.length} drivers`,
         })),
         takeWhile(() => DateTime.local() < latestEndTime),
       )),
@@ -168,22 +160,17 @@ export class LiveResultService extends RaceResultService {
   getIntervals(race: IRace, drivers: IDriver[]): Observable<IDriverInterval[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      map(session => requiredValue(session.session_key, 'session_key')),
-      switchMap(sessionKey => combineLatest([
+    return this.#raceSessionKey(race).pipe(
+      switchMap(sessionKey => this.#withLiveUpdates(
         this.#openF1HttpService.getIntervals(sessionKey),
         this.#openF1WSSService.intervals$,
-      ]).pipe(
-        map(([intervals, update], index) => (index === 0 ? [...intervals, update] : [update]).filter(isTruthy)),
-        catchError(error => {
-          console.error(error);
-          this.#intervalStatus$.next({ error, latestUpdate: DateTime.now() });
-          return of<Interval[]>([]);
-        }),
-        scan((previous, current) => [...previous, ...current], []),
+        this.#intervalStatus$,
+      ).pipe(
+        scan(latestByDriver<Interval>(), new Map<number, Interval>()),
+        map(intervals => [...intervals.values()]),
         tap(intervals => this.#intervalStatus$.next({
           latestUpdate: DateTime.now(),
-          info: `${intervals.length} interval updates`,
+          info: `${intervals.length} drivers`,
         })),
         takeWhile(() => DateTime.local() < latestEndTime),
       )),
@@ -194,24 +181,19 @@ export class LiveResultService extends RaceResultService {
   getRaceControl(race: IRace, drivers: IDriver[]): Observable<RaceControl[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      map(session => requiredValue(session.session_key, 'session_key')),
-      switchMap(sessionKey => combineLatest([
+    return this.#raceSessionKey(race).pipe(
+      switchMap(sessionKey => this.#withLiveUpdates(
         this.#openF1HttpService.getRaceControl(sessionKey),
         this.#openF1WSSService.raceControl$,
-      ]).pipe(
-        map(([messages, update], index) => (index === 0 ? [...messages, update] : [update]).filter(isTruthy)),
-        catchError(error => {
-          console.error(error);
-          return of<OpenF1RaceControl[]>([]);
-        }),
-        scan((previous, current) => [...previous, ...current], []),
+        this.#raceControlStatus$,
+      ).pipe(
+        scan((previous, current) => [...previous, ...current], [] as OpenF1RaceControl[]),
         takeWhile(() => DateTime.local() < latestEndTime),
       )),
       map(messages => mapper.raceControl({ messages, drivers })),
       tap(mappedMessages => this.#raceControlStatus$.next({
         latestUpdate: DateTime.now(),
-        info: `${mappedMessages.length} race control messages`
+        info: `${mappedMessages.length} race control messages`,
       })),
     );
   }
@@ -219,19 +201,15 @@ export class LiveResultService extends RaceResultService {
   getStints(race: IRace, drivers: IDriver[]): Observable<IStint[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#openF1HttpService.getSession(race, 'Race').pipe(
-      map(session => requiredValue(session.session_key, 'session_key')),
-      concatMap(sessionKey => combineLatest([
+    return this.#raceSessionKey(race).pipe(
+      concatMap(sessionKey => this.#withLiveUpdates(
         this.#openF1HttpService.getStints(sessionKey),
         this.#openF1WSSService.stints$,
-      ]).pipe(
-        map(([stints, stintUpdate], index) => (index === 0 ? [...stints, stintUpdate] : [stintUpdate]).filter(isTruthy)),
-        catchError(error => {
-          console.error(error);
-          return of<Stint[]>([]);
-        }),
-        scan((previous, current) => [...previous, ...current], []),
-        map(stints => mapper.stints({ stints, drivers })),
+        this.#stintStatus$,
+      ).pipe(
+        // An update of an earlier stint must not replace the current one
+        scan(latestByDriver<Stint>((current, previous) => current.stint_number >= previous.stint_number), new Map<number, Stint>()),
+        map(stints => mapper.stints({ stints: [...stints.values()], drivers })),
         tap(mappedStints => this.#stintStatus$.next({
           latestUpdate: DateTime.now(),
           info: `${mappedStints.length} stints`,
@@ -262,18 +240,46 @@ export class LiveResultService extends RaceResultService {
     return this.#gridPositions;
   }
 
+  #raceSessionKey(race: IRace): Observable<number> {
+    return this.#openF1HttpService.getSession(race, 'Race').pipe(
+      retry(historyRetry),
+      map(session => requiredValue(session.session_key, 'session_key')),
+    );
+  }
+
+  /**
+   * Combines the history from the HTTP API with the live updates. A failed history is retried and then reported in the status,
+   * while the live updates keep coming
+   */
+  #withLiveUpdates<T>(history$: Observable<T[]>, live$: Observable<T | undefined>, status$: BehaviorSubject<LiveStatus>): Observable<T[]> {
+    return combineLatest([
+      history$.pipe(
+        retry(historyRetry),
+        catchError(error => {
+          console.error(error);
+          status$.next({ latestUpdate: DateTime.now(), error });
+          return of<T[]>([]);
+        }),
+      ),
+      live$,
+    ]).pipe(
+      map(([history, update], index) => (index === 0 ? [...history, update] : [update]).filter(isTruthy)),
+    );
+  }
+
   #getLapsAndPositions(race: IRace): Observable<LapsAndPositions> {
     if (!this.#lapsAndPositions$) {
       this.#openF1WSSService.initializeClient();
-      this.#lapsAndPositions$ = this.#openF1HttpService.getSession(race, 'Race').pipe(
-        retry({
-          count: 3,
-          delay: 5000,
-        }),
-        map(session => requiredValue(session.session_key, 'session_key')),
+      this.#lapsAndPositions$ = this.#raceSessionKey(race).pipe(
         // takeWhile(() => DateTime.local() < latestEndTime),
         concatMap(sessionKey => combineLatest([
-          this.#openF1HttpService.getPositionAndLabs(race, sessionKey),
+          this.#openF1HttpService.getPositionAndLabs(race, sessionKey).pipe(
+            retry(historyRetry),
+            catchError(error => {
+              this.#resultStatus$.next({ latestUpdate: DateTime.now(), error });
+              return of<LapsAndPositions>({ positions: [], laps: [] });
+            }),
+          ),
           combineLatest({
             position: this.#openF1WSSService.positions$,
             lap: this.#openF1WSSService.laps$,
@@ -283,15 +289,12 @@ export class LiveResultService extends RaceResultService {
           positions: (index === 0 ? [...positions, position] : [position]).filter(isTruthy),
           laps: (index === 0 ? [...laps, lap] : [lap]).filter(isTruthy),
         })),
-        catchError(error => {
-          this.#resultStatus$.next({ latestUpdate: DateTime.now(), error });
-          return of({ positions: [], laps: [] as Lap[] });
-        }),
         scan((previous, current) => ({
-          positions: [...previous.positions, ...current.positions ?? []],
-          laps: mergeLaps(previous.laps, current.laps ?? []),
+          positions: [...previous.positions, ...current.positions],
+          laps: mergeLaps(previous.laps, current.laps),
         })),
-        tap(({ laps }) => this.currentLap.next(laps.at(-1)?.lap_number ?? 0)),
+        // The laps are in the order they arrived, so a back marker's lap can come last
+        tap(({ laps }) => this.currentLap.next(laps.reduce((max, lap) => Math.max(max, lap.lap_number), 0))),
         shareLatest(),
       );
     }
