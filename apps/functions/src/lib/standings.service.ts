@@ -14,6 +14,8 @@ interface WeekendInfo {
   drivers: IDriver[];
   raceSession: Session;
   qualifySession: Session;
+  /** Missing on a weekend without a sprint */
+  sprintSession?: Session;
   raceBasis: IRaceBasis;
 }
 
@@ -27,10 +29,36 @@ export const setStandings = async (race: IRace) => {
   const weekendInfo = await getWeekendInfo(token, season.id, race);
   await setDriverStatistics(weekendInfo)
     .then(results => setDriverStandings(weekendInfo, race, results))
-    .then(() => setTeamsStanding(weekendInfo));
+    .then(() => setTeamsStanding(token, season.id, weekendInfo.raceSession, weekendInfo.sprintSession));
 };
 
-const setDriverStandings = async ({ token, seasonId, drivers, raceSession }: WeekendInfo, race: IRace, results: IDriverRaceResult[]) => {
+/**
+ * Updates the points and positions of the drivers and the teams after the sprint, before the race is done. The wins are kept,
+ * as the sprint winner is counted with the race
+ */
+export const setSprintStandings = async (race: IRace) => {
+  const season = await currentSeason();
+  const token = requiredValue(await openF1Api.token(), 'Token')?.access_token;
+  const circuitId = requiredValue(race.circuitId, 'Race circuit id');
+  const sprintSession = requiredValue(await findSession(token, season.id, circuitId, 'Sprint'), `Sprint session of ${race.name}`);
+  const drivers = await getDrivers();
+
+  const db = getFirestore();
+  const allDrivers = await db
+    .doc(documentPaths.standing.allDriver(season.id))
+    .get()
+    .then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
+  const championship = await driverStandings(token, sprintSession, drivers);
+  const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => ({
+    driver,
+    ...points,
+    wins: allDrivers.standing.find(s => s.driver.driverId === driver.driverId)?.wins ?? 0,
+  }));
+  await db.doc(documentPaths.standing.allDriver(season.id)).set({ standing });
+  await setTeamsStanding(token, season.id, sprintSession);
+};
+
+const setDriverStandings = async ({ token, seasonId, drivers, raceSession, sprintSession }: WeekendInfo, race: IRace, results: IDriverRaceResult[]) => {
   const db = getFirestore();
   const allDrivers = await db
     .doc(documentPaths.standing.allDriver(seasonId))
@@ -38,7 +66,7 @@ const setDriverStandings = async ({ token, seasonId, drivers, raceSession }: Wee
     .then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
   const sprintWinner = await sprintRaceWinner(token, seasonId, race.circuitId, drivers);
   const raceWinner = results.find(r => r.position === 1)?.driver.driverId;
-  const championship = await driverStandings(token, raceSession, drivers);
+  const championship = await driverStandings(token, raceSession, drivers, sprintSession);
   const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => {
     const previous = allDrivers.standing.find(s => s.driver.driverId === driver.driverId);
     const wins = (previous?.wins ?? 0) + (driver.driverId === sprintWinner ? 1 : 0) + (driver.driverId === raceWinner ? 1 : 0);
@@ -86,13 +114,7 @@ const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
 };
 
 const sprintRaceWinner = async (token: string, seasonId: string, circuitId: number, drivers: IDriver[]): Promise<string | undefined> => {
-  let session: Session = undefined;
-  try {
-    session = await openF1Api.session(token, seasonId, circuitId, 'Sprint');
-  } catch {
-    // Ignore
-  }
-
+  const session = await findSession(token, seasonId, circuitId, 'Sprint');
   if (!session) return undefined;
 
   const results = await openF1Api.sessionResults(token, session.session_key);
@@ -103,8 +125,21 @@ const sprintRaceWinner = async (token: string, seasonId: string, circuitId: numb
 
 type DriverPoints = Omit<IDriverStanding, 'wins'>;
 
-const driverStandings = async (token: string, raceSession: Session, drivers: IDriver[]): Promise<DriverPoints[]> => {
-  const positions = await openF1Api.championDriverPoints(token, raceSession.session_key);
+/** OpenF1 answers 404 when there is no session, e.g. no sprint */
+const findSession = async (token: string, seasonId: string, circuitId: number, sessionName: 'Race' | 'Qualifying' | 'Sprint'): Promise<Session | undefined> => {
+  try {
+    return await openF1Api.session(token, seasonId, circuitId, sessionName);
+  } catch {
+    return undefined;
+  }
+};
+
+/** With a sprint session, the standing is compared with the standing before the sprint, so before the weekend */
+const driverStandings = async (token: string, session: Session, drivers: IDriver[], sprintSession?: Session): Promise<DriverPoints[]> => {
+  const positions = await openF1Api.championDriverPoints(token, session.session_key);
+  const sprint = sprintSession && session.session_key !== sprintSession.session_key
+    ? new Map((await openF1Api.championDriverPoints(token, sprintSession.session_key)).map(c => [c.driver_number, c]))
+    : undefined;
   const findDriver = findDriverFn(drivers);
 
   return positions
@@ -115,11 +150,14 @@ const driverStandings = async (token: string, raceSession: Session, drivers: IDr
       }
       return !!driver;
     })
-    .map(({ driver, championship }) => ({ driver, ...championshipPoints(championship) }));
+    .map(({ driver, championship }) => ({ driver, ...championshipPoints(championship, sprint?.get(championship.driver_number)) }));
 };
 
-const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) => {
-  const standings = await openF1Api.championTeamsPoints(token, raceSession.session_key);
+const setTeamsStanding = async (token: string, seasonId: string, session: Session, sprintSession?: Session) => {
+  const standings = await openF1Api.championTeamsPoints(token, session.session_key);
+  const sprint = sprintSession && session.session_key !== sprintSession.session_key
+    ? new Map((await openF1Api.championTeamsPoints(token, sprintSession.session_key)).map(c => [c.team_name, c]))
+    : undefined;
 
   const db = getFirestore();
   const teams = await db
@@ -139,7 +177,7 @@ const setTeamsStanding = async ({ raceSession, token, seasonId }: WeekendInfo) =
       }
       transaction.set(
         db.doc(documentPaths.team(seasonId, team.constructorId)),
-        championshipPoints(s) as Partial<ITeam>,
+        championshipPoints(s, sprint?.get(s.team_name)) as Partial<ITeam>,
         {
           merge: true,
         },
@@ -156,13 +194,11 @@ const getWeekendInfo = async (token: string, seasonId: string, race: IRace): Pro
     .doc(documentPaths.circuit(circuitId))
     .get()
     .then(doc => doc.data() as Circuit);
-  const drivers = await db
-    .collection(collectionPaths.drivers())
-    .get()
-    .then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
+  const drivers = await getDrivers();
 
   const raceSession = await openF1Api.session(token, seasonId, circuitId, 'Race');
   const qualifySession = await openF1Api.session(token, seasonId, circuitId, 'Qualifying');
+  const sprintSession = await findSession(token, seasonId, circuitId, 'Sprint');
   const raceBasis = mapper.basisRace(circuit, race.round, seasonId);
 
   return {
@@ -171,7 +207,13 @@ const getWeekendInfo = async (token: string, seasonId: string, race: IRace): Pro
     drivers,
     raceSession,
     qualifySession,
+    sprintSession,
     raceBasis,
     seasonId,
   };
 };
+
+const getDrivers = () => getFirestore()
+  .collection(collectionPaths.drivers())
+  .get()
+  .then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));

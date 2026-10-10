@@ -6,5 +6,6 @@ export * from './reminder.crontab';
 export * from './reminder.trigger';
 export * from './standings.trigger';
 export * from './standings.call';
+export * from './sprint-standings.call';
 export * from './update-race.call';
 export * from './without-bid.call';

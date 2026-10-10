@@ -80,7 +80,8 @@ The user deploys. Never run the deploy scripts, and don't ask or offer to deploy
 - **Dark theme**: the app uses the prebuilt `pink-bluegrey` Material theme. Black logos disappear on it, so logos are shown in a white circle
 - **Championship points**: drivers (`IDriverStanding`) and teams (`ITeam`) extend `IChampionshipPoints` with `points`, `position`,
   `previousPoints` and `previousPosition`. They come from the OpenF1 championship endpoints, where `points_start` and `position_start`
-  are before the race weekend. Map them with `championshipPoints()` and get places moved with `positionChange()` (positive is up).
+  are before the session. On a sprint weekend pass the sprint's championship as `weekendStart`, so the previous standing is from before
+  the weekend. Map them with `championshipPoints()` and get places moved with `positionChange()` (positive is up).
   Show places moved with `<sha-position-change>`
 - **WBC standings** are not stored. They are summed from `season.wbc.results`
 
