@@ -12,9 +12,11 @@ import { PositionChangeComponent } from '@f2020/shared';
       @for (entry of entries(); track entry.bid.player.uid) {
         <mat-list-item [style.transform]="'translateY(' + entry.offset * 100 + '%)'">
           <img matListItemAvatar height="40" width="40" [ngSrc]="entry.bid.player.photoURL" [alt]="entry.bid.player.displayName">
-          <div matListItemTitle class="flex flex-row justify-between items-center">
-            <span>{{ entry.bid.player.displayName }}</span>
-            <sha-position-change [change]="entry.change" />
+          <div matListItemTitle>
+            <span class="inline-flex w-full flex-row justify-between items-center gap-2">
+              <span>{{ entry.bid.player.displayName }}</span>
+              <sha-position-change [change]="entry.change" />
+            </span>
           </div>
           <div matListItemLine>{{ entry.bid.points }} point</div>
         </mat-list-item>

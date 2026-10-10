@@ -5,12 +5,12 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { isQualifyLive, OpenF1WSSService, provideQualifyResultService, QualifyResultProvider, qualifySessionData, RaceStore } from '@f2020/api';
-import { Bid, IDriver } from '@f2020/data';
+import { Bid, IDriver, IDriverSector } from '@f2020/data';
 import { Session } from '@f2020/openf1';
 import { CardPageComponent, DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { combineLatest, map, switchMap } from 'rxjs';
-import { truthy } from '@f2020/tools';
+import { toMap, truthy } from '@f2020/tools';
 import { LiveRadioComponent } from '../live-radio.component';
 import { LiveStatusComponent } from '../live-status.component';
 import { RaceControlService } from '../race-control';
@@ -49,7 +49,7 @@ import { LiveQualifyDriversComponent } from './live-qualify-drivers';
             }
           </mat-card-header>
           <mat-card-content>
-            <f2020-live-qualify-drivers class="block mt-3" [result]="result()" />
+            <f2020-live-qualify-drivers class="block mt-3" [result]="result()" [sectors]="sectors()" />
           </mat-card-content>
         </mat-card>
         <mat-card>
@@ -96,11 +96,16 @@ export class LiveQualifyComponent {
   protected readonly drivers: Signal<IDriver[] | undefined> = this.#store.drivers;
   protected readonly bids = computed(() => (this.#store.bids() ?? []) as Bid[]);
 
-  protected readonly result = toSignal(combineLatest({
+  #raceAndDrivers$ = combineLatest({
     race: toObservable(this.race).pipe(truthy()),
     drivers: toObservable(this.drivers).pipe(truthy()),
-  }).pipe(
+  });
+  protected readonly result = toSignal(this.#raceAndDrivers$.pipe(
     switchMap(({ race, drivers }) => this.#live.getResult(race, drivers)),
+  ));
+  protected readonly sectors = toSignal(this.#raceAndDrivers$.pipe(
+    switchMap(({ race, drivers }) => this.#live.getSectorStatus(race, drivers)),
+    map(sectors => sectors.reduce(toMap<IDriverSector, string>(sector => sector.driver.driverId), new Map<string, IDriverSector>())),
   ));
   protected readonly latestUpdate = toSignal(this.#live.resultStatus.pipe(map(status => status.latestUpdate)));
   protected readonly error = toSignal(this.#live.resultStatus.pipe(map(status => status.error?.statusText)));
@@ -109,6 +114,7 @@ export class LiveQualifyComponent {
     resultStatus: this.#live.resultStatus,
     radioStatus: this.#live.radioStatus,
     raceControlStatus: this.#live.raceControlStatus,
+    sectorStatus: this.#live.sectorStatus,
   }).pipe(
     map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
   ));

@@ -22,13 +22,16 @@ const lapKey = (driverNumber: number, lapNumber: number) => `${driverNumber}-${l
 
 const openF1Map = (source: OpenF1LiveQualifyParams): ILiveQualifyResult => {
   const drivers = getDrivers(source.drivers);
-  const sessionStatus = source.raceControl.filter(message => message.category === 'SessionStatus' && message.qualifying_phase);
+  // OpenF1 has no qualifying phase on the status messages of Q1 in some sessions
+  const sessionStatus = source.raceControl
+    .filter(message => message.category === 'SessionStatus')
+    .map(message => ({ ...message, phase: message.qualifying_phase || 1 }));
   // The first start of each part. A part that is resumed after a red flag is started again
   const phaseStarts = sessionStatus
     .filter(message => message.message === 'SESSION STARTED')
-    .reduce((starts, message) => starts.has(message.qualifying_phase!) ? starts : starts.set(message.qualifying_phase!, toDateTime(message.date)), new Map<number, DateTime>());
+    .reduce((starts, message) => starts.has(message.phase) ? starts : starts.set(message.phase, toDateTime(message.date)), new Map<number, DateTime>());
   const phase = Math.max(1, ...phaseStarts.keys()) as QualifyPhase;
-  const phaseFinished = sessionStatus.findLast(message => message.qualifying_phase === phase)?.message === 'SESSION FINISHED';
+  const phaseFinished = sessionStatus.findLast(message => message.phase === phase)?.message === 'SESSION FINISHED';
 
   const deletedLaps = new Set(source.raceControl
     .map(message => deletedTime.exec(message.message))

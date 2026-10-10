@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { IDriver, ILiveQualifyResult, IRace, mapper, RaceControl, TeamRadio } from '@f2020/data';
+import { IDriver, IDriverSector, ILiveQualifyResult, IRace, mapper, RaceControl, TeamRadio } from '@f2020/data';
 import { Lap, Position, RaceControl as OpenF1RaceControl, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
@@ -32,12 +32,14 @@ export class ReplayQualifyService extends QualifyResultService {
   #resultStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #radioStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #replayState$ = new BehaviorSubject<ReplayState | null>(null);
   #started = false;
 
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
+  readonly sectorStatus = this.#sectorStatus$.asObservable();
 
   async #startReplay(race: IRace) {
     if (this.#started) {
@@ -90,6 +92,20 @@ export class ReplayQualifyService extends QualifyResultService {
       tap(result => this.#resultStatus$.next({
         latestUpdate: this.#replayState$.value?.currentTime ?? null,
         info: `Q${result.phase}, ${result.results.length} drivers`,
+      })),
+    );
+  }
+
+  getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
+    this.#startReplay(race);
+    return this.#replayState$.pipe(
+      truthy(),
+      // The sectors are shown while the lap is driven, so a lap counts from its start
+      map(state => state.laps.filter(lap => isBefore(lap.date_start, state.currentTime))),
+      map(laps => mapper.sectors({ laps, drivers })),
+      tap(sectors => this.#sectorStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${sectors.length} driver sectors`,
       })),
     );
   }

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
-import { ILiveDriverQualifying, ILiveQualifyResult } from '@f2020/data';
+import { IDriverSector, ILiveDriverQualifying, ILiveQualifyResult } from '@f2020/data';
 import { DriverHeadshotComponent, PolePositionTimePipe } from '@f2020/shared';
+import { LiveSectorStatusComponent } from '../positions/sector/live-sector-status.component';
 
 @Component({
   selector: 'f2020-live-qualify-drivers',
@@ -10,17 +11,22 @@ import { DriverHeadshotComponent, PolePositionTimePipe } from '@f2020/shared';
       @for (entry of entries(); track entry.result.driver.driverId) {
         <mat-list-item [style.transform]="'translateY(' + entry.offset * 100 + '%)'" [class.opacity-50]="entry.result.knockedOutIn">
           <sha-driver-headshot matListItemAvatar [driver]="entry.result.driver" placeholder="assets/loading/red.svg" />
-          <div matListItemTitle class="flex flex-row justify-between">
-            <span>{{ entry.result.position }}. {{ entry.result.driver.name }}</span>
-            <span class="tabular-nums">{{ entry.result.duration | polePositionTime }}</span>
-          </div>
-          <div matListItemLine class="flex flex-row justify-between">
-            <span class="text-xs">
-              @if (entry.result.knockedOutIn; as phase) {
-                Ude i Q{{ phase }}
-              }
+          <!-- The layout is on an inline span inside, as Material styles the title and the line itself -->
+          <div matListItemTitle>
+            <span class="inline-flex w-full flex-row justify-between gap-2">
+              <span>{{ entry.result.position }}. {{ entry.result.driver.name }}</span>
+              <span class="tabular-nums">{{ entry.result.duration | polePositionTime }}</span>
             </span>
-            <span class="text-xs tabular-nums">{{ gap(entry.result) }}</span>
+          </div>
+          <div matListItemLine>
+            <span class="inline-flex w-full flex-row justify-between gap-2 text-xs">
+              @if (entry.result.knockedOutIn; as phase) {
+                <span>Ude i Q{{ phase }}</span>
+              } @else {
+                <f2020-live-sector-status [status]="sectors()?.get(entry.result.driver.driverId)" />
+              }
+              <span class="tabular-nums">{{ gap(entry.result) }}</span>
+            </span>
           </div>
         </mat-list-item>
       } @empty {
@@ -34,10 +40,12 @@ import { DriverHeadshotComponent, PolePositionTimePipe } from '@f2020/shared';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatList, MatListItem, MatListItemAvatar, MatListItemTitle, MatListItemLine, DriverHeadshotComponent, PolePositionTimePipe],
+  imports: [MatList, MatListItem, MatListItemAvatar, MatListItemTitle, MatListItemLine, DriverHeadshotComponent, PolePositionTimePipe, LiveSectorStatusComponent],
 })
 export class LiveQualifyDriversComponent {
   result = input.required<ILiveQualifyResult | undefined>();
+  /** The sectors of the lap each driver is on, by driver id */
+  sectors = input<Map<string, IDriverSector>>();
 
   /** The drivers stay in the first order, and are moved to their position, so they slide into place */
   #initial = linkedSignal<ILiveDriverQualifying[], string[]>({

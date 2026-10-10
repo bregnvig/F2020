@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { IDriver, ILiveQualifyResult, IRace, mapper, RaceControl, TeamRadio } from '@f2020/data';
+import { IDriver, IDriverSector, ILiveQualifyResult, IRace, mapper, RaceControl, TeamRadio } from '@f2020/data';
 import { Lap, Position, RaceControl as OpenF1RaceControl, Session } from '@f2020/openf1';
 import { shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
@@ -19,11 +19,14 @@ export class LiveQualifyService extends QualifyResultService {
   #resultStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #radioStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
+  readonly sectorStatus = this.#sectorStatus$.asObservable();
 
   #raceControl$?: Observable<OpenF1RaceControl[]>;
+  #laps$?: Observable<Lap[]>;
 
   getResult(race: IRace, drivers: IDriver[]): Observable<ILiveQualifyResult> {
     return this.#session(race).pipe(
@@ -36,19 +39,23 @@ export class LiveQualifyService extends QualifyResultService {
           scan(latestByDriver<Position>(), new Map<number, Position>()),
           map(positions => [...positions.values()]),
         ),
-        laps: withLiveUpdates(
-          this.#openF1HttpService.getLaps(session.session_key),
-          this.#openF1WSSService.laps$.pipe(forSession(session.session_key)),
-          this.#resultStatus$,
-        ).pipe(
-          scan(mergeLaps, [] as Lap[]),
-        ),
+        laps: this.#laps(race),
         raceControl: this.#raceControlMessages(race),
       }))),
       map(({ positions, laps, raceControl }) => mapper.liveQualifyResult({ positions, laps, raceControl, drivers, race })),
       tap(result => this.#resultStatus$.next({
         latestUpdate: DateTime.now(),
         info: `Q${result.phase}, ${result.results.length} drivers`,
+      })),
+    );
+  }
+
+  getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
+    return this.#laps(race).pipe(
+      map(laps => mapper.sectors({ laps, drivers })),
+      tap(sectors => this.#sectorStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${sectors.length} driver sectors`,
       })),
     );
   }
@@ -78,6 +85,22 @@ export class LiveQualifyService extends QualifyResultService {
         info: `${messages.length} race control messages`,
       })),
     );
+  }
+
+  /** The result and the sectors both use the laps */
+  #laps(race: IRace): Observable<Lap[]> {
+    if (!this.#laps$) {
+      this.#laps$ = this.#session(race).pipe(
+        switchMap(session => this.#untilOver(session, withLiveUpdates(
+          this.#openF1HttpService.getLaps(session.session_key),
+          this.#openF1WSSService.laps$.pipe(forSession(session.session_key)),
+          this.#resultStatus$,
+        ))),
+        scan(mergeLaps, [] as Lap[]),
+        shareLatest(),
+      );
+    }
+    return this.#laps$;
   }
 
   /** The result and the race control snackbar both use the race control messages, which tell when Q1, Q2 and Q3 start */
