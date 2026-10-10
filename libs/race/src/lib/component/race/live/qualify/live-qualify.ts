@@ -21,7 +21,7 @@ import { LiveQualifyDriversComponent } from './live-qualify-drivers';
   selector: 'f2020-live-qualify',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <sha-card-page>
+    <sha-card-page cols="md:grid-cols-2">
       @if (race(); as race) {
         <mat-card>
           <mat-card-header>
@@ -52,7 +52,7 @@ import { LiveQualifyDriversComponent } from './live-qualify-drivers';
             <f2020-live-qualify-drivers class="block mt-3" [result]="result()" [sectors]="sectors()" />
           </mat-card-content>
         </mat-card>
-        <mat-card>
+        <mat-card class="md:col-span-2">
           <mat-card-header>
             <mat-card-title>Holdbeskeder</mat-card-title>
           </mat-card-header>
