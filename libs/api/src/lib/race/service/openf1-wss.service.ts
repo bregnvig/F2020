@@ -1,6 +1,6 @@
 import { inject, OnDestroy, Service } from '@angular/core';
 import { Interval, Lap, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
-import mqtt, { ErrorWithReasonCode, MqttClient } from 'mqtt';
+import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, catchError, EMPTY, Observable, retry, Subject, Subscription, tap } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
 import { firestoreWebUtils } from '../../firestore-utils';
@@ -83,7 +83,8 @@ export class OpenF1WSSService implements OnDestroy {
     });
     client.on('offline', () => console.debug(`MQTT client offline, reconnecting every ${reconnectPeriod / 1000} seconds`));
     client.on('error', err => {
-      if (err instanceof ErrorWithReasonCode && authErrorCodes.has(err.code)) {
+      // The browser build of mqtt doesn't export ErrorWithReasonCode, so the code is checked instead
+      if ('code' in err && typeof err.code === 'number' && authErrorCodes.has(err.code)) {
         console.debug('MQTT client refused, refreshing the token before the next reconnect');
         this.#refreshToken(client);
         return;
