@@ -11,6 +11,8 @@ export interface TrackMarker {
   color?: string;
   /** Moves the marker ahead by this many dots and 5 pixels, so players with the same points are not on top of each other */
   ahead?: number;
+  /** How far the car is in the animation of going out of the race, from 0 to 1 */
+  retiring?: number;
 }
 
 /** The space between players with the same points, besides a dot */
@@ -45,6 +47,15 @@ const aheadPixels = 5;
             <circle [attr.cx]="marker.ax" [attr.cy]="marker.ay" [attr.r]="avatarRadius()" fill="none" stroke="#fff"
                     [attr.stroke-width]="view().unit * 0.3" />
             <text [attr.x]="marker.ax" [attr.y]="marker.ay + avatarRadius() + view().unit * 2.4">{{ marker.label }}</text>
+          } @else if (marker.retiring !== undefined) {
+            <!-- A red ring grows from the car, while the car fades away -->
+            <g [attr.opacity]="1 - marker.retiring">
+              <circle [attr.cx]="marker.x" [attr.cy]="marker.y" [attr.r]="view().unit * (1.1 + 5 * marker.retiring)" fill="none"
+                      stroke="#ef4444" [attr.stroke-width]="view().unit * 0.5" />
+              <circle [attr.cx]="marker.x" [attr.cy]="marker.y" [attr.r]="view().unit * 1.1 * (1 - marker.retiring)"
+                      [attr.fill]="marker.color ?? '#fff'" stroke="#fff" [attr.stroke-width]="view().unit * 0.3" />
+              <text [attr.x]="marker.x" [attr.y]="marker.y - view().unit * 2.2" fill="#ef4444">{{ marker.label }} DNF</text>
+            </g>
           } @else {
             <circle [attr.cx]="marker.x" [attr.cy]="marker.y" [attr.r]="view().unit * 1.1" [attr.fill]="marker.color ?? '#fff'"
                     stroke="#fff" [attr.stroke-width]="view().unit * 0.3" />
