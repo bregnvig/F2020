@@ -7,7 +7,7 @@ export interface Roast {
   worst: string;
 }
 
-export const escapeHtml = (text: string = '') => text.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
+export const escapeHtml = (text = '') => text.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 
 /**
  * One roast of the best and the worst players, shared by every mail. The mail is sent without it when OpenAI fails
