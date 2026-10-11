@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RaceResultProvider, RacesService, TeamService } from '@f2020/api';
-import { combineLatest, firstValueFrom, of, retry, switchMap, tap } from 'rxjs';
-import { Bid, buildInterimResult, buildResult, calculateInterimResult, calculateResult, compareBids, IDriver, IRace } from '@f2020/data';
+import { combineLatest, retry, switchMap, tap } from 'rxjs';
+import { Bid, buildResult, calculateResult, compareBids, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { NgOptimizedImage } from '@angular/common';
 import { shareLatest } from '@f2020/tools';
@@ -72,24 +72,18 @@ export class LiveRaceComponent implements OnInit {
       takeUntilDestroyed(this.#destroyRef),
       shareLatest(),
     );
-    // The places moved are from the interim result. It is built from the qualifying, when it has not been submitted
-    const storedInterimResult = this.race().result;
-    const interimResult$ = storedInterimResult
-      ? of(storedInterimResult)
-      : qualify$.pipe(map(qualify => buildInterimResult(qualify, this.race().selectedDriver, this.race().selectedTeam)));
-    firstValueFrom(interimResult$.pipe(
-        map(result => this.bids().map(bid => calculateInterimResult(bid, result))),
-        map(bids => bids.toSorted(compareBids)),
-      ),
-    ).then(bids => {
-      this.initialPositions.set(bids);
-      this.#originalPosition = new Map(bids.map((bid, index) => [bid.player.uid, index]));
-    });
     bids$.pipe(
       takeUntilDestroyed(this.#destroyRef),
     ).subscribe(bids => {
       this.standings.emit(bids);
-      this.#currentPosition = bids.toSorted(compareBids).map(bid => bid.player.uid);
+      const ranked = bids.toSorted(compareBids);
+      // The places moved are from the first update of the race, so the race starts without any. The interim result is not used,
+      // as the points of the race are counted from the order on the grid as soon as it starts
+      if (!this.#originalPosition) {
+        this.initialPositions.set(ranked);
+        this.#originalPosition = new Map(ranked.map((bid, index) => [bid.player.uid, index]));
+      }
+      this.#currentPosition = ranked.map(bid => bid.player.uid);
       this.initialPositions.update(positions => positions.map(bid => ({
         ...bid,
         points: bids.find(b => b.player.uid === bid.player.uid)?.points ?? 0,
