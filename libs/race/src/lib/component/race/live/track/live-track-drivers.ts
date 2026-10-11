@@ -3,7 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { RaceResultProvider, TrackService } from '@f2020/api';
 import { IDriver, IRace, isStationary, progressAt } from '@f2020/data';
 import { animationFrame } from './animation-frame';
-import { carProgress } from './car-progress';
+import { carProgress, valueOf } from './car-progress';
 import { TrackLapComponent } from './track-lap';
 import { TrackMapComponent, TrackMarker } from './track-map';
 
@@ -46,27 +46,21 @@ export class LiveTrackDriversComponent {
     stream: ({ params }) => this.#live.getLocationPlayback(params.race, params.drivers),
   });
 
-  #cars = carProgress(this.track.value, this.#playback.value);
-
-  #result = rxResource({
-    params: () => ({ race: this.race(), drivers: this.drivers() }),
-    stream: ({ params }) => this.#live.getResult(params.race, params.drivers),
-  });
-
-  /**
-   * The drivers out of the race. The result takes a driver who is two laps behind as out, so a car is only left out
-   * when it has stopped as well
-   */
-  #retired = computed(() => new Set(this.#result.value()?.result.results.filter(({ status }) => status === 'DNF').map(({ driver }) => driver.driverId)));
+  #playbackValue = valueOf(this.#playback);
+  #cars = carProgress(valueOf(this.track), this.#playbackValue);
 
   /** Worked out for every frame, at the time the playback gives */
   protected readonly markers = computed<TrackMarker[]>(() => {
     this.#frame();
-    const now = this.#playback.value()?.now();
-    const retired = this.#retired();
-    return now === undefined ? [] : this.#cars().flatMap(({ driver, samples, locations }) => {
+    const now = this.#playbackValue()?.now();
+    if (now === undefined) return [];
+    const cars = this.#cars();
+    // A car that has stopped while most of the others drive is out of the race. On the grid or under a red flag most have stopped
+    const stopped = new Set(cars.filter(({ locations }) => isStationary(locations, now)).map(({ driver }) => driver.driverId));
+    const retired = stopped.size < cars.length / 2 ? stopped : new Set<string>();
+    return cars.flatMap(({ driver, samples }) => {
       const progress = progressAt(samples, now);
-      return progress === undefined || (retired.has(driver.driverId) && isStationary(locations, now)) ? [] : [{
+      return progress === undefined || retired.has(driver.driverId) ? [] : [{
         id: driver.driverId,
         progress,
         label: driver.code,

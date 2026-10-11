@@ -1,5 +1,11 @@
-import { computed, Signal } from '@angular/core';
+import { computed, Resource, Signal } from '@angular/core';
 import { IDriver, LocationPlayback, LocationSample, Track, trackProgress } from '@f2020/data';
+
+/**
+ * The value of a resource, or undefined while it loads or has failed. Reading the value of a failed resource throws, which every
+ * frame would break the page
+ */
+export const valueOf = <T>(resource: Resource<T | undefined>): Signal<T | undefined> => computed(() => resource.hasValue() ? resource.value() : undefined);
 
 export interface CarProgress {
   driver: IDriver;

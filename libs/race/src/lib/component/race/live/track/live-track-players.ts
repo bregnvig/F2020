@@ -8,7 +8,7 @@ import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { LiveRaceComponent } from '../live-race.component';
 import { animationFrame } from './animation-frame';
-import { carProgress } from './car-progress';
+import { carProgress, valueOf } from './car-progress';
 import { TrackLapComponent } from './track-lap';
 import { TrackMapComponent, TrackMarker } from './track-map';
 
@@ -19,8 +19,8 @@ export interface LiveTrackPlayersData {
   bids: Bid[];
 }
 
-/** A point is a tenth of a lap */
-const lapPerPoint = 0.1;
+/** A point is 6% of a lap */
+const lapPerPoint = 0.06;
 
 /** How long it takes a player to move to a new place, when the points change */
 const overtake = 1500;
@@ -30,7 +30,7 @@ const easeInOut = (t: number) => t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2
 /** The players from first to last, the best pole position time first when tied */
 const rank = (bids: Bid[]) => bids.toSorted(compareBids);
 
-/** How far each player is behind the leader in laps, a tenth of a lap for each point */
+/** How far each player is behind the leader in laps, 6% of a lap for each point */
 export const playerGaps = (bids: Bid[]): Map<string, number> => {
   const leaderPoints = rank(bids)[0]?.points ?? 0;
   return new Map(bids.map(bid => [bid.player!.uid, (leaderPoints - (bid.points ?? 0)) * lapPerPoint]));
@@ -97,7 +97,9 @@ export class LiveTrackPlayersComponent {
     stream: () => this.#live.getPositions(this.data.race, this.data.drivers),
   });
 
-  #cars = carProgress(this.track.value, this.#playback.value);
+  #playbackValue = valueOf(this.#playback);
+  #positionsValue = valueOf(this.#positions);
+  #cars = carProgress(valueOf(this.track), this.#playbackValue);
 
   /** The standings change with every update of the race, so the gaps only change when the points do */
   #gaps = computed(() => playerGaps(this.standings()), { equal: sameGaps });
@@ -111,8 +113,8 @@ export class LiveTrackPlayersComponent {
    */
   protected readonly markers = computed<TrackMarker[]>(() => {
     const frame = this.#frame();
-    const now = this.#playback.value()?.now();
-    const leader = this.#positions.value()?.find(position => position.position === 1)?.driver;
+    const now = this.#playbackValue()?.now();
+    const leader = this.#positionsValue()?.find(position => position.position === 1)?.driver;
     const car = this.#cars().find(({ driver }) => driver.driverId === leader?.driverId);
     const leaderProgress = car && now !== undefined ? progressAt(car.samples, now) : undefined;
     if (leaderProgress === undefined) return [];
@@ -120,17 +122,17 @@ export class LiveTrackPlayersComponent {
     const gaps = this.#gapsAt(frame);
     const ahead = tieSteps(this.standings());
     // The last is drawn first, so the leader is on top
-    return rank(this.standings()).toReversed().map(({ player }) => {
+    return rank(this.standings()).map(({ player }, index) => {
       const gap = gaps.get(player!.uid) ?? 0;
       const lapsDown = Math.floor(gap + 1e-9);
       return {
         id: player!.uid,
         progress: leaderProgress - gap,
         ahead: ahead.get(player!.uid),
-        label: player!.displayName + (lapsDown ? ` +${lapsDown}` : ''),
+        label: `${index + 1}. ${player!.displayName}` + (lapsDown ? ` +${lapsDown}` : ''),
         image: player!.photoURL,
       };
-    });
+    }).toReversed();
   });
 
   constructor() {

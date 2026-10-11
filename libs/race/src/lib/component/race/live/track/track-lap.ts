@@ -28,7 +28,8 @@ export class TrackLapComponent {
 
   protected readonly laps = computed(() => {
     const circuitId = this.race().circuitId;
-    return circuitId != null ? this.#circuitLaps.value()?.[circuitId] : undefined;
+    // A failed resource throws when its value is read
+    return circuitId != null && this.#circuitLaps.hasValue() ? this.#circuitLaps.value()[circuitId] : undefined;
   });
   /** The leader is on the last lap after crossing the line at the end of it */
   protected readonly lap = computed(() => Math.min(this.#lap(), this.laps() ?? Number.MAX_SAFE_INTEGER));

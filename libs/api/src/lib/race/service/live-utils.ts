@@ -50,9 +50,12 @@ export const withLiveUpdates = <T>(history$: Observable<T[]>, live$: Observable<
 /** Live updates have their dates converted, the history from the HTTP API does not */
 export const toMillis = (date: string | DateTime) => DateTime.isDateTime(date) ? date.toMillis() : Date.parse(date);
 
-/** Adds the locations to the samples of each driver, oldest first, and drops the samples from before `keepAfter` */
+/**
+ * Adds the locations to the samples of each driver, oldest first, and drops the samples from before `keepAfter`.
+ * OpenF1 has 0, 0 for a car without a location, e.g. one that retired, which is left out
+ */
 export const addLocationSamples = (samples: Map<number, LocationSample[]>, locations: Location[], keepAfter = 0): Map<number, LocationSample[]> => {
-  const added = locations.reduce((acc, { driver_number, date, x, y, z }) =>
+  const added = locations.filter(({ x, y }) => x !== 0 || y !== 0).reduce((acc, { driver_number, date, x, y, z }) =>
     acc.set(driver_number, [...(acc.get(driver_number) ?? []), { time: toMillis(date as string | DateTime), x, y, z }]), new Map(samples));
   return new Map([...added].map(([driverNumber, driverSamples]) => [
     driverNumber,

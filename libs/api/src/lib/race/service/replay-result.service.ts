@@ -334,6 +334,7 @@ export class ReplayResultService extends RaceResultService {
     if (!this.#gridPositions) {
       this.#gridPositions = this.#openF1HttpService.getSession(race, 'Qualifying').pipe(
         switchMap(session => this.#openF1HttpService.getStartingGrid(session.session_key)),
+        retry(startRetry),
         map(positions => mapper.grid({ positions, drivers })),
         first(),
         shareLatest(),
