@@ -56,16 +56,34 @@ export const serverToken = async (): Promise<string> => {
   return cachedToken.token;
 };
 
+const tooManyRequests = 429;
+const retries = 4;
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 /**
- * Gets a list from the OpenF1 REST API, e.g. `laps?session_key=9161`. OpenF1 answers 404 when it has no data, which is an empty list
+ * Every player's requests use the same token, so they share OpenF1's rate limit, and a page fetching a lot at once can go over it.
+ * A request that is refused for that is tried again, after the time OpenF1 asks for or a little longer each time
  */
-export const openF1List = async <T>(path: string): Promise<T[]> => {
+const fetchWithRetry = async (path: string, attempt = 0): Promise<Response> => {
   const response = await fetch(openF1ApiUrl + path, {
     headers: {
       'Authorization': `Bearer ${await serverToken()}`,
       'Accept': 'application/json',
     },
   });
+  if (response.status !== tooManyRequests || attempt >= retries) {
+    return response;
+  }
+  const retryAfter = Number(response.headers.get('retry-after'));
+  await sleep(retryAfter > 0 ? retryAfter * 1000 : 500 * 2 ** attempt + Math.random() * 250);
+  return fetchWithRetry(path, attempt + 1);
+};
+
+/**
+ * Gets a list from the OpenF1 REST API, e.g. `laps?session_key=9161`. OpenF1 answers 404 when it has no data, which is an empty list
+ */
+export const openF1List = async <T>(path: string): Promise<T[]> => {
+  const response = await fetchWithRetry(path);
   if (response.status === 404) return [];
   if (!response.ok) {
     throw new Error(`OpenF1 request failed with status ${response.status} ${response.statusText}: ${path}`);
