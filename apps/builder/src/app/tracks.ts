@@ -20,36 +20,8 @@ const reversedTracks = new Set([61]);
 
 const round = (value: number) => Math.round(value * 1e6) / 1e6;
 
-const svgSize = 1000;
-const svgPadding = 30;
-
 /**
- * The outline as a black track with a white edge, on a transparent background. The longest side is `svgSize`.
- * The longitude is scaled by the cosine of the latitude, so the track keeps its shape
- */
-const trackSvg = (path: Coordinate[]): string => {
-  const scaleX = Math.cos(path.reduce((sum, { lat }) => sum + lat, 0) / path.length * Math.PI / 180);
-  const points = path.map(({ lat, lng }) => ({ x: lng * scaleX, y: -lat }));
-  const minX = Math.min(...points.map(p => p.x));
-  const minY = Math.min(...points.map(p => p.y));
-  const width = Math.max(...points.map(p => p.x)) - minX;
-  const height = Math.max(...points.map(p => p.y)) - minY;
-  const scale = (svgSize - 2 * svgPadding) / Math.max(width, height);
-  const [viewWidth, viewHeight] = [width * scale + 2 * svgPadding, height * scale + 2 * svgPadding].map(Math.round);
-  const d = points
-    .map(({ x, y }, index) => `${index ? 'L' : 'M'}${((x - minX) * scale + svgPadding).toFixed(1)} ${((y - minY) * scale + svgPadding).toFixed(1)}`)
-    .join('') + 'Z';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewWidth} ${viewHeight}" width="${viewWidth}" height="${viewHeight}">
-  <g fill="none" stroke-linejoin="round" stroke-linecap="round">
-    <path d="${d}" stroke="#fff" stroke-width="22"/>
-    <path d="${d}" stroke="#000" stroke-width="12"/>
-  </g>
-</svg>
-`;
-};
-
-/**
- * Writes the outline of every circuit with a trackId to `{outDir}/{circuitId}.json`, as an array of { lat, lng }, and as `{circuitId}.svg`.
+ * Writes the outline of every circuit with a trackId to `{outDir}/{circuitId}.json`, as an array of { lat, lng }.
  * The UI draws it as a polyline on the race map. The outline is closed, so the polyline forms a loop,
  * and runs in the racing direction, so the map can show direction arrows along it.
  */
@@ -74,7 +46,6 @@ export const buildTracks = async (outDir: string): Promise<number> => {
       path.push(first);
     }
     writeFileSync(join(outDir, `${circuit.circuitId}.json`), JSON.stringify(path));
-    writeFileSync(join(outDir, `${circuit.circuitId}.svg`), trackSvg(path));
     console.log('Wrote track', circuit.circuitId, feature.properties.Name, path.length, 'points');
     return count + 1;
   }, 0);
