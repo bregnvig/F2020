@@ -51,6 +51,7 @@ export const buildInterimResult = (qualify: IQualifyResult, selectedDriver: stri
     qualify: qualifyResult,
     selectedDriver: selectedDriverResult,
     selectedTeam: selectedTeamResult,
-    polePositionTime: qualify.results[0]?.q3,
+    // The qualifying from OpenF1 only has the time of the latest part, the live qualifying has the time of each part
+    polePositionTime: qualify.results[0]?.q3 ?? qualify.results[0]?.duration,
   };
 };

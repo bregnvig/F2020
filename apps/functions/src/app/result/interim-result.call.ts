@@ -1,4 +1,4 @@
-import { Bid, calculateInterimResult, IRace, Player, validateInterimResult } from '@f2020/data';
+import { Bid, calculateInterimResult, compareBids, IRace, Player, validateInterimResult } from '@f2020/data';
 import { getFirestore } from 'firebase-admin/firestore';
 import { log } from 'firebase-functions/logger';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
@@ -49,7 +49,7 @@ export const createInterimResult = async (race: IRace | undefined, result: Parti
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data()))
     .then(bids => bids.map(bid => calculateInterimResult(bid as Bid, result)))
-    .then(bids => bids.sort((a, b) => b.points! - a.points!));
+    .then(bids => bids.sort(compareBids));
 
   await db.runTransaction(transaction => {
     calculatedResults.forEach(cr => {

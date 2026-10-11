@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RaceResultProvider, RacesService, TeamService } from '@f2020/api';
 import { combineLatest, firstValueFrom, of, retry, switchMap, tap } from 'rxjs';
-import { Bid, buildInterimResult, buildResult, calculateInterimResult, calculateResult, IDriver, IRace } from '@f2020/data';
+import { Bid, buildInterimResult, buildResult, calculateInterimResult, calculateResult, compareBids, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
 import { NgOptimizedImage } from '@angular/common';
 import { shareLatest } from '@f2020/tools';
@@ -79,7 +79,7 @@ export class LiveRaceComponent implements OnInit {
       : qualify$.pipe(map(qualify => buildInterimResult(qualify, this.race().selectedDriver, this.race().selectedTeam)));
     firstValueFrom(interimResult$.pipe(
         map(result => this.bids().map(bid => calculateInterimResult(bid, result))),
-        map(bids => bids.toSorted((a, b) => b.points - a.points)),
+        map(bids => bids.toSorted(compareBids)),
       ),
     ).then(bids => {
       this.initialPositions.set(bids);
@@ -89,7 +89,7 @@ export class LiveRaceComponent implements OnInit {
       takeUntilDestroyed(this.#destroyRef),
     ).subscribe(bids => {
       this.standings.emit(bids);
-      this.#currentPosition = bids.toSorted((a, b) => b.points - a.points).map(bid => bid.player.uid);
+      this.#currentPosition = bids.toSorted(compareBids).map(bid => bid.player.uid);
       this.initialPositions.update(positions => positions.map(bid => ({
         ...bid,
         points: bids.find(b => b.player.uid === bid.player.uid)?.points ?? 0,

@@ -58,9 +58,17 @@ export const calculateInterimResult = (bid: Bid, result: Partial<Bid>): Bid => {
   const qualifyPoints = bid.selectedTeam!.qualify === result.selectedTeam?.qualify ? 1 : 0;
   calculatedResult.selectedTeam = { ...bid.selectedTeam, qualifyPoints } as SelectedTeamValue;
 
+  if (typeof result.polePositionTime === 'number') {
+    calculatedResult.polePositionTimeDiff = Math.abs(bid.polePositionTime - result.polePositionTime);
+  }
+
   calculatedResult.points = calculatedResult.qualifyPoints.reduce(sumPoints, 0)
     + (calculatedResult.selectedDriver?.gridPoints ?? 0)
     + (calculatedResult.selectedTeam?.qualifyPoints ?? 0);
 
   return calculatedResult;
 };
+
+/** The order of the players, as in the WBC: most points first, and the pole position time closest to the qualifying when tied */
+export const compareBids = (a: Partial<Bid>, b: Partial<Bid>): number =>
+  (b.points ?? 0) - (a.points ?? 0) || (a.polePositionTimeDiff ?? Number.MAX_VALUE) - (b.polePositionTimeDiff ?? Number.MAX_VALUE);
