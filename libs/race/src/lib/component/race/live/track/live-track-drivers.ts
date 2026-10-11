@@ -49,6 +49,12 @@ export class LiveTrackDriversComponent {
   #playbackValue = valueOf(this.#playback);
   #cars = carProgress(valueOf(this.track), this.#playbackValue);
 
+  /**
+   * When each car was found out of the race. It stays out whatever the locations say after that, as a car that has retired
+   * can show up again for a moment. Moving the relive back to before it shows it again
+   */
+  #retiredAt = new Map<string, number>();
+
   /** Worked out for every frame, at the time the playback gives */
   protected readonly markers = computed<TrackMarker[]>(() => {
     this.#frame();
@@ -56,11 +62,15 @@ export class LiveTrackDriversComponent {
     if (now === undefined) return [];
     const cars = this.#cars();
     // A car that has stopped while most of the others drive is out of the race. On the grid or under a red flag most have stopped
-    const stopped = new Set(cars.filter(({ locations }) => isStationary(locations, now)).map(({ driver }) => driver.driverId));
-    const retired = stopped.size < cars.length / 2 ? stopped : new Set<string>();
+    const stopped = cars.filter(({ locations }) => isStationary(locations, now)).map(({ driver }) => driver.driverId);
+    if (stopped.length < cars.length / 2) {
+      // The earliest time it was found, as the relive can be moved back to before it was first seen
+      stopped.forEach(driverId => now < (this.#retiredAt.get(driverId) ?? Number.MAX_VALUE) && this.#retiredAt.set(driverId, now));
+    }
+    const retired = (driverId: string) => (this.#retiredAt.get(driverId) ?? Number.MAX_VALUE) <= now;
     return cars.flatMap(({ driver, samples }) => {
       const progress = progressAt(samples, now);
-      return progress === undefined || retired.has(driver.driverId) ? [] : [{
+      return progress === undefined || retired(driver.driverId) ? [] : [{
         id: driver.driverId,
         progress,
         label: driver.code,
