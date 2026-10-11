@@ -4,7 +4,6 @@ import {
   IDriver,
   IDriverGridPosition,
   IDriverInterval,
-  IDriverLocation,
   IDriverRaceResult,
   IDriverSector,
   IPitStop,
@@ -12,6 +11,7 @@ import {
   IRaceResult,
   IStint,
   ITeam,
+  LocationPlayback,
   mapper,
   RaceControl,
   TeamRadio,
@@ -19,22 +19,50 @@ import {
 import { Interval, Lap, Location, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, catchError, distinctUntilChanged, firstValueFrom, interval, Observable, of } from 'rxjs';
+import { BehaviorSubject, catchError, distinctUntilChanged, firstValueFrom, interval, Observable, of, retry, timer } from 'rxjs';
 import { first, map, switchMap, tap } from 'rxjs/operators';
+import { addLocationSamples } from './live-utils';
 import { OpenF1HttpService } from './openf1-http.service';
 import { LiveStatus, RaceResultService } from './race-result.service';
+
+/** Items in the order of their times in milliseconds. Items without a time come first */
+interface Timed<T> {
+  items: T[];
+  times: number[];
+}
+
+const timed = <T>(items: T[], date: (item: T) => string | null | undefined): Timed<T> => {
+  const sorted = items
+    .map(item => ({ item, time: date(item) ? Date.parse(date(item)!) : Number.NEGATIVE_INFINITY }))
+    .toSorted((a, b) => a.time - b.time);
+  return { items: sorted.map(({ item }) => item), times: sorted.map(({ time }) => time) };
+};
+
+/**
+ * The items up to a time. A race has about 25.000 items, so they are found by halving instead of parsing every date
+ * every second, which made the relive stall
+ */
+const upTo = <T>({ items, times }: Timed<T>, time: DateTime): T[] => {
+  const milliseconds = time.toMillis();
+  let [low, high] = [0, times.length];
+  while (low < high) {
+    const middle = (low + high) >> 1;
+    times[middle] <= milliseconds ? low = middle + 1 : high = middle;
+  }
+  return items.slice(0, low);
+};
 
 interface ReplayState {
   start: DateTime;
   end: DateTime;
   currentTime: DateTime;
   sessionKey: number;
-  positions: Position[];
-  laps: Lap[];
-  teamRadio: OpenF1TeamRadio[];
-  pitStops: PitStop[];
-  intervals: Interval[];
-  raceControl: OpenF1RaceControl[];
+  positions: Timed<Position>;
+  laps: Timed<Lap>;
+  teamRadio: Timed<OpenF1TeamRadio>;
+  pitStops: Timed<PitStop>;
+  intervals: Timed<Interval>;
+  raceControl: Timed<OpenF1RaceControl>;
   stints: Stint[];
 }
 
@@ -45,13 +73,27 @@ export interface ReplayClock {
   currentTime: DateTime;
 }
 
-export const replaySpeeds = [1, 2, 3] as const;
+export const replaySpeeds = [1, 2, 3, 5] as const;
 export type ReplaySpeed = typeof replaySpeeds[number];
+
+/** The relive starts this long before the lights go out, as the pit exit opens long before */
+const beforeLightsOut = 15_000;
+
+/** The first lap of every driver starts when the lights go out, which can be long after the scheduled start */
+const lightsOut = (laps: Lap[]): DateTime | undefined => {
+  const start = laps.find(lap => lap.lap_number === 1 && lap.date_start)?.date_start;
+  return start ? DateTime.fromISO(start) : undefined;
+};
+
+/** A request for the relive is tried again a little later each time */
+const startRetry = { count: 4, delay: (_error: unknown, attempt: number) => timer(2000 * attempt) };
 
 /** The relive moves this often, by the time multiplied by the speed */
 const tick = 1000;
 /** The locations are fetched for this long at a time */
 const locationChunk = 30_000;
+/** The next locations are fetched this long before they are needed, which is 4 seconds at 5x */
+const locationLookahead = 20_000;
 
 @Service({ autoProvided: false })
 export class ReplayResultService extends RaceResultService {
@@ -59,6 +101,8 @@ export class ReplayResultService extends RaceResultService {
   #destroyRef = inject(DestroyRef);
   #started = false;
   #speed$ = new BehaviorSubject<ReplaySpeed>(1);
+  /** When the relive last moved, so the cars can be drawn between the moves */
+  #movedAt = 0;
 
   #resultStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #radioStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
@@ -92,13 +136,22 @@ export class ReplayResultService extends RaceResultService {
   /** Moves the relive to a time between the start and the end of the race */
   seek(time: DateTime) {
     const state = this.#replayState$.value;
+    this.#movedAt = performance.now();
     state && this.#replayState$.next({ ...state, currentTime: DateTime.min(DateTime.max(time, state.start), state.end) });
   }
 
-  #gridPositions?: Observable<IDriverGridPosition[]>;
-  #locations$?: Observable<IDriverLocation[]>;
+  /** The time of the relive right now, which is between two moves */
+  #now = () => {
+    const state = this.#replayState$.value;
+    if (!state) return 0;
+    const time = state.currentTime.toMillis();
+    return state.currentTime < state.end ? time + Math.min(performance.now() - this.#movedAt, tick) * this.#speed$.value : time;
+  };
 
-  /** The race is relived as it was driven, from the start until the session ended */
+  #gridPositions?: Observable<IDriverGridPosition[]>;
+  #locationPlayback$?: Observable<LocationPlayback>;
+
+  /** The race is relived as it was driven, from just before the lights go out until the session ended */
   async #startReplay(race: IRace) {
     if (this.#started) {
       return;
@@ -106,20 +159,32 @@ export class ReplayResultService extends RaceResultService {
     this.#started = true;
 
     // Get session key first
-    const session = await firstValueFrom(this.#openF1HttpService.getSession(race, 'Race'));
+    const session = await firstValueFrom(this.#openF1HttpService.getSession(race, 'Race').pipe(retry(startRetry)));
     const sessionKey = requiredValue(session.session_key, 'session_key');
 
-    // Fetch all data sequentially using await
-    const intervals = await firstValueFrom(this.#openF1HttpService.getIntervals(sessionKey));
-    const { positions, laps } = await firstValueFrom(this.#openF1HttpService.getPositionAndLabs(race, sessionKey));
-    const teamRadio = await firstValueFrom(this.#openF1HttpService.getTeamRadio(race, sessionKey));
-    const pitStops = await firstValueFrom(this.#openF1HttpService.getPitStops(sessionKey));
-    const raceControl = await firstValueFrom(this.#openF1HttpService.getRaceControl(sessionKey));
-    const stints = await firstValueFrom(this.#openF1HttpService.getStints(sessionKey));
+    // Fetch all data sequentially using await. OpenF1 may refuse a request when too many are made, so each is tried again
+    const intervals = await firstValueFrom(this.#openF1HttpService.getIntervals(sessionKey).pipe(retry(startRetry)));
+    const { positions, laps } = await firstValueFrom(this.#openF1HttpService.getPositionAndLabs(race, sessionKey).pipe(retry(startRetry)));
+    const teamRadio = await firstValueFrom(this.#openF1HttpService.getTeamRadio(race, sessionKey).pipe(retry(startRetry)));
+    const pitStops = await firstValueFrom(this.#openF1HttpService.getPitStops(sessionKey).pipe(retry(startRetry)));
+    const raceControl = await firstValueFrom(this.#openF1HttpService.getRaceControl(sessionKey).pipe(retry(startRetry)));
+    const stints = await firstValueFrom(this.#openF1HttpService.getStints(sessionKey).pipe(retry(startRetry)));
 
-    const start = race.raceStart.toUTC();
+    const start = lightsOut(laps)?.minus({ milliseconds: beforeLightsOut }) ?? race.raceStart.toUTC();
     const end = session.date_end ? DateTime.fromISO(session.date_end) : start.plus({ hour: 3 });
-    this.#replayState$.next({ start, end, currentTime: start, sessionKey, positions, laps, teamRadio, pitStops, intervals, raceControl, stints });
+    this.#replayState$.next({
+      start,
+      end,
+      currentTime: start,
+      sessionKey,
+      positions: timed(positions, p => p.date),
+      laps: timed(laps, l => l.date_start),
+      teamRadio: timed(teamRadio, m => m.date),
+      pitStops: timed(pitStops, p => p.date),
+      intervals: timed(intervals, i => i.date),
+      raceControl: timed(raceControl, m => m.date),
+      stints,
+    });
 
     interval(tick).pipe(
       takeUntilDestroyed(this.#destroyRef),
@@ -130,14 +195,19 @@ export class ReplayResultService extends RaceResultService {
   }
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
-    this.#startReplay(race);
+    // A start that fails after the retries is shown on the page
+    this.#startReplay(race).catch(error => {
+      console.error('Failed to start the relive', error);
+      this.#started = false;
+      this.#resultStatus$.next({ latestUpdate: DateTime.now(), error });
+    });
     const grid$ = this.getGrid(race, drivers);
 
     return this.#replayState$.pipe(
       truthy(),
       map(state => ({
-        positions: state.positions.filter(p => !p.date || DateTime.fromISO(p.date) <= state.currentTime),
-        laps: state.laps.filter(l => !l.date_start || DateTime.fromISO(l.date_start) <= state.currentTime),
+        positions: upTo(state.positions, state.currentTime),
+        laps: upTo(state.laps, state.currentTime),
         currentTime: state.currentTime,
       })),
       switchMap(value => grid$.pipe(
@@ -146,7 +216,8 @@ export class ReplayResultService extends RaceResultService {
       map(({ positions, laps, gridPositions, currentTime }) => {
         const { result, ...raceNoResult } = race;
         const latestUpdate = DateTime.fromISO(laps.at(-1)?.date_start ?? currentTime.toISO());
-        this.currentLap.next(laps.at(-1)?.lap_number ?? 0);
+        // The laps are not in order of their numbers, so a back marker's lap can come last
+        this.currentLap.next(laps.reduce((max, lap) => Math.max(max, lap.lap_number), 0));
         // Update the status with current information
         this.#resultStatus$.next({
           latestUpdate: DateTime.now(),
@@ -163,7 +234,7 @@ export class ReplayResultService extends RaceResultService {
   getRadio(_race: IRace, drivers: IDriver[]): Observable<TeamRadio[] | null> {
     return this.#replayState$.pipe(
       truthy(),
-      map(state => state.teamRadio.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
+      map(state => upTo(state.teamRadio, state.currentTime)),
       map(messages => mapper.radio({ messages, drivers }).toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
       tap(messages => this.#radioStatus$.next({
         latestUpdate: DateTime.now(),
@@ -175,7 +246,7 @@ export class ReplayResultService extends RaceResultService {
   getPitStops(_race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     return this.#replayState$.pipe(
       truthy(),
-      map(state => state.pitStops.filter(p => !p.date || DateTime.fromISO(p.date) <= state.currentTime)),
+      map(state => upTo(state.pitStops, state.currentTime)),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
       tap(mappedStops => this.#pitStopStatus$.next({
         latestUpdate: DateTime.now(),
@@ -188,7 +259,7 @@ export class ReplayResultService extends RaceResultService {
     return this.#replayState$.pipe(
       truthy(),
       switchMap(state => {
-        const filteredPositions = state.positions.filter(p => !p.date || DateTime.fromISO(p.date) <= state.currentTime);
+        const filteredPositions = upTo(state.positions, state.currentTime);
 
         return this.getGrid(race, drivers).pipe(
           map(gridPositions => ({
@@ -212,7 +283,7 @@ export class ReplayResultService extends RaceResultService {
   getIntervals(_race: IRace, drivers: IDriver[]): Observable<IDriverInterval[]> {
     return this.#replayState$.pipe(
       truthy(),
-      map(state => state.intervals.filter(i => !i.date || DateTime.fromISO(i.date) <= state.currentTime)),
+      map(state => upTo(state.intervals, state.currentTime)),
       tap(intervals => this.#intervalStatus$.next({
         latestUpdate: DateTime.now(),
         info: `${intervals.length} intervals`,
@@ -224,7 +295,7 @@ export class ReplayResultService extends RaceResultService {
   getRaceControl(_race: IRace, drivers: IDriver[]): Observable<RaceControl[]> {
     return this.#replayState$.pipe(
       truthy(),
-      map(state => state.raceControl.filter(m => !m.date || DateTime.fromISO(m.date) <= state.currentTime)),
+      map(state => upTo(state.raceControl, state.currentTime)),
       map(messages => mapper.raceControl({ messages, drivers })),
       tap(mappedMessages => this.#raceControlStatus$.next({
         latestUpdate: DateTime.now(),
@@ -238,7 +309,7 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => {
         // Filter laps up to current time
-        const currentLaps = state.laps.filter(l => !l.date_start || DateTime.fromISO(l.date_start) <= state.currentTime);
+        const currentLaps = upTo(state.laps, state.currentTime);
 
         // Get the maximum lap number that has been completed at current time
         const maxLapNumber = Math.max(0, ...currentLaps.map(l => l.lap_number));
@@ -271,40 +342,34 @@ export class ReplayResultService extends RaceResultService {
     return this.#gridPositions;
   }
 
-  /**
-   * The locations are fetched 30 seconds at a time, as a whole race has about half a million. Each driver is shown at the latest
-   * location before the time of the relive, so moving it back works as well
-   */
-  getLocations(_race: IRace, drivers: IDriver[]): Observable<IDriverLocation[]> {
+  /** The locations are fetched 30 seconds at a time, as a whole race has about half a million */
+  getLocationPlayback(_race: IRace, drivers: IDriver[]): Observable<LocationPlayback> {
     // The track card and the fullscreen share the locations
-    this.#locations$ ??= this.#replayState$.pipe(
+    this.#locationPlayback$ ??= this.#replayState$.pipe(
       truthy(),
-      map(({ sessionKey, start, currentTime }) => ({ sessionKey, from: start.plus({ milliseconds: Math.floor(currentTime.diff(start).as('milliseconds') / locationChunk) * locationChunk }) })),
+      map(({ sessionKey, start, currentTime }) => {
+        const chunk = Math.floor((currentTime.diff(start).as('milliseconds') + locationLookahead) / locationChunk);
+        return { sessionKey, from: start.plus({ milliseconds: chunk * locationChunk }) };
+      }),
       distinctUntilChanged((a, b) => a.from.equals(b.from)),
-      // A little before the chunk, so every car has a location at its start
-      switchMap(({ sessionKey, from }) => this.#openF1HttpService.getLocations(sessionKey, from.minus({ seconds: 2 }), from.plus({ milliseconds: locationChunk })).pipe(
-        map(locations => locations.map(location => ({ ...location, time: DateTime.fromISO(location.date) }))),
+      // The chunk starts early, as it is fetched before it is needed
+      switchMap(({ sessionKey, from }) => this.#openF1HttpService.getLocations(sessionKey, from.minus({ milliseconds: locationLookahead + 2000 }), from.plus({ milliseconds: locationChunk })).pipe(
+        retry(startRetry),
         catchError(error => {
           console.error('Failed to fetch the locations', error);
-          return of([]);
+          return of<Location[]>([]);
         }),
       )),
-      switchMap(chunk => this.#replayState$.pipe(
-        truthy(),
-        map(({ currentTime }) => chunk
-          .filter(({ time }) => time <= currentTime)
-          .reduce((latest, location) => latest.set(location.driver_number, location), new Map<number, Location>())),
-      )),
-      map(locations => mapper.locations({ locations: [...locations.values()], drivers })),
+      map(locations => ({ drivers: mapper.locations({ samples: addLocationSamples(new Map(), locations), drivers }), now: this.#now })),
       shareLatest(),
     );
-    return this.#locations$;
+    return this.#locationPlayback$;
   }
 
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
     return this.#replayState$.pipe(
       truthy(),
-      map(state => state.laps.filter(l => !l.date_start || DateTime.fromISO(l.date_start) <= state.currentTime)),
+      map(state => upTo(state.laps, state.currentTime)),
       tap(sectors => this.#sectorStatus$.next({
         latestUpdate: DateTime.now(),
         info: `${sectors.length} driver sectors`,

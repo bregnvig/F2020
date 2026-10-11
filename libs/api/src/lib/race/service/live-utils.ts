@@ -1,4 +1,5 @@
-import { Lap } from '@f2020/openf1';
+import { LocationSample } from '@f2020/data';
+import { Lap, Location } from '@f2020/openf1';
 import { isTruthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, catchError, combineLatest, filter, map, MonoTypeOperatorFunction, Observable, of, retry } from 'rxjs';
@@ -45,3 +46,16 @@ export const withLiveUpdates = <T>(history$: Observable<T[]>, live$: Observable<
   ]).pipe(
     map(([history, update], index) => (index === 0 ? [...history, update] : [update]).filter(isTruthy)),
   );
+
+/** Live updates have their dates converted, the history from the HTTP API does not */
+export const toMillis = (date: string | DateTime) => DateTime.isDateTime(date) ? date.toMillis() : Date.parse(date);
+
+/** Adds the locations to the samples of each driver, oldest first, and drops the samples from before `keepAfter` */
+export const addLocationSamples = (samples: Map<number, LocationSample[]>, locations: Location[], keepAfter = 0): Map<number, LocationSample[]> => {
+  const added = locations.reduce((acc, { driver_number, date, x, y, z }) =>
+    acc.set(driver_number, [...(acc.get(driver_number) ?? []), { time: toMillis(date as string | DateTime), x, y, z }]), new Map(samples));
+  return new Map([...added].map(([driverNumber, driverSamples]) => [
+    driverNumber,
+    driverSamples.filter(({ time }) => time > keepAfter).toSorted((a, b) => a.time - b.time),
+  ]));
+};

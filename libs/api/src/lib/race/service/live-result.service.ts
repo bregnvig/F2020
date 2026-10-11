@@ -3,7 +3,6 @@ import {
   IDriver,
   IDriverGridPosition,
   IDriverInterval,
-  IDriverLocation,
   IDriverRaceResult,
   IDriverSector,
   IPitStop,
@@ -11,19 +10,26 @@ import {
   IRaceResult,
   IStint,
   ITeam,
+  LocationPlayback,
+  LocationSample,
   mapper,
   RaceControl,
   TeamRadio,
 } from '@f2020/data';
-import { Interval, Lap, Location, RaceControl as OpenF1RaceControl, PitStop, Position, Stint } from '@f2020/openf1';
+import { Interval, Lap, RaceControl as OpenF1RaceControl, PitStop, Position, Stint } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, bufferTime, combineLatest, filter, Observable, of, scan, switchMap, takeWhile, tap } from 'rxjs';
+import { BehaviorSubject, bufferTime, combineLatest, defer, filter, Observable, of, scan, switchMap, takeWhile, tap } from 'rxjs';
 import { catchError, concatMap, first, map, retry } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { OpenF1WSSService } from './openf1-wss.service';
-import { historyRetry, latestByDriver, mergeLaps, withLiveUpdates } from './live-utils';
+import { addLocationSamples, historyRetry, latestByDriver, mergeLaps, toMillis, withLiveUpdates } from './live-utils';
 import { LiveStatus, RaceResultService } from './race-result.service';
+
+/** The cars are drawn this long behind the latest locations */
+const liveDelay = 1000;
+/** The locations kept for drawing the cars */
+const keptLocations = 10_000;
 
 interface LapsAndPositions {
   positions: Position[];
@@ -54,7 +60,7 @@ export class LiveResultService extends RaceResultService {
   readonly currentLap = new BehaviorSubject<number>(0);
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
-  #locations$?: Observable<IDriverLocation[]>;
+  #locationPlayback$?: Observable<LocationPlayback>;
   #lapsAndPositions$: Observable<LapsAndPositions>;
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
@@ -224,25 +230,33 @@ export class LiveResultService extends RaceResultService {
     return this.#gridPositions;
   }
 
-  getLocations(race: IRace, drivers: IDriver[]): Observable<IDriverLocation[]> {
+  /**
+   * The cars are drawn a second behind the latest locations, so there is a location on both sides of the time drawn.
+   * The clocks of the browser and OpenF1 differ, so the time is from the shortest delay seen from a location being recorded to it arriving
+   */
+  getLocationPlayback(race: IRace, drivers: IDriver[]): Observable<LocationPlayback> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     this.#openF1WSSService.initializeClient();
     this.#openF1WSSService.subscribeLocations();
 
     // The track card and the fullscreen share the locations
-    this.#locations$ ??= this.#raceSessionKey(race).pipe(
-      switchMap(sessionKey => this.#openF1WSSService.locations$.pipe(
-        filter(location => location.session_key === sessionKey),
-        // About 70 locations a second for the whole field, so they are handled four times a second
-        bufferTime(250),
-        filter(locations => locations.length > 0),
-        scan(latestByDriver<Location>(), new Map<number, Location>()),
-        takeWhile(() => DateTime.local() < latestEndTime),
-      )),
-      map(locations => mapper.locations({ locations: [...locations.values()], drivers })),
-      shareLatest(),
-    );
-    return this.#locations$;
+    this.#locationPlayback$ ??= defer(() => {
+      let lag = Number.MAX_VALUE;
+      const now = () => Date.now() - lag - liveDelay;
+      return this.#raceSessionKey(race).pipe(
+        switchMap(sessionKey => this.#openF1WSSService.locations$.pipe(
+          filter(location => location.session_key === sessionKey),
+          // About 70 locations a second for the whole field, so they are handled four times a second
+          bufferTime(250),
+          filter(locations => locations.length > 0),
+          tap(locations => lag = Math.min(lag, ...locations.map(({ date }) => Date.now() - toMillis(date)))),
+          scan((samples, locations) => addLocationSamples(samples, locations, now() - keptLocations), new Map<number, LocationSample[]>()),
+          takeWhile(() => DateTime.local() < latestEndTime),
+        )),
+        map(samples => ({ drivers: mapper.locations({ samples, drivers }), now })),
+      );
+    }).pipe(shareLatest());
+    return this.#locationPlayback$;
   }
 
   #raceSessionKey(race: IRace): Observable<number> {

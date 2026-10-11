@@ -17,7 +17,10 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { LiveStatusComponent } from './live-status.component';
 import { LiveTrackDriversComponent } from './track/live-track-drivers';
 import { ReliveControlsComponent } from './relive-controls';
+import { TrackLapComponent } from './track/track-lap';
 import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-track-players';
+import { LiveTrackDriversData, LiveTrackDriversDialogComponent } from './track/live-track-drivers-dialog';
+import { ComponentType } from '@angular/cdk/portal';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconButton } from '@angular/material/button';
 
@@ -37,7 +40,7 @@ import { MatIconButton } from '@angular/material/button';
                 Relive
               }
             </mat-card-title>
-            <button mat-icon-button class="!hidden md:!inline-block ms-auto" aria-label="Vis spillerne på banen" (click)="openTrack()">
+            <button mat-icon-button class="ms-auto" aria-label="Vis spillerne på banen" (click)="openPlayersTrack()">
               <fa-icon [icon]="icons.farExpand" />
             </button>
             <mat-card-subtitle>
@@ -54,8 +57,7 @@ import { MatIconButton } from '@angular/material/button';
             @if (!isLiveLive()) {
               <f2020-relive-controls class="block" />
             }
-            <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()" (latestUpdate)="latestUpdate.set($event)"
-                             (standings)="standings.set($event)" />
+            <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()" (latestUpdate)="latestUpdate.set($event)" />
           </mat-card-content>
         </mat-card>
         <mat-card>
@@ -69,15 +71,18 @@ import { MatIconButton } from '@angular/material/button';
             <f2020-live-positions #positions class="block mt-3" [race]="race()" [drivers]="drivers()" />
           </mat-card-content>
         </mat-card>
-        <mat-card class="!hidden md:!flex lg:col-span-2">
+        <mat-card>
           <mat-card-header>
-            <mat-card-title>Banen</mat-card-title>
+            <mat-card-title><f2020-track-lap [race]="race()" emptyText="Banen" /></mat-card-title>
+            <button mat-icon-button class="ms-auto" aria-label="Vis banen i fuld skærm" (click)="openDriversTrack()">
+              <fa-icon [icon]="icons.farExpand" />
+            </button>
           </mat-card-header>
           <mat-card-content>
-            <f2020-live-track-drivers class="block mt-3" [race]="race()" [drivers]="drivers()" />
+            <f2020-live-track-drivers class="block mt-3 aspect-square max-h-[70vh] mx-auto" [race]="race()" [drivers]="drivers()" [showLap]="false" />
           </mat-card-content>
         </mat-card>
-        <mat-card class="lg:col-span-2">
+        <mat-card>
           <mat-card-header>
             <mat-card-title>Holdbeskeder</mat-card-title>
             <mat-card-subtitle>
@@ -114,6 +119,7 @@ import { MatIconButton } from '@angular/material/button';
     LiveTrackDriversComponent,
     MatIconButton,
     ReliveControlsComponent,
+    TrackLapComponent,
   ],
   providers: [
     provideRaceResultService(),
@@ -131,14 +137,14 @@ export class LiveLiveComponent {
   #dialog = inject(MatDialog);
   #injector = inject(Injector);
   radioError = toSignal(this.#live.radioStatus.pipe(
-    map(status => status.error?.statusText),
+    map(status => status.error?.statusText ?? status.error?.message),
   ));
 
   error = toSignal(combineLatest({
     result: this.#live.resultStatus,
     pitStop: this.#live.pitStopStatus,
   }).pipe(
-    map(({ result, pitStop }) => result.error?.statusText || pitStop.error?.statusText),
+    map(({ result, pitStop }) => result.error?.statusText || result.error?.message || pitStop.error?.statusText || pitStop.error?.message),
   ));
 
   race = this.#store.race;
@@ -146,7 +152,6 @@ export class LiveLiveComponent {
   bids: Signal<Bid[]> = this.#store.bids as Signal<Bid[]>;
   isLiveLive = computed(() => this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
   latestUpdate = signal<DateTime | undefined>(undefined);
-  protected readonly standings = signal<Bid[]>([]);
 
   #status = toSignal(combineLatest({
     resultStatus: this.#live.resultStatus,
@@ -175,10 +180,18 @@ export class LiveLiveComponent {
     this.#bottomSheet.open(LiveStatusComponent, { data: this.#status });
   }
 
+  protected openPlayersTrack() {
+    this.#openFullscreen<LiveTrackPlayersComponent, LiveTrackPlayersData>(LiveTrackPlayersComponent, { race: this.race(), drivers: this.drivers()!, bids: this.bids() });
+  }
+
+  protected openDriversTrack() {
+    this.#openFullscreen<LiveTrackDriversDialogComponent, LiveTrackDriversData>(LiveTrackDriversDialogComponent, { race: this.race(), drivers: this.drivers()! });
+  }
+
   /** The injector of the page is passed on, so the fullscreen uses the same live or relive data */
-  protected openTrack() {
-    this.#dialog.open<LiveTrackPlayersComponent, LiveTrackPlayersData>(LiveTrackPlayersComponent, {
-      data: { race: this.race(), drivers: this.drivers()!, bids: this.standings.asReadonly() },
+  #openFullscreen<C, D>(component: ComponentType<C>, data: D) {
+    this.#dialog.open<C, D>(component, {
+      data,
       injector: this.#injector,
       width: '100vw',
       height: '100vh',

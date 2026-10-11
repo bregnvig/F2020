@@ -1,24 +1,23 @@
-import { Location } from '@f2020/openf1';
 import { isTruthy } from '@f2020/tools';
-import { IDriver, IDriverLocation } from '../model';
+import { IDriver, IDriverLocations, LocationSample } from '../model';
 import { findDriver, getDrivers } from './mapper-utils';
 
 interface OpenF1LocationParams {
   drivers: IDriver[];
-  /** The latest location of each driver */
-  locations: Location[];
+  /** The samples of each driver number, oldest first */
+  samples: Map<number, LocationSample[]>;
 }
 
-const openF1Map = (source: OpenF1LocationParams): IDriverLocation[] => {
+const openF1Map = (source: OpenF1LocationParams): IDriverLocations[] => {
   const drivers = getDrivers(source.drivers);
-  return source.locations
-    .map(({ driver_number, x, y, z }) => {
-      const driver = findDriver(drivers, driver_number, 'Location');
-      return driver ? { driver, x, y, z } : undefined;
+  return [...source.samples]
+    .map(([driverNumber, samples]) => {
+      const driver = findDriver(drivers, driverNumber, 'Location');
+      return driver ? { driver, samples } : undefined;
     })
     .filter(isTruthy);
 };
 
-export function map(source: OpenF1LocationParams): IDriverLocation[] {
+export function map(source: OpenF1LocationParams): IDriverLocations[] {
   return openF1Map(source);
 }

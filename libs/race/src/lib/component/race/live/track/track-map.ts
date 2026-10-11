@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, numberAttribute, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, numberAttribute } from '@angular/core';
 import { Track, trackPosition } from '@f2020/data';
 
 export interface TrackMarker {
@@ -11,19 +11,7 @@ export interface TrackMarker {
   color?: string;
 }
 
-/** A move takes as long as the time since the previous update, so the cars keep going between updates, within these limits */
-const shortestMove = 100;
-const longestMove = 1500;
-
-interface Move {
-  from: number;
-  delta: number;
-}
-
-/**
- * The track in black with a white edge, and markers on it. The markers glide along the track to a new place,
- * so they don't cut corners when the places come seconds apart
- */
+/** The track in black with a white edge, and markers on it */
 @Component({
   selector: 'f2020-track-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,8 +26,9 @@ interface Move {
         <path [attr.d]="view().path" stroke="#fff" [attr.stroke-width]="view().unit * 1.6" />
         <path [attr.d]="view().path" stroke="#000" [attr.stroke-width]="view().unit" />
       </g>
-      <g [attr.font-size]="view().unit * 2.2" text-anchor="middle" fill="#fff" stroke="#000" paint-order="stroke"
-         [attr.stroke-width]="view().unit * 0.4">
+      <!-- The font is set, as the page's is Times New Roman and Material only sets Roboto on its own components -->
+      <g [attr.font-size]="view().unit * 2" font-family="Roboto, sans-serif" font-weight="500" text-anchor="middle" fill="#fff"
+         stroke="rgb(0 0 0 / 0.7)" paint-order="stroke" stroke-linejoin="round" [attr.stroke-width]="view().unit * 0.5">
         @for (marker of placed(); track marker.id) {
           @if (marker.image) {
             <line [attr.x1]="marker.x" [attr.y1]="marker.y" [attr.x2]="marker.ax" [attr.y2]="marker.ay" stroke="#fff"
@@ -67,11 +56,6 @@ export class TrackMapComponent {
   /** The space around the track, as a part of its size. Pictures need more room than dots */
   padding = input(0.05, { transform: numberAttribute });
 
-  #displayed = signal(new Map<string, number>());
-  #frame?: number;
-  #moves = new Map<string, Move>();
-  #moveStart = 0;
-  #moveDuration = longestMove;
 
   /** The view box with the y axis flipped, as OpenF1's points up. A unit is a hundredth of the size of the track */
   protected readonly view = computed(() => {
@@ -89,42 +73,11 @@ export class TrackMapComponent {
 
   protected readonly placed = computed(() => {
     const track = this.track();
-    const displayed = this.#displayed();
-    const [centerX, centerY] = [(track.minX + track.maxX) / 2, (track.minY + track.maxY) / 2];
-    const distance = this.view().unit * 9;
+    // The pictures are on the outside of the track, the same side all the way round, so they don't jump across it
+    const distance = this.view().unit * 9 * track.outside;
     return this.markers().map(marker => {
-      const { x, y, nx, ny } = trackPosition(track, displayed.get(marker.id) ?? marker.progress);
-      // The picture is put on the outside of the track
-      const side = (x - centerX) * nx + (y - centerY) * ny >= 0 ? 1 : -1;
-      return { ...marker, x, y: -y, ax: x + side * nx * distance, ay: -(y + side * ny * distance) };
+      const { x, y, nx, ny } = trackPosition(track, marker.progress);
+      return { ...marker, x, y: -y, ax: x + nx * distance, ay: -(y + ny * distance) };
     });
   });
-
-  constructor() {
-    effect(() => {
-      const markers = this.markers();
-      untracked(() => this.#move(markers));
-    });
-    inject(DestroyRef).onDestroy(() => this.#frame && cancelAnimationFrame(this.#frame));
-  }
-
-  /** Starts moving the markers from where they are shown to their new places */
-  #move(markers: TrackMarker[]) {
-    const now = performance.now();
-    this.#moveDuration = Math.min(longestMove, Math.max(shortestMove, now - this.#moveStart));
-    this.#moveStart = now;
-    const displayed = this.#displayed();
-    this.#moves = new Map(markers.map(({ id, progress }) => {
-      const from = displayed.get(id) ?? progress;
-      // The shortest way round, so a car crossing the finish line doesn't go back round the lap
-      return [id, { from, delta: ((progress - from) % 1 + 1.5) % 1 - 0.5 }];
-    }));
-    this.#frame ??= requestAnimationFrame(this.#step);
-  }
-
-  #step = (now: number) => {
-    const share = Math.min(1, (now - this.#moveStart) / this.#moveDuration);
-    this.#displayed.set(new Map([...this.#moves].map(([id, { from, delta }]) => [id, from + delta * share])));
-    this.#frame = share < 1 ? requestAnimationFrame(this.#step) : undefined;
-  };
 }

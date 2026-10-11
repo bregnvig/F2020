@@ -2,7 +2,7 @@ import { inject, Service } from '@angular/core';
 import { buildTrack, IRace, Track } from '@f2020/data';
 import { Lap } from '@f2020/openf1';
 import { DateTime } from 'luxon';
-import { catchError, firstValueFrom, from, Observable, shareReplay, throwError } from 'rxjs';
+import { catchError, defer, firstValueFrom, Observable, retry, shareReplay, throwError, timer } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
 
 /** A lap has a location about every 0.3 second, so a lap with fewer is missing data */
@@ -20,7 +20,9 @@ export class TrackService {
   getTrack(race: IRace): Observable<Track> {
     const key = `${race.season}-${race.round}`;
     if (!trackCache.has(key)) {
-      trackCache.set(key, from(this.#loadTrack(race)).pipe(
+      trackCache.set(key, defer(() => this.#loadTrack(race)).pipe(
+        // OpenF1 may refuse a request when too many are made
+        retry({ count: 4, delay: (_error, attempt) => timer(2000 * attempt) }),
         // A failed track is fetched again the next time
         catchError(error => {
           trackCache.delete(key);
