@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, numberAttribute } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, input, numberAttribute, signal } from '@angular/core';
 import { Track, trackPosition } from '@f2020/data';
 
 export interface TrackMarker {
@@ -9,7 +9,12 @@ export interface TrackMarker {
   /** A picture shown away from the track, with a line to its place on the track. Without it the marker is a dot on the track */
   image?: string;
   color?: string;
+  /** Moves the marker ahead by this many dots and 5 pixels, so players with the same points are not on top of each other */
+  ahead?: number;
 }
+
+/** The space between players with the same points, besides a dot */
+const aheadPixels = 5;
 
 /** The track in black with a white edge, and markers on it */
 @Component({
@@ -64,20 +69,35 @@ export class TrackMapComponent {
     const pad = size * this.padding();
     return {
       unit: size / 100,
+      width: size + 2 * pad,
       box: `${minX - pad} ${-maxY - pad} ${maxX - minX + 2 * pad} ${maxY - minY + 2 * pad}`,
       path: points.map(({ x, y }, index) => `${index ? 'L' : 'M'}${x} ${-y}`).join('') + 'Z',
     };
   });
 
+  /** The size the map is shown at, to turn pixels into the units of the track */
+  #size = signal({ width: 0, height: 0 });
+
   protected readonly avatarRadius = computed(() => this.view().unit * 3.5);
 
   protected readonly placed = computed(() => {
     const track = this.track();
+    // A step ahead is a dot and some pixels, in the units of the track at the size the map is shown
+    const { unit, width } = this.view();
+    const shown = Math.max(this.#size().width, this.#size().height);
+    const step = (unit * 1.2 + (shown ? aheadPixels * width / shown : 0)) / track.length;
     // The pictures are on the outside of the track, the same side all the way round, so they don't jump across it
     const distance = this.view().unit * 9 * track.outside;
     return this.markers().map(marker => {
-      const { x, y, nx, ny } = trackPosition(track, marker.progress);
+      const { x, y, nx, ny } = trackPosition(track, marker.progress + (marker.ahead ?? 0) * step);
       return { ...marker, x, y: -y, ax: x + nx * distance, ay: -(y + ny * distance) };
     });
   });
+
+  constructor() {
+    const element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    const observer = new ResizeObserver(([entry]) => this.#size.set({ width: entry.contentRect.width, height: entry.contentRect.height }));
+    observer.observe(element);
+    inject(DestroyRef).onDestroy(() => observer.disconnect());
+  }
 }

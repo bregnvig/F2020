@@ -3,7 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { RaceResultProvider, TrackService } from '@f2020/api';
-import { Bid, IDriver, IRace, progressAt } from '@f2020/data';
+import { Bid, compareBids, IDriver, IRace, progressAt } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { LiveRaceComponent } from '../live-race.component';
@@ -21,22 +21,27 @@ export interface LiveTrackPlayersData {
 
 /** A point is a tenth of a lap */
 const lapPerPoint = 0.1;
-/** Players with the same points are spread over half a point, the best pole position time first */
-const lapForTie = 0.05;
 
 /** How long it takes a player to move to a new place, when the points change */
 const overtake = 1500;
 
 const easeInOut = (t: number) => t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
 
-/** How far each player is behind the leader in laps. A tenth of a lap for each point, and the best pole position time first when tied */
+/** The players from first to last, the best pole position time first when tied */
+const rank = (bids: Bid[]) => bids.toSorted(compareBids);
+
+/** How far each player is behind the leader in laps, a tenth of a lap for each point */
 export const playerGaps = (bids: Bid[]): Map<string, number> => {
-  const ranked = bids.toSorted((a, b) => (b.points ?? 0) - (a.points ?? 0) || (a.polePositionTimeDiff ?? Number.MAX_VALUE) - (b.polePositionTimeDiff ?? Number.MAX_VALUE));
-  const leaderPoints = ranked[0]?.points ?? 0;
+  const leaderPoints = rank(bids)[0]?.points ?? 0;
+  return new Map(bids.map(bid => [bid.player!.uid, (leaderPoints - (bid.points ?? 0)) * lapPerPoint]));
+};
+
+/** How many places ahead of the players with the same points each player is, from the pole position time */
+const tieSteps = (bids: Bid[]): Map<string, number> => {
+  const ranked = rank(bids);
   return new Map(ranked.map(bid => {
     const tied = ranked.filter(other => other.points === bid.points);
-    const tie = tied.length > 1 ? lapForTie * tied.indexOf(bid) / (tied.length - 1) : 0;
-    return [bid.player!.uid, (leaderPoints - (bid.points ?? 0)) * lapPerPoint + tie];
+    return [bid.player!.uid, tied.length - 1 - tied.indexOf(bid)];
   }));
 };
 
@@ -113,12 +118,15 @@ export class LiveTrackPlayersComponent {
     if (leaderProgress === undefined) return [];
     this.#gaps();
     const gaps = this.#gapsAt(frame);
-    return this.standings().map(({ player }) => {
+    const ahead = tieSteps(this.standings());
+    // The last is drawn first, so the leader is on top
+    return rank(this.standings()).toReversed().map(({ player }) => {
       const gap = gaps.get(player!.uid) ?? 0;
       const lapsDown = Math.floor(gap + 1e-9);
       return {
         id: player!.uid,
         progress: leaderProgress - gap,
+        ahead: ahead.get(player!.uid),
         label: player!.displayName + (lapsDown ? ` +${lapsDown}` : ''),
         image: player!.photoURL,
       };
