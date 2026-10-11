@@ -7,7 +7,7 @@
         <mat-card-subtitle>{{ race().raceStart | dateTime: 'medium' }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content style="height: 33vh">
-        <f2020-race-map [race]="race()" />
+        <f2020-race-map [race]="race()"/>
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [href]="race().url" target="_blank">INFO</a>
@@ -68,14 +68,14 @@
           </mat-card-content>
           @if (race().state === 'completed' || isLiveLive() || qualifyLink()) {
             <mat-card-actions>
-              @if (qualifyLink(); as qualifyLink) {
-                <a mat-button routerLink="live/qualify">
-                  <span class="uppercase">{{ qualifyLink }}</span>
-                </a>
-              }
               @if (race().state === 'completed' || isLiveLive()) {
                 <a mat-button routerLink="live">
                   <span class="uppercase">{{ isLiveLive() ? 'Live' : 'Genoplev løbet' }}</span>
+                </a>
+              }
+              @if (qualifyLink(); as qualifyLink) {
+                <a mat-button routerLink="live/qualify">
+                  <span class="uppercase">{{ qualifyLink }}</span>
                 </a>
               }
             </mat-card-actions>
