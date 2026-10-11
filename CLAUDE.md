@@ -66,6 +66,16 @@ The user deploys. Never run the deploy scripts, and don't ask or offer to deploy
 - `OpenF1HttpService` - HTTP client for OpenF1 API
 - `OpenF1WSSService` - WebSocket service for real-time F1 data
 
+### OpenF1 Proxy
+
+The app never calls the OpenF1 REST API directly. During a live session OpenF1 answers the CORS preflight of a browser with 401, as
+a preflight never has the token. `OpenF1HttpService` calls the callable function `openF1Call` with the path and query
+(e.g. `position?session_key=9161`), which fetches it with a server token (`openF1List` in `apps/functions/src/lib/openf1.api.ts`).
+
+- Only players may call it, and the path must be an endpoint with a query, so it can't fetch other URLs
+- OpenF1 answers 404 when it has no data. The proxy returns an empty list instead
+- The live updates over MQTT are not affected and connect from the browser, with a token from the `getToken` function
+
 ## Development Notes
 
 - Uses Nx for monorepo management
