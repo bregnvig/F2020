@@ -10,6 +10,7 @@ import {
   faChartLineUpDown,
   faClock,
   faEgg,
+  faExpand,
   faFaceSadCry,
   faGavel,
   faInfo,
@@ -29,6 +30,7 @@ import {
   faUser,
   faUserFriends,
   faUserPlus,
+  faXmark,
 } from '@fortawesome/pro-regular-svg-icons';
 import {
   faAngleDown,
@@ -79,6 +81,8 @@ const farIcons = [
   faCircleDot,
   faBlockBrick,
   faRankingStar,
+  faExpand,
+  faXmark,
 ];
 
 const fasIcons = [

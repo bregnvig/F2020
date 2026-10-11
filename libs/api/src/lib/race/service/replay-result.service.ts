@@ -1,8 +1,10 @@
-import { inject, Service } from '@angular/core';
+import { DestroyRef, inject, Service } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   IDriver,
   IDriverGridPosition,
   IDriverInterval,
+  IDriverLocation,
   IDriverRaceResult,
   IDriverSector,
   IPitStop,
@@ -14,15 +16,17 @@ import {
   RaceControl,
   TeamRadio,
 } from '@f2020/data';
-import { Interval, Lap, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, Location, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, firstValueFrom, Observable, take, timer } from 'rxjs';
+import { BehaviorSubject, catchError, distinctUntilChanged, firstValueFrom, interval, Observable, of } from 'rxjs';
 import { first, map, switchMap, tap } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { LiveStatus, RaceResultService } from './race-result.service';
 
 interface ReplayState {
+  start: DateTime;
+  end: DateTime;
   currentTime: DateTime;
   sessionKey: number;
   positions: Position[];
@@ -34,9 +38,27 @@ interface ReplayState {
   stints: Stint[];
 }
 
+/** Where the relive is, and between which times it can be moved */
+export interface ReplayClock {
+  start: DateTime;
+  end: DateTime;
+  currentTime: DateTime;
+}
+
+export const replaySpeeds = [1, 2, 3] as const;
+export type ReplaySpeed = typeof replaySpeeds[number];
+
+/** The relive moves this often, by the time multiplied by the speed */
+const tick = 1000;
+/** The locations are fetched for this long at a time */
+const locationChunk = 30_000;
+
 @Service({ autoProvided: false })
 export class ReplayResultService extends RaceResultService {
   #openF1HttpService = inject(OpenF1HttpService);
+  #destroyRef = inject(DestroyRef);
+  #started = false;
+  #speed$ = new BehaviorSubject<ReplaySpeed>(1);
 
   #resultStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #radioStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
@@ -57,13 +79,31 @@ export class ReplayResultService extends RaceResultService {
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
   readonly sectorStatus = this.#sectorStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
+  readonly speed = this.#speed$.asObservable();
+  readonly clock: Observable<ReplayClock> = this.#replayState$.pipe(
+    truthy(),
+    map(({ start, end, currentTime }) => ({ start, end, currentTime })),
+  );
+
+  setSpeed(speed: ReplaySpeed) {
+    this.#speed$.next(speed);
+  }
+
+  /** Moves the relive to a time between the start and the end of the race */
+  seek(time: DateTime) {
+    const state = this.#replayState$.value;
+    state && this.#replayState$.next({ ...state, currentTime: DateTime.min(DateTime.max(time, state.start), state.end) });
+  }
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
+  #locations$?: Observable<IDriverLocation[]>;
 
-  async #startReplay(race: IRace, targetDuration = 60000) {
-    if (this.#replayState$.value) {
+  /** The race is relived as it was driven, from the start until the session ended */
+  async #startReplay(race: IRace) {
+    if (this.#started) {
       return;
     }
+    this.#started = true;
 
     // Get session key first
     const session = await firstValueFrom(this.#openF1HttpService.getSession(race, 'Race'));
@@ -77,30 +117,16 @@ export class ReplayResultService extends RaceResultService {
     const raceControl = await firstValueFrom(this.#openF1HttpService.getRaceControl(sessionKey));
     const stints = await firstValueFrom(this.#openF1HttpService.getStints(sessionKey));
 
-    const raceStartTime = race.raceStart.toUTC();
-    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
-    const totalSteps = targetDuration / 500;
-    const timeStepMs = latestEndTime.diff(raceStartTime).as('milliseconds') / totalSteps;
+    const start = race.raceStart.toUTC();
+    const end = session.date_end ? DateTime.fromISO(session.date_end) : start.plus({ hour: 3 });
+    this.#replayState$.next({ start, end, currentTime: start, sessionKey, positions, laps, teamRadio, pitStops, intervals, raceControl, stints });
 
-    let currentTime = raceStartTime;
-    timer(0, 500).pipe(
-      take(totalSteps),
-      map(() => {
-        const state = { currentTime };
-        currentTime = currentTime.plus({ milliseconds: timeStepMs });
-        return {
-          ...state,
-          sessionKey,
-          positions,
-          laps,
-          teamRadio,
-          pitStops,
-          intervals,
-          raceControl,
-          stints,
-        };
-      }),
-    ).subscribe(state => this.#replayState$.next(state));
+    interval(tick).pipe(
+      takeUntilDestroyed(this.#destroyRef),
+    ).subscribe(() => {
+      const state = this.#replayState$.value;
+      state && state.currentTime < state.end && this.seek(state.currentTime.plus({ milliseconds: tick * this.#speed$.value }));
+    });
   }
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
@@ -243,6 +269,36 @@ export class ReplayResultService extends RaceResultService {
       );
     }
     return this.#gridPositions;
+  }
+
+  /**
+   * The locations are fetched 30 seconds at a time, as a whole race has about half a million. Each driver is shown at the latest
+   * location before the time of the relive, so moving it back works as well
+   */
+  getLocations(_race: IRace, drivers: IDriver[]): Observable<IDriverLocation[]> {
+    // The track card and the fullscreen share the locations
+    this.#locations$ ??= this.#replayState$.pipe(
+      truthy(),
+      map(({ sessionKey, start, currentTime }) => ({ sessionKey, from: start.plus({ milliseconds: Math.floor(currentTime.diff(start).as('milliseconds') / locationChunk) * locationChunk }) })),
+      distinctUntilChanged((a, b) => a.from.equals(b.from)),
+      // A little before the chunk, so every car has a location at its start
+      switchMap(({ sessionKey, from }) => this.#openF1HttpService.getLocations(sessionKey, from.minus({ seconds: 2 }), from.plus({ milliseconds: locationChunk })).pipe(
+        map(locations => locations.map(location => ({ ...location, time: DateTime.fromISO(location.date) }))),
+        catchError(error => {
+          console.error('Failed to fetch the locations', error);
+          return of([]);
+        }),
+      )),
+      switchMap(chunk => this.#replayState$.pipe(
+        truthy(),
+        map(({ currentTime }) => chunk
+          .filter(({ time }) => time <= currentTime)
+          .reduce((latest, location) => latest.set(location.driver_number, location), new Map<number, Location>())),
+      )),
+      map(locations => mapper.locations({ locations: [...locations.values()], drivers })),
+      shareLatest(),
+    );
+    return this.#locations$;
   }
 
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {

@@ -1,5 +1,5 @@
 import { inject, OnDestroy, Service } from '@angular/core';
-import { Interval, Lap, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, Location, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, catchError, EMPTY, Observable, retry, Subject, Subscription, tap } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
@@ -22,6 +22,9 @@ const topics = {
   stints: 'v1/stints',
 };
 
+/** About 3.7 locations a second for each car, so it is only subscribed when the track is shown */
+const locationTopic = 'v1/location';
+
 @Service({ autoProvided: false })
 export class OpenF1WSSService implements OnDestroy {
 
@@ -33,6 +36,8 @@ export class OpenF1WSSService implements OnDestroy {
   #radio = new BehaviorSubject<TeamRadio | undefined>(undefined);
   #raceControl = new BehaviorSubject<RaceControl | undefined>(undefined);
   #stints = new BehaviorSubject<Stint | undefined>(undefined);
+  #locations = new Subject<Location>();
+  #subscribedLocations = false;
   #client: MqttClient | null = null;
   #tokenRequest?: Subscription;
 
@@ -44,6 +49,7 @@ export class OpenF1WSSService implements OnDestroy {
     [topics.pitStops]: this.#pitStops,
     [topics.raceControl]: this.#raceControl,
     [topics.stints]: this.#stints,
+    [locationTopic]: this.#locations,
   };
 
   laps$ = this.#laps.asObservable();
@@ -53,6 +59,7 @@ export class OpenF1WSSService implements OnDestroy {
   radio$ = this.#radio.asObservable();
   raceControl$ = this.#raceControl.asObservable();
   stints$ = this.#stints.asObservable();
+  locations$ = this.#locations.asObservable();
 
   ngOnDestroy(): void {
     this.#tokenRequest?.unsubscribe();
@@ -79,7 +86,8 @@ export class OpenF1WSSService implements OnDestroy {
     });
     client.on('connect', () => {
       console.debug('MQTT client connected');
-      client.subscribe(Object.values(topics), err => err && console.error('Failed to subscribe to the OpenF1 topics', err));
+      const subscribed = [...Object.values(topics), ...(this.#subscribedLocations ? [locationTopic] : [])];
+      client.subscribe(subscribed, err => err && console.error('Failed to subscribe to the OpenF1 topics', err));
     });
     client.on('offline', () => console.debug(`MQTT client offline, reconnecting every ${reconnectPeriod / 1000} seconds`));
     client.on('error', err => {
@@ -94,6 +102,15 @@ export class OpenF1WSSService implements OnDestroy {
     client.on('message', (topic, message) => this.#handleMessage(topic, message));
     this.#client = client;
     this.#tokenRequest = this.#updatePassword(client).subscribe(() => client.connect());
+  }
+
+  /** Starts the locations of the cars. They stay subscribed until the client ends */
+  subscribeLocations() {
+    if (this.#subscribedLocations) {
+      return;
+    }
+    this.#subscribedLocations = true;
+    this.#client?.connected && this.#client.subscribe(locationTopic, err => err && console.error('Failed to subscribe to the locations', err));
   }
 
   #refreshToken(client: MqttClient) {

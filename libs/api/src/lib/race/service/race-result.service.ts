@@ -1,4 +1,4 @@
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IRace, IRaceResult, IStint, ITeam, RaceControl, TeamRadio } from '@f2020/data';
+import { IDriver, IDriverGridPosition, IDriverInterval, IDriverLocation, IDriverRaceResult, IDriverSector, IPitStop, IRace, IRaceResult, IStint, ITeam, RaceControl, TeamRadio } from '@f2020/data';
 import { InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -44,4 +44,7 @@ export abstract class RaceResultService extends LiveSessionService {
   abstract getGrid(race: IRace, drivers: IDriver[]): Observable<IDriverGridPosition[]>;
 
   abstract getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]>;
+
+  /** The latest location of each car */
+  abstract getLocations(race: IRace, drivers: IDriver[]): Observable<IDriverLocation[]>;
 }

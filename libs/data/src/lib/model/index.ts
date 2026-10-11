@@ -13,3 +13,4 @@ export * from './circuit.model';
 export * from './team-radio.model';
 export * from './sector.model';
 export * from './championship.model';
+export * from './track.model';

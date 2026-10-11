@@ -3,6 +3,7 @@ export * from './driver.model';
 export * from './grid-position.model';
 export * from './interval.model';
 export * from './lap.model';
+export * from './location.model';
 export * from './pitstop.model';
 export * from './position.model';
 export * from './race-control.model';

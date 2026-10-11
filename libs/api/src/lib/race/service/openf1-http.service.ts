@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { IRace } from '@f2020/data';
-import { GridPosition, Interval, Lap, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { GridPosition, Interval, Lap, Location, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, Observable, of, shareReplay, tap } from 'rxjs';
@@ -78,6 +78,12 @@ export class OpenF1HttpService {
 
   getStints(sessionKey: number): Observable<Stint[]> {
     return this.#getList<Stint>(openF1Url.stints(sessionKey));
+  }
+
+  /** The locations between two times. Keep the period short, as there are about 3.7 locations a second for each car */
+  getLocations(sessionKey: number, after: DateTime, until: DateTime, driverNumber?: number): Observable<Location[]> {
+    const query = `&date>${after.toUTC().toISO(toISOOptions)}&date<=${until.toUTC().toISO(toISOOptions)}` + (driverNumber ? `&driver_number=${driverNumber}` : '');
+    return this.#getList<Location>(openF1Url.location(sessionKey) + query);
   }
 
   /**

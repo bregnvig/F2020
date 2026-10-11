@@ -38,6 +38,8 @@ export class LiveRaceComponent implements OnInit {
   initialPositions = signal<Bid[]>([]);
 
   latestUpdate = output<DateTime>();
+  /** The players with their points as the race is now */
+  standings = output<Bid[]>();
   #destroyRef = inject(DestroyRef);
   #racesService = inject(RacesService);
   #live = inject(RaceResultProvider);
@@ -86,6 +88,7 @@ export class LiveRaceComponent implements OnInit {
     bids$.pipe(
       takeUntilDestroyed(this.#destroyRef),
     ).subscribe(bids => {
+      this.standings.emit(bids);
       this.#currentPosition = bids.toSorted((a, b) => b.points - a.points).map(bid => bid.player.uid);
       this.initialPositions.update(positions => positions.map(bid => ({
         ...bid,

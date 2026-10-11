@@ -15,6 +15,7 @@ import { map as radio } from './radio.mapper';
 import { map as raceControl } from './race-control.mapper';
 import { map as stints } from './stint.mapper';
 import { map as sectors } from './sector.mapper';
+import { map as locations } from './location.mapper';
 
 export const mapper = {
   basisRace,
@@ -37,4 +38,5 @@ export const mapper = {
   grid,
   stints,
   sectors,
+  locations,
 };

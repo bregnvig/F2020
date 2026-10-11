@@ -53,6 +53,8 @@ type Icon =
   | 'farBlockBrick'
   | 'farRankingStar'
   | 'fasSafetyCar'
+  | 'farExpand'
+  | 'farXmark'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -108,4 +110,6 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farBlockBrick: ['far', 'block-brick'],
   farRankingStar: ['far', 'ranking-star'],
   fasSafetyCar: ['fas', 'car-on'],
+  farExpand: ['far', 'expand'],
+  farXmark: ['far', 'xmark'],
 };

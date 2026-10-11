@@ -8,6 +8,7 @@ export * from './lib/race/service/live-result.service';
 export * from './lib/race/service/replay-result.service';
 export * from './lib/race/service/race-result.service';
 export * from './lib/race/service/race-result.factory';
+export * from './lib/race/service/track.service';
 export * from './lib/race/service/qualify-result.service';
 export * from './lib/race/service/qualify-result.factory';
 export * from './lib/race/service/qualify-session';
