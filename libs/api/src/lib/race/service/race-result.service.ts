@@ -1,4 +1,4 @@
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, RaceControl, TeamRadio } from '@f2020/data';
+import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, RaceControl, RetiredCars, TeamRadio } from '@f2020/data';
 import { inject, InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable, shareReplay, tap } from 'rxjs';
@@ -47,6 +47,8 @@ export abstract class RaceResultService extends LiveSessionService {
   abstract getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]>;
 
   abstract readonly locationStatus: Observable<LiveStatus>;
+  /** Which cars are out of the race, kept for the page so every track on it agrees */
+  readonly retiredCars = new RetiredCars();
 
   #racesService = inject(RacesService);
   #qualify$?: Observable<IQualifyResult | undefined>;
