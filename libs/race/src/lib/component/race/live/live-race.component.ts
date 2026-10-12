@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RaceResultProvider, RacesService, TeamService } from '@f2020/api';
+import { RaceResultProvider, TeamService } from '@f2020/api';
 import { combineLatest, retry, switchMap, tap } from 'rxjs';
 import { Bid, buildResult, calculateResult, compareBids, IDriver, IRace } from '@f2020/data';
 import { map } from 'rxjs/operators';
@@ -41,7 +41,6 @@ export class LiveRaceComponent implements OnInit {
   /** The players with their points as the race is now */
   standings = output<Bid[]>();
   #destroyRef = inject(DestroyRef);
-  #racesService = inject(RacesService);
   #live = inject(RaceResultProvider);
   #teams = inject(TeamService).teams$;
 
@@ -50,7 +49,7 @@ export class LiveRaceComponent implements OnInit {
 
   ngOnInit() {
 
-    const qualify$ = this.#racesService.getQualify(this.race(), this.drivers()).pipe(
+    const qualify$ = this.#live.getQualify(this.race(), this.drivers()).pipe(
       shareLatest(),
     );
     const bids$ = this.#teams.pipe(

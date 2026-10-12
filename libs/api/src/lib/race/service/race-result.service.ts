@@ -1,7 +1,8 @@
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IRace, IRaceResult, IStint, ITeam, LocationPlayback, RaceControl, TeamRadio } from '@f2020/data';
-import { InjectionToken } from '@angular/core';
+import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, RaceControl, TeamRadio } from '@f2020/data';
+import { inject, InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, shareReplay, tap } from 'rxjs';
+import { RacesService } from './races.service';
 
 export interface LiveStatus {
   error?: any;
@@ -44,6 +45,25 @@ export abstract class RaceResultService extends LiveSessionService {
   abstract getGrid(race: IRace, drivers: IDriver[]): Observable<IDriverGridPosition[]>;
 
   abstract getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]>;
+
+  abstract readonly locationStatus: Observable<LiveStatus>;
+
+  #racesService = inject(RacesService);
+  #qualify$?: Observable<IQualifyResult | undefined>;
+  #qualifyStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  readonly qualifyStatus = this.#qualifyStatus$.asObservable();
+
+  /** The result of the qualifying, fetched once for the page. Every players list on it uses it */
+  getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
+    this.#qualify$ ??= this.#racesService.getQualify(race, drivers).pipe(
+      tap({
+        next: qualify => this.#qualifyStatus$.next({ latestUpdate: DateTime.now(), info: `${qualify?.results.length ?? 0} drivers` }),
+        error: error => this.#qualifyStatus$.next({ latestUpdate: DateTime.now(), error }),
+      }),
+      shareReplay(1),
+    );
+    return this.#qualify$;
+  }
 
   /** The locations of the cars, and the time to draw them at */
   abstract getLocationPlayback(race: IRace, drivers: IDriver[]): Observable<LocationPlayback>;

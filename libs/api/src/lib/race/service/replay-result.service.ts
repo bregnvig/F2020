@@ -112,6 +112,7 @@ export class ReplayResultService extends RaceResultService {
   #stintStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #locationStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #replayState$ = new BehaviorSubject<ReplayState | null>(null);
 
   readonly resultStatus = this.#resultStatus$.asObservable();
@@ -122,6 +123,7 @@ export class ReplayResultService extends RaceResultService {
   readonly stintStatus = this.#stintStatus$.asObservable();
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
   readonly sectorStatus = this.#sectorStatus$.asObservable();
+  readonly locationStatus = this.#locationStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
   readonly speed = this.#speed$.asObservable();
   readonly clock: Observable<ReplayClock> = this.#replayState$.pipe(
@@ -356,8 +358,10 @@ export class ReplayResultService extends RaceResultService {
       // The chunk starts early, as it is fetched before it is needed
       switchMap(({ sessionKey, from }) => this.#openF1HttpService.getLocations(sessionKey, from.minus({ milliseconds: locationLookahead + 2000 }), from.plus({ milliseconds: locationChunk })).pipe(
         retry(startRetry),
+        tap(locations => this.#locationStatus$.next({ latestUpdate: DateTime.now(), info: `${locations.length} locations from ${from.toFormat('HH:mm:ss')}` })),
         catchError(error => {
           console.error('Failed to fetch the locations', error);
+          this.#locationStatus$.next({ latestUpdate: DateTime.now(), error });
           return of<Location[]>([]);
         }),
       )),

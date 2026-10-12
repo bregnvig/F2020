@@ -49,6 +49,7 @@ export class LiveResultService extends RaceResultService {
   #stintStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #locationStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
@@ -57,10 +58,13 @@ export class LiveResultService extends RaceResultService {
   readonly stintStatus = this.#stintStatus$.asObservable();
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
   readonly sectorStatus = this.#sectorStatus$.asObservable();
+  readonly locationStatus = this.#locationStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
   #locationPlayback$?: Observable<LocationPlayback>;
+  #pitStops$?: Observable<IPitStop[]>;
+  #positions$?: Observable<IDriverRaceResult[]>;
   #lapsAndPositions$: Observable<LapsAndPositions>;
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
@@ -104,10 +108,11 @@ export class LiveResultService extends RaceResultService {
     );
   }
 
+  /** The pit stops are fetched once for the page, as every players list uses them */
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#raceSessionKey(race).pipe(
+    this.#pitStops$ ??= this.#raceSessionKey(race).pipe(
       concatMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getPitStops(sessionKey),
         this.#openF1WSSService.pitStops$,
@@ -120,13 +125,17 @@ export class LiveResultService extends RaceResultService {
           info: `${mappedStops.length} pit stops`,
         })),
         takeWhile(() => DateTime.local() < latestEndTime),
-      )));
+      )),
+      shareLatest(),
+    );
+    return this.#pitStops$;
   }
 
+  /** The positions are fetched once for the page, as the positions and the players on the track use them */
   getPositions(race: IRace, drivers: IDriver[]): Observable<IDriverRaceResult[]> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
 
-    return this.#raceSessionKey(race).pipe(
+    this.#positions$ ??= this.#raceSessionKey(race).pipe(
       switchMap(sessionKey => withLiveUpdates(
         this.#openF1HttpService.getPositions(sessionKey),
         this.#openF1WSSService.positions$,
@@ -144,7 +153,9 @@ export class LiveResultService extends RaceResultService {
         takeWhile(() => DateTime.local() < latestEndTime),
       )),
       map(({ positions, gridPositions }) => mapper.position({ positions, race, drivers, gridPositions })),
+      shareLatest(),
     );
+    return this.#positions$;
   }
 
   getIntervals(race: IRace, drivers: IDriver[]): Observable<IDriverInterval[]> {
@@ -254,6 +265,7 @@ export class LiveResultService extends RaceResultService {
           takeWhile(() => DateTime.local() < latestEndTime),
         )),
         map(samples => ({ drivers: mapper.locations({ samples, drivers }), now })),
+        tap(({ drivers }) => this.#locationStatus$.next({ latestUpdate: DateTime.now(), info: `${drivers.length} cars` })),
       );
     }).pipe(shareLatest());
     return this.#locationPlayback$;
