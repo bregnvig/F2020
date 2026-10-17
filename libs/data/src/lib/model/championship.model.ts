@@ -26,3 +26,31 @@ export const championshipPoints = (championship: DriverChampionship | TeamChampi
  */
 export const positionChange = ({ position, previousPosition }: IChampionshipPoints): number =>
   position && previousPosition ? previousPosition - position : 0;
+
+/** The points and place in the championship before a session */
+export interface ChampionshipStart {
+  points: number;
+  position?: number;
+}
+
+/** The championship before the race, the drivers by id and the teams by the OpenF1 name */
+export interface ChampionshipStarts {
+  drivers: Map<string, ChampionshipStart>;
+  teams: Map<string, ChampionshipStart>;
+}
+
+/** The points for the places of a race, from first to tenth */
+export const racePoints = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+
+/**
+ * The championship as it would be if the race ended now, from the points before it and the points gained in it. Ties keep the order
+ * from before the race, as the tie-break on the best results isn't known
+ */
+export const championshipNow = <K>(start: Map<K, ChampionshipStart>, gained: Map<K, number>): { key: K; standing: IChampionshipPoints }[] =>
+  [...new Set([...start.keys(), ...gained.keys()])]
+    .map(key => ({ key, before: start.get(key), points: (start.get(key)?.points ?? 0) + (gained.get(key) ?? 0) }))
+    .sort((a, b) => b.points - a.points || (a.before?.position ?? Number.MAX_VALUE) - (b.before?.position ?? Number.MAX_VALUE))
+    .map(({ key, before, points }, index) => ({
+      key,
+      standing: { points, position: index + 1, previousPoints: before?.points ?? 0, previousPosition: before?.position },
+    }));

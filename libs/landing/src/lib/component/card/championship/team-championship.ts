@@ -3,9 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { SeasonStore, TeamService } from '@f2020/api';
-import { icon } from '@f2020/shared';
+import { ChampionshipListComponent, icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { ChampionshipListComponent } from './championship-list';
 import { topEntries } from './championship';
 
 @Component({
@@ -17,7 +16,7 @@ import { topEntries } from './championship';
         <mat-card-title>Konstruktørmesterskabet</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <f2020-championship-list [entries]="entries()"/>
+        <sha-championship-list [entries]="entries()"/>
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [routerLink]="['teams']">SE MERE</a>

@@ -1,7 +1,10 @@
-import { IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, RaceControl, RetiredCars, TeamRadio } from '@f2020/data';
+import { ChampionshipStarts, IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, mapper, RaceControl, RetiredCars, TeamRadio } from '@f2020/data';
 import { inject, InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, Observable, shareReplay, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, retry, shareReplay, switchMap, take, tap, timer } from 'rxjs';
+import { StandingService } from '../../service/standing.service';
+import { TeamService } from '../../service/team.service';
+import { OpenF1HttpService } from './openf1-http.service';
 import { RacesService } from './races.service';
 
 export interface LiveStatus {
@@ -51,9 +54,15 @@ export abstract class RaceResultService extends LiveSessionService {
   readonly retiredCars = new RetiredCars();
 
   #racesService = inject(RacesService);
+  #openF1HttpService = inject(OpenF1HttpService);
+  #standingService = inject(StandingService);
+  #teamService = inject(TeamService);
   #qualify$?: Observable<IQualifyResult | undefined>;
   #qualifyStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   readonly qualifyStatus = this.#qualifyStatus$.asObservable();
+  #championshipStart$?: Observable<ChampionshipStarts>;
+  #championshipStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  readonly championshipStatus = this.#championshipStatus$.asObservable();
 
   /** The result of the qualifying, fetched once for the page. Every players list on it uses it */
   getQualify(race: IRace, drivers: IDriver[]): Observable<IQualifyResult | undefined> {
@@ -65,6 +74,41 @@ export abstract class RaceResultService extends LiveSessionService {
       shareReplay(1),
     );
     return this.#qualify$;
+  }
+
+  /**
+   * The championship before the race, fetched once for the page. OpenF1 only has the championship of the race after it, so a live race
+   * uses the stored standings, which are from before the race until it has ended
+   */
+  getChampionshipStart(race: IRace, drivers: IDriver[]): Observable<ChampionshipStarts> {
+    this.#championshipStart$ ??= this.#openF1HttpService.getSession(race, 'Race').pipe(
+      switchMap(({ session_key }) => combineLatest([
+        this.#openF1HttpService.getChampionshipDrivers(session_key),
+        this.#openF1HttpService.getChampionshipTeams(session_key),
+      ])),
+      switchMap(([driverChampionship, teamChampionship]) => driverChampionship.length
+        ? of(mapper.championship(drivers, driverChampionship, teamChampionship))
+        : this.#storedChampionship(race)),
+      retry({ count: 4, delay: (_error, attempt) => timer(2000 * attempt) }),
+      tap({
+        next: ({ drivers }) => this.#championshipStatus$.next({ latestUpdate: DateTime.now(), info: `${drivers.size} drivers` }),
+        error: error => this.#championshipStatus$.next({ latestUpdate: DateTime.now(), error }),
+      }),
+      shareReplay(1),
+    );
+    return this.#championshipStart$;
+  }
+
+  #storedChampionship(race: IRace): Observable<ChampionshipStarts> {
+    return combineLatest([
+      this.#standingService.getStandings(race.season).pipe(take(1)),
+      this.#teamService.teams$.pipe(take(1)),
+    ]).pipe(
+      map(([standings, teams]) => ({
+        drivers: new Map(standings.map(({ driver, points, position }) => [driver.driverId, { points, position }])),
+        teams: new Map(teams.map(({ name, points, position }) => [name, { points, position }])),
+      })),
+    );
   }
 
   /** The locations of the cars, and the time to draw them at */

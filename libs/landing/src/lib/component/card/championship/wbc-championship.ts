@@ -4,9 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { SeasonStore } from '@f2020/api';
 import { IChampionshipPoints, Player, WBCResult } from '@f2020/data';
-import { icon } from '@f2020/shared';
+import { ChampionshipListComponent, icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { ChampionshipListComponent } from './championship-list';
 import { topEntries } from './championship';
 
 interface WBCStanding extends IChampionshipPoints {
@@ -43,7 +42,7 @@ const wbcStandings = (results: WBCResult[]): WBCStanding[] => {
         <mat-card-title>WBC</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <f2020-championship-list [entries]="entries()"/>
+        <sha-championship-list [entries]="entries()"/>
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [routerLink]="['wbc']">SE MERE</a>

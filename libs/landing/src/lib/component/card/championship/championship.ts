@@ -1,5 +1,5 @@
 import { IChampionshipPoints, positionChange } from '@f2020/data';
-import { ChampionshipEntry } from './championship-list';
+import { ChampionshipEntry } from '@f2020/shared';
 
 type EntryInfo = Pick<ChampionshipEntry, 'id' | 'name' | 'driver' | 'image' | 'logo'>;
 

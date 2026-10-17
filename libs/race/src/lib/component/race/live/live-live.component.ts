@@ -18,6 +18,7 @@ import { LiveStatusComponent } from './live-status.component';
 import { LiveTrackDriversComponent } from './track/live-track-drivers';
 import { ReliveControlsComponent } from './relive-controls';
 import { TrackLapComponent } from './track/track-lap';
+import { LiveChampionshipComponent } from './live-championship';
 import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-track-players';
 import { LiveTrackDriversData, LiveTrackDriversDialogComponent } from './track/live-track-drivers-dialog';
 import { ComponentType } from '@angular/cdk/portal';
@@ -96,6 +97,8 @@ import { MatIconButton } from '@angular/material/button';
             <f2020-live-radio class="block mt-3" [race]="race()" [drivers]="drivers()" />
           </mat-card-content>
         </mat-card>
+        <f2020-live-championship [race]="race()" [drivers]="drivers()" type="drivers" />
+        <f2020-live-championship [race]="race()" [drivers]="drivers()" type="teams" />
       }
     </sha-card-page>
 
@@ -120,6 +123,7 @@ import { MatIconButton } from '@angular/material/button';
     MatIconButton,
     ReliveControlsComponent,
     TrackLapComponent,
+    LiveChampionshipComponent,
   ],
   providers: [
     provideRaceResultService(),
@@ -164,6 +168,7 @@ export class LiveLiveComponent {
     sectorStatus: this.#live.sectorStatus,
     locationStatus: this.#live.locationStatus,
     qualifyStatus: this.#live.qualifyStatus,
+    championshipStatus: this.#live.championshipStatus,
   }).pipe(
     map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
   ));

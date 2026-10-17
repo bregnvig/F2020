@@ -16,6 +16,7 @@ import { map as raceControl } from './race-control.mapper';
 import { map as stints } from './stint.mapper';
 import { map as sectors } from './sector.mapper';
 import { map as locations } from './location.mapper';
+import { map as championship } from './championship.mapper';
 
 export const mapper = {
   basisRace,
@@ -39,4 +40,5 @@ export const mapper = {
   stints,
   sectors,
   locations,
+  championship,
 };
