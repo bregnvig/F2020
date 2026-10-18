@@ -27,7 +27,7 @@ const pointsNow = (positions: IDriverRaceResult[]) => new Map(positions.map(({ d
       </mat-card-header>
       <mat-card-content>
         @if (entries().length) {
-          <sha-championship-list animated [entries]="entries()" />
+          <sha-championship-list [entries]="entries()" />
         } @else if (start.error()) {
           <p class="mt-3">Mesterskabet kunne ikke hentes</p>
         } @else {

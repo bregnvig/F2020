@@ -10,7 +10,7 @@ import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { TyreComponent } from './tyre.component';
 import { LiveSectorStatusComponent } from './sector/live-sector-status.component';
-import { DriverHeadshotComponent } from '@f2020/shared';
+import { AnimatedForDirective, DriverHeadshotComponent } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-live-positions',
@@ -27,12 +27,8 @@ import { DriverHeadshotComponent } from '@f2020/shared';
     AsyncPipe,
     TyreComponent,
     LiveSectorStatusComponent,
+    AnimatedForDirective,
   ],
-  styles: `
-    mat-list-item {
-      transition: all 1s;
-    }
-  `,
 })
 export class LivePositionsComponent implements OnInit {
 
@@ -42,7 +38,9 @@ export class LivePositionsComponent implements OnInit {
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
 
-  initialPositions = signal<IDriver[]>([]);
+  /** The drivers from first to last, the grid until the positions come */
+  protected readonly order = signal<IDriver[]>([]);
+  protected readonly driverKey = (driver: IDriver) => driver.driverId;
   latestUpdate = toSignal(this.#live.positionStatus.pipe(
     map(status => status.latestUpdate),
   ), { initialValue: null });
@@ -51,7 +49,6 @@ export class LivePositionsComponent implements OnInit {
   currentLap$: Observable<number>;
 
   #originalPosition?: Map<string, number>;
-  #currentPosition?: string[];
   #intervals?: Map<string, IDriverInterval>;
 
   ngOnInit() {
@@ -62,15 +59,16 @@ export class LivePositionsComponent implements OnInit {
       map(gridPositions => gridPositions.map(gp => gp.driver)),
       take(1),
     ).subscribe(initial => {
-      this.initialPositions.set(initial);
       this.#originalPosition = new Map(initial.map((driver, index) => [driver.driverId, index]));
+      if (!this.order().length) this.order.set(initial);
     });
     positions$.pipe(
       map(positions => positions.toSorted((a, b) => a.position - b.position)),
-      map(positions => positions.map(p => p.driver.driverId)),
-      filter(positions => positions.length === this.initialPositions().length),
+      map(positions => positions.map(p => p.driver)),
+      // A part of the field would move the others to the wrong places
+      filter(drivers => drivers.length === this.#originalPosition?.size),
       takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(current => this.#currentPosition = current);
+    ).subscribe(drivers => this.order.set(drivers));
     this.#live.getIntervals(this.race(), this.drivers()).pipe(
       takeUntilDestroyed(this.#destroyRef),
     ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));
@@ -86,9 +84,10 @@ export class LivePositionsComponent implements OnInit {
     return Math.abs(number);
   }
 
-  currentChange(driverId: string) {
-    const position = this.#currentPosition?.indexOf(driverId);
-    return this.#originalPosition ? this.#originalPosition.get(driverId) - position : 0;
+  /** Places moved since the start. Positive when moving up */
+  protected placesMoved(driverId: string, index: number) {
+    const original = this.#originalPosition?.get(driverId);
+    return original === undefined ? 0 : original - index;
   }
 
   interval(driverId: string) {
@@ -103,11 +102,6 @@ export class LivePositionsComponent implements OnInit {
     if (typeof interval === 'number' && !gapToLeader) return `Lapped`;
 
     return typeof gapToLeader === 'number' && gapToLeader !== 0 ? `(+${gapToLeader.toFixed(3)}s)` : (gapToLeader || ' ');
-  }
-
-  transform(uid: string) {
-    const change = -this.currentChange(uid);
-    return `translateY(${(change) * 100}%)`;
   }
 
 }

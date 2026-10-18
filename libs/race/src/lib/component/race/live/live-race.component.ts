@@ -6,6 +6,7 @@ import { Bid, buildResult, calculateResult, compareBids, IDriver, IRace } from '
 import { map } from 'rxjs/operators';
 import { NgOptimizedImage } from '@angular/common';
 import { shareLatest } from '@f2020/tools';
+import { AnimatedForDirective } from '@f2020/shared';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
@@ -22,20 +23,17 @@ import { DateTime } from 'luxon';
     FaIconComponent,
     MatListItemLine,
     MatListItemTitle,
-
+    AnimatedForDirective,
   ],
-  styles: `
-    mat-list-item {
-      transition: all 1s;
-    }
-  `,
 })
 export class LiveRaceComponent implements OnInit {
 
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
   bids = input.required<Bid[]>();
-  initialPositions = signal<Bid[]>([]);
+  /** The players from first to last as the race is now */
+  protected readonly ranked = signal<Bid[]>([]);
+  protected readonly playerKey = (bid: Bid) => bid.player.uid;
 
   latestUpdate = output<DateTime>();
   /** The players with their points as the race is now */
@@ -45,7 +43,6 @@ export class LiveRaceComponent implements OnInit {
   #teams = inject(TeamService).teams$;
 
   #originalPosition?: Map<string, number>;
-  #currentPosition?: string[];
 
   ngOnInit() {
 
@@ -78,30 +75,19 @@ export class LiveRaceComponent implements OnInit {
       const ranked = bids.toSorted(compareBids);
       // The places moved are from the first update of the race, so the race starts without any. The interim result is not used,
       // as the points of the race are counted from the order on the grid as soon as it starts
-      if (!this.#originalPosition) {
-        this.initialPositions.set(ranked);
-        this.#originalPosition = new Map(ranked.map((bid, index) => [bid.player.uid, index]));
-      }
-      this.#currentPosition = ranked.map(bid => bid.player.uid);
-      this.initialPositions.update(positions => positions.map(bid => ({
-        ...bid,
-        points: bids.find(b => b.player.uid === bid.player.uid)?.points ?? 0,
-      } as Bid)));
+      this.#originalPosition ??= new Map(ranked.map((bid, index) => [bid.player.uid, index]));
+      this.ranked.set(ranked);
     });
   }
 
-  abs(number: number) {
+  protected abs(number: number) {
     return Math.abs(number);
   }
 
-  currentChange(uid: string) {
-    const position = this.#currentPosition?.indexOf(uid);
-    return this.#originalPosition ? this.#originalPosition.get(uid) - position : 0;
-  }
-
-  transform(uid: string) {
-    const change = -this.currentChange(uid);
-    return `translateY(${(change) * 100}%)`;
+  /** Places moved since the first update of the race. Positive when moving up */
+  protected placesMoved(uid: string, index: number) {
+    const original = this.#originalPosition?.get(uid);
+    return original === undefined ? 0 : original - index;
   }
 
 }

@@ -3,35 +3,34 @@
   <mat-list>
     @let stints = stints$ | async;
     @let sectors = sectors$ | async;
-    @for (driver of initialPositions(); track driver.driverId) {
-      <mat-list-item [style.transform]="transform(driver.driverId)">
-        <sha-driver-headshot matListItemAvatar [driver]="driver" placeholder="assets/loading/red.svg"/>
-        <div matListItemTitle>
-          <span>{{ driver.name }}</span>
-          @let change = currentChange(driver.driverId);
-          @if (change) {
-            <span class="float-right rounded-full mt-5 py-1 px-3" [class.bg-lime-700]="change > 0" [class.bg-red-700]="change < 0">
-                <fa-icon class="me-1" [icon]="['fas', change > 0 ? 'angle-up' : 'angle-down' ]" [fixedWidth]="true"/>
-              {{ abs(change) }}
+    <mat-list-item *shaAnimatedFor="let driver of order(); key: driverKey; let index = index">
+      <sha-driver-headshot matListItemAvatar [driver]="driver" placeholder="assets/loading/red.svg"/>
+      <div matListItemTitle>
+        <span>{{ driver.name }}</span>
+        @let change = placesMoved(driver.driverId, index);
+        @if (change) {
+          <span class="float-right rounded-full mt-5 py-1 px-3" [class.bg-lime-700]="change > 0" [class.bg-red-700]="change < 0">
+              <fa-icon class="me-1" [icon]="['fas', change > 0 ? 'angle-up' : 'angle-down' ]" [fixedWidth]="true"/>
+            {{ abs(change) }}
+        </span>
+        }
+      </div>
+      <div matListItemLine>
+        <span class="text-xs">{{ interval(driver.driverId) }}</span>
+        <span class="text-xs ml-2">
+          {{ gapToLeader(driver.driverId) }}
+          <f2020-live-sector-status [status]="sectors?.get(driver.driverId)"/>
+        </span>
+        @if (stints?.get(driver.driverId); as stint) {
+          <span [style.margin-top.px]="-24" class="float-right me-32">
+            <f2020-tyre [tyre]="stint.compound"/>
+              ({{ stint.tyreAgeAtStart + (currentLap - stint.lapStart) }})
           </span>
-          }
-        </div>
-        <div matListItemLine>
-          <span class="text-xs">{{ interval(driver.driverId) }}</span>
-          <span class="text-xs ml-2">
-            {{ gapToLeader(driver.driverId) }}
-            <f2020-live-sector-status [status]="sectors?.get(driver.driverId)"/>
-          </span>
-          @if (stints?.get(driver.driverId); as stint) {
-            <span [style.margin-top.px]="-24" class="float-right me-32">
-              <f2020-tyre [tyre]="stint.compound"/>
-                ({{ stint.tyreAgeAtStart + (currentLap - stint.lapStart) }})
-            </span>
-          }
-        </div>
-      </mat-list-item>
-    } @empty {
-      Venter på positioner...
-    }
+        }
+      </div>
+    </mat-list-item>
   </mat-list>
+  @if (!order().length) {
+    Venter på positioner...
+  }
 </ng-container>

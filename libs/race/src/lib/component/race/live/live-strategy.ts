@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { RaceResultProvider } from '@f2020/api';
+import { AnimatedForDirective } from '@f2020/shared';
 import { IDriver, IRace, IStint, Tyre } from '@f2020/data';
 import { valueOf } from './track/car-progress';
 
@@ -14,6 +15,11 @@ const tyres: Record<Tyre, { letter: string; name: string; colour: string }> = {
   FULL_WET: { letter: 'W', name: 'Wet', colour: 'bg-blue-600 text-white' },
 };
 const unknownTyre = { letter: '?', name: 'Ukendt', colour: 'bg-gray-500 text-white' };
+
+interface StrategyRow {
+  driver: IDriver;
+  bars: StintBar[];
+}
 
 interface StintBar {
   key: number;
@@ -40,17 +46,16 @@ interface StintBar {
             <span>Omgang 1</span>
             <span>{{ laps() }}</span>
           </div>
-          @for (row of rows(); track row.driver.driverId) {
-            <div class="flex items-center gap-2 h-6 mb-1">
-              <span class="w-10 shrink-0 text-sm font-medium">{{ row.driver.code }}</span>
-              <div class="relative flex-1 h-5">
-                @for (bar of row.bars; track bar.key) {
-                  <span class="absolute inset-y-0 rounded-sm text-xs font-bold flex items-center justify-center overflow-hidden border-e border-[#424242] {{ bar.colour }}"
-                        [style.left.%]="bar.left" [style.width.%]="bar.width" [title]="bar.title">{{ bar.letter }}</span>
-                }
-              </div>
+          <!-- The rows are padded instead of spaced, as they are moved by their own height -->
+          <div *shaAnimatedFor="let row of rows(); key: rowKey" class="flex items-center gap-2 h-7 py-0.5">
+            <span class="w-10 shrink-0 text-sm font-medium">{{ row.driver.code }}</span>
+            <div class="relative flex-1 h-full">
+              @for (bar of row.bars; track bar.key) {
+                <span class="absolute inset-y-0 rounded-sm text-xs font-bold flex items-center justify-center overflow-hidden border-e border-[#424242] {{ bar.colour }}"
+                      [style.left.%]="bar.left" [style.width.%]="bar.width" [title]="bar.title">{{ bar.letter }}</span>
+              }
             </div>
-          }
+          </div>
         } @else if (strategy.error()) {
           <p>Dækstrategien kunne ikke hentes</p>
         } @else {
@@ -59,7 +64,7 @@ interface StintBar {
       </mat-card-content>
     </mat-card>
   `,
-  imports: [MatCard, MatCardHeader, MatCardTitle, MatCardContent],
+  imports: [AnimatedForDirective, MatCard, MatCardHeader, MatCardTitle, MatCardContent],
 })
 export class LiveStrategyComponent {
   #live = inject(RaceResultProvider);
@@ -89,7 +94,9 @@ export class LiveStrategyComponent {
     return Math.max(laps ?? 0, this.#currentLap(), 1);
   });
 
-  protected readonly rows = computed(() => {
+  protected readonly rowKey = (row: StrategyRow) => row.driver.driverId;
+
+  protected readonly rows = computed<StrategyRow[]>(() => {
     const laps = this.laps();
     const stints = (this.#strategyValue() ?? []).reduce((byDriver, stint) =>
       byDriver.set(stint.driver.driverId, [...(byDriver.get(stint.driver.driverId) ?? []), stint]), new Map<string, IStint[]>());
