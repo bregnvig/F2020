@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { IRace } from '@f2020/data';
-import { DriverChampionship, GridPosition, Interval, Lap, Location, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamChampionship, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { DriverChampionship, GridPosition, Interval, Lap, Location, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamChampionship, TeamRadio as OpenF1TeamRadio, Weather } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, Observable, of, shareReplay, tap } from 'rxjs';
@@ -78,6 +78,10 @@ export class OpenF1HttpService {
 
   getStints(sessionKey: number): Observable<Stint[]> {
     return this.#getList<Stint>(openF1Url.stints(sessionKey));
+  }
+
+  getWeather(sessionKey: number): Observable<Weather[]> {
+    return this.#getList<Weather>(openF1Url.weather(sessionKey));
   }
 
   /** The championship of the drivers, before and after the session. Empty until OpenF1 has it, which is after the session */

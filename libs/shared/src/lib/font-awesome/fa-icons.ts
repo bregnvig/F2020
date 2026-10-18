@@ -55,6 +55,14 @@ type Icon =
   | 'fasSafetyCar'
   | 'farExpand'
   | 'farXmark'
+  | 'farTemperatureHalf'
+  | 'farRoad'
+  | 'farDroplet'
+  | 'farWind'
+  | 'farGauge'
+  | 'farCloudRain'
+  | 'farSun'
+  | 'farArrowUp'
   ;
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
@@ -112,4 +120,12 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   fasSafetyCar: ['fas', 'car-on'],
   farExpand: ['far', 'expand'],
   farXmark: ['far', 'xmark'],
+  farTemperatureHalf: ['far', 'temperature-half'],
+  farRoad: ['far', 'road'],
+  farDroplet: ['far', 'droplet'],
+  farWind: ['far', 'wind'],
+  farGauge: ['far', 'gauge'],
+  farCloudRain: ['far', 'cloud-rain'],
+  farSun: ['far', 'sun'],
+  farArrowUp: ['far', 'arrow-up'],
 };

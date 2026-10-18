@@ -103,6 +103,7 @@ export class LiveRaceCardComponent {
     locationStatus: this.#live.locationStatus,
     qualifyStatus: this.#live.qualifyStatus,
     championshipStatus: this.#live.championshipStatus,
+    weatherStatus: this.#live.weatherStatus,
   }).pipe(
     map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
   ));

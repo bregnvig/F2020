@@ -12,12 +12,13 @@ import {
   IRaceResult,
   IStint,
   ITeam,
+  IWeatherReading,
   LocationPlayback,
   mapper,
   RaceControl,
   TeamRadio,
 } from '@f2020/data';
-import { Interval, Lap, Location, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, Location, PitStop, Position, RaceControl as OpenF1RaceControl, Stint, TeamRadio as OpenF1TeamRadio, Weather } from '@f2020/openf1';
 import { requiredValue, shareLatest, truthy } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, catchError, distinctUntilChanged, firstValueFrom, interval, Observable, of, retry, timer } from 'rxjs';
@@ -65,6 +66,7 @@ interface ReplayState {
   intervals: Timed<Interval>;
   raceControl: Timed<OpenF1RaceControl>;
   stints: Stint[];
+  weather: Timed<Weather>;
 }
 
 /** Where the relive is, and between which times it can be moved */
@@ -114,6 +116,7 @@ export class ReplayResultService extends RaceResultService {
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #locationStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #weatherStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #replayState$ = new BehaviorSubject<ReplayState | null>(null);
 
   readonly resultStatus = this.#resultStatus$.asObservable();
@@ -125,6 +128,7 @@ export class ReplayResultService extends RaceResultService {
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
   readonly sectorStatus = this.#sectorStatus$.asObservable();
   readonly locationStatus = this.#locationStatus$.asObservable();
+  readonly weatherStatus = this.#weatherStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
   readonly speed = this.#speed$.asObservable();
   readonly clock: Observable<ReplayClock> = this.#replayState$.pipe(
@@ -172,6 +176,7 @@ export class ReplayResultService extends RaceResultService {
     const pitStops = await firstValueFrom(this.#openF1HttpService.getPitStops(sessionKey).pipe(retry(startRetry)));
     const raceControl = await firstValueFrom(this.#openF1HttpService.getRaceControl(sessionKey).pipe(retry(startRetry)));
     const stints = await firstValueFrom(this.#openF1HttpService.getStints(sessionKey).pipe(retry(startRetry)));
+    const weather = await firstValueFrom(this.#openF1HttpService.getWeather(sessionKey).pipe(retry(startRetry)));
 
     const start = lightsOut(laps)?.minus({ milliseconds: beforeLightsOut }) ?? race.raceStart.toUTC();
     const end = session.date_end ? DateTime.fromISO(session.date_end) : start.plus({ hour: 3 });
@@ -187,6 +192,7 @@ export class ReplayResultService extends RaceResultService {
       intervals: timed(intervals, i => i.date),
       raceControl: timed(raceControl, m => m.date),
       stints,
+      weather: timed(weather, w => w.date),
     });
 
     interval(tick).pipe(
@@ -352,6 +358,20 @@ export class ReplayResultService extends RaceResultService {
         const laps = upTo(state.laps, state.currentTime).filter(lap => Date.parse(lap.date_start) + (lap.lap_duration ?? 0) * 1000 <= now);
         return mapper.fastestLaps({ laps, drivers });
       }),
+    );
+  }
+
+  getWeather(_race: IRace): Observable<IWeatherReading[]> {
+    return this.#replayState$.pipe(
+      truthy(),
+      map(state => upTo(state.weather, state.currentTime)),
+      // The relive moves every second, and the weather about once a minute
+      distinctUntilChanged((previous, current) => previous.length === current.length),
+      map(weather => mapper.weather({ weather })),
+      tap(readings => this.#weatherStatus$.next({
+        latestUpdate: DateTime.now(),
+        info: `${readings.length} readings`,
+      })),
     );
   }
 

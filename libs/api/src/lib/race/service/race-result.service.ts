@@ -1,4 +1,4 @@
-import { ChampionshipStarts, IDriver, IFastestLaps, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, mapper, RaceControl, RetiredCars, TeamRadio } from '@f2020/data';
+import { ChampionshipStarts, IDriver, IFastestLaps, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, mapper, RaceControl, RetiredCars, TeamRadio, IWeatherReading } from '@f2020/data';
 import { inject, InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, map, Observable, of, retry, shareReplay, switchMap, take, tap, timer } from 'rxjs';
@@ -33,6 +33,7 @@ export abstract class RaceResultService extends LiveSessionService {
   abstract readonly intervalStatus: Observable<LiveStatus>;
   abstract readonly stintStatus: Observable<LiveStatus>;
   abstract readonly sectorStatus: Observable<LiveStatus>;
+  abstract readonly weatherStatus: Observable<LiveStatus>;
   abstract readonly currentLap: BehaviorSubject<number>;
 
   abstract getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null>;
@@ -54,6 +55,9 @@ export abstract class RaceResultService extends LiveSessionService {
 
   /** The best lap and the top speed of each driver so far */
   abstract getFastestLaps(race: IRace, drivers: IDriver[]): Observable<IFastestLaps>;
+
+  /** The weather at the track so far, the oldest first */
+  abstract getWeather(race: IRace): Observable<IWeatherReading[]>;
 
   abstract readonly locationStatus: Observable<LiveStatus>;
   /** Which cars are out of the race, kept for the page so every track on it agrees */

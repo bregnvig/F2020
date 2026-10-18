@@ -9,6 +9,7 @@ export const openF1Url = {
   championshipTeams: (sessionKey: number) => `https://api.openf1.org/v1/championship_teams?session_key=${sessionKey}`,
   startingGrid: (sessionKey: number) => `https://api.openf1.org/v1/starting_grid?session_key=${sessionKey}`,
   stints: (sessionKey: number) => `https://api.openf1.org/v1/stints?session_key=${sessionKey}`,
+  weather: (sessionKey: number) => `https://api.openf1.org/v1/weather?session_key=${sessionKey}`,
   location: (sessionKey: number) => `https://api.openf1.org/v1/location?session_key=${sessionKey}`,
   driver: (sessionKey?: number) => `https://api.openf1.org/v1/drivers?session_key=${sessionKey ?? 'latest'}`,
   radio: (sessionKey?: number) => `https://api.openf1.org/v1/team_radio?session_key=${sessionKey ?? 'latest'}`,

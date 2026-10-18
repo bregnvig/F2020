@@ -18,6 +18,7 @@ import { map as fastestLaps } from './fastest-lap.mapper';
 import { map as sectors } from './sector.mapper';
 import { map as locations } from './location.mapper';
 import { map as championship } from './championship.mapper';
+import { map as weather } from './weather.mapper';
 
 export const mapper = {
   basisRace,
@@ -44,4 +45,5 @@ export const mapper = {
   sectors,
   locations,
   championship,
+  weather,
 };

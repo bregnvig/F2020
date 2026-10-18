@@ -9,6 +9,7 @@ import { LiveRaceCardComponent } from './live-race-card';
 import { LiveRadioCardComponent } from './live-radio-card';
 import { LiveStrategyComponent } from './live-strategy';
 import { LiveTrackCardComponent } from './live-track-card';
+import { LiveWeatherComponent } from './live-weather';
 import { RaceControlService } from './race-control';
 
 @Component({
@@ -25,6 +26,7 @@ import { RaceControlService } from './race-control';
         <f2020-live-fastest-laps [race]="race()" [drivers]="drivers" />
         <f2020-live-championship [race]="race()" [drivers]="drivers" type="drivers" />
         <f2020-live-championship [race]="race()" [drivers]="drivers" type="teams" />
+        <f2020-live-weather [race]="race()" />
       }
     </sha-card-page>
   `,
@@ -37,6 +39,7 @@ import { RaceControlService } from './race-control';
     LiveStrategyComponent,
     LiveFastestLapsComponent,
     LiveChampionshipComponent,
+    LiveWeatherComponent,
   ],
   providers: [
     provideRaceResultService(),

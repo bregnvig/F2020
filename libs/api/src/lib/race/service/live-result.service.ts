@@ -11,20 +11,21 @@ import {
   IRaceResult,
   IStint,
   ITeam,
+  IWeatherReading,
   LocationPlayback,
   LocationSample,
   mapper,
   RaceControl,
   TeamRadio,
 } from '@f2020/data';
-import { Interval, Lap, RaceControl as OpenF1RaceControl, PitStop, Position, Stint } from '@f2020/openf1';
+import { Interval, Lap, RaceControl as OpenF1RaceControl, PitStop, Position, Stint, Weather } from '@f2020/openf1';
 import { isTruthy, requiredValue, shareLatest } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, bufferTime, combineLatest, defer, filter, Observable, of, scan, switchMap, takeWhile, tap } from 'rxjs';
 import { catchError, concatMap, first, map, retry } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { OpenF1WSSService } from './openf1-wss.service';
-import { addLocationSamples, historyRetry, latestByDriver, mergeLaps, toMillis, withLiveUpdates } from './live-utils';
+import { addLocationSamples, forSession, historyRetry, latestByDriver, mergeLaps, toMillis, withLiveUpdates } from './live-utils';
 import { LiveStatus, RaceResultService } from './race-result.service';
 
 /** The cars are drawn this long behind the latest locations */
@@ -51,6 +52,7 @@ export class LiveResultService extends RaceResultService {
   #raceControlStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #sectorStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #locationStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
+  #weatherStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   readonly resultStatus = this.#resultStatus$.asObservable();
   readonly radioStatus = this.#radioStatus$.asObservable();
   readonly pitStopStatus = this.#pitStopStatus$.asObservable();
@@ -60,6 +62,7 @@ export class LiveResultService extends RaceResultService {
   readonly raceControlStatus = this.#raceControlStatus$.asObservable();
   readonly sectorStatus = this.#sectorStatus$.asObservable();
   readonly locationStatus = this.#locationStatus$.asObservable();
+  readonly weatherStatus = this.#weatherStatus$.asObservable();
   readonly currentLap = new BehaviorSubject<number>(0);
 
   #gridPositions?: Observable<IDriverGridPosition[]>;
@@ -67,6 +70,7 @@ export class LiveResultService extends RaceResultService {
   #pitStops$?: Observable<IPitStop[]>;
   #positions$?: Observable<IDriverRaceResult[]>;
   #stints$?: Observable<Stint[]>;
+  #weather$?: Observable<IWeatherReading[]>;
   #lapsAndPositions$: Observable<LapsAndPositions>;
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
@@ -217,6 +221,29 @@ export class LiveResultService extends RaceResultService {
     return this.#getLapsAndPositions(race).pipe(
       map(({ laps }) => mapper.fastestLaps({ laps, drivers })),
     );
+  }
+
+  /** The weather is fetched once for the page. OpenF1 measures it about once a minute */
+  getWeather(race: IRace): Observable<IWeatherReading[]> {
+    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+
+    this.#weather$ ??= this.#raceSessionKey(race).pipe(
+      concatMap(sessionKey => withLiveUpdates(
+        this.#openF1HttpService.getWeather(sessionKey),
+        this.#openF1WSSService.weather$.pipe(forSession<Weather>(sessionKey)),
+        this.#weatherStatus$,
+      ).pipe(
+        scan((previous, current) => [...previous, ...current], [] as Weather[]),
+        map(weather => mapper.weather({ weather })),
+        tap(readings => this.#weatherStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${readings.length} readings`,
+        })),
+        takeWhile(() => DateTime.local() < latestEndTime),
+      )),
+      shareLatest(),
+    );
+    return this.#weather$;
   }
 
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {

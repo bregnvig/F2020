@@ -31,6 +31,14 @@ import {
   faUserFriends,
   faUserPlus,
   faXmark,
+  faTemperatureHalf,
+  faRoad,
+  faDroplet,
+  faWind,
+  faGauge,
+  faCloudRain,
+  faSun,
+  faArrowUp,
 } from '@fortawesome/pro-regular-svg-icons';
 import {
   faAngleDown,
@@ -83,6 +91,14 @@ const farIcons = [
   faRankingStar,
   faExpand,
   faXmark,
+  faTemperatureHalf,
+  faRoad,
+  faDroplet,
+  faWind,
+  faGauge,
+  faCloudRain,
+  faSun,
+  faArrowUp,
 ];
 
 const fasIcons = [

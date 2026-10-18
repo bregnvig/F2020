@@ -1,5 +1,5 @@
 import { inject, OnDestroy, Service } from '@angular/core';
-import { Interval, Lap, Location, PitStop, Position, RaceControl, Stint, TeamRadio } from '@f2020/openf1';
+import { Interval, Lap, Location, PitStop, Position, RaceControl, Stint, TeamRadio, Weather } from '@f2020/openf1';
 import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, catchError, EMPTY, Observable, retry, Subject, Subscription, tap } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
@@ -20,6 +20,7 @@ const topics = {
   pitStops: 'v1/pit',
   raceControl: 'v1/race_control',
   stints: 'v1/stints',
+  weather: 'v1/weather',
 };
 
 /** About 3.7 locations a second for each car, so it is only subscribed when the track is shown */
@@ -36,6 +37,7 @@ export class OpenF1WSSService implements OnDestroy {
   #radio = new BehaviorSubject<TeamRadio | undefined>(undefined);
   #raceControl = new BehaviorSubject<RaceControl | undefined>(undefined);
   #stints = new BehaviorSubject<Stint | undefined>(undefined);
+  #weather = new BehaviorSubject<Weather | undefined>(undefined);
   #locations = new Subject<Location>();
   #subscribedLocations = false;
   #client: MqttClient | null = null;
@@ -49,6 +51,7 @@ export class OpenF1WSSService implements OnDestroy {
     [topics.pitStops]: this.#pitStops,
     [topics.raceControl]: this.#raceControl,
     [topics.stints]: this.#stints,
+    [topics.weather]: this.#weather,
     [locationTopic]: this.#locations,
   };
 
@@ -59,6 +62,7 @@ export class OpenF1WSSService implements OnDestroy {
   radio$ = this.#radio.asObservable();
   raceControl$ = this.#raceControl.asObservable();
   stints$ = this.#stints.asObservable();
+  weather$ = this.#weather.asObservable();
   locations$ = this.#locations.asObservable();
 
   ngOnDestroy(): void {
