@@ -3,7 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { RaceResultProvider, TrackService } from '@f2020/api';
 import { IDriver, IRace, progressAt } from '@f2020/data';
 import { animationFrame } from './animation-frame';
-import { carProgress, valueOf } from './car-progress';
+import { carProgress, carsInPitLane, valueOf } from './car-progress';
 import { TrackLapComponent } from './track-lap';
 import { TrackMapComponent, TrackMarker } from './track-map';
 
@@ -57,6 +57,7 @@ export class LiveTrackDriversComponent {
     const cars = this.#cars();
     const retired = this.#live.retiredCars;
     retired.update(cars.map(({ driver, locations }) => ({ id: driver.driverId, locations })), now, frame);
+    const inPitLane = carsInPitLane(cars, now);
     return cars.flatMap(({ driver, samples }) => {
       const progress = progressAt(samples, now);
       const retiring = retired.retiring(driver.driverId, now, frame);
@@ -66,6 +67,7 @@ export class LiveTrackDriversComponent {
         label: driver.code,
         color: driver.teamColor ? `#${driver.teamColor}` : undefined,
         retiring,
+        pit: inPitLane.has(driver.driverId),
       }];
     });
   });

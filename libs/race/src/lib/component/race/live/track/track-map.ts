@@ -13,6 +13,8 @@ export interface TrackMarker {
   ahead?: number;
   /** How far the car is in the animation of going out of the race, from 0 to 1 */
   retiring?: number;
+  /** The car is in the pit lane, and is drawn faded */
+  pit?: boolean;
 }
 
 /** The space between players with the same points, besides a dot */
@@ -57,9 +59,11 @@ const aheadPixels = 5;
               <text [attr.x]="marker.x" [attr.y]="marker.y - view().unit * 2.2" fill="#ef4444">{{ marker.label }} DNF</text>
             </g>
           } @else {
-            <circle [attr.cx]="marker.x" [attr.cy]="marker.y" [attr.r]="view().unit * 1.1" [attr.fill]="marker.color ?? '#fff'"
-                    stroke="#fff" [attr.stroke-width]="view().unit * 0.3" />
-            <text [attr.x]="marker.x" [attr.y]="marker.y - view().unit * 1.6">{{ marker.label }}</text>
+            <g [attr.opacity]="marker.pit ? 0.5 : 1">
+              <circle [attr.cx]="marker.x" [attr.cy]="marker.y" [attr.r]="view().unit * 1.1" [attr.fill]="marker.color ?? '#fff'"
+                      stroke="#fff" [attr.stroke-width]="view().unit * 0.3" />
+              <text [attr.x]="marker.x" [attr.y]="marker.y - view().unit * 1.6">{{ marker.label }}{{ marker.pit ? ' PIT' : '' }}</text>
+            </g>
           }
         }
       </g>

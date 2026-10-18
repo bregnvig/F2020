@@ -70,12 +70,12 @@ export const buildTrack = (locations: Point3D[]): Track => {
 };
 
 /**
- * How far round the lap a location is, from 0 at the finish line to 1. The height is included in the distance,
- * so a car on a bridge is not put on the road below it
+ * Where a location is on the track: how far round the lap, from 0 at the finish line to 1, and how far from the track it is.
+ * The height is included in the distance, so a car on a bridge is not put on the road below it
  */
-export const trackProgress = (track: Track, location: Point3D): number => {
+export const trackNearest = (track: Track, location: Point3D): { progress: number; distance: number } => {
   const { points, length } = track;
-  const { index, fraction } = points.reduce((best, point, i) => {
+  const { index, fraction, d } = points.reduce((best, point, i) => {
     const next = points[(i + 1) % points.length];
     const [dx, dy, dz] = [next.x - point.x, next.y - point.y, next.z - point.z];
     const segment = dx * dx + dy * dy + dz * dz;
@@ -85,8 +85,26 @@ export const trackProgress = (track: Track, location: Point3D): number => {
   }, { index: 0, fraction: 0, d: Number.MAX_VALUE });
   const start = points[index].distance;
   const end = index === points.length - 1 ? length : points[index + 1].distance;
-  return (start + fraction * (end - start)) / length;
+  return { progress: (start + fraction * (end - start)) / length, distance: d };
 };
+
+/**
+ * A car further from the track than this is in the pit lane. On the track a car is at most a few metres from the line of the fastest
+ * lap of the qualifying, and in the pit lane 6 to 19 metres, in OpenF1's units of about 10 cm
+ */
+export const pitLaneDistance = 80;
+
+/** A car must be off the track this long to be in the pit lane, so going wide in a corner doesn't count */
+const pitLaneHold = 3000;
+
+/** If the car is in the pit lane at the time, from how far from the track it has been the last 3 seconds */
+export const inPitLane = (samples: { time: number; distance: number }[], now: number): boolean => {
+  const recent = samples.filter(({ time }) => time > now - pitLaneHold && time <= now);
+  return recent.length > 1 && recent.at(-1)!.time - recent[0].time >= pitLaneHold / 2 && recent.every(({ distance }) => distance > pitLaneDistance);
+};
+
+/** How far round the lap a location is, from 0 at the finish line to 1 */
+export const trackProgress = (track: Track, location: Point3D): number => trackNearest(track, location).progress;
 
 /** The points on each side of a point used for its direction, so the direction turns smoothly through a corner */
 const directionSpan = 3;

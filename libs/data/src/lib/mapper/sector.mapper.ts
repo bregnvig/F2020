@@ -55,6 +55,7 @@ const openF1Map = ({ laps, drivers }: OpenF1SectorParams): IDriverSector[] => {
     const driverSectors = driverFastestSectors.get(lap.driver_number);
     return {
       driver,
+      lap: lap.lap_number,
       sector1: {
         status: getSectorColor(lap.duration_sector_1, driverSectors?.sector1, fastestSector1),
         mini: lap.segments_sector_1?.filter(isTruthy).map(status => SectorColorMap[status]),

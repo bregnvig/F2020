@@ -19,6 +19,8 @@ export interface ISector {
 
 export interface IDriverSector {
   driver: IDriver;
+  /** The lap the driver is on */
+  lap: number;
   sector1: ISector;
   sector2?: ISector;
   sector3?: ISector;
