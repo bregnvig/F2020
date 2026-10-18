@@ -3,7 +3,7 @@ import { Stint } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
 import { getDrivers } from './mapper-utils';
 
-interface OpenF1StintParams {
+export interface OpenF1StintParams {
   stints: Stint[];
   drivers: IDriver[];
 }
@@ -33,3 +33,25 @@ const openF1Stints = (params: OpenF1StintParams) => {
 export function map(params: OpenF1StintParams): IStint[] {
   return openF1Stints(params);
 }
+
+/**
+ * Every stint of every driver up to the lap of the leader, for the tyre strategy. A stint that is still going on ends at the lap of
+ * the leader, as the stints of a relive are known to the end
+ */
+export const strategy = ({ stints, drivers, currentLap }: OpenF1StintParams & { currentLap: number }): IStint[] => {
+  const driverMap = getDrivers(drivers);
+  return stints
+    .filter(stint => stint.lap_start <= currentLap)
+    .flatMap(stint => {
+      const driver = driverMap.get(stint.driver_number);
+      return driver ? [{
+        driver,
+        compound: stint.compound as Tyre,
+        lapStart: stint.lap_start,
+        lapEnd: Math.min(stint.lap_end || currentLap, currentLap),
+        stintNumber: stint.stint_number,
+        tyreAgeAtStart: stint.tyre_age_at_start,
+      }] : [];
+    })
+    .toSorted((a, b) => a.stintNumber - b.stintNumber);
+};

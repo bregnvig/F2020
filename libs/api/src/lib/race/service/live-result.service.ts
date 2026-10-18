@@ -5,6 +5,7 @@ import {
   IDriverInterval,
   IDriverRaceResult,
   IDriverSector,
+  IFastestLaps,
   IPitStop,
   IRace,
   IRaceResult,
@@ -65,6 +66,7 @@ export class LiveResultService extends RaceResultService {
   #locationPlayback$?: Observable<LocationPlayback>;
   #pitStops$?: Observable<IPitStop[]>;
   #positions$?: Observable<IDriverRaceResult[]>;
+  #stints$?: Observable<Stint[]>;
   #lapsAndPositions$: Observable<LapsAndPositions>;
 
   getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
@@ -200,23 +202,21 @@ export class LiveResultService extends RaceResultService {
   }
 
   getStints(race: IRace, drivers: IDriver[]): Observable<IStint[]> {
-    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+    return this.#getAllStints(race).pipe(
+      map(stints => mapper.stints({ stints, drivers })),
+    );
+  }
 
-    return this.#raceSessionKey(race).pipe(
-      concatMap(sessionKey => withLiveUpdates(
-        this.#openF1HttpService.getStints(sessionKey),
-        this.#openF1WSSService.stints$,
-        this.#stintStatus$,
-      ).pipe(
-        // An update of an earlier stint must not replace the current one
-        scan(latestByDriver<Stint>((current, previous) => current.stint_number >= previous.stint_number), new Map<number, Stint>()),
-        map(stints => mapper.stints({ stints: [...stints.values()], drivers })),
-        tap(mappedStints => this.#stintStatus$.next({
-          latestUpdate: DateTime.now(),
-          info: `${mappedStints.length} stints`,
-        })),
-        takeWhile(() => DateTime.local() < latestEndTime),
-      )));
+  getStrategy(race: IRace, drivers: IDriver[]): Observable<IStint[]> {
+    return combineLatest([this.#getAllStints(race), this.currentLap]).pipe(
+      map(([stints, currentLap]) => mapper.strategy({ stints, drivers, currentLap })),
+    );
+  }
+
+  getFastestLaps(race: IRace, drivers: IDriver[]): Observable<IFastestLaps> {
+    return this.#getLapsAndPositions(race).pipe(
+      map(({ laps }) => mapper.fastestLaps({ laps, drivers })),
+    );
   }
 
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
@@ -269,6 +269,30 @@ export class LiveResultService extends RaceResultService {
       );
     }).pipe(shareLatest());
     return this.#locationPlayback$;
+  }
+
+  /** Every stint of every driver, shared by the positions and the tyre strategy. A stint is updated as it goes on */
+  #getAllStints(race: IRace): Observable<Stint[]> {
+    const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
+
+    this.#stints$ ??= this.#raceSessionKey(race).pipe(
+      concatMap(sessionKey => withLiveUpdates(
+        this.#openF1HttpService.getStints(sessionKey),
+        this.#openF1WSSService.stints$,
+        this.#stintStatus$,
+      ).pipe(
+        scan((stints, updates) => updates.reduce((acc, stint) => acc.set(`${stint.driver_number}-${stint.stint_number}`, stint), new Map(stints)),
+          new Map<string, Stint>()),
+        map(stints => [...stints.values()].toSorted((a, b) => a.stint_number - b.stint_number)),
+        tap(stints => this.#stintStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${stints.length} stints`,
+        })),
+        takeWhile(() => DateTime.local() < latestEndTime),
+      )),
+      shareLatest(),
+    );
+    return this.#stints$;
   }
 
   #raceSessionKey(race: IRace): Observable<number> {

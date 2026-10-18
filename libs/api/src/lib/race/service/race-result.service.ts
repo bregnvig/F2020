@@ -1,4 +1,4 @@
-import { ChampionshipStarts, IDriver, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, mapper, RaceControl, RetiredCars, TeamRadio } from '@f2020/data';
+import { ChampionshipStarts, IDriver, IFastestLaps, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, mapper, RaceControl, RetiredCars, TeamRadio } from '@f2020/data';
 import { inject, InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, map, Observable, of, retry, shareReplay, switchMap, take, tap, timer } from 'rxjs';
@@ -48,6 +48,12 @@ export abstract class RaceResultService extends LiveSessionService {
   abstract getGrid(race: IRace, drivers: IDriver[]): Observable<IDriverGridPosition[]>;
 
   abstract getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]>;
+
+  /** Every stint of every driver so far */
+  abstract getStrategy(race: IRace, drivers: IDriver[]): Observable<IStint[]>;
+
+  /** The best lap and the top speed of each driver so far */
+  abstract getFastestLaps(race: IRace, drivers: IDriver[]): Observable<IFastestLaps>;
 
   abstract readonly locationStatus: Observable<LiveStatus>;
   /** Which cars are out of the race, kept for the page so every track on it agrees */

@@ -6,6 +6,7 @@ import {
   IDriverInterval,
   IDriverRaceResult,
   IDriverSector,
+  IFastestLaps,
   IPitStop,
   IRace,
   IRaceResult,
@@ -329,6 +330,28 @@ export class ReplayResultService extends RaceResultService {
         latestUpdate: DateTime.now(),
         info: `${mappedStints.length} stints`,
       })),
+    );
+  }
+
+  getStrategy(_race: IRace, drivers: IDriver[]): Observable<IStint[]> {
+    return this.#replayState$.pipe(
+      truthy(),
+      map(state => {
+        const currentLap = upTo(state.laps, state.currentTime).reduce((max, lap) => Math.max(max, lap.lap_number), 0);
+        return mapper.strategy({ stints: state.stints, drivers, currentLap });
+      }),
+    );
+  }
+
+  getFastestLaps(_race: IRace, drivers: IDriver[]): Observable<IFastestLaps> {
+    return this.#replayState$.pipe(
+      truthy(),
+      map(state => {
+        const now = state.currentTime.toMillis();
+        // A lap is known from its start, so it is only counted once it has been driven
+        const laps = upTo(state.laps, state.currentTime).filter(lap => Date.parse(lap.date_start) + (lap.lap_duration ?? 0) * 1000 <= now);
+        return mapper.fastestLaps({ laps, drivers });
+      }),
     );
   }
 

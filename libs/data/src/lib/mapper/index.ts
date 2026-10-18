@@ -13,7 +13,8 @@ import { map as position } from './position.mapper';
 import { map as grid } from './grid-position.mapper';
 import { map as radio } from './radio.mapper';
 import { map as raceControl } from './race-control.mapper';
-import { map as stints } from './stint.mapper';
+import { map as stints, strategy } from './stint.mapper';
+import { map as fastestLaps } from './fastest-lap.mapper';
 import { map as sectors } from './sector.mapper';
 import { map as locations } from './location.mapper';
 import { map as championship } from './championship.mapper';
@@ -38,6 +39,8 @@ export const mapper = {
   raceControl,
   grid,
   stints,
+  strategy,
+  fastestLaps,
   sectors,
   locations,
   championship,

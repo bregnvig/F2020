@@ -12,8 +12,9 @@ const pointsNow = (positions: IDriverRaceResult[]) => new Map(positions.map(({ d
 @Component({
   selector: 'f2020-live-championship',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block' },
   template: `
-    <mat-card>
+    <mat-card class="h-full">
       <mat-card-header>
         <mat-card-title>
           @if (type() === 'drivers') {
