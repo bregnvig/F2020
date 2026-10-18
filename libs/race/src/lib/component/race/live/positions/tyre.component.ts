@@ -3,7 +3,7 @@ import { Tyre } from '@f2020/data';
 import { NgOptimizedImage } from '@angular/common';
 
 const tyreToAsset: Record<Tyre, string> = {
-  FULL_WET: 'assets/loading/blue.svg',
+  WET: 'assets/loading/blue.svg',
   HARD: 'assets/loading/white.svg',
   INTERMEDIATE: 'assets/loading/green.svg',
   MEDIUM: 'assets/loading/yellow.svg',

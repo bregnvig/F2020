@@ -99,7 +99,7 @@ export interface IPitStop {
   duration: number;
 }
 
-export type Tyre = 'HARD' | 'MEDIUM' | 'SOFT' | 'INTERMEDIATE' | 'FULL_WET';
+export type Tyre = 'HARD' | 'MEDIUM' | 'SOFT' | 'INTERMEDIATE' | 'WET';
 
 export interface IStint {
   driver: IDriver;
