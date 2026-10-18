@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
@@ -22,10 +22,39 @@ export interface LiveTrackPlayersData {
 /** A point is 6% of a lap */
 const lapPerPoint = 0.06;
 
-/** How long it takes a player to move to a new place, when the points change */
-const overtake = 1500;
+/**
+ * When the points change, the players drive to their new places instead of jumping, so a player losing points slows down and is
+ * overtaken. A player gaining points drives this much faster than the leader, as a part of the leader's speed
+ */
+const catchUp = 0.6;
+/** And a player losing points this much slower, so 0.35 drives at 65% of the leader's speed. Below 1, so no one drives backwards */
+const fallBack = 0.35;
+/** A player drives at the full difference in speed until this long, in milliseconds of the race, from the new place */
+const settle = 6000;
+/**
+ * About how long a player takes to change speed, in milliseconds of the race, so a player brakes instead of stopping. At most a
+ * quarter of settle, or the player drives past the new place and back
+ */
+const reaction = 1500;
+/** Moving the relive more than this puts the players at their places at once */
+const jump = 5000;
+/** The leader's speed is measured over this long */
+const speedPeriod = 2000;
+/** The slowest the leader is taken to drive, a lap in 5 minutes, so the players still get to their places behind a safety car */
+const minimumSpeed = 1 / 300_000;
 
-const easeInOut = (t: number) => t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+/** The speed of a car in laps per millisecond of the race */
+const speedAt = (samples: { time: number; progress: number }[], now: number): number => {
+  const [before, after] = [progressAt(samples, now - speedPeriod), progressAt(samples, now)];
+  const laps = before === undefined || after === undefined ? 0 : ((after - before) % 1 + 1.5) % 1 - 0.5;
+  return Math.max(minimumSpeed, laps / speedPeriod);
+};
+
+interface ShownGap {
+  gap: number;
+  /** How fast the gap grows, in laps per millisecond */
+  velocity: number;
+}
 
 /** The players from first to last, the best pole position time first when tied */
 const rank = (bids: Bid[]) => bids.toSorted(compareBids);
@@ -44,8 +73,6 @@ const tieSteps = (bids: Bid[]): Map<string, number> => {
     return [bid.player!.uid, tied.length - 1 - tied.indexOf(bid)];
   }));
 };
-
-const sameGaps = (a: Map<string, number>, b: Map<string, number>) => a.size === b.size && [...a].every(([id, gap]) => b.get(id) === gap);
 
 @Component({
   selector: 'f2020-live-track-players',
@@ -101,25 +128,24 @@ export class LiveTrackPlayersComponent {
   #positionsValue = valueOf(this.#positions);
   #cars = carProgress(valueOf(this.track), this.#playbackValue);
 
-  /** The standings change with every update of the race, so the gaps only change when the points do */
-  #gaps = computed(() => playerGaps(this.standings()), { equal: sameGaps });
-  #fromGaps = new Map<string, number>();
-  #toGaps = new Map<string, number>();
-  #overtakeStart = 0;
+  /** The gaps the players are driving to */
+  #gaps = computed(() => playerGaps(this.standings()));
+  /** The gaps as they are drawn */
+  #shown = new Map<string, ShownGap>();
+  #shownAt?: number;
 
   /**
    * The players on the track, worked out for every frame. The leader follows the car leading the race, and the others are behind
    * by their gap. A player more than a lap behind has the laps after the name
    */
   protected readonly markers = computed<TrackMarker[]>(() => {
-    const frame = this.#frame();
+    this.#frame();
     const now = this.#playbackValue()?.now();
     const leader = this.#positionsValue()?.find(position => position.position === 1)?.driver;
     const car = this.#cars().find(({ driver }) => driver.driverId === leader?.driverId);
     const leaderProgress = car && now !== undefined ? progressAt(car.samples, now) : undefined;
     if (leaderProgress === undefined) return [];
-    this.#gaps();
-    const gaps = this.#gapsAt(frame);
+    const gaps = this.#driveTo(this.#gaps(), now, speedAt(car!.samples, now));
     const ahead = tieSteps(this.standings());
     // The last is drawn first, so the leader is on top
     return rank(this.standings()).map(({ player }, index) => {
@@ -135,26 +161,26 @@ export class LiveTrackPlayersComponent {
     }).toReversed();
   });
 
-  constructor() {
-    // A player is seen overtaking, as the gaps move to the new gaps over a while
-    effect(() => {
-      const gaps = this.#gaps();
-      untracked(() => {
-        const now = performance.now();
-        this.#fromGaps = this.#gapsAt(now);
-        this.#toGaps = gaps;
-        this.#overtakeStart = now;
-      });
-    });
+  /**
+   * Moves the gaps drawn towards the gaps of the points, as the time of the race goes on. A player behind its place drives faster
+   * than the leader, and one ahead of it slower, and changes speed gradually
+   */
+  #driveTo(gaps: Map<string, number>, now: number, leaderSpeed: number): Map<string, number> {
+    const elapsed = this.#shownAt === undefined ? Number.MAX_VALUE : now - this.#shownAt;
+    this.#shownAt = now;
+    return new Map([...gaps].map(([id, gap]) => {
+      const shown = this.#shown.get(id);
+      const next = !shown || elapsed < 0 || elapsed > jump ? { gap, velocity: 0 } : this.#drive(shown, gap, elapsed, leaderSpeed);
+      this.#shown.set(id, next);
+      return [id, next.gap];
+    }));
   }
 
-  #gapsAt(time: number): Map<string, number> {
-    // The time of a frame can be a little before the overtake started, and the easing is only meant for 0 to 1
-    const eased = easeInOut(Math.min(1, Math.max(0, (time - this.#overtakeStart) / overtake)));
-    return new Map([...this.#toGaps].map(([id, to]) => {
-      const from = this.#fromGaps.get(id) ?? to;
-      return [id, from + (to - from) * eased];
-    }));
+  #drive({ gap, velocity }: ShownGap, target: number, elapsed: number, leaderSpeed: number): ShownGap {
+    const clamp = (value: number) => Math.min(fallBack * leaderSpeed, Math.max(-catchUp * leaderSpeed, value));
+    // Clamped again, as the leader can slow down, e.g. behind a safety car, and a player must not then drive backwards
+    const next = clamp(velocity + (clamp((target - gap) / settle) - velocity) * Math.min(1, elapsed / reaction));
+    return { gap: gap + next * elapsed, velocity: next };
   }
 
   /** Esc closes it wherever the focus is */
