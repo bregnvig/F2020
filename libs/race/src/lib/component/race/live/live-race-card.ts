@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatIconButton } from '@angular/material/button';
@@ -27,10 +27,10 @@ import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-tr
       <mat-card-header>
         <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode" (click)="openStatus()">
         <mat-card-title>
-          @if (isLiveLive()) {
-            Live live
-          } @else {
+          @if (relive()) {
             Relive
+          } @else {
+            Live live
           }
         </mat-card-title>
         <button mat-icon-button class="ms-auto" aria-label="Vis spillerne på banen" (click)="openPlayersTrack()">
@@ -47,7 +47,7 @@ import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-tr
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        @if (!isLiveLive()) {
+        @if (relive()) {
           <f2020-relive-controls class="block" />
         }
         <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()" (latestUpdate)="latestUpdate.set($event)" />
@@ -78,11 +78,10 @@ export class LiveRaceCardComponent {
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
   bids = input.required<Bid[]>();
+  relive = input(false, { transform: booleanAttribute });
 
   protected readonly icons = icon;
   protected readonly latestUpdate = signal<DateTime | undefined>(undefined);
-  protected readonly isLiveLive = computed(() =>
-    this.race().raceStart.minus({ hour: 1 }) < DateTime.local() && this.race().raceStart.plus({ hour: 3 }) > DateTime.local());
 
   protected readonly error = toSignal(combineLatest({
     result: this.#live.resultStatus,
@@ -117,6 +116,7 @@ export class LiveRaceCardComponent {
       race: this.race(),
       drivers: this.drivers(),
       bids: this.bids(),
+      relive: this.relive(),
     });
   }
 }

@@ -1,4 +1,5 @@
 import { inject, InjectionToken, Provider } from '@angular/core';
+import { IRace } from '@f2020/data';
 import { DateTime } from 'luxon';
 import { RaceStore } from '../+state';
 import { LiveResultService } from './live-result.service';
@@ -6,6 +7,9 @@ import { LiveSessionProvider, RaceResultService } from './race-result.service';
 import { ReplayResultService } from './replay-result.service';
 
 export const RaceResultProvider = new InjectionToken<RaceResultService>('RaceResultService');
+
+/** A race is followed live until 3 hours after the start, and relived after that */
+export const isRaceRelived = (race: IRace) => race.raceStart.toUTC().plus({ hour: 3 }) <= DateTime.now().toUTC();
 
 function raceResultServiceFactory(
   liveResultService: LiveResultService,
@@ -15,10 +19,7 @@ function raceResultServiceFactory(
   const race = raceStore.race();
 
   if (!race) throw new Error('No race loaded in RaceStore');
-  const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
-
-  const isRaceOpen = latestEndTime > DateTime.now().toUTC();
-  return isRaceOpen ? liveResultService : replayResultService;
+  return isRaceRelived(race) ? replayResultService : liveResultService;
 }
 
 export function provideRaceResultService(): Provider[] {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { IDriver, IRace } from '@f2020/data';
@@ -34,6 +34,7 @@ export class LiveTrackCardComponent {
 
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
+  relive = input(false, { transform: booleanAttribute });
 
   protected readonly icons = icon;
 
@@ -41,6 +42,7 @@ export class LiveTrackCardComponent {
     this.#openFullscreen<LiveTrackDriversDialogComponent, LiveTrackDriversData>(LiveTrackDriversDialogComponent, {
       race: this.race(),
       drivers: this.drivers(),
+      relive: this.relive(),
     });
   }
 }

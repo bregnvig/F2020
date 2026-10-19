@@ -7,6 +7,7 @@ import { Bid, compareBids, IDriver, IRace, progressAt } from '@f2020/data';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { LiveRaceComponent } from '../live-race.component';
+import { ReliveControlsComponent } from '../relive-controls';
 import { animationFrame } from './animation-frame';
 import { carProgress, valueOf } from './car-progress';
 import { TrackLapComponent } from './track-lap';
@@ -17,6 +18,7 @@ export interface LiveTrackPlayersData {
   drivers: IDriver[];
   /** The submitted bids */
   bids: Bid[];
+  relive: boolean;
 }
 
 /** A point is 6% of a lap */
@@ -79,14 +81,19 @@ const tieSteps = (bids: Bid[]): Map<string, number> => {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex w-full h-full text-white" style="font-family: Roboto, sans-serif">
-      <div class="relative flex-1 min-w-0 p-4">
+      <div class="relative flex flex-col flex-1 min-w-0 p-4">
         <f2020-track-lap class="absolute top-4 left-4 text-sm font-medium" [race]="data.race" />
-        @if (track.hasValue() && markers().length) {
-          <f2020-track-map class="block w-full h-full" padding="0.15" [track]="track.value()" [markers]="markers()" />
-        } @else if (track.error()) {
-          <p>Banen kunne ikke hentes</p>
-        } @else {
-          <p>Venter på bilerne...</p>
+        <div class="flex-1 min-h-0">
+          @if (track.hasValue() && markers().length) {
+            <f2020-track-map class="block w-full h-full" padding="0.15" [track]="track.value()" [markers]="markers()" />
+          } @else if (track.error()) {
+            <p>Banen kunne ikke hentes</p>
+          } @else {
+            <p>Venter på bilerne...</p>
+          }
+        </div>
+        @if (data.relive) {
+          <f2020-relive-controls class="block w-full max-w-2xl mx-auto" />
         }
       </div>
       <!-- The list gives the points of the players, so it is there on small screens as well, only hidden -->
@@ -98,7 +105,7 @@ const tieSteps = (bids: Bid[]): Map<string, number> => {
       <fa-icon [icon]="icons.farXmark" />
     </button>
   `,
-  imports: [TrackMapComponent, MatIconButton, MatDialogClose, FaIconComponent, LiveRaceComponent, TrackLapComponent],
+  imports: [TrackMapComponent, MatIconButton, MatDialogClose, FaIconComponent, LiveRaceComponent, TrackLapComponent, ReliveControlsComponent],
   host: { '(document:keydown.escape)': 'close()' },
 })
 export class LiveTrackPlayersComponent {
