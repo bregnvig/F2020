@@ -16,7 +16,6 @@ const versionNo = '49';
   },
 })
 export class WhatElseComponent {
-
   isHidden = signal(localStorage.getItem('what-else') === versionNo);
   icon = icon.falRocketLaunch;
   bug = icon.farBug;

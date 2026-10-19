@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
   @if (player()) {
-    <img class="avatar" [ngSrc]="player().photoURL" height="44" width="44" alt="Profil billede">
+    <img class="avatar" [ngSrc]="player().photoURL" height="44" width="44" alt="Profil billede" />
     <span>{{ player().displayName }}</span>
   }
 </mat-toolbar>
@@ -8,7 +8,7 @@
   <mat-action-list>
     @for (race of races(); track race) {
       <mat-list-item [routerLink]="['../..', 'race', race.round]">
-        <img matListItemAvatar [ngSrc]="race.countryCode | flagURL" height="44" width="44" [alt]="race.countryCode">
+        <img matListItemAvatar [ngSrc]="race.countryCode | flagURL" height="44" width="44" [alt]="race.countryCode" />
         <h3 matListItemTitle>{{ race.raceName }}</h3>
         <p matListItemLine>{{ race.points }} points</p>
       </mat-list-item>

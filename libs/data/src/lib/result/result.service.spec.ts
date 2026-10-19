@@ -3,7 +3,6 @@ import { SelectedDriverValue } from './model/bid.model';
 import { calculateResult, offsetPoints, propertyPoints } from './result.service';
 
 describe('Result service test', () => {
-
   it('should award points to qualify', () => {
     const result = ['grosjean', 'bottas', 'kevin_magnussen', 'albon', 'norris', 'russell', 'hamilton'];
     let bid = ['grosjean', 'bottas', 'kevin_magnussen', 'albon', 'norris', 'russell'];
@@ -24,7 +23,6 @@ describe('Result service test', () => {
 
     bid = bid = ['kevin_magnussen', 'albon', 'norris', 'hamilton', 'grosjean', 'bottas'];
     expect(offsetPoints(bid, result, 1)).toStrictEqual([0, 0, 0, 0, 0, 0]);
-
   });
 
   it('should award points to podium', () => {
@@ -130,5 +128,4 @@ describe('Result service test', () => {
     expect(calculatedResult.firstCrashPoints).toStrictEqual([1]);
     expect(calculatedResult.polePositionTimeDiff).toStrictEqual(1112);
   });
-
 });

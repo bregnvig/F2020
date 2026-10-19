@@ -60,10 +60,10 @@ export class TeamsList {
             ({
               ...team,
               drivers: [...new Set([...team.drivers, driver])],
-            } as ITeam)
+            }) as ITeam,
         ),
         switchMap(team => this.#service.updateTeam(team).then(() => team.drivers[team.drivers.length - 1])),
-        first()
+        first(),
       )
       .subscribe(driver => this.#snackBar.open(`${this.#getDriverName(driver)} tilføjet til ${team.name}`, undefined, { duration: 1000 }));
   }

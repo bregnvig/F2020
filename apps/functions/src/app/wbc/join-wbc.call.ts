@@ -32,19 +32,26 @@ const join = async (player: PlayerImpl) => {
   const bookie = await getBookie();
   const doc = db.doc(documentPaths.season(season.id));
   return db.runTransaction(transaction => {
-    transaction.set(doc, {
-      wbc: {
-        participants: FieldValue.arrayUnion(player.uid),
+    transaction.set(
+      doc,
+      {
+        wbc: {
+          participants: FieldValue.arrayUnion(player.uid),
+        },
       },
-    }, { merge: true });
-    transferInTransaction({
-      date: DateTime.local(),
-      amount: 100,
-      message: `Deltagelse WBC`,
-      from: player.uid,
-      to: bookie.uid,
-      involved: [player.uid, bookie.uid],
-    }, transaction);
+      { merge: true },
+    );
+    transferInTransaction(
+      {
+        date: DateTime.local(),
+        amount: 100,
+        message: `Deltagelse WBC`,
+        from: player.uid,
+        to: bookie.uid,
+        involved: [player.uid, bookie.uid],
+      },
+      transaction,
+    );
     return Promise.resolve('WBC joined');
   });
 };

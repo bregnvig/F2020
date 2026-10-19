@@ -7,7 +7,7 @@ export const getToken = onCall(async (request: CallableRequest<void>) => {
     .then(async () => openF1Api.token())
     .then(token => {
       if (!token) throw logAndCreateError('not-found', 'Token not found');
-      return ({ token: token.access_token, expiresIn: parseInt(token.expires_in) });
+      return { token: token.access_token, expiresIn: parseInt(token.expires_in) };
     })
     .catch(internalError);
 });

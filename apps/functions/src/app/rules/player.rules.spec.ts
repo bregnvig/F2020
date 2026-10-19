@@ -5,7 +5,6 @@ import { collections } from '../../test-utils';
 import { playersURL } from '../../lib/paths';
 
 describe('Player rules', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   beforeEach(async () => {
@@ -71,5 +70,4 @@ describe('Player rules', () => {
     const app = await authedApp({ uid: 'non-player-id' });
     await assertFails(app.firestore.collection(`${playersURL}`).get()).then(permissionDenied);
   });
-
 });

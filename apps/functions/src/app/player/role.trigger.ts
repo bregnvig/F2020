@@ -10,6 +10,6 @@ export const setAnonymousRole = onDocumentCreated('players/{userId}', async even
   return newUser.roles?.length
     ? Promise.resolve()
     : event.data.ref.update({
-      roles: ['anonymous'],
-    });
+        roles: ['anonymous'],
+      });
 });

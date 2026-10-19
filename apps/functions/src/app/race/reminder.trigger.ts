@@ -6,9 +6,7 @@ import { converter } from '../../lib/timestamp.converter';
 import { raceLink, sendNotification } from './../../lib';
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 
-const messageBody = (race: IRace, player: Player): string =>
-  `${player.displayName} har lige afgivet sit bud til ${race.name}, og du har ikke spillet endnu😱`;
-
+const messageBody = (race: IRace, player: Player): string => `${player.displayName} har lige afgivet sit bud til ${race.name}, og du har ikke spillet endnu😱`;
 
 export const almostTimeTrigger = onDocumentWritten('seasons/{seasonId}/races/{round}/bids/{bid}', async event => {
   const before = event.data.before?.data() as Bid;
@@ -22,11 +20,11 @@ export const almostTimeTrigger = onDocumentWritten('seasons/{seasonId}/races/{ro
 });
 
 const almostTimeReminder = async (race: IRace, player: Player) => {
-  const players = (await playerWithoutBid())
-    .filter(p => p.tokens?.length)
-    .filter(p => !p.almostTimeReminder || (p.almostTimeReminder.diffNow('hours').hours > 24));
+  const players = (await playerWithoutBid()).filter(p => p.tokens?.length).filter(p => !p.almostTimeReminder || p.almostTimeReminder.diffNow('hours').hours > 24);
 
-  players.forEach(p => sendNotification(p.tokens, `${Math.floor(race.close.diffNow('minutes').minutes)} minutter tilbage`, messageBody(race, player), { link: raceLink(race.season, race.round) }));
+  players.forEach(p =>
+    sendNotification(p.tokens, `${Math.floor(race.close.diffNow('minutes').minutes)} minutter tilbage`, messageBody(race, player), { link: raceLink(race.season, race.round) }),
+  );
 
   const db = getFirestore();
 

@@ -13,7 +13,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
         @if (team) {
           <mat-list-item>
             @if (seasonId(); as seasonId) {
-              <sha-team-logo matListItemAvatar [seasonId]="seasonId" [name]="team"/>
+              <sha-team-logo matListItemAvatar [seasonId]="seasonId" [name]="team" />
             }
             <div class="flex justify-between items-center w-full">
               <div class="flex flex-col text-sm font-medium">
@@ -23,7 +23,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
                 }
               </div>
               <div class="flex">
-                <f2020-display-points-diff [postfix]="compareWith()?.[$index] | teamName" [value]="points()?.[$index]" [compareWith]="comparePoints()?.[$index]"/>
+                <f2020-display-points-diff [postfix]="compareWith()?.[$index] | teamName" [value]="points()?.[$index]" [compareWith]="comparePoints()?.[$index]" />
               </div>
             </div>
           </mat-list-item>
@@ -32,12 +32,7 @@ import { DisplayPointsDiffComponent } from '../diff/display-points-diff.componen
     </mat-list>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatListModule,
-    TeamNamePipe,
-    DisplayPointsDiffComponent,
-    TeamLogoComponent,
-  ],
+  imports: [MatListModule, TeamNamePipe, DisplayPointsDiffComponent, TeamLogoComponent],
 })
 export class DisplayTeamsComponent {
   readonly #season = inject(SeasonStore).season;
@@ -48,5 +43,4 @@ export class DisplayTeamsComponent {
   readonly comparePoints = input<number[]>();
 
   protected readonly seasonId = computed(() => this.#season()?.id);
-
 }

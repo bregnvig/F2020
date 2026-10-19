@@ -5,14 +5,15 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { buildResults } from './build-results';
 
 export const buildStandings = async (seasonId: number, year: number) => {
-
   const db = firebaseApp.database;
   const raceResults = await buildResults(seasonId, year);
   await db.runTransaction(async transaction => {
     const writeProp = (race: IRaceResult | IQualifyResult, prop: 'races' | 'qualify') => {
       race.results.forEach((r: IDriverRaceResult | IDriverQualifying) => {
         const driverId = requiredValue(r.driver.driverId, 'DriverId');
-        transaction.set(db.doc(`seasons/${seasonId}/standings/drivers/${year}/${driverId}`), {
+        transaction.set(
+          db.doc(`seasons/${seasonId}/standings/drivers/${year}/${driverId}`),
+          {
             [prop]: race.round === 1 ? [{ ...race, results: [r] }] : FieldValue.arrayUnion({ ...race, results: [r] }),
           },
           { merge: true },
@@ -24,5 +25,4 @@ export const buildStandings = async (seasonId: number, year: number) => {
       writeProp(qualify, 'qualify');
     });
   });
-
 };

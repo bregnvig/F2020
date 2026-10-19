@@ -13,14 +13,13 @@ interface GraphEntry {
 }
 
 @Component({
-    selector: 'f2020-wbc-graph',
-    templateUrl: './wbc-graph.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    styleUrls: ['./wbc-graph.component.scss'],
-    imports: [LineChartModule, MatListModule, NgOptimizedImage]
+  selector: 'f2020-wbc-graph',
+  templateUrl: './wbc-graph.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./wbc-graph.component.scss'],
+  imports: [LineChartModule, MatListModule, NgOptimizedImage],
 })
 export class WbcGraphComponent {
-
   data: Signal<GraphEntry[]>;
   activeEntries: Signal<GraphEntry[]>;
   playerEntries: Signal<WBCGraphEntry[]>;
@@ -30,19 +29,20 @@ export class WbcGraphComponent {
   constructor() {
     const store = inject(SeasonStore);
     const graph = computed(() => new WBCGraph(store.season().wbc));
-    this.data = computed(() => graph()?.entries.map(e => ({
-      name: e.player.displayName,
-      series: e.entries,
-    })));
+    this.data = computed(() =>
+      graph()?.entries.map(e => ({
+        name: e.player.displayName,
+        series: e.entries,
+      })),
+    );
     this.activeEntries = computed(() => this.data()?.filter(e => this.#selected().includes(e.name)));
     effect(() => localStorage.setItem('selectedWBCPlayers', JSON.stringify(this.#selected())));
-    this.playerEntries = computed(() => [...graph()?.entries ?? []].sort((a, b) => b.points - a.points));
+    this.playerEntries = computed(() => [...(graph()?.entries ?? [])].sort((a, b) => b.points - a.points));
   }
 
   toggle(player: Player) {
-    this.#selected.set(this.#selected().some(name => name === player.displayName)
-      ? this.#selected().filter(name => name !== player.displayName)
-      : [...this.#selected(), player.displayName],
+    this.#selected.set(
+      this.#selected().some(name => name === player.displayName) ? this.#selected().filter(name => name !== player.displayName) : [...this.#selected(), player.displayName],
     );
   }
 

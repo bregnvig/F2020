@@ -11,7 +11,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
     <mat-list>
       @for (result of qualifyResult().results; track result.driver.driverId) {
         <mat-list-item>
-          <sha-driver-headshot matListItemAvatar [driver]="result.driver"/>
+          <sha-driver-headshot matListItemAvatar [driver]="result.driver" />
           <h5 matListItemTitle class="flex flex-row justify-between">{{ result.driver.name }}</h5>
           <p matListItemMeta class="!text-base !text-white">{{ result.position }}</p>
           <p matListItemLine>
@@ -25,6 +25,5 @@ import { DriverHeadshotComponent } from '@f2020/shared';
   imports: [MatListModule, QualifyingTimesComponent, DriverHeadshotComponent],
 })
 export class LastYearQualifyComponent {
-
   readonly qualifyResult = input.required<IQualifyResult>();
 }

@@ -27,20 +27,26 @@ const undo = async (player: PlayerImpl) => {
   const bookie = await getBookie();
   const doc = db.doc(documentPaths.season(season.id));
   return db.runTransaction(transaction => {
-    transaction.set(doc, {
-      wbc: {
-        participants: FieldValue.arrayRemove(player.uid),
+    transaction.set(
+      doc,
+      {
+        wbc: {
+          participants: FieldValue.arrayRemove(player.uid),
+        },
       },
-    }, { merge: true });
-    transferInTransaction({
-      date: DateTime.local(),
-      amount: 100,
-      message: `Fortrød deltagelse i WBC`,
-      from: bookie.uid,
-      to: player.uid,
-      involved: [player.uid, bookie.uid],
-    }, transaction);
+      { merge: true },
+    );
+    transferInTransaction(
+      {
+        date: DateTime.local(),
+        amount: 100,
+        message: `Fortrød deltagelse i WBC`,
+        from: bookie.uid,
+        to: player.uid,
+        involved: [player.uid, bookie.uid],
+      },
+      transaction,
+    );
     return Promise.resolve('WBC undone');
   });
 };
-

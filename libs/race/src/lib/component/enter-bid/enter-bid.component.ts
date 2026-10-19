@@ -17,9 +17,9 @@ import { debounceTime, filter, map, switchMap } from 'rxjs/operators';
 
 const noNullsInArray = (control: FormControl<Bid>) => {
   return Object.values(control.value ?? {})
-    .filter((value) => Array.isArray(value))
+    .filter(value => Array.isArray(value))
     .flat()
-    .some((value) => isNullish(value))
+    .some(value => isNullish(value))
     ? { noNullsInArray: true }
     : null;
 };
@@ -52,10 +52,10 @@ export class EnterBidComponent {
     firstValueFrom(
       toObservable(this.race).pipe(
         truthy(),
-        switchMap((race) => racesService.getBid(race.season, race.round, playerId)),
-        map((bid) => bid || {}),
+        switchMap(race => racesService.getBid(race.season, race.round, playerId)),
+        map(bid => bid || {}),
       ),
-    ).then((yourBid) => {
+    ).then(yourBid => {
       this.bidControl.reset(yourBid, { emitEvent: false });
       !Object.keys(yourBid).length && this.#store.updateBid(yourBid as Bid);
     });
@@ -66,7 +66,7 @@ export class EnterBidComponent {
     const updatedBid = toSignal(
       this.bidControl.valueChanges.pipe(
         debounceTime(3000),
-        filter((bid) => !bid?.submitted),
+        filter(bid => !bid?.submitted),
         filterEquals(),
       ),
     );
@@ -77,7 +77,7 @@ export class EnterBidComponent {
     this.#store
       .submitBid(this.bidControl.value)
       .then(() => this.#router.navigate([this.race().season, 'race', this.race().round]))
-      .catch((error) => {
+      .catch(error => {
         this.bidControl.enable({ emitEvent: false });
         console.info(this.bidControl.value);
         console.error(error);

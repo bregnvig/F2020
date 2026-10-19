@@ -6,7 +6,7 @@
         <mat-optgroup>
           <span class="inline-flex items-center gap-2">
             @if (seasonId(); as seasonId) {
-              <sha-team-logo [seasonId]="seasonId" [name]="teamAndDrivers[0]" [size]="24"/>
+              <sha-team-logo [seasonId]="seasonId" [name]="teamAndDrivers[0]" [size]="24" />
             }
             {{ teamAndDrivers[0] }}
           </span>
@@ -15,7 +15,7 @@
               @let driver = driverId | driver;
               <mat-option [value]="driverId">
                 <div class="flex flex-row">
-                  <sha-driver-headshot class="avatar" [driver]="driver" placeholder="assets/loading/red.svg"/>
+                  <sha-driver-headshot class="avatar" [driver]="driver" placeholder="assets/loading/red.svg" />
                   <span class="my-auto">{{ driver?.name }}</span>
                 </div>
               </mat-option>

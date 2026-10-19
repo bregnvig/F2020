@@ -25,7 +25,7 @@ import { LiveQualifyDriversComponent } from './live-qualify-drivers';
       @if (race(); as race) {
         <mat-card>
           <mat-card-header>
-            <img mat-card-avatar height="40" width="40" [ngSrc]="race | flagURL" [alt]="race.countryCode" (click)="openStatus()">
+            <img mat-card-avatar height="40" width="40" [ngSrc]="race | flagURL" [alt]="race.countryCode" (click)="openStatus()" />
             <mat-card-title>{{ isLive ? 'Live kvalifikation' : 'Genoplev kvalifikationen' }}</mat-card-title>
             <mat-card-subtitle>
               @if (latestUpdate(); as latestUpdate) {
@@ -79,11 +79,7 @@ import { LiveQualifyDriversComponent } from './live-qualify-drivers';
     LiveQualifyDriversComponent,
     LiveRadioComponent,
   ],
-  providers: [
-    provideQualifyResultService(),
-    RaceControlService,
-    OpenF1WSSService,
-  ],
+  providers: [provideQualifyResultService(), RaceControlService, OpenF1WSSService],
 })
 export class LiveQualifyComponent {
   #store = inject(RaceStore);
@@ -100,24 +96,29 @@ export class LiveQualifyComponent {
     race: toObservable(this.race).pipe(truthy()),
     drivers: toObservable(this.drivers).pipe(truthy()),
   });
-  protected readonly result = toSignal(this.#raceAndDrivers$.pipe(
-    switchMap(({ race, drivers }) => this.#live.getResult(race, drivers)),
-  ));
-  protected readonly sectors = toSignal(this.#raceAndDrivers$.pipe(
-    switchMap(({ race, drivers }) => this.#live.getSectorStatus(race, drivers)),
-    map(sectors => sectors.reduce(toMap<IDriverSector, string>(sector => sector.driver.driverId), new Map<string, IDriverSector>())),
-  ));
+  protected readonly result = toSignal(this.#raceAndDrivers$.pipe(switchMap(({ race, drivers }) => this.#live.getResult(race, drivers))));
+  protected readonly sectors = toSignal(
+    this.#raceAndDrivers$.pipe(
+      switchMap(({ race, drivers }) => this.#live.getSectorStatus(race, drivers)),
+      map(sectors =>
+        sectors.reduce(
+          toMap<IDriverSector, string>(sector => sector.driver.driverId),
+          new Map<string, IDriverSector>(),
+        ),
+      ),
+    ),
+  );
   protected readonly latestUpdate = toSignal(this.#live.resultStatus.pipe(map(status => status.latestUpdate)));
   protected readonly error = toSignal(this.#live.resultStatus.pipe(map(status => status.error?.statusText)));
 
-  #status = toSignal(combineLatest({
-    resultStatus: this.#live.resultStatus,
-    radioStatus: this.#live.radioStatus,
-    raceControlStatus: this.#live.raceControlStatus,
-    sectorStatus: this.#live.sectorStatus,
-  }).pipe(
-    map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
-  ));
+  #status = toSignal(
+    combineLatest({
+      resultStatus: this.#live.resultStatus,
+      radioStatus: this.#live.radioStatus,
+      raceControlStatus: this.#live.raceControlStatus,
+      sectorStatus: this.#live.sectorStatus,
+    }).pipe(map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status })))),
+  );
 
   constructor() {
     const raceControlMessages = inject(RaceControlService);

@@ -41,11 +41,7 @@ import { RaceControlService } from './race-control';
     LiveChampionshipComponent,
     LiveWeatherComponent,
   ],
-  providers: [
-    provideRaceResultService(),
-    RaceControlService,
-    OpenF1WSSService,
-  ],
+  providers: [provideRaceResultService(), RaceControlService, OpenF1WSSService],
 })
 export class LiveLiveComponent {
   #store = inject(RaceStore);

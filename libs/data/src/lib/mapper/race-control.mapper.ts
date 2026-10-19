@@ -12,9 +12,7 @@ const openF1Map = (source: OpenF1RaceControlParams): RaceControl[] => {
   const drivers = getDrivers(source.drivers);
 
   return source.messages.map(message => {
-    const driver = message.driver_number
-      ? drivers.get(message.driver_number)
-      : undefined;
+    const driver = message.driver_number ? drivers.get(message.driver_number) : undefined;
 
     return {
       category: message.category,

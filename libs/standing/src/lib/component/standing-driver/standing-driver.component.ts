@@ -35,7 +35,6 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
   ],
 })
 export class StandingDriverComponent {
-
   currentSeasonResult$: Observable<IDriverResult>;
   previousSeasonResult$: Observable<IDriverResult>;
 
@@ -60,17 +59,11 @@ export class StandingDriverComponent {
       this.currentYear = year;
       this.previousYear = year - 1;
     });
-    this.currentSeasonResult$ = combineLatest([
-      this.driverId$,
-      currentYear$,
-    ]).pipe(
+    this.currentSeasonResult$ = combineLatest([this.driverId$, currentYear$]).pipe(
       switchMap(([driverId, currentYear]) => service.getDriverResult(currentYear, currentYear, driverId)),
       shareLatest(),
     );
-    this.previousSeasonResult$ = combineLatest([
-      this.driverId$,
-      currentYear$,
-    ]).pipe(
+    this.previousSeasonResult$ = combineLatest([this.driverId$, currentYear$]).pipe(
       switchMap(([driverId, currentYear]) => service.getDriverResult(currentYear, currentYear - 1, driverId)),
       shareLatest(),
     );

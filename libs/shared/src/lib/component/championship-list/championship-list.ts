@@ -39,8 +39,13 @@ export interface ChampionshipEntry {
             } @else if (entry.logo; as logo) {
               <sha-team-logo [seasonId]="logo.seasonId" [name]="entry.name" />
             } @else if (entry.image; as image) {
-              <img class="rounded-full shrink-0" height="40" width="40" [ngSrc]="failedImages().has(entry.id) ? placeholder : image.url ?? placeholder"
-                   [alt]="entry.name" (error)="imageFailed(entry.id)">
+              <img
+                class="rounded-full shrink-0"
+                height="40"
+                width="40"
+                [ngSrc]="failedImages().has(entry.id) ? placeholder : (image.url ?? placeholder)"
+                [alt]="entry.name"
+                (error)="imageFailed(entry.id)" />
             }
             <span>
               @if (entry.position) {

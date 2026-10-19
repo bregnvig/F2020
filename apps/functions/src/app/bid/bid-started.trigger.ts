@@ -11,7 +11,8 @@ export const newBidTrigger = onDocumentCreated('seasons/{seasonId}/races/{raceId
   const notYourself = (p: Player) => p.uid !== bid.player?.uid;
   const wishToReceive = (p: Player) => !p.receiveBettingStarted || p.receiveBettingStarted.some(uid => uid === bid.player.uid);
   const allFilter = (p: Player) => [hasTokens, notYourself, wishToReceive].every(fn => fn(p));
-  const players: Player[] = await db.collection(collectionPaths.players())
+  const players: Player[] = await db
+    .collection(collectionPaths.players())
     .where('receiveReminders', '==', true)
     .get()
     .then(playerSnapshot => playerSnapshot.docs.map(d => d.data() as Player))
@@ -20,20 +21,20 @@ export const newBidTrigger = onDocumentCreated('seasons/{seasonId}/races/{raceId
   const season = await currentSeason();
   const race = await getCurrentRace('open');
   // The bids are stored by uid. Players who have submitted can follow the bid, the others are sent to the race
-  const submitted: Set<string> = await db.collection(collectionPaths.bids(season.id, race.round))
+  const submitted: Set<string> = await db
+    .collection(collectionPaths.bids(season.id, race.round))
     .where('submitted', '==', true)
     .select()
     .get()
     .then(snapshot => new Set(snapshot.docs.map(d => d.id)));
-  const link = (p: Player) => submitted.has(p.uid) ? bidLink(season.id, race.round, bid.player.uid) : raceLink(season.id, race.round);
+  const link = (p: Player) => (submitted.has(p.uid) ? bidLink(season.id, race.round, bid.player.uid) : raceLink(season.id, race.round));
 
   return Promise.all([
     ...players.map(p => sendNotification(p.tokens, `🥳 Bud på vej!`, `${bid.player?.displayName} er ved at lave sit bud!`, { link: link(p) })),
     db.runTransaction(transaction => {
-      const doc = db.doc(documentPaths.participant(season.id, race.round, bid.player.uid)) as DocumentReference<{ player: Player, submitted: false; }>;
+      const doc = db.doc(documentPaths.participant(season.id, race.round, bid.player.uid)) as DocumentReference<{ player: Player; submitted: false }>;
       transaction.set(doc, { player: bid.player, submitted: false });
       return Promise.resolve('Bid without data written');
     }),
-
   ]);
 });

@@ -10,7 +10,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
     <mat-list>
       @for (result of raceResult().results; track result.driver.driverId) {
         <mat-list-item>
-          <sha-driver-headshot matListItemAvatar [driver]="result.driver"/>
+          <sha-driver-headshot matListItemAvatar [driver]="result.driver" />
           <h5 matListItemTitle>{{ result.driver.name }}</h5>
           <p matListItemMeta class="!text-base !text-white">{{ result.points }}</p>
           <p matListItemLine>{{ result.status }}</p>

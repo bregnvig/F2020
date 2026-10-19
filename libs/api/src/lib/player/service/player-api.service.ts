@@ -12,7 +12,6 @@ const playerConverter = converter.timestamp<Player>();
 
 @Service()
 export class PlayerApiService {
-
   static readonly playersURL = 'players';
 
   #afs = inject(Firestore);
@@ -30,9 +29,7 @@ export class PlayerApiService {
         switchMap(user => docData(doc(this.#afs, `${PlayerApiService.playersURL}/${user.uid}`).withConverter(playerConverter))),
         map(user => user as Player),
       ),
-      this.#currentUser$.pipe(
-        filter(user => !user || !(user?.uid)),
-      ),
+      this.#currentUser$.pipe(filter(user => !user || !user?.uid)),
     );
     getRedirectResult(this.#auth).then(result => {
       if (result && result.user) {
@@ -40,16 +37,14 @@ export class PlayerApiService {
       }
     });
     onAuthStateChanged(this.#auth, async user => {
-      this.#currentUser$.next(user ? ({ ...user }) : undefined);
+      this.#currentUser$.next(user ? { ...user } : undefined);
       if (user) {
         await this.#updateBaseInformation(user).then(() => isDevMode() && console.debug('Base information updated'));
         await this.#fcm.setupMessaging().then(
           async token => {
             const player = await firstValueFrom(this.player$);
             if (token && !player.tokens?.includes(token)) {
-              await firstValueFrom(this.updatePlayer({ tokens: [token] })).then(
-                () => console.debug('Token added', token),
-              );
+              await firstValueFrom(this.updatePlayer({ tokens: [token] })).then(() => console.debug('Token added', token));
             }
           },
           error => Notification.permission !== 'denied' && console.error('Unable to setup messaging', error),
@@ -58,7 +53,6 @@ export class PlayerApiService {
       isDevMode() && console.debug(user);
     });
   }
-
 
   signInWithGoogle(): Promise<void> {
     return signInWithRedirect(this.#auth, new GoogleAuthProvider()).then(

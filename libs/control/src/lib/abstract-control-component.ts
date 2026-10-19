@@ -2,7 +2,6 @@ import { Directive } from '@angular/core';
 import { AbstractControl, ControlValueAccessor } from '@angular/forms';
 @Directive()
 export abstract class AbstractControlComponent<T> implements ControlValueAccessor {
-
   #queue: any[] = [];
   #_propagateChange: (_: T) => any;
   #_propagateTouched: (_?: any) => any;
@@ -21,7 +20,7 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
     this.#_propagateChange = fn;
     if (this.#queue.length) {
       let value;
-      while (value = this.#queue.shift()) {
+      while ((value = this.#queue.shift())) {
         this.propagateChange(value);
       }
     }
@@ -38,7 +37,6 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
   markAllTouched(): void {
     this.#markAllTouched?.();
   }
-
 
   protected propagateChange(_: any): void {
     if (this.#_propagateChange) {

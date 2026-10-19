@@ -28,7 +28,6 @@ const locationTopic = 'v1/location';
 
 @Service({ autoProvided: false })
 export class OpenF1WSSService implements OnDestroy {
-
   #openF1Http = inject(OpenF1HttpService);
   #laps = new BehaviorSubject<Lap | undefined>(undefined);
   #positions = new BehaviorSubject<Position | undefined>(undefined);
@@ -127,7 +126,7 @@ export class OpenF1WSSService implements OnDestroy {
   #updatePassword(client: MqttClient): Observable<string> {
     return this.#openF1Http.getToken().pipe(
       retry({ count: 5, delay: reconnectPeriod }),
-      tap(token => client.options.password = token),
+      tap(token => (client.options.password = token)),
       catchError(error => {
         console.error('Failed to get an OpenF1 token for MQTT', error);
         return EMPTY;

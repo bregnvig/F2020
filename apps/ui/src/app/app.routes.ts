@@ -11,8 +11,8 @@ const mustBeAuthorized = () => {
   const router = inject(Router);
 
   return toObservable(store.unauthorized).pipe(
-    filter((unauthorized) => !isNullish(unauthorized)),
-    map((unauthorized) => (unauthorized ? router.navigate(['login']).then(() => false) : true))
+    filter(unauthorized => !isNullish(unauthorized)),
+    map(unauthorized => (unauthorized ? router.navigate(['login']).then(() => false) : true)),
   );
 };
 
@@ -38,21 +38,21 @@ export const routes: Routes = [
   {
     path: 'players',
     canActivate: [mustBeAuthorized],
-    loadChildren: () => import('@f2020/players').then((r) => r.PlayersRoutes),
+    loadChildren: () => import('@f2020/players').then(r => r.PlayersRoutes),
   },
   {
     path: 'accounts',
     canActivate: [mustBeAuthorized],
-    loadChildren: () => import('@f2020/bank').then((r) => r.BankRoutes),
+    loadChildren: () => import('@f2020/bank').then(r => r.BankRoutes),
   },
   {
     path: 'player',
     canActivate: [mustBeAuthorized],
-    loadChildren: () => import('@f2020/player').then((r) => r.PlayerRoutes),
+    loadChildren: () => import('@f2020/player').then(r => r.PlayerRoutes),
   },
   {
     path: 'info',
-    loadChildren: () => import('@f2020/info').then((r) => r.InfoRoutes),
+    loadChildren: () => import('@f2020/info').then(r => r.InfoRoutes),
   },
   {
     path: ':season',
@@ -60,23 +60,23 @@ export const routes: Routes = [
     children: [
       {
         path: 'teams',
-        loadChildren: () => import('@f2020/teams').then((m) => m.TeamsRoutes),
+        loadChildren: () => import('@f2020/teams').then(m => m.TeamsRoutes),
       },
       {
         path: '',
-        loadChildren: () => import('@f2020/landing').then((m) => m.LandingRoutes),
+        loadChildren: () => import('@f2020/landing').then(m => m.LandingRoutes),
       },
       {
         path: 'race',
-        loadChildren: () => import('@f2020/race').then((m) => m.RaceRouting),
+        loadChildren: () => import('@f2020/race').then(m => m.RaceRouting),
       },
       {
         path: 'wbc',
-        loadChildren: () => import('@f2020/wbc').then((m) => m.WbcRoutes),
+        loadChildren: () => import('@f2020/wbc').then(m => m.WbcRoutes),
       },
       {
         path: 'standings',
-        loadChildren: () => import('@f2020/standing').then((m) => m.StandingRoutes),
+        loadChildren: () => import('@f2020/standing').then(m => m.StandingRoutes),
       },
     ],
   },

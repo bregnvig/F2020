@@ -4,7 +4,6 @@ import { firebaseApp } from './firebase';
 import { readFileSync } from 'fs';
 import { assetPath } from './assets';
 
-
 const getCircuits = (): Circuit[] => {
   return JSON.parse(readFileSync(assetPath('circuits.json')).toString());
 };
@@ -15,12 +14,7 @@ export const buildCircuits = async (): Promise<number> => {
   const circuitsCollection = db.collection('circuits');
 
   return db.runTransaction(transaction => {
-    circuits
-      .forEach(circuit =>
-        transaction.set(circuitsCollection.doc(circuit.circuitId.toString()), circuit),
-      );
+    circuits.forEach(circuit => transaction.set(circuitsCollection.doc(circuit.circuitId.toString()), circuit));
     return Promise.resolve(circuits.length);
   });
 };
-
-

@@ -15,11 +15,8 @@ import { LiveSectorComponent } from './live-sector.component';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    LiveSectorComponent,
-  ],
+  imports: [LiveSectorComponent],
 })
-
 export class LiveSectorStatusComponent {
   status = input.required<IDriverSector | undefined>();
   // a = effect(() => {

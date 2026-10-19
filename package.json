@@ -120,7 +120,7 @@
     "killport": "^1.0.2",
     "nx": "23.2.1",
     "postcss": "^8.4.21",
-    "prettier": "2.8.4",
+    "prettier": "3.9.10",
     "tailwindcss": "^3.2.7",
     "ts-ics": "^1.6.2",
     "ts-node": "10.9.1",

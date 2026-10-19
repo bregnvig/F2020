@@ -67,9 +67,10 @@ export const aiGeneratedRoast = async (situation: string, results: Partial<Bid>[
   }
 };
 
-const avatar = (player?: Partial<Player>) => player?.photoURL
-  ? `<img src="${escapeHtml(player.photoURL)}" width="32" height="32" alt="" style="border-radius:50%;display:block">`
-  : `<div style="width:32px;height:32px;border-radius:50%;background:#e91e63;color:#fff;text-align:center;line-height:32px;font-weight:bold">${escapeHtml(player?.displayName?.charAt(0))}</div>`;
+const avatar = (player?: Partial<Player>) =>
+  player?.photoURL
+    ? `<img src="${escapeHtml(player.photoURL)}" width="32" height="32" alt="" style="border-radius:50%;display:block">`
+    : `<div style="width:32px;height:32px;border-radius:50%;background:#e91e63;color:#fff;text-align:center;line-height:32px;font-weight:bold">${escapeHtml(player?.displayName?.charAt(0))}</div>`;
 
 /**
  * The players with their pictures and points. Players with the same points share the position, and the player reading it is highlighted

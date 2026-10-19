@@ -29,25 +29,37 @@ const tenths = (value: number) => Math.round(value * 10) / 10 || 0;
         @if (latest(); as latest) {
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
-              <div class="text-xs opacity-70"><fa-icon class="me-1" [icon]="icons.farTemperatureHalf" />Luft</div>
+              <div class="text-xs opacity-70">
+                <fa-icon class="me-1" [icon]="icons.farTemperatureHalf" />
+                Luft
+              </div>
               <div class="text-2xl tabular-nums">{{ latest.airTemperature | number: '1.1-1' }}°</div>
               @if (change(); as change) {
                 <div class="text-xs opacity-70 tabular-nums">{{ change.air > 0 ? '+' : '' }}{{ change.air | number: '1.1-1' }}° siden start</div>
               }
             </div>
             <div>
-              <div class="text-xs opacity-70"><fa-icon class="me-1" [icon]="icons.farRoad" />Banen</div>
+              <div class="text-xs opacity-70">
+                <fa-icon class="me-1" [icon]="icons.farRoad" />
+                Banen
+              </div>
               <div class="text-2xl tabular-nums">{{ latest.trackTemperature | number: '1.1-1' }}°</div>
               @if (change(); as change) {
                 <div class="text-xs opacity-70 tabular-nums">{{ change.track > 0 ? '+' : '' }}{{ change.track | number: '1.1-1' }}° siden start</div>
               }
             </div>
             <div>
-              <div class="text-xs opacity-70"><fa-icon class="me-1" [icon]="latest.rainfall ? icons.farCloudRain : icons.farSun" />Nedbør</div>
+              <div class="text-xs opacity-70">
+                <fa-icon class="me-1" [icon]="latest.rainfall ? icons.farCloudRain : icons.farSun" />
+                Nedbør
+              </div>
               <div class="text-2xl" [class.text-blue-400]="latest.rainfall">{{ latest.rainfall ? 'Regn' : 'Tørt' }}</div>
             </div>
             <div>
-              <div class="text-xs opacity-70"><fa-icon class="me-1" [icon]="icons.farWind" />Vind</div>
+              <div class="text-xs opacity-70">
+                <fa-icon class="me-1" [icon]="icons.farWind" />
+                Vind
+              </div>
               <div class="text-lg tabular-nums">
                 {{ latest.windSpeed | number: '1.1-1' }} m/s
                 <!-- The arrow points where the wind blows, so away from where it comes from -->
@@ -56,11 +68,17 @@ const tenths = (value: number) => Math.round(value * 10) / 10 || 0;
               <div class="text-xs opacity-70">Fra {{ windFrom() }}</div>
             </div>
             <div>
-              <div class="text-xs opacity-70"><fa-icon class="me-1" [icon]="icons.farDroplet" />Luftfugtighed</div>
+              <div class="text-xs opacity-70">
+                <fa-icon class="me-1" [icon]="icons.farDroplet" />
+                Luftfugtighed
+              </div>
               <div class="text-lg tabular-nums">{{ latest.humidity | number: '1.0-0' }} %</div>
             </div>
             <div>
-              <div class="text-xs opacity-70"><fa-icon class="me-1" [icon]="icons.farGauge" />Lufttryk</div>
+              <div class="text-xs opacity-70">
+                <fa-icon class="me-1" [icon]="icons.farGauge" />
+                Lufttryk
+              </div>
               <div class="text-lg tabular-nums">{{ latest.pressure | number: '1.0-0' }} hPa</div>
             </div>
           </div>

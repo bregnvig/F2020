@@ -17,7 +17,12 @@ const driverRef = ({ headshotUrl, name }: IDriver): string | undefined => {
   if (fromHeadshot) {
     return fromHeadshot.toLowerCase();
   }
-  const names = name.normalize('NFD').replace(/[^a-zA-Z ]/g, '').toLowerCase().split(' ').filter(n => !!n);
+  const names = name
+    .normalize('NFD')
+    .replace(/[^a-zA-Z ]/g, '')
+    .toLowerCase()
+    .split(' ')
+    .filter(n => !!n);
   return names.length > 1 && names[0].length >= 3 && names.at(-1).length >= 3 ? `${names[0].slice(0, 3)}${names.at(-1).slice(0, 3)}01` : undefined;
 };
 

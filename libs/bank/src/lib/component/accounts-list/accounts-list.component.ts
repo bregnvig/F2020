@@ -14,7 +14,5 @@ import { LoadingComponent } from '@f2020/shared';
   imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, CurrencyPipe, NgOptimizedImage],
 })
 export class AccountsListComponent {
-
   players: Signal<Player[]> = inject(PlayersStore).players;
-
 }

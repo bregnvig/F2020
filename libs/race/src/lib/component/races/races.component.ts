@@ -13,23 +13,13 @@ import { RacesStore } from '@f2020/api';
   selector: 'f2020-races',
   templateUrl: './races.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatToolbarModule,
-    MatListModule,
-    RouterLink,
-    LoadingComponent,
-    FlagURLPipe,
-    RaceStatusPipe,
-    NgOptimizedImage,
-  ],
+  imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, FlagURLPipe, RaceStatusPipe, NgOptimizedImage],
 })
 export class RacesComponent {
-
   races: Signal<IRace[]>;
   now = DateTime.local();
 
   constructor() {
     this.races = inject(RacesStore).races;
   }
-
 }

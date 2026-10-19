@@ -17,7 +17,13 @@ export function basisMap(source: Circuit, round: number, season: number | string
   return basisMapICS(source, round, typeof season === 'string' ? parseInt(season) : season);
 }
 
-const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'season' | 'state' | 'raceStart' | 'url'>, selectedDriver: IDriver | nullish, previousRace?: IRace, drivers?: IDriver[]): IRace => {
+const mapICS = (
+  circuit: Circuit,
+  params: Pick<IRace, 'close' | 'round' | 'season' | 'state' | 'raceStart' | 'url'>,
+  selectedDriver: IDriver | nullish,
+  previousRace?: IRace,
+  drivers?: IDriver[],
+): IRace => {
   return {
     ...basisMapICS(circuit, params.round, params.season),
     state: params.state ?? 'waiting',
@@ -30,6 +36,12 @@ const mapICS = (circuit: Circuit, params: Pick<IRace, 'close' | 'round' | 'seaso
   };
 };
 
-export function map(circuit: Circuit, selectedDriver: IDriver, race: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart' | 'state' | 'url'>, previousRace?: IRace, drivers?: IDriver[]): IRace {
+export function map(
+  circuit: Circuit,
+  selectedDriver: IDriver,
+  race: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart' | 'state' | 'url'>,
+  previousRace?: IRace,
+  drivers?: IDriver[],
+): IRace {
   return mapICS(circuit, race, selectedDriver, previousRace, drivers);
 }

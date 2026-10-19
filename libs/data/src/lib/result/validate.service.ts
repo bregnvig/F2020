@@ -18,12 +18,23 @@ export const validateBid = (bid: Bid, race: IRace): void => {
     fastestDriver: 1,
     firstCrash: 1,
     slowestPitStop: 1,
-  } as { [key: string]: number; };
-  const validArrays: boolean = Object.values(bid).filter(v => Array.isArray(v)).map(validArraysFn).every(Boolean) && Object.keys(lengths).every(key => lengths[key] === (bid as any)[key].length);
-  const validPole = !!(bid.polePositionTime && (bid.polePositionTime < (1000 * 60 * 2)) && (bid.polePositionTime > (1000 * 50)));
+  } as { [key: string]: number };
+  const validArrays: boolean =
+    Object.values(bid)
+      .filter(v => Array.isArray(v))
+      .map(validArraysFn)
+      .every(Boolean) && Object.keys(lengths).every(key => lengths[key] === (bid as any)[key].length);
+  const validPole = !!(bid.polePositionTime && bid.polePositionTime < 1000 * 60 * 2 && bid.polePositionTime > 1000 * 50);
   const numberOfDrivers = requiredValue(race.drivers?.length, 'Race drivers');
-  const validSelected = !!(bid.selectedDriver && bid.selectedDriver.grid && bid.selectedDriver.grid > 0 && bid.selectedDriver.grid <= numberOfDrivers
-    && bid.selectedDriver.finish && bid.selectedDriver.finish > 0 && bid.selectedDriver.finish <= numberOfDrivers);
+  const validSelected = !!(
+    bid.selectedDriver &&
+    bid.selectedDriver.grid &&
+    bid.selectedDriver.grid > 0 &&
+    bid.selectedDriver.grid <= numberOfDrivers &&
+    bid.selectedDriver.finish &&
+    bid.selectedDriver.finish > 0 &&
+    bid.selectedDriver.finish <= numberOfDrivers
+  );
   const validTeam = validTeamFn(race.selectedTeam, bid.selectedTeam);
 
   if (![validArrays, validPole, validSelected, validTeam].every(Boolean)) {
@@ -36,26 +47,35 @@ export const validateResult = (result: Bid, race: IRace): void => {
     podium: 4,
     qualify: 7,
     slowestPitStop: 2,
-  } as { [key: string]: number; };
+  } as { [key: string]: number };
 
   if (!result) {
     throw new Error('No result specified');
   }
 
   const numberOfDrivers = requiredValue(race.drivers?.length, 'Race drivers');
-  const validArrays: boolean = Object.values(result).filter(v => Array.isArray(v)).map(validArraysFn).every(Boolean) && Object.keys(lengths).every(key => lengths[key] === undefined || (lengths[key] === (result as any)[key].length));
-  const validPole = !!(result.polePositionTime && (result.polePositionTime < (1000 * 60 * 2)) && (result.polePositionTime > (1000 * 50)));
-  const validSelected = !!(result.selectedDriver && result.selectedDriver.grid && result.selectedDriver.grid > 0 && result.selectedDriver.grid <= numberOfDrivers
-    && result.selectedDriver.finish && result.selectedDriver.finish > 0 && result.selectedDriver.finish <= numberOfDrivers);
+  const validArrays: boolean =
+    Object.values(result)
+      .filter(v => Array.isArray(v))
+      .map(validArraysFn)
+      .every(Boolean) && Object.keys(lengths).every(key => lengths[key] === undefined || lengths[key] === (result as any)[key].length);
+  const validPole = !!(result.polePositionTime && result.polePositionTime < 1000 * 60 * 2 && result.polePositionTime > 1000 * 50);
+  const validSelected = !!(
+    result.selectedDriver &&
+    result.selectedDriver.grid &&
+    result.selectedDriver.grid > 0 &&
+    result.selectedDriver.grid <= numberOfDrivers &&
+    result.selectedDriver.finish &&
+    result.selectedDriver.finish > 0 &&
+    result.selectedDriver.finish <= numberOfDrivers
+  );
   const validTeam = validTeamFn(race.selectedTeam, result.selectedTeam);
   if (![validArrays, validPole, validSelected, validTeam].every(Boolean)) {
     throw new Error(`Result not valid. Arrays: ${validArrays}, valid selected: ${validSelected}, valid pole: ${validPole}, valid team: ${validTeam}`);
   }
-
 };
 
 export const validateInterimResult = (result: Partial<Bid>, race: IRace): void => {
-
   if (!result) {
     throw new Error('No interim result specified');
   }
@@ -66,5 +86,4 @@ export const validateInterimResult = (result: Partial<Bid>, race: IRace): void =
   if (![validQualify, validSelected, validTeam].every(Boolean)) {
     throw new Error(`Interim result not valid. Qualify: ${validQualify}, valid selected: ${validSelected}, valid team: ${validTeam}`);
   }
-
 };

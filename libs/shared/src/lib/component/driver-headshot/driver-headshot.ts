@@ -12,7 +12,7 @@ import { driverHeadshotUrl } from '../../formula1-media';
   selector: 'sha-driver-headshot',
   template: `
     @if (src(); as src) {
-      <img class="size-full rounded-[inherit] object-cover" [width]="size()" [height]="size()" [ngSrc]="src" [alt]="driver()?.name ?? ''" (error)="failed()">
+      <img class="size-full rounded-[inherit] object-cover" [width]="size()" [height]="size()" [ngSrc]="src" [alt]="driver()?.name ?? ''" (error)="failed()" />
     }
   `,
   host: {
@@ -34,11 +34,7 @@ export class DriverHeadshotComponent {
   #sources = computed(() => {
     const driver = this.driver();
     const seasonId = this.#season()?.id;
-    return [
-      driver && seasonId ? driverHeadshotUrl(seasonId, driver, this.size() * 2) : undefined,
-      driver?.headshotUrl,
-      this.placeholder(),
-    ].filter(src => !!src);
+    return [driver && seasonId ? driverHeadshotUrl(seasonId, driver, this.size() * 2) : undefined, driver?.headshotUrl, this.placeholder()].filter(src => !!src);
   });
   /** Starts over when the driver changes */
   #index = linkedSignal({ source: this.#sources, computation: () => 0 });

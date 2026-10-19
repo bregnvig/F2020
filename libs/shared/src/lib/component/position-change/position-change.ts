@@ -10,7 +10,7 @@ import { icon } from '../../font-awesome';
   template: `
     @if (change()) {
       <span class="rounded-full py-1 px-3 whitespace-nowrap" [class.bg-lime-700]="change() > 0" [class.bg-red-700]="change() < 0">
-        <fa-icon class="me-1" [icon]="change() > 0 ? upIcon : downIcon" [fixedWidth]="true"/>
+        <fa-icon class="me-1" [icon]="change() > 0 ? upIcon : downIcon" [fixedWidth]="true" />
         {{ places() }}
       </span>
     }

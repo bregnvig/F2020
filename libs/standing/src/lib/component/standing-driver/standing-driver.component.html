@@ -1,6 +1,6 @@
 @let driver = driverId$ | async | driver;
 <mat-toolbar color="primary">
-  <sha-driver-headshot class="avatar bg-white" [driver]="driver"/>
+  <sha-driver-headshot class="avatar bg-white" [driver]="driver" />
   <span>{{ driver?.name }}</span>
 </mat-toolbar>
 <sha-card-page>
@@ -9,7 +9,7 @@
     <f2020-number-card title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" [icon]="icon.farTrophy" />
     <f2020-number-card title="Udgået" [number]="result.retired" [icon]="icon.farCarCrash" />
   } @else {
-    <sha-loading/>
+    <sha-loading />
   }
   @if (currentSeasonResult$ | async; as result) {
     <mat-tab-group selectedIndex="1">

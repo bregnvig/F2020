@@ -13,12 +13,10 @@ export interface WBCGraphPlayerEntry {
 }
 
 export class WBCGraph {
-
   entries: WBCGraphEntry[];
 
-
   constructor(wbc: WBC) {
-    const results = (wbc.results || []);
+    const results = wbc.results || [];
     const playerMap = results.reduce((acc, result) => {
       result.players.forEach(p => acc.set(p.player.uid, p.player));
       return acc;
@@ -29,21 +27,23 @@ export class WBCGraph {
     const playerToPosition: Map<string, WBCGraphPlayerEntry[]> = uids.reduce((acc, uid) => acc.set(uid, []), new Map<string, WBCGraphPlayerEntry[]>());
 
     results.forEach(result => {
-
-      uids.map(uid => {
-        summedPoints.set(uid, (summedPoints.get(uid) || 0) + (result.players.find(p => p.player.uid === uid)?.points ?? 0));
-        return [uid, summedPoints.get(uid)!] as UidPoints;
-      })
+      uids
+        .map(uid => {
+          summedPoints.set(uid, (summedPoints.get(uid) || 0) + (result.players.find(p => p.player.uid === uid)?.points ?? 0));
+          return [uid, summedPoints.get(uid)!] as UidPoints;
+        })
         .sort((a, b) => a[1] - b[1])
-        .forEach((entry, index) => playerToPosition.get(entry[0]).push({
-          name: result.raceName,
-          value: index + 1,
-        }));
+        .forEach((entry, index) =>
+          playerToPosition.get(entry[0]).push({
+            name: result.raceName,
+            value: index + 1,
+          }),
+        );
     });
     this.entries = Array.from(playerToPosition.entries()).map(([uid, entries]) => ({
       player: playerMap.get(uid),
       points: summedPoints.get(uid),
-      entries
+      entries,
     }));
   }
 }

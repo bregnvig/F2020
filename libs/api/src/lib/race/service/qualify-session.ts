@@ -21,8 +21,10 @@ export const isQualifyStarted = (session: Session, now = DateTime.now()) => Date
 export const qualifySessionResolver: ResolveFn<Session> = () => {
   const store = inject(RaceStore);
   const openF1 = inject(OpenF1HttpService);
-  return firstValueFrom(toObservable(store.race).pipe(
-    truthy(),
-    switchMap(race => openF1.getSession(race, 'Qualifying')),
-  ));
+  return firstValueFrom(
+    toObservable(store.race).pipe(
+      truthy(),
+      switchMap(race => openF1.getSession(race, 'Qualifying')),
+    ),
+  );
 };

@@ -3,12 +3,13 @@ import { DateTime } from 'luxon';
 import { getCurrentRace, updateRace } from '../../lib';
 import { logger } from 'firebase-functions';
 
-
 // This will be run every hour!
-export const closeRaceCrontab = onSchedule({
+export const closeRaceCrontab = onSchedule(
+  {
     timeZone: 'Europe/Copenhagen',
     schedule: '0 * * * *',
-  }, async () => {
+  },
+  async () => {
     const race = await getCurrentRace('open');
     if (race) {
       logger.info(`Is ${race.name} closed`, race.close <= DateTime.local());

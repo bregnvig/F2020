@@ -9,7 +9,7 @@ import { MatIconButton } from '@angular/material/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <audio #audio (ended)="ended()" (timeupdate)="updateProgress()">
-      <source [src]="url()" type="audio/mpeg">
+      <source [src]="url()" type="audio/mpeg" />
       Hov - du kan ikke afspille denne besked
     </audio>
     <span class="float-right flex items-center">
@@ -17,15 +17,11 @@ import { MatIconButton } from '@angular/material/button';
         <span #duration class="duration text-xs me-2">{{ duration | number: '1.2-2' }}s</span>
       }
       <button mat-icon-button (click)="audio.paused ? audio.play() : audio.pause()">
-        <fa-icon [icon]="audio.paused || audio.ended ? play : pause" [fixedWidth]="true"/>
+        <fa-icon [icon]="audio.paused || audio.ended ? play : pause" [fixedWidth]="true" />
       </button>
     </span>
   `,
-  imports: [
-    DecimalPipe,
-    FaIconComponent,
-    MatIconButton,
-  ],
+  imports: [DecimalPipe, FaIconComponent, MatIconButton],
   styles: `
     .duration {
       position: relative;
@@ -34,7 +30,7 @@ import { MatIconButton } from '@angular/material/button';
     }
 
     .duration::after {
-      content: "";
+      content: '';
       position: absolute;
       bottom: 0;
       left: 0;
@@ -45,9 +41,7 @@ import { MatIconButton } from '@angular/material/button';
     }
   `,
 })
-
 export class RadioMessageComponent {
-
   duration = viewChild<ElementRef<HTMLSpanElement>>('duration');
   audio = viewChild<ElementRef<HTMLAudioElement>>('audio');
 
@@ -57,7 +51,7 @@ export class RadioMessageComponent {
   url = input.required<string>();
 
   updateProgress() {
-    const progress = this.audio().nativeElement.currentTime / this.audio().nativeElement.duration * 100;
+    const progress = (this.audio().nativeElement.currentTime / this.audio().nativeElement.duration) * 100;
     css.setVar('--radio-duration', `${progress}%`, this.duration().nativeElement);
   }
 

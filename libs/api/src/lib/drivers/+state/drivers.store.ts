@@ -7,7 +7,7 @@ import { pipe, switchMap } from 'rxjs';
 import { DriverService } from '../service/driver.service';
 
 export interface DriversState {
-  drivers: IDriver[] | undefined,
+  drivers: IDriver[] | undefined;
   loaded: boolean; // has the Driver list been loaded
   error: string | undefined; // last none error (if any)
 }
@@ -24,11 +24,13 @@ export const DriversStore = signalStore(
   withMethods((store, service = inject(DriverService)) => ({
     loadDrivers: rxMethod<void>(
       pipe(
-        switchMap(() => service.drivers$.pipe(
-          tapResponse({
-            next: drivers => patchState(store, { drivers, loaded: true }),
-            error: error => patchState(store, { error: error?.toString() }),
-          })),
+        switchMap(() =>
+          service.drivers$.pipe(
+            tapResponse({
+              next: drivers => patchState(store, { drivers, loaded: true }),
+              error: error => patchState(store, { error: error?.toString() }),
+            }),
+          ),
         ),
       ),
     ),

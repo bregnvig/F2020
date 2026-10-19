@@ -26,8 +26,8 @@ const drivenSectors = (lap: Lap, now?: number): SectorTimes => {
   }) as SectorTimes;
 };
 
-const minimum = (times: (number | undefined)[]) => times.reduce<number | undefined>((min, time) =>
-  time !== undefined && (min === undefined || time < min) ? time : min, undefined);
+const minimum = (times: (number | undefined)[]) =>
+  times.reduce<number | undefined>((min, time) => (time !== undefined && (min === undefined || time < min) ? time : min), undefined);
 
 const sectorColor = (duration: number | undefined, personalBest: number | undefined, best: number | undefined): SectorColor | undefined => {
   if (!duration) return;
@@ -40,8 +40,10 @@ export const map = ({ laps, drivers, now }: OpenF1SectorParams): IDriverSector[]
   const driverMap = getDrivers(drivers);
   const driven = laps.map(lap => ({ lap, sectors: drivenSectors(lap, now) }));
 
-  const lapsByDriver = driven.reduce((byDriver, lap) =>
-    byDriver.set(lap.lap.driver_number, [...(byDriver.get(lap.lap.driver_number) ?? []), lap]), new Map<number, typeof driven>());
+  const lapsByDriver = driven.reduce(
+    (byDriver, lap) => byDriver.set(lap.lap.driver_number, [...(byDriver.get(lap.lap.driver_number) ?? []), lap]),
+    new Map<number, typeof driven>(),
+  );
 
   const fastest = [0, 1, 2].map(sector => minimum(driven.map(({ sectors }) => sectors[sector])));
   const personalBests = driven.reduce((best, { lap, sectors }) => {

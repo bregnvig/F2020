@@ -14,10 +14,9 @@ const firebaseApp = initializeApp({
   storageBucket: 'f1-2024-8ab8e.appspot.com',
   messagingSenderId: '651727325900',
   appId: '1:651727325900:web:aec3360693b0b39516d069',
-  vapidKey: 'BFnBh8HKN7mhvwA-auVC54sAjaHFBR2gJ6GxtwdW5LxeFfOGztsW84VMlqP9Szzpkhq2MBCA1NXh53BLaUNFc4c'
+  vapidKey: 'BFnBh8HKN7mhvwA-auVC54sAjaHFBR2gJ6GxtwdW5LxeFfOGztsW84VMlqP9Szzpkhq2MBCA1NXh53BLaUNFc4c',
 });
 
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
 const messaging = getMessaging(firebaseApp);
-

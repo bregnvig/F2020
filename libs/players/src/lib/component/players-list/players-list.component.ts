@@ -14,7 +14,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   imports: [MatToolbarModule, MatListModule, RouterLink, FaIconComponent, LoadingComponent],
 })
 export class PlayersListComponent implements OnInit {
-
   players: Signal<Player[]>;
   icon = icon;
 
@@ -23,8 +22,7 @@ export class PlayersListComponent implements OnInit {
     this.players = computed(() => (store.players() ?? []).filter(p => !p.roles.includes('bookie')));
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   isAnonymous(player: Player): boolean {
     return player.roles.length === 1 && player.roles[0] === 'anonymous';

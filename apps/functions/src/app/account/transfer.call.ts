@@ -24,7 +24,6 @@ export const transfer = onCall(async (request: CallableRequest<TransferData>) =>
 });
 
 const buildWithdraw = async ({ fromUid, toUid, amount, message }: TransferData) => {
-
   if (!fromUid) {
     throw logAndCreateError('not-found', `No from uid specified for request `);
   }

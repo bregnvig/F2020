@@ -6,4 +6,3 @@ export interface ITeam extends IChampionshipPoints {
   drivers: string[];
   previousDrivers?: string[];
 }
-

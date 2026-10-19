@@ -17,17 +17,16 @@ export interface RaceControlSnackbarData {
   template: `
     <div class="flex-grow flex items-center gap-3 min-w-0">
       @if (data.message.driver) {
-        <sha-driver-headshot class="avatar" [driver]="data.message.driver"/>
+        <sha-driver-headshot class="avatar" [driver]="data.message.driver" />
       } @else {
         <div class="flex-shrink-0 w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
-          <fa-icon [icon]="icon(data.message.category)"/>
+          <fa-icon [icon]="icon(data.message.category)" />
         </div>
       }
 
       <div class="flex-grow flex justify-between min-w-0">
         <p class="line-clamp-2 break-words">{{ data.message.message }}</p>
       </div>
-
     </div>
   `,
   imports: [DriverHeadshotComponent, FaIconComponent],

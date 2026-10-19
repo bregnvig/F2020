@@ -14,11 +14,11 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
       <p>Hvor mange penge skal der indsættes?</p>
       <mat-form-field>
         <mat-label>Beløb</mat-label>
-        <input formControlName="amount" matInput type="number">
+        <input formControlName="amount" matInput type="number" />
       </mat-form-field>
       <mat-form-field>
         <mat-label>Besked</mat-label>
-        <input formControlName="message" matInput placeholder="Via MobilePay">
+        <input formControlName="message" matInput placeholder="Via MobilePay" />
       </mat-form-field>
     </div>
     <div mat-dialog-actions>
@@ -29,7 +29,6 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
   imports: [MatDialogTitle, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatButton, MatDialogActions, MatDialogContent],
 })
 export class DepositDialogComponent {
-
   #fb = inject(FormBuilder);
   #dialogRef = inject(MatDialogRef<DepositDialogComponent>);
   #service = inject(AccountService);
@@ -39,7 +38,7 @@ export class DepositDialogComponent {
     message: this.#fb.control(''),
   });
 
-  data = inject<{ player: Player; }>(MAT_DIALOG_DATA);
+  data = inject<{ player: Player }>(MAT_DIALOG_DATA);
 
   deposit() {
     const { amount, message } = this.fg.value;

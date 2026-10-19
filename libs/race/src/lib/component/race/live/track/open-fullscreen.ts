@@ -6,12 +6,13 @@ import { MatDialog } from '@angular/material/dialog';
 export const injectOpenFullscreen = () => {
   const dialog = inject(MatDialog);
   const injector = inject(Injector);
-  return <C, D>(component: ComponentType<C>, data: D) => dialog.open<C, D>(component, {
-    data,
-    injector,
-    width: '100vw',
-    height: '100vh',
-    maxWidth: '100vw',
-    maxHeight: '100vh',
-  });
+  return <C, D>(component: ComponentType<C>, data: D) =>
+    dialog.open<C, D>(component, {
+      data,
+      injector,
+      width: '100vw',
+      height: '100vh',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+    });
 };

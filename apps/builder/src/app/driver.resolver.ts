@@ -47,7 +47,7 @@ export const resolveDriver = async (drivers: IDriver[], gridPosition: GridPositi
 
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
 
   const question = (query: string): Promise<string> => {
@@ -98,11 +98,7 @@ Available Drivers:`);
         matches = allDrivers;
       } else {
         const term = normalize(answer);
-        matches = allDrivers.filter(d =>
-          normalize(d.name).includes(term) ||
-          d.code?.toLowerCase().includes(term) ||
-          d.permanentNumbers.some(n => n.toString().includes(term))
-        );
+        matches = allDrivers.filter(d => normalize(d.name).includes(term) || d.code?.toLowerCase().includes(term) || d.permanentNumbers.some(n => n.toString().includes(term)));
       }
 
       if (matches.length === 0) {

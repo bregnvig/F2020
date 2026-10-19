@@ -14,4 +14,3 @@ export * from './session.model';
 export * from './stint.model';
 export * from './token.model';
 export * from './weather.model';
-

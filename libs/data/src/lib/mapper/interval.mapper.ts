@@ -9,17 +9,16 @@ interface OpenF1IntervalParams {
 }
 
 const openF1Map = (source: OpenF1IntervalParams): IDriverInterval[] => {
-
   const currentPositions = [...source.intervals.reduce(toMap<Interval, number>('driver_number'), new Map<number, Interval>()).values()];
   const drivers = getDrivers(source.drivers);
 
   return currentPositions.map(position => {
     const driver = requiredValue(drivers.get(position.driver_number), 'Interval driver with driver number', position.driver_number);
-    return ({
+    return {
       driver,
       gapToLeader: position.gap_to_leader,
       interval: position.interval,
-    }) as IDriverInterval;
+    } as IDriverInterval;
   });
 };
 

@@ -6,21 +6,20 @@ import { DateTime } from 'luxon';
 import { requiredValue } from '@f2020/tools';
 import { openai, OpenAIModel } from './openai.service';
 
-
 export const playerWithoutBid = async (): Promise<Player[]> => {
-
-
   const currentRace = await getCurrentRace('open');
 
   const db = getFirestore();
-  const played: Set<string> = await db.collection(collectionPaths.bids(currentRace.season, currentRace.round))
+  const played: Set<string> = await db
+    .collection(collectionPaths.bids(currentRace.season, currentRace.round))
     .where('submitted', '==', true)
     .get()
     .then(snapshot => snapshot.docs.map(d => d.data() as Bid))
     .then(bids => bids.map(b => b.player!.uid))
     .then((uids: string[]) => new Set<string>(uids));
 
-  const players = await db.collection(collectionPaths.players())
+  const players = await db
+    .collection(collectionPaths.players())
     .where('roles', 'array-contains', 'player')
     .get()
     .then(snapshot => snapshot.docs.map(d => d.data() as Player));
@@ -58,9 +57,7 @@ export const mailBody = (player: Player, race: IRace) => {
 
 // const notificationMessage = (race: IRace, closeDay: string, closeTime: string): string =>
 //   `${race.name} lukker ${closeDay} kl.${closeTime}, og du har endnu ikke spillet!`;
-export const finalNotificationMessage = (race: IRace): string =>
-  `${race.name} lukker lige om lidt, og du har endnu ikke spillet😲`;
-
+export const finalNotificationMessage = (race: IRace): string => `${race.name} lukker lige om lidt, og du har endnu ikke spillet😲`;
 
 // Define a specific type for the expected JSON response
 type NotificationResponse = {
@@ -107,7 +104,7 @@ export const notificationMessage = async (race: IRace): Promise<NotificationResp
                 type: 'string',
               },
               body: {
-                description: 'The notification\'s haiku poem',
+                description: "The notification's haiku poem",
                 type: 'string',
               },
             },
@@ -127,7 +124,6 @@ export const notificationMessage = async (race: IRace): Promise<NotificationResp
 
     // Parse the JSON string and assert its type for type safety
     return JSON.parse(content) as NotificationResponse;
-
   } catch (error) {
     // Log the error and return a default/fallback object or re-throw
     console.error('Failed to generate notification message:', error);

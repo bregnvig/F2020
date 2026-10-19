@@ -14,23 +14,25 @@ export const fetchJson = <T>(url: string): Promise<T> => cachedFetch(url).then(r
  */
 export const findSession = async (year: number, race: IRace, sessionName: 'Race' | 'Sprint' | 'Qualifying'): Promise<Session | undefined> => {
   // OpenF1 answers 404 when no session matches, e.g. a weekend without a sprint
-  const sessions = await fetchJson<Session[]>(`https://api.openf1.org/v1/sessions?year=${year}&circuit_key=${race.circuitId}&session_name=${sessionName}`)
-    .catch(() => [] as Session[]);
+  const sessions = await fetchJson<Session[]>(`https://api.openf1.org/v1/sessions?year=${year}&circuit_key=${race.circuitId}&session_name=${sessionName}`).catch(
+    () => [] as Session[],
+  );
   const distance = (s: Session) => Math.abs(DateTime.fromISO(s.date_start).diff(race.raceStart, 'days').days);
-  return sessions
-    .filter(s => distance(s) < 4)
-    .sort((a, b) => distance(a) - distance(b))[0];
+  return sessions.filter(s => distance(s) < 4).sort((a, b) => distance(a) - distance(b))[0];
 };
 
-export const getCompletedRaces = (seasonId: number): Promise<IRace[]> => firebaseApp.database
-  .collection(racesURL(seasonId)).withConverter(converter.race).get()
-  .then(snapshot => snapshot.docs.map(doc => doc.data() as IRace))
-  .then(races => races.filter(r => r.state === 'completed').sort((a, b) => a.round - b.round));
+export const getCompletedRaces = (seasonId: number): Promise<IRace[]> =>
+  firebaseApp.database
+    .collection(racesURL(seasonId))
+    .withConverter(converter.race)
+    .get()
+    .then(snapshot => snapshot.docs.map(doc => doc.data() as IRace))
+    .then(races => races.filter(r => r.state === 'completed').sort((a, b) => a.round - b.round));
 
-const winnerNumber = async (session: Session | undefined): Promise<number | undefined> => session
-  ? fetchJson<SessionResult[]>(`https://api.openf1.org/v1/session_result?session_key=${session.session_key}`)
-    .then(results => results.find(r => r.position === 1)?.driver_number)
-  : undefined;
+const winnerNumber = async (session: Session | undefined): Promise<number | undefined> =>
+  session
+    ? fetchJson<SessionResult[]>(`https://api.openf1.org/v1/session_result?session_key=${session.session_key}`).then(results => results.find(r => r.position === 1)?.driver_number)
+    : undefined;
 
 interface Wins {
   /** Wins by driver id */
@@ -47,7 +49,9 @@ const raceSessionOf = async (seasonId: number, race: IRace): Promise<Session> =>
 };
 
 const storedWins = async (seasonId: number, lastRace: IRace): Promise<Wins> => {
-  const stored = await firebaseApp.database.doc(`seasons/${seasonId}/standings/all-drivers`).get()
+  const stored = await firebaseApp.database
+    .doc(`seasons/${seasonId}/standings/all-drivers`)
+    .get()
     .then(doc => (doc.data()?.standing ?? []) as IDriverStanding[]);
   if (!stored.length) {
     throw new Error(`No stored standing in season ${seasonId} to keep wins from. Run without --keep-wins`);
@@ -87,7 +91,10 @@ const countWins = async (seasonId: number, completedRaces: IRace[], findDriver: 
  */
 export const fixDriverStandings = async (seasonId: number, write: boolean, keepWins: boolean) => {
   const db = firebaseApp.database;
-  const drivers = await db.collection('drivers').get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
+  const drivers = await db
+    .collection('drivers')
+    .get()
+    .then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
   const findDriver = (driverNumber: number) => drivers.find(d => d.activeNumber === driverNumber);
 
   const completedRaces = await getCompletedRaces(seasonId);
@@ -97,9 +104,7 @@ export const fixDriverStandings = async (seasonId: number, write: boolean, keepW
   }
   console.log(`Found ${completedRaces.length} completed races. Last is round ${completedRaces.at(-1).round} ${completedRaces.at(-1).name}`);
 
-  const { wins, lastRaceSession } = keepWins
-    ? await storedWins(seasonId, completedRaces.at(-1))
-    : await countWins(seasonId, completedRaces, findDriver);
+  const { wins, lastRaceSession } = keepWins ? await storedWins(seasonId, completedRaces.at(-1)) : await countWins(seasonId, completedRaces, findDriver);
 
   const championship = await fetchJson<DriverChampionship[]>(`https://api.openf1.org/v1/championship_drivers?session_key=${lastRaceSession.session_key}`);
   const standing: IDriverStanding[] = championship
@@ -113,14 +118,16 @@ export const fixDriverStandings = async (seasonId: number, write: boolean, keepW
     })
     .filter(s => !!s);
 
-  console.table(standing.map(s => ({
-    driver: s.driver.driverId,
-    position: s.position,
-    points: s.points,
-    previousPosition: s.previousPosition,
-    previousPoints: s.previousPoints,
-    wins: s.wins,
-  })));
+  console.table(
+    standing.map(s => ({
+      driver: s.driver.driverId,
+      position: s.position,
+      points: s.points,
+      previousPosition: s.previousPosition,
+      previousPoints: s.previousPoints,
+      wins: s.wins,
+    })),
+  );
 
   const path = `seasons/${seasonId}/standings/all-drivers`;
   if (write) {

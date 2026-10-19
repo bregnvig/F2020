@@ -11,17 +11,17 @@ import { NgOptimizedImage } from '@angular/common';
   template: `
     <mat-card>
       <mat-card-header class="text-yellow-500">
-        <fa-icon mat-card-avatar [icon]="infoIcon" size="2x"/>
+        <fa-icon mat-card-avatar [icon]="infoIcon" size="2x" />
         <mat-card-title>Løbet er blevet opdateret</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         @for (updatedBy of race().updatedBy; track $index) {
           <p class="flex flex-row items-center">
-            <img [ngSrc]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName" height="40" width="40">
+            <img [ngSrc]="updatedBy.player.photoURL" class="avatar" [alt]="updatedBy.player.displayName" height="40" width="40" />
             <span class="ml-2 flex flex-col">
-          <span>{{ messages()[$index] }}</span>
-          <small class="text-slate-400">{{ updatedBy.updatedAt | dateTime: 'short' }}</small>
-        </span>
+              <span>{{ messages()[$index] }}</span>
+              <small class="text-slate-400">{{ updatedBy.updatedAt | dateTime: 'short' }}</small>
+            </span>
           </p>
         }
       </mat-card-content>
@@ -32,23 +32,23 @@ import { NgOptimizedImage } from '@angular/common';
   providers: [DriverNamePipe],
 })
 export class RaceUpdatedWarningComponent {
-
   #driverName = inject(DriverNamePipe);
 
   readonly infoIcon = icon.farInfo;
   readonly race = input.required<IRace>();
-  readonly messages = computed(() => (this.race()?.updatedBy ?? []).map(u => [
-      `${u.player.displayName} har ændret`,
-      u.close ? this.getCloseChange(u) : '',
-      u.close && u.selectedDriver ? ' og ' : '',
-      u.selectedDriver ? this.getDriverChange(u) : '',
-    ].join(' '),
-  ));
+  readonly messages = computed(() =>
+    (this.race()?.updatedBy ?? []).map(u =>
+      [
+        `${u.player.displayName} har ændret`,
+        u.close ? this.getCloseChange(u) : '',
+        u.close && u.selectedDriver ? ' og ' : '',
+        u.selectedDriver ? this.getDriverChange(u) : '',
+      ].join(' '),
+    ),
+  );
 
   getCloseChange(u: Partial<RaceUpdatedBy>): string {
-    return u.previous
-      ? `lukke tidspunktet fra ${u.previous.close.toFormat('HH:mm')} til ${u.close.toFormat('HH:mm')} `
-      : `lukke tidspunktet til ${u.close.toFormat('HH:mm')} `;
+    return u.previous ? `lukke tidspunktet fra ${u.previous.close.toFormat('HH:mm')} til ${u.close.toFormat('HH:mm')} ` : `lukke tidspunktet til ${u.close.toFormat('HH:mm')} `;
   }
 
   getDriverChange(u: Partial<RaceUpdatedBy>): string {

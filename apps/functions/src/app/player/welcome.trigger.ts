@@ -18,7 +18,7 @@ export const WelcomeMailTrigger = onDocumentUpdated('players/{userId}', async ev
   const after: Player = event.data.after.data() as Player;
   if (before.roles?.includes('anonymous') && after.roles?.includes('player')) {
     log('player', after.displayName, 'Is now approved - lets send a welcome mail');
-    return sendMail(after.email, 'Velkommen til F1 2020 Betting', mailbody(after)).then((msg) => {
+    return sendMail(after.email, 'Velkommen til F1 2020 Betting', mailbody(after)).then(msg => {
       log(`sendMail result :(${msg})`);
     });
   }

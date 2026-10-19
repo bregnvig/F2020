@@ -12,16 +12,13 @@ const tyreToAsset: Record<Tyre, string> = {
 
 @Component({
   selector: 'f2020-tyre',
-  template: `<img class="inline" [ngSrc]="src()" height="24" width="24" [alt]="tyre()" />`,
-  imports: [
-    NgOptimizedImage,
-  ],
+  template: `
+    <img class="inline" [ngSrc]="src()" height="24" width="24" [alt]="tyre()" />
+  `,
+  imports: [NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class TyreComponent {
-
   tyre = input.required<Tyre>();
   src = computed(() => tyreToAsset[this.tyre()] ?? tyreToAsset['SOFT']);
-
 }

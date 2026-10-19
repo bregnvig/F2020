@@ -32,7 +32,6 @@ const adjectives = [
 ];
 
 const weather = async (data: Record<string, string | number>): Promise<string> => {
-
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
 
   const response = await openai.chat.completions.create({

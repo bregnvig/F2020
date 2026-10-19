@@ -1,12 +1,12 @@
 <mat-list>
   <mat-list-item *shaAnimatedFor="let bid of ranked(); key: playerKey; let index = index">
-    <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName">
+    <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" />
     <div matListItemTitle>
       <span>{{ bid.player.displayName }}</span>
       @let change = placesMoved(bid.player.uid, index);
       @if (change) {
         <span class="float-right rounded-full mt-5 py-1 px-3" [class.bg-lime-700]="change > 0" [class.bg-red-700]="change < 0">
-          <fa-icon class="me-1" [icon]="['fas', change > 0 ? 'angle-up' : 'angle-down' ]" [fixedWidth]="true"/>
+          <fa-icon class="me-1" [icon]="['fas', change > 0 ? 'angle-up' : 'angle-down']" [fixedWidth]="true" />
           {{ abs(change) }}
         </span>
       }

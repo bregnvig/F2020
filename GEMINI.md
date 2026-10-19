@@ -74,9 +74,7 @@ This project emphasizes a modern, functional, and idiomatic TypeScript style. We
   ```typescript
   // ✅ PREFERRED: Functional and declarative
   const numbers = [1, 2, 3, 4];
-  const doubledAndSummed = numbers
-    .map(n => n * 2)
-    .reduce((sum, n) => sum + n, 0);
+  const doubledAndSummed = numbers.map(n => n * 2).reduce((sum, n) => sum + n, 0);
 
   // ❌ AVOID: Imperative loop
   let sum = 0;
@@ -292,11 +290,11 @@ import { Component } from '@angular/core';
         <div>Unknown status</div>
       }
     }
-  `
+  `,
 })
 export class NewControlFlowComponent {
   isLoading = false;
-  items: {id: number, name: string}[] = [];
+  items: { id: number; name: string }[] = [];
   status = 'pending';
 }
 
@@ -316,13 +314,13 @@ export class NewControlFlowComponent {
       <div *ngSwitchCase="'complete'">Complete!</div>
       <div *ngSwitchDefault>Unknown status</div>
     </div>
-  `
+  `,
 })
 export class OldControlFlowComponent {
   isLoading = false;
-  items: {id: number, name: string}[] = [];
+  items: { id: number; name: string }[] = [];
   status = 'pending';
-  trackByFn(index: number, item: {id: number, name: string}) {
+  trackByFn(index: number, item: { id: number; name: string }) {
     return item.id;
   }
 }
@@ -405,7 +403,11 @@ export class MyComponentWithInject {
 
 // ❌ AVOID: Constructor injection
 export class MyComponentWithConstructorDI {
-  constructor(private service: MyService, private router: Router, private fb: FormBuilder) {}
+  constructor(
+    private service: MyService,
+    private router: Router,
+    private fb: FormBuilder,
+  ) {}
 }
 ```
 
@@ -436,7 +438,7 @@ export class MyComponentWithSignals {
   doubledCount = computed(() => this.count() * 2);
 
   increment() {
-    this.count.update((c) => c + 1);
+    this.count.update(c => c + 1);
   }
 }
 
@@ -450,5 +452,7 @@ export class MyComponentWithoutSignals {
 }
 
 // Dummy classes for compilation
-class MyService { getData() {} }
+class MyService {
+  getData() {}
+}
 ```

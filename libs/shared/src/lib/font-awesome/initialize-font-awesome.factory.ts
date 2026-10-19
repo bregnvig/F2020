@@ -120,23 +120,14 @@ const fasIcons = [
   faCarOn,
 ];
 
-const falIcons = [
-  faRocketLaunch,
-  faTireFlat,
-];
+const falIcons = [faRocketLaunch, faTireFlat];
 
-const fabIcons = [
-  faGoogle,
-  faFacebookF,
-  faApple,
-  faCss3,
-  faFirefoxBrowser,
-  faClaude,
-];
+const fabIcons = [faGoogle, faFacebookF, faApple, faCss3, faFirefoxBrowser, faClaude];
 
 export function initializeFontAwesomeFactory(faIconLibrary: FaIconLibrary) {
-  return () => new Promise<any>((resolve: any) => {
-    faIconLibrary.addIcons(...fasIcons, ...farIcons, ...falIcons, ...fabIcons);
-    resolve();
-  });
+  return () =>
+    new Promise<any>((resolve: any) => {
+      faIconLibrary.addIcons(...fasIcons, ...farIcons, ...falIcons, ...fabIcons);
+      resolve();
+    });
 }

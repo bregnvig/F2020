@@ -13,7 +13,7 @@ import { teamLogoUrl } from '../../formula1-media';
         {{ name().charAt(0) }}
       </span>
     } @else {
-      <img class="rounded-full bg-white p-1 object-contain" [width]="size()" [height]="size()" [ngSrc]="url()" [alt]="name()" (error)="failed.set(true)">
+      <img class="rounded-full bg-white p-1 object-contain" [width]="size()" [height]="size()" [ngSrc]="url()" [alt]="name()" (error)="failed.set(true)" />
     }
   `,
   host: {

@@ -15,7 +15,6 @@ import { AsyncPipe, CurrencyPipe } from '@angular/common';
   imports: [InfiniteScrollDirective, LoadingComponent, AsyncPipe, CurrencyPipe, DateTimePipe, MatListModule],
 })
 export class TransactionsComponent {
-
   transactions$: Observable<Transaction[]>;
   player = input.required<string, Player>({
     transform: value => value?.uid,
@@ -26,11 +25,11 @@ export class TransactionsComponent {
     const service = inject(AccountService);
     effect(() => {
       const player = this.player();
-      player && (this.transactions$ = this.#lastDate$.pipe(
+      player &&
+        (this.transactions$ = this.#lastDate$.pipe(
           switchMap(lastDate => service.getTransactions(player, lastDate, 20)),
           scan((acc, transactions) => [...acc, ...transactions], []),
-        )
-      );
+        ));
     });
   }
 

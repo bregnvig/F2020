@@ -38,7 +38,7 @@ const openF1Map = (source: OpenF1RaceResultParams): IRaceResult => {
         grid,
         status,
         fastestLap: rankedTimes[sessionResult.driver_number],
-        points: status === 'Gennemført' ? ChampionshipPoints[index] ?? 0 : 0,
+        points: status === 'Gennemført' ? (ChampionshipPoints[index] ?? 0) : 0,
       });
     })
     .filter(isTruthy);

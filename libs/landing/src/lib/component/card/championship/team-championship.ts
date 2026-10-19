@@ -12,11 +12,11 @@ import { topEntries } from './championship';
   template: `
     <mat-card>
       <mat-card-header>
-        <fa-icon mat-card-avatar [icon]="icon" size="2x"/>
+        <fa-icon mat-card-avatar [icon]="icon" size="2x" />
         <mat-card-title>Konstruktørmesterskabet</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <sha-championship-list [entries]="entries()"/>
+        <sha-championship-list [entries]="entries()" />
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [routerLink]="['teams']">SE MERE</a>
@@ -34,9 +34,14 @@ export class TeamChampionshipComponent {
   #season = inject(SeasonStore).season;
 
   protected readonly icon = icon.fasPeopleGroup;
-  protected readonly entries = computed(() => topEntries(this.#teams().filter(t => t.points > 0), team => ({
-    id: team.constructorId,
-    name: team.name,
-    logo: { seasonId: this.#season().id },
-  })));
+  protected readonly entries = computed(() =>
+    topEntries(
+      this.#teams().filter(t => t.points > 0),
+      team => ({
+        id: team.constructorId,
+        name: team.name,
+        logo: { seasonId: this.#season().id },
+      }),
+    ),
+  );
 }

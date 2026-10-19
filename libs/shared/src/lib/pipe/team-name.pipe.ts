@@ -3,12 +3,11 @@ import { TeamService } from '@f2020/api';
 import { ITeam } from '@f2020/data';
 
 @Pipe({
-    name: 'teamName',
-    pure: false,
-    standalone: true,
+  name: 'teamName',
+  pure: false,
+  standalone: true,
 })
 export class TeamNamePipe implements PipeTransform {
-
   #previousId?: string;
   #team?: ITeam;
   #teams?: ITeam[];
@@ -23,12 +22,10 @@ export class TeamNamePipe implements PipeTransform {
   }
 
   transform(constructorId: string): string | undefined {
-
     if (constructorId && constructorId !== this.#previousId && this.#teams?.length) {
       this.#previousId = constructorId;
       this.#team = this.#teams.find(d => d.constructorId === constructorId);
     }
     return this.#team?.name;
   }
-
 }

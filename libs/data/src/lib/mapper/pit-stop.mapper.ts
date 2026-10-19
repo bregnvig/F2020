@@ -3,7 +3,6 @@ import { PitStop } from '@f2020/openf1';
 import { requiredValue, toMap } from '@f2020/tools';
 import { getDrivers } from './mapper-utils';
 
-
 interface OpenF1PitstopParams {
   pitStops: PitStop[];
   drivers: IDriver[];
@@ -21,19 +20,21 @@ const openF1PitStops = (params: OpenF1PitstopParams) => {
   // the ones without a duration, which would otherwise be the fastest pit stop
   const pitStops = params.pitStops
     .filter(pitStop => pitStop.pit_duration != null)
-    .reduce(toMap<PitStop, string>(pitStop => `${pitStop.driver_number}-${pitStop.lap_number}`), new Map<string, PitStop>());
+    .reduce(
+      toMap<PitStop, string>(pitStop => `${pitStop.driver_number}-${pitStop.lap_number}`),
+      new Map<string, PitStop>(),
+    );
 
   return [...pitStops.values()].map(pitStop => {
     const driver = requiredValue(drivers.get(pitStop.driver_number), 'Pit stop driver with driver number', pitStop.driver_number);
-    return ({
+    return {
       driver,
       team: requiredValue(teams.get(driver.driverId), 'Pit stop team with driver id', driver),
       lap: pitStop.lap_number,
       duration: pitStop.pit_duration * 1000,
-    });
+    };
   });
 };
-
 
 export function pitStops(params: OpenF1PitstopParams): IPitStop[] {
   return openF1PitStops(params);

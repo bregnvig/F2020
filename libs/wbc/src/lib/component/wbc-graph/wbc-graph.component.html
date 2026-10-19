@@ -16,8 +16,8 @@
   <mat-selection-list>
     @for (entry of playerEntries(); track entry) {
       <mat-list-option (click)="toggle(entry.player)" [selected]="isSelected(entry)">
-        <img matListItemAvatar height="40" width="40" [ngSrc]="entry.player.photoURL">
-        <h3 matListItemLine class="selected">{{ entry.player.displayName }} </h3>
+        <img matListItemAvatar height="40" width="40" [ngSrc]="entry.player.photoURL" />
+        <h3 matListItemLine class="selected">{{ entry.player.displayName }}</h3>
         <p matListItemLine>{{ entry.points }} point</p>
       </mat-list-option>
     }

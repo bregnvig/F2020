@@ -11,4 +11,3 @@ export const standingCall = onCall(async (request: CallableRequest<IRace>) => {
     .then(() => setStandings(request.data))
     .catch(internalError);
 });
-

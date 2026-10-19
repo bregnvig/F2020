@@ -11,24 +11,30 @@ export const getDrivers = async (sessionKey?: string): Promise<IDriver[]> => {
   return cachedFetch(`https://api.openf1.org/v1/drivers${filter}`)
     .then(response => response.json())
     .then((response: Driver[]) => response.map(mapper.driver))
-    .then(drivers => drivers.filter(driver => {
-      const result = !!driver.code && (!!driver.countryCode || !!sessionKey);
-      !result && console.log('Invalid driver', driver);
-      return result;
-    }))
-    .then(drivers => [...drivers.reduce((acc, driver) => {
-      const existing = acc.get(driver.code);
-      if (existing) {
-        const permanentNumber = driver.permanentNumbers[0];
-        !existing.permanentNumbers.includes(permanentNumber) && existing.permanentNumbers.push(permanentNumber);
-      }
-      return acc.set(driver.code, { ...(existing ?? {}), ...filterNullish(driver), permanentNumbers: existing?.permanentNumbers ?? driver.permanentNumbers } as IDriver);
-    }, new Map<string, IDriver>()).values()]);
+    .then(drivers =>
+      drivers.filter(driver => {
+        const result = !!driver.code && (!!driver.countryCode || !!sessionKey);
+        !result && console.log('Invalid driver', driver);
+        return result;
+      }),
+    )
+    .then(drivers => [
+      ...drivers
+        .reduce((acc, driver) => {
+          const existing = acc.get(driver.code);
+          if (existing) {
+            const permanentNumber = driver.permanentNumbers[0];
+            !existing.permanentNumbers.includes(permanentNumber) && existing.permanentNumbers.push(permanentNumber);
+          }
+          return acc.set(driver.code, { ...(existing ?? {}), ...filterNullish(driver), permanentNumbers: existing?.permanentNumbers ?? driver.permanentNumbers } as IDriver);
+        }, new Map<string, IDriver>())
+        .values(),
+    ]);
 };
 
 export const buildDrivers = async (): Promise<number> => {
   const db = firebaseApp.database;
-  const drivers = (await getDrivers());
+  const drivers = await getDrivers();
   const activeDrivers = await getDrivers('latest');
   const activeDriverMap = new Map(activeDrivers.map(d => [d.driverId, d.permanentNumbers[0]]));
 
@@ -36,14 +42,13 @@ export const buildDrivers = async (): Promise<number> => {
   const existingDrivers = await driverCollection.get().then(snapshot => snapshot.docs.map(doc => doc.data()) as IDriver[]);
   const existingDriver = existingDrivers.reduce((acc, d) => ({ ...acc, [StringUtils.normalize(d.name)]: d }), {});
   return db.runTransaction(transaction => {
-    drivers
-      .forEach(driver => {
-        const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumbers === driver.permanentNumbers && d.code === driver.code);
-        const driverId = existing?.driverId ?? driver.driverId;
-        const activeNumber = activeDriverMap.get(driver.driverId);
-        console.log(`${existing ? 'Updating' : 'Creating'}`, driver.code, driverId, driver.teamName, driver.headshotUrl, activeNumber != null ? `#${activeNumber}` : 'inactive');
-        transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId, activeNumber })));
-      });
+    drivers.forEach(driver => {
+      const existing = existingDriver[StringUtils.normalize(driver.name)] ?? existingDrivers.find(d => d.permanentNumbers === driver.permanentNumbers && d.code === driver.code);
+      const driverId = existing?.driverId ?? driver.driverId;
+      const activeNumber = activeDriverMap.get(driver.driverId);
+      console.log(`${existing ? 'Updating' : 'Creating'}`, driver.code, driverId, driver.teamName, driver.headshotUrl, activeNumber != null ? `#${activeNumber}` : 'inactive');
+      transaction.set(driverCollection.doc(driverId), filterNullish(firestoreUtils.convertTimestamps({ ...existing, ...driver, driverId, activeNumber })));
+    });
     return Promise.resolve(drivers.length);
   });
 };

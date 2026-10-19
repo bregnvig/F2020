@@ -13,16 +13,9 @@ import { MatCardModule } from '@angular/material/card';
   selector: 'f2020-join-wbc',
   templateUrl: './join-wbc.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatCardModule,
-    FaIconComponent,
-    MatButtonModule,
-    RouterLink,
-    RelativeToNowPipe,
-  ],
+  imports: [MatCardModule, FaIconComponent, MatButtonModule, RouterLink, RelativeToNowPipe],
 })
 export class JoinWbcComponent {
-
   #snackBar = inject(MatSnackBar);
 
   @HostBinding('hidden') isHidden = true;
@@ -46,14 +39,13 @@ export class JoinWbcComponent {
       const uid = this.playerStore.player().uid;
       return (wbc?.participants || []).includes(uid);
     });
-    effect(() => this.isHidden = !this.stillTimeToJoin());
+    effect(() => (this.isHidden = !this.stillTimeToJoin()));
   }
 
-
   joinWBC() {
-    this.playerStore.joinWBC()
+    this.playerStore
+      .joinWBC()
       .then(() => firstValueFrom(this.#snackBar.open('🏆 Du deltager nu i WBC', 'FORTRYD', { duration: 5000 }).onAction()))
       .then(() => this.playerStore.undoWBC());
   }
-
 }

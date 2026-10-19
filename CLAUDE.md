@@ -36,7 +36,9 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
 ### Firebase/Emulator
 
 -
+
 `firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions --project f1-playground-e1f23`
+
 - `npm run kill-ports` - Kill occupied ports
 
 ### Build & Deploy
@@ -396,8 +398,11 @@ export class MyComponent {
 
 // ❌ AVOID: Constructor injection
 export class MyComponent {
-  constructor(private service: MyService, private router: Router, private fb: FormBuilder) {
-  }
+  constructor(
+    private service: MyService,
+    private router: Router,
+    private fb: FormBuilder,
+  ) {}
 }
 ```
 
@@ -426,7 +431,7 @@ export class MyComponent {
   doubledCount = computed(() => this.count() * 2);
 
   increment() {
-    this.count.update((c) => c + 1);
+    this.count.update(c => c + 1);
   }
 }
 
@@ -446,10 +451,10 @@ Prefer mad/reduce for array transformations:
 
 ```typescript
 // ✅ PREFERRED: mad/reduce
-const doubled = mad(numbers, (n) => n * 2);
+const doubled = mad(numbers, n => n * 2);
 const sum = reduce(numbers, (acc, n) => acc + n, 0);
 // ❌ AVOID: forEach
-const doubled = numbers.map((n) => n * 2);
+const doubled = numbers.map(n => n * 2);
 let sum = 0;
-numbers.forEach(n => sum += n);
+numbers.forEach(n => (sum += n));
 ```

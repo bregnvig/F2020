@@ -14,17 +14,29 @@ import { PlayersStore } from '@f2020/api';
 @Component({
   templateUrl: './transfer-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatDialogTitle, MatDialogContent, MatFormField, CurrencyPipe, MatSelect, MatOption, MatLabel, MatInput, MatDialogActions, MatButton, MatDialogClose],
+  imports: [
+    ReactiveFormsModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatFormField,
+    CurrencyPipe,
+    MatSelect,
+    MatOption,
+    MatLabel,
+    MatInput,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+  ],
 })
 export class TransferDialogComponent {
-
   readonly #fb = inject(FormBuilder);
   readonly #dialogRef = inject(MatDialogRef<DepositDialogComponent>);
   readonly #service = inject(AccountService);
   readonly #store = inject(PlayersStore);
 
   players = computed(() => this.#store.players().filter(p => p.uid !== this.data.player.uid));
-  data = inject<{ player: Player; }>(MAT_DIALOG_DATA);
+  data = inject<{ player: Player }>(MAT_DIALOG_DATA);
 
   fg = this.#fb.group({
     to: this.#fb.control<Player>(null, Validators.required),
@@ -32,10 +44,8 @@ export class TransferDialogComponent {
     message: this.#fb.control('', Validators.required),
   });
 
-
   onWithdraw() {
     const { amount, message, to } = this.fg.value;
     this.#dialogRef.close(this.#service.transfer(this.data.player.uid, to.uid, amount, message).then(() => ({ to, amount })));
   }
-
 }

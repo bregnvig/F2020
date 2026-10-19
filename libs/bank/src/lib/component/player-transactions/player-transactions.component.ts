@@ -19,7 +19,8 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
   template: `
     @if (player()) {
       <mat-toolbar color="primary">
-        <span class="flex-auto">{{ player().displayName }}</span><span>{{ player().balance | currency: 'DKK' }}</span>
+        <span class="flex-auto">{{ player().displayName }}</span>
+        <span>{{ player().balance | currency: 'DKK' }}</span>
       </mat-toolbar>
     }
     <f2020-transactions [player]="player()" />
@@ -34,7 +35,6 @@ import { WithdrawDialogComponent } from './../withdraw-dialog/withdraw-dialog.co
   imports: [MatToolbarModule, TransactionsComponent, MatButtonModule, MatDialogModule, CurrencyPipe],
 })
 export class PlayerTransactionsComponent implements OnInit {
-
   player: Signal<Player>;
   #store = inject(PlayersStore);
   #injector = inject(Injector);
@@ -43,44 +43,53 @@ export class PlayerTransactionsComponent implements OnInit {
   #route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.#route.params.pipe(
-      map<Params, string>(params => params.uid),
-    ).subscribe(uid => this.#store.setPlayer(uid));
+    this.#route.params.pipe(map<Params, string>(params => params.uid)).subscribe(uid => this.#store.setPlayer(uid));
     this.player = this.#store.player;
   }
 
   openDeposit(player: Player) {
-    this.#dialog.open(DepositDialogComponent, {
-      width: '250px',
-      data: { player },
-      injector: this.#injector,
-    }).afterClosed().pipe(
-      switchMap(result => result),
-      first(),
-    ).subscribe(amount => this.#snackBar.open(`${player.displayName} har fået indsat ${amount}`, null, { duration: 3000 }));
+    this.#dialog
+      .open(DepositDialogComponent, {
+        width: '250px',
+        data: { player },
+        injector: this.#injector,
+      })
+      .afterClosed()
+      .pipe(
+        switchMap(result => result),
+        first(),
+      )
+      .subscribe(amount => this.#snackBar.open(`${player.displayName} har fået indsat ${amount}`, null, { duration: 3000 }));
   }
 
   openWithdraw(player: Player) {
-    this.#dialog.open(WithdrawDialogComponent, {
-      width: '250px',
-      data: { player },
-      injector: this.#injector,
-    }).afterClosed().pipe(
-      switchMap(result => result),
-      first(),
-    ).subscribe(amount => this.#snackBar.open(`${player.displayName} har fået udbetalt ${amount}`, null, { duration: 3000 }));
+    this.#dialog
+      .open(WithdrawDialogComponent, {
+        width: '250px',
+        data: { player },
+        injector: this.#injector,
+      })
+      .afterClosed()
+      .pipe(
+        switchMap(result => result),
+        first(),
+      )
+      .subscribe(amount => this.#snackBar.open(`${player.displayName} har fået udbetalt ${amount}`, null, { duration: 3000 }));
   }
 
   openTransfer(player: Player) {
-    this.#dialog.open(TransferDialogComponent, {
-      data: { player },
-      injector: this.#injector,
-    }).afterClosed().pipe(
-      switchMap(result => result),
-      first(),
-    ).subscribe(({ amount, to }: {
-      amount: number,
-      to: Player;
-    }) => this.#snackBar.open(`${player.displayName} har overført ${amount} til ${to.displayName}`, null, { duration: 3000 }));
+    this.#dialog
+      .open(TransferDialogComponent, {
+        data: { player },
+        injector: this.#injector,
+      })
+      .afterClosed()
+      .pipe(
+        switchMap(result => result),
+        first(),
+      )
+      .subscribe(({ amount, to }: { amount: number; to: Player }) =>
+        this.#snackBar.open(`${player.displayName} har overført ${amount} til ${to.displayName}`, null, { duration: 3000 }),
+      );
   }
 }

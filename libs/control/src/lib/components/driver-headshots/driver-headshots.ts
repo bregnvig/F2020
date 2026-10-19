@@ -11,7 +11,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
   template: `
     @for (driverId of driverIds(); track $index) {
       @let driver = driverId | driver;
-      <sha-driver-headshot [driver]="driver" [matTooltip]="driver?.code ?? ''"/>
+      <sha-driver-headshot [driver]="driver" [matTooltip]="driver?.code ?? ''" />
     }
   `,
   host: {

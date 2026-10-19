@@ -18,7 +18,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   imports: [MatToolbarModule, MatListModule, HasRoleDirective, SidenavButtonComponent, RouterLink, MatDividerModule, FaIconComponent, NgOptimizedImage],
 })
 export class SidebarComponent {
-
   #router = inject(Router);
 
   closing = output<void>();

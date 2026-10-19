@@ -7,36 +7,36 @@ const normalize = (str: string) => str.toLocaleLowerCase().trim();
 const mapPath = '/tmp/circuit-names.json';
 
 const countryNameMap: Record<string, string> = {
-  'australia': 'AUS',
-  'austria': 'AUT',
-  'azerbaijan': 'AZE',
-  'bahrain': 'BHR',
-  'belgium': 'BEL',
-  'brazil': 'BRA',
-  'canada': 'CAN',
-  'china': 'CHN',
-  'france': 'FRA',
-  'germany': 'DEU',
+  australia: 'AUS',
+  austria: 'AUT',
+  azerbaijan: 'AZE',
+  bahrain: 'BHR',
+  belgium: 'BEL',
+  brazil: 'BRA',
+  canada: 'CAN',
+  china: 'CHN',
+  france: 'FRA',
+  germany: 'DEU',
   'great britain': 'GBR',
-  'hungary': 'HUN',
-  'italy': 'ITA',
-  'japan': 'JPN',
-  'malaysia': 'MYS',
-  'mexico': 'MEX',
-  'monaco': 'MCO',
-  'netherlands': 'NLD',
-  'portugal': 'PRT',
-  'qatar': 'QAT',
-  'russia': 'RUS',
+  hungary: 'HUN',
+  italy: 'ITA',
+  japan: 'JPN',
+  malaysia: 'MYS',
+  mexico: 'MEX',
+  monaco: 'MCO',
+  netherlands: 'NLD',
+  portugal: 'PRT',
+  qatar: 'QAT',
+  russia: 'RUS',
   'saudi arabia': 'SAU',
-  'singapore': 'SGP',
-  'spain': 'ESP',
-  'turkey': 'TUR',
-  'uae': 'ARE',
+  singapore: 'SGP',
+  spain: 'ESP',
+  turkey: 'TUR',
+  uae: 'ARE',
   'united arab emirates': 'ARE',
   'united kingdom': 'GBR',
   'united states': 'USA',
-  'usa': 'USA',
+  usa: 'USA',
 };
 
 export const resolveCircuit = async (summary: string, location: string, circuits: Circuit[]): Promise<Circuit> => {
@@ -72,8 +72,7 @@ export const resolveCircuit = async (summary: string, location: string, circuits
   let found = candidates.find(c => {
     const name = normalize(c.name);
     const circuitName = normalize(c.circuitName);
-    return raceName.includes(name) || locationNormalized.includes(name) ||
-           raceName.includes(circuitName) || locationNormalized.includes(circuitName);
+    return raceName.includes(name) || locationNormalized.includes(name) || raceName.includes(circuitName) || locationNormalized.includes(circuitName);
   });
 
   // Pass 2: Weaker match - circuit name or race name contains location (e.g. Location "Monaco" in "Monaco Grand Prix")
@@ -132,11 +131,9 @@ Available Circuits:`);
         matches = candidates;
       } else {
         const term = normalize(answer);
-        const countryCode = Object.keys(countryNameMap).find(
-          (country) => countryNameMap[country].toLowerCase() === term,
-        );
+        const countryCode = Object.keys(countryNameMap).find(country => countryNameMap[country].toLowerCase() === term);
         matches = candidates.filter(
-          (c) =>
+          c =>
             normalize(c.name).includes(term) ||
             normalize(c.circuitName).includes(term) ||
             c.countryCode2.toLowerCase() === term ||

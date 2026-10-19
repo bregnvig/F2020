@@ -17,7 +17,6 @@ import { MatCardModule } from '@angular/material/card';
   },
 })
 export class LastYearComponent {
-
   lastYear: Signal<RoundResult>;
   icon = icon.farCalendar;
   url: Signal<string | undefined>;

@@ -20,17 +20,19 @@ export const SeasonStore = signalStore(
     error: undefined,
   }),
   withMethods((store, service = inject(SeasonService)) => ({
-      loadSeason: rxMethod<string>(
-        pipe(
-          distinctUntilChanged(),
-          tap(() => patchState(store, { loaded: false, season: undefined, error: undefined })),
-          switchMap((seasonId: string) => service.loadSeason(seasonId).pipe(
-              tapResponse({
-                next: season => patchState(store, { season, loaded: true }),
-                error: error => patchState(store, { error: error?.toString() }),
-              }),
-            ),
+    loadSeason: rxMethod<string>(
+      pipe(
+        distinctUntilChanged(),
+        tap(() => patchState(store, { loaded: false, season: undefined, error: undefined })),
+        switchMap((seasonId: string) =>
+          service.loadSeason(seasonId).pipe(
+            tapResponse({
+              next: season => patchState(store, { season, loaded: true }),
+              error: error => patchState(store, { error: error?.toString() }),
+            }),
           ),
-        )),
-    }),
-  ));
+        ),
+      ),
+    ),
+  })),
+);

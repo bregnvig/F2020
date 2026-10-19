@@ -6,7 +6,6 @@ import { collections } from '../../test-utils';
 import { adminApp, authedApp, clearFirestoreData } from '../../test-utils/firestore-test-utils';
 
 describe('Reminder unittest', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   // const writeBid = async (bid: any, uid: string) => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).set(bid);
@@ -31,7 +30,6 @@ describe('Reminder unittest', () => {
 
   it('should have firebase initialized', async () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('withoutBid')())
-      .then((result: firebase.functions.HttpsCallableResult) => expect(result.data.length).toBe(2));
+    await assertSucceeds(app.functions.httpsCallable('withoutBid')()).then((result: firebase.functions.HttpsCallableResult) => expect(result.data.length).toBe(2));
   });
 });

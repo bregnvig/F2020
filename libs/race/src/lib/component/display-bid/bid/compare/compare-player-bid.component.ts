@@ -14,7 +14,7 @@ import { Player } from '@f2020/data';
         @if (select.value) {
           <mat-option [value]="null">
             <div class="flex gap-3">
-              <img class="player-avatar rounded-full" src="assets/loading/red.svg" alt="Nulstil" width="24" height="24">
+              <img class="player-avatar rounded-full" src="assets/loading/red.svg" alt="Nulstil" width="24" height="24" />
               <span>Nulstil</span>
             </div>
           </mat-option>
@@ -22,7 +22,7 @@ import { Player } from '@f2020/data';
         @for (player of players(); track player.uid) {
           <mat-option [value]="player.uid">
             <div class="flex gap-3">
-              <img class="player-avatar rounded-full" [src]="player.photoURL" [alt]="player.displayName" width="24" height="24">
+              <img class="player-avatar rounded-full" [src]="player.photoURL" [alt]="player.displayName" width="24" height="24" />
               <span>{{ player.displayName }}</span>
             </div>
           </mat-option>

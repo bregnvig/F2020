@@ -2,62 +2,54 @@
   <span>{{ header() }}</span>
 </mat-toolbar>
 <sha-card-page>
-
   @if (teams(); as teams) {
-    <mat-list>
-      @for (team of teams; track team.constructorId; ) {
-        <h2 class="!flex items-center gap-3" [class.!mt-2]="!$first" matSubheader>
-          @if (seasonId(); as seasonId) {
-            <sha-team-logo [seasonId]="seasonId" [name]="team.name" [size]="32"/>
-          }
-          <span class="grow">{{ team.name }}</span>
-          @if (team.points) {
-            <span class="mr-4"> {{ team.points }} point</span>
-          }
-        </h2>
-        @let drivers = allDrivers(team);
-        @for (driverId of drivers; track driverId) {
-          <mat-list-item>
-            @let driver = driverId | driver;
-            <h5 matListItemTitle>
-              {{ driver?.name }}
-              @if (team.previousDrivers?.includes(driverId)) {
-                <fa-icon [icon]="icon.falTireFlat"/>
-              }
-            </h5>
-            <sha-driver-headshot matListItemAvatar [driver]="driver"/>
-            <small class="!flex justify-between" matListItemLine>
-              <span class="flex-auto uppercase">{{ driverId }}</span>
-              @let permanentNumbers = driver?.permanentNumbers?.join(', ');
-              <span class="flex-auto text-end" [title]="permanentNumbers">
-                @if (driver?.activeNumber) {
-                  #{{ driver?.activeNumber }}
-                }
-              </span>
-            </small>
-            <p *shaHasRole="'admin'" matListItemMeta>
-              <button mat-icon-button (click)="removeDriver(driverId, team)">
-                <fa-icon [icon]="icon.farTrash"/>
-              </button>
-              <button mat-icon-button (click)="previousDriver(driverId, team)">
-                <fa-icon [icon]="icon.falTireFlat"/>
-              </button>
-            </p>
-          </mat-list-item>
-        }
-        <mat-list-item *shaHasRole="'admin'">
-          <p matListItemMeta>
-            <button mat-icon-button [disabled]="noDrivers()" (click)="addDriver(team)">
-              <fa-icon [icon]="icon.farPlus"/>
-            </button>
-          </p>
-        </mat-list-item>
-        @if (!$last) {
-          <mat-divider class="mt-2"/>
-        }
+  <mat-list>
+    @for (team of teams; track team.constructorId; ) {
+    <h2 class="!flex items-center gap-3" [class.!mt-2]="!$first" matSubheader>
+      @if (seasonId(); as seasonId) {
+      <sha-team-logo [seasonId]="seasonId" [name]="team.name" [size]="32" />
       }
-    </mat-list>
+      <span class="grow">{{ team.name }}</span>
+      @if (team.points) {
+      <span class="mr-4">{{ team.points }} point</span>
+      }
+    </h2>
+    @let drivers = allDrivers(team); @for (driverId of drivers; track driverId) {
+    <mat-list-item>
+      @let driver = driverId | driver;
+      <h5 matListItemTitle>
+        {{ driver?.name }} @if (team.previousDrivers?.includes(driverId)) {
+        <fa-icon [icon]="icon.falTireFlat" />
+        }
+      </h5>
+      <sha-driver-headshot matListItemAvatar [driver]="driver" />
+      <small class="!flex justify-between" matListItemLine>
+        <span class="flex-auto uppercase">{{ driverId }}</span>
+        @let permanentNumbers = driver?.permanentNumbers?.join(', ');
+        <span class="flex-auto text-end" [title]="permanentNumbers">@if (driver?.activeNumber) { #{{ driver?.activeNumber }} }</span>
+      </small>
+      <p *shaHasRole="'admin'" matListItemMeta>
+        <button mat-icon-button (click)="removeDriver(driverId, team)">
+          <fa-icon [icon]="icon.farTrash" />
+        </button>
+        <button mat-icon-button (click)="previousDriver(driverId, team)">
+          <fa-icon [icon]="icon.falTireFlat" />
+        </button>
+      </p>
+    </mat-list-item>
+    }
+    <mat-list-item *shaHasRole="'admin'">
+      <p matListItemMeta>
+        <button mat-icon-button [disabled]="noDrivers()" (click)="addDriver(team)">
+          <fa-icon [icon]="icon.farPlus" />
+        </button>
+      </p>
+    </mat-list-item>
+    @if (!$last) {
+    <mat-divider class="mt-2" />
+    } }
+  </mat-list>
   } @else {
-    <sha-loading/>
+  <sha-loading />
   }
 </sha-card-page>

@@ -16,9 +16,9 @@ interface RacesState {
   loaded: boolean; // has the Races list been loaded
   error: string | undefined; // last none error (if any)
   yourBid: Partial<Bid> | undefined;
-  lastYear: RoundResult | undefined,
+  lastYear: RoundResult | undefined;
   /** Tells apart a last year still loading from no race last year */
-  lastYearLoaded: boolean,
+  lastYearLoaded: boolean;
 }
 
 const initialState: RacesState = {
@@ -39,60 +39,54 @@ export const RacesStore = signalStore(
   withComputed(({ races }) => ({
     currentRace: computed(() => findCurrentRace(races())) as any,
   })),
-  withMethods((
-    store,
-    service = inject(RacesService),
-    playerStore = inject(PlayerStore),
-    authorized$ = toObservable(inject(PlayerStore).authorized).pipe(
-      distinctUntilChanged(),
-    ),
-    seasonId$ = toObservable(inject(SeasonStore).season).pipe(
-      map(season => season?.id),
-      distinctUntilChanged(),
-    ),
-  ) => ({
-    loadRaces: rxMethod<void>(
-      pipe(
-        switchMap(() => combineLatest([authorized$, seasonId$])),
-        switchMap(([authorized, seasonId]) => {
-          if (authorized && seasonId) {
-
-            return service.getRaces(seasonId).pipe(
+  withMethods(
+    (
+      store,
+      service = inject(RacesService),
+      playerStore = inject(PlayerStore),
+      authorized$ = toObservable(inject(PlayerStore).authorized).pipe(distinctUntilChanged()),
+      seasonId$ = toObservable(inject(SeasonStore).season).pipe(
+        map(season => season?.id),
+        distinctUntilChanged(),
+      ),
+    ) => ({
+      loadRaces: rxMethod<void>(
+        pipe(
+          switchMap(() => combineLatest([authorized$, seasonId$])),
+          switchMap(([authorized, seasonId]) => {
+            if (authorized && seasonId) {
+              return service.getRaces(seasonId).pipe(
+                tapResponse({
+                  next: races => patchState(store, { races, loaded: true, error: undefined }),
+                  error: error => patchState(store, { error: error?.toString() }),
+                }),
+                map(races => findCurrentRace(races)),
+                switchMap(currentRace => (currentRace ? service.getBid(seasonId, currentRace.round, playerStore.player().uid) : of(undefined))),
+                tapResponse({
+                  next: bid => patchState(store, { yourBid: bid }),
+                  error: error => patchState(store, { error: error?.toString() }),
+                }),
+              );
+            }
+            return of();
+          }),
+        ),
+      ),
+      loadLastYear: rxMethod<void>(
+        pipe(
+          switchMap(() => authorized$),
+          switchMap(authorized => {
+            if (store.lastYear()) return of();
+            const race = store.currentRace();
+            return (authorized && race ? from(service.getLastYearResult(race.season, race.circuitId)) : of(undefined)).pipe(
               tapResponse({
-                next: races => patchState(store, { races, loaded: true, error: undefined }),
-                error: error => patchState(store, { error: error?.toString() }),
-              }),
-              map(races => findCurrentRace(races)),
-              switchMap(currentRace => currentRace
-                ? service.getBid(seasonId, currentRace.round, playerStore.player().uid)
-                : of(undefined),
-              ),
-              tapResponse({
-                next: bid => patchState(store, { yourBid: bid }),
+                next: lastYear => patchState(store, { lastYear, lastYearLoaded: true }),
                 error: error => patchState(store, { error: error?.toString() }),
               }),
             );
-          }
-          return of();
-        }),
+          }),
+        ),
       ),
-    ),
-    loadLastYear: rxMethod<void>(
-      pipe(
-        switchMap(() => authorized$),
-        switchMap(authorized => {
-          if (store.lastYear()) return of();
-          const race = store.currentRace();
-          return (authorized && race
-              ? from(service.getLastYearResult(race.season, race.circuitId))
-              : of(undefined)
-          ).pipe(
-            tapResponse({
-              next: lastYear => patchState(store, { lastYear, lastYearLoaded: true }),
-              error: error => patchState(store, { error: error?.toString() }),
-            }),
-          );
-        }),
-      )),
-  })),
+    }),
+  ),
 );

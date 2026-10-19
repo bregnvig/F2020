@@ -6,13 +6,11 @@ import { NgClass } from '@angular/common';
   template: `
     <div>
       <div class="p-3 grid gap-x-4 gap-y-4 grid-cols-1 mx-auto" [ngClass]="cols()">
-        <ng-content/>
+        <ng-content />
       </div>
     </div>
   `,
-  imports: [
-    NgClass,
-  ],
+  imports: [NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardPageComponent {

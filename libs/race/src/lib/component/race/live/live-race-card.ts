@@ -25,7 +25,7 @@ import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-tr
   template: `
     <mat-card class="h-full">
       <mat-card-header>
-        <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode" (click)="openStatus()">
+        <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode" (click)="openStatus()" />
         <mat-card-title>
           @if (relive()) {
             Relive
@@ -83,29 +83,29 @@ export class LiveRaceCardComponent {
   protected readonly icons = icon;
   protected readonly latestUpdate = signal<DateTime | undefined>(undefined);
 
-  protected readonly error = toSignal(combineLatest({
-    result: this.#live.resultStatus,
-    pitStop: this.#live.pitStopStatus,
-  }).pipe(
-    map(({ result, pitStop }) => result.error?.statusText || result.error?.message || pitStop.error?.statusText || pitStop.error?.message),
-  ));
+  protected readonly error = toSignal(
+    combineLatest({
+      result: this.#live.resultStatus,
+      pitStop: this.#live.pitStopStatus,
+    }).pipe(map(({ result, pitStop }) => result.error?.statusText || result.error?.message || pitStop.error?.statusText || pitStop.error?.message)),
+  );
 
-  #status = toSignal(combineLatest({
-    resultStatus: this.#live.resultStatus,
-    radioStatus: this.#live.radioStatus,
-    pitStopStatus: this.#live.pitStopStatus,
-    positionStatus: this.#live.positionStatus,
-    intervalStatus: this.#live.intervalStatus,
-    stintStatus: this.#live.stintStatus,
-    raceControlStatus: this.#live.raceControlStatus,
-    sectorStatus: this.#live.sectorStatus,
-    locationStatus: this.#live.locationStatus,
-    qualifyStatus: this.#live.qualifyStatus,
-    championshipStatus: this.#live.championshipStatus,
-    weatherStatus: this.#live.weatherStatus,
-  }).pipe(
-    map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status }))),
-  ));
+  #status = toSignal(
+    combineLatest({
+      resultStatus: this.#live.resultStatus,
+      radioStatus: this.#live.radioStatus,
+      pitStopStatus: this.#live.pitStopStatus,
+      positionStatus: this.#live.positionStatus,
+      intervalStatus: this.#live.intervalStatus,
+      stintStatus: this.#live.stintStatus,
+      raceControlStatus: this.#live.raceControlStatus,
+      sectorStatus: this.#live.sectorStatus,
+      locationStatus: this.#live.locationStatus,
+      qualifyStatus: this.#live.qualifyStatus,
+      championshipStatus: this.#live.championshipStatus,
+      weatherStatus: this.#live.weatherStatus,
+    }).pipe(map(statuses => Object.entries(statuses).map(([name, status]) => ({ name, ...status })))),
+  );
 
   protected openStatus() {
     this.#bottomSheet.open(LiveStatusComponent, { data: this.#status });

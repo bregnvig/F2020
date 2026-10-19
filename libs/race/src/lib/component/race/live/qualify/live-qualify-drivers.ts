@@ -35,7 +35,17 @@ import { LiveSectorStatusComponent } from '../positions/sector/live-sector-statu
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AnimatedForDirective, MatList, MatListItem, MatListItemAvatar, MatListItemTitle, MatListItemLine, DriverHeadshotComponent, PolePositionTimePipe, LiveSectorStatusComponent],
+  imports: [
+    AnimatedForDirective,
+    MatList,
+    MatListItem,
+    MatListItemAvatar,
+    MatListItemTitle,
+    MatListItemLine,
+    DriverHeadshotComponent,
+    PolePositionTimePipe,
+    LiveSectorStatusComponent,
+  ],
 })
 export class LiveQualifyDriversComponent {
   result = input.required<ILiveQualifyResult | undefined>();

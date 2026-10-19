@@ -7,10 +7,13 @@ import { playersURL } from '../../lib/paths';
 import { permissionDenied } from './../../test-utils/firestore-test-utils';
 
 describe('Manual balance unittest', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
-  const readPlayer = async (uid: string) => adminFirestore.doc(`${playersURL}/${uid}`).get().then(snapshot => snapshot.data());
+  const readPlayer = async (uid: string) =>
+    adminFirestore
+      .doc(`${playersURL}/${uid}`)
+      .get()
+      .then(snapshot => snapshot.data());
 
   beforeEach(async () => {
     // depositFn = test.wrap(deposit);
@@ -27,21 +30,18 @@ describe('Manual balance unittest', () => {
 
   it('should deny a manual update, when user not logged in', async () => {
     const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('manualBalance')({ uid: players.player.uid, accountId: 1 }))
-      .then(unauthenticated);
+    await assertFails(app.functions.httpsCallable('manualBalance')({ uid: players.player.uid, accountId: 1 })).then(unauthenticated);
   });
   it('should deny a manual balance, when user is not bank-admin', async () => {
     const app = await authedApp({ uid: collections.players.player.uid });
-    await assertFails(app.functions.httpsCallable('manualBalance')({ uid: players.player.uid, accountId: 1 }))
-      .then(permissionDenied);
+    await assertFails(app.functions.httpsCallable('manualBalance')({ uid: players.player.uid, accountId: 1 })).then(permissionDenied);
   });
 
   it('should update manual balance, when user is bank-admin', async () => {
     const app = await authedApp({ uid: collections.players.bankadmin.uid });
-    await assertSucceeds(app.functions.httpsCallable('manualBalance')({ uid: players.player.uid, balance: 111 }))
-      .then(async () => {
-        const t = await readPlayer(players.player.uid);
-        expect(t!.balance).toBe(111);
-      });
+    await assertSucceeds(app.functions.httpsCallable('manualBalance')({ uid: players.player.uid, balance: 111 })).then(async () => {
+      const t = await readPlayer(players.player.uid);
+      expect(t!.balance).toBe(111);
+    });
   });
 });

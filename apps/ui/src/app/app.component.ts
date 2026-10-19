@@ -15,19 +15,9 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
   selector: 'f2020-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatToolbarModule,
-    RouterLink,
-    MatButtonModule,
-    MatIconModule,
-    MatSidenavModule,
-    SidebarComponent,
-    RouterOutlet,
-    FaIconComponent,
-  ],
+  imports: [MatToolbarModule, RouterLink, MatButtonModule, MatIconModule, MatSidenavModule, SidebarComponent, RouterOutlet, FaIconComponent],
 })
 export class AppComponent {
-
   bars = icon.fasBars;
   readonly #playerStore = inject(PlayerStore);
   readonly #driverStore = inject(DriversStore);
@@ -57,13 +47,15 @@ export class AppComponent {
   }
 
   #checkForVersionUpdate() {
-    this.#updates.versionUpdates.pipe(
-      filter(event => event.type === 'VERSION_READY'),
-      first(),
-      switchMap(() => this.#snackBar.open('🤩 Ny version klar', 'OPDATER', { duration: 10000 }).onAction()),
-      switchMap(() => this.#updates.activateUpdate()),
-      first(),
-    ).subscribe(() => location.reload());
+    this.#updates.versionUpdates
+      .pipe(
+        filter(event => event.type === 'VERSION_READY'),
+        first(),
+        switchMap(() => this.#snackBar.open('🤩 Ny version klar', 'OPDATER', { duration: 10000 }).onAction()),
+        switchMap(() => this.#updates.activateUpdate()),
+        first(),
+      )
+      .subscribe(() => location.reload());
   }
 
   #checkForOutdatedVersion() {
@@ -71,16 +63,17 @@ export class AppComponent {
       ui: 2,
       api: 2,
     });
-    this.#versionService.versionOK$.pipe(
-      first(),
-    ).subscribe(ok => {
+    this.#versionService.versionOK$.pipe(first()).subscribe(ok => {
       if (!ok) {
-        this.#snackBar.open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', 'OK').onAction().pipe(
-          switchMap(() => this.#updates.checkForUpdate()),
-          switchMap(() => this.#updates.activateUpdate()),
-        ).subscribe(() => location.reload());
+        this.#snackBar
+          .open('😭 Din nuværende version er forældet. Du bliver nødt til at hente den nye version', 'OK')
+          .onAction()
+          .pipe(
+            switchMap(() => this.#updates.checkForUpdate()),
+            switchMap(() => this.#updates.activateUpdate()),
+          )
+          .subscribe(() => location.reload());
       }
     });
   }
-
 }

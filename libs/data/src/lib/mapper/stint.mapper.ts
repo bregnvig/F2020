@@ -19,14 +19,14 @@ const openF1Stints = (params: OpenF1StintParams) => {
 
   return Array.from(latestStintsByDriver.values()).map(stint => {
     const driver = requiredValue(drivers.get(stint.driver_number), 'Stint driver with driver number', stint.driver_number);
-    return ({
+    return {
       driver,
       compound: stint.compound as Tyre,
       lapStart: stint.lap_start,
       lapEnd: stint.lap_end,
       stintNumber: stint.stint_number,
       tyreAgeAtStart: stint.tyre_age_at_start,
-    });
+    };
   });
 };
 
@@ -44,14 +44,18 @@ export const strategy = ({ stints, drivers, currentLap }: OpenF1StintParams & { 
     .filter(stint => stint.lap_start <= currentLap)
     .flatMap(stint => {
       const driver = driverMap.get(stint.driver_number);
-      return driver ? [{
-        driver,
-        compound: stint.compound as Tyre,
-        lapStart: stint.lap_start,
-        lapEnd: Math.min(stint.lap_end || currentLap, currentLap),
-        stintNumber: stint.stint_number,
-        tyreAgeAtStart: stint.tyre_age_at_start,
-      }] : [];
+      return driver
+        ? [
+            {
+              driver,
+              compound: stint.compound as Tyre,
+              lapStart: stint.lap_start,
+              lapEnd: Math.min(stint.lap_end || currentLap, currentLap),
+              stintNumber: stint.stint_number,
+              tyreAgeAtStart: stint.tyre_age_at_start,
+            },
+          ]
+        : [];
     })
     .toSorted((a, b) => a.stintNumber - b.stintNumber);
 };

@@ -4,10 +4,7 @@ import { collectionPaths, converter } from './';
 import { logAndCreateError } from './firestore-utils';
 
 export const currentSeason = async (): Promise<ISeason> => {
-  const snapshot = await getFirestore().collection(collectionPaths.seasons())
-    .where('current', '==', true)
-    .withConverter<ISeason>(converter.timestamp)
-    .get();
+  const snapshot = await getFirestore().collection(collectionPaths.seasons()).where('current', '==', true).withConverter<ISeason>(converter.timestamp).get();
   if (snapshot.docs.length === 1) {
     return snapshot.docs[0].data();
   }

@@ -9,14 +9,17 @@ export const transferInTransaction = ({ date, amount, message, from, to }: Money
   const db = getFirestore();
   const transactions = db.collection('transactions');
 
-  return transaction.create(transactions.doc(), firestoreUtils.convertDateTimes(<MoneyTransaction>{
-    date: date || DateTime.local(),
-    amount,
-    message,
-    from: from ?? null,
-    to: to ?? null,
-    involved: [from, to].filter(Boolean),
-  }));
+  return transaction.create(
+    transactions.doc(),
+    firestoreUtils.convertDateTimes(<MoneyTransaction>{
+      date: date || DateTime.local(),
+      amount,
+      message,
+      from: from ?? null,
+      to: to ?? null,
+      involved: [from, to].filter(Boolean),
+    }),
+  );
 };
 
 export const transfer = (bankTransaction: MoneyTransaction): Promise<void> => {

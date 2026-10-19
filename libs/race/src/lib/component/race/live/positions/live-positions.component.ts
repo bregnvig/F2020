@@ -34,7 +34,6 @@ const lapFlashTime = 2000;
   ],
 })
 export class LivePositionsComponent implements OnInit {
-
   #live = inject(RaceResultProvider);
   #destroyRef = inject(DestroyRef);
   #teams = inject(TeamService).teams$;
@@ -46,9 +45,7 @@ export class LivePositionsComponent implements OnInit {
   /** The drivers from first to last, the grid until the positions come */
   protected readonly order = signal<IDriver[]>([]);
   protected readonly driverKey = (driver: IDriver) => driver.driverId;
-  latestUpdate = toSignal(this.#live.positionStatus.pipe(
-    map(status => status.latestUpdate),
-  ), { initialValue: null });
+  latestUpdate = toSignal(this.#live.positionStatus.pipe(map(status => status.latestUpdate)), { initialValue: null });
   stints$?: Observable<Map<string, IStint>>;
   sectors$?: Observable<Map<string, IDriverSector>>;
   #track = rxResource({
@@ -76,7 +73,11 @@ export class LivePositionsComponent implements OnInit {
     const cars = this.#cars();
     const retired = this.#live.retiredCars;
     const frame = performance.now();
-    retired.update(cars.map(({ driver, locations }) => ({ id: driver.driverId, locations })), now, frame);
+    retired.update(
+      cars.map(({ driver, locations }) => ({ id: driver.driverId, locations })),
+      now,
+      frame,
+    );
     return new Set([...carsInPitLane(cars, now)].filter(driverId => retired.retiring(driverId, now, frame) === undefined));
   });
 
@@ -100,38 +101,59 @@ export class LivePositionsComponent implements OnInit {
   ngOnInit() {
     const positions$ = this.#live.getPositions(this.race(), this.drivers()).pipe(shareLatest());
     this.currentLap$ = this.#live.currentLap;
-    this.#live.getGrid(this.race(), this.drivers()).pipe(
-      filter(value => value?.length > 0),
-      map(gridPositions => gridPositions.map(gp => gp.driver)),
-      take(1),
-    ).subscribe(initial => {
-      this.#originalPosition = new Map(initial.map((driver, index) => [driver.driverId, index]));
-      if (!this.order().length) this.order.set(initial);
-    });
-    positions$.pipe(
-      map(positions => positions.toSorted((a, b) => a.position - b.position)),
-      map(positions => positions.map(p => p.driver)),
-      // A part of the field would move the others to the wrong places
-      filter(drivers => drivers.length === this.#originalPosition?.size),
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(drivers => this.order.set(drivers));
-    this.#live.getIntervals(this.race(), this.drivers()).pipe(
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(intervals => this.#intervals = intervals.reduce(toMap<IDriverInterval, string>(i => i.driver.driverId), new Map<string, IDriverInterval>()));
+    this.#live
+      .getGrid(this.race(), this.drivers())
+      .pipe(
+        filter(value => value?.length > 0),
+        map(gridPositions => gridPositions.map(gp => gp.driver)),
+        take(1),
+      )
+      .subscribe(initial => {
+        this.#originalPosition = new Map(initial.map((driver, index) => [driver.driverId, index]));
+        if (!this.order().length) this.order.set(initial);
+      });
+    positions$
+      .pipe(
+        map(positions => positions.toSorted((a, b) => a.position - b.position)),
+        map(positions => positions.map(p => p.driver)),
+        // A part of the field would move the others to the wrong places
+        filter(drivers => drivers.length === this.#originalPosition?.size),
+        takeUntilDestroyed(this.#destroyRef),
+      )
+      .subscribe(drivers => this.order.set(drivers));
+    this.#live
+      .getIntervals(this.race(), this.drivers())
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe(
+        intervals =>
+          (this.#intervals = intervals.reduce(
+            toMap<IDriverInterval, string>(i => i.driver.driverId),
+            new Map<string, IDriverInterval>(),
+          )),
+      );
     this.stints$ = this.#live.getStints(this.race(), this.drivers()).pipe(
-      map(stints => stints.reduce(toMap(stint => stint.driver.driverId), new Map<string, IStint>)),
+      map(stints =>
+        stints.reduce(
+          toMap(stint => stint.driver.driverId),
+          new Map<string, IStint>(),
+        ),
+      ),
     );
     this.pitStops$ = this.#teams.pipe(
       switchMap(teams => this.#live.getPitStops(this.race(), this.drivers(), teams)),
-      map(pitStops => pitStops
-        .toSorted((a, b) => a.lap - b.lap)
-        .reduce((latest, pitStop) => latest.set(pitStop.driver.driverId, pitStop), new Map<string, IPitStop>())),
+      map(pitStops => pitStops.toSorted((a, b) => a.lap - b.lap).reduce((latest, pitStop) => latest.set(pitStop.driver.driverId, pitStop), new Map<string, IPitStop>())),
     );
-    this.#live.getFastestLaps(this.race(), this.drivers()).pipe(
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(({ latest }) => this.#flashNewLaps(latest));
+    this.#live
+      .getFastestLaps(this.race(), this.drivers())
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe(({ latest }) => this.#flashNewLaps(latest));
     this.sectors$ = this.#live.getSectorStatus(this.race(), this.drivers()).pipe(
-      map(sectors => sectors.reduce(toMap(stint => stint.driver.driverId), new Map<string, IDriverSector>)),
+      map(sectors =>
+        sectors.reduce(
+          toMap(stint => stint.driver.driverId),
+          new Map<string, IDriverSector>(),
+        ),
+      ),
     );
   }
 
@@ -142,11 +164,15 @@ export class LivePositionsComponent implements OnInit {
     const flashed = previous ? latest.filter(({ driver, lap }) => lap === (previous.get(driver.driverId) ?? 0) + 1) : [];
     flashed.forEach(({ driver, color }) => {
       this.lapFlash.update(flash => new Map(flash).set(driver.driverId, color));
-      setTimeout(() => this.lapFlash.update(flash => {
-        const updated = new Map(flash);
-        updated.delete(driver.driverId);
-        return updated;
-      }), lapFlashTime);
+      setTimeout(
+        () =>
+          this.lapFlash.update(flash => {
+            const updated = new Map(flash);
+            updated.delete(driver.driverId);
+            return updated;
+          }),
+        lapFlashTime,
+      );
     });
   }
 
@@ -175,7 +201,7 @@ export class LivePositionsComponent implements OnInit {
 
   interval(driverId: string) {
     const interval = this.#intervals?.get(driverId)?.interval;
-    return typeof interval === 'number' && interval !== 0 ? `+${interval}s` : (interval || ' ');
+    return typeof interval === 'number' && interval !== 0 ? `+${interval}s` : interval || ' ';
   }
 
   gapToLeader(driverId: string) {
@@ -184,7 +210,6 @@ export class LivePositionsComponent implements OnInit {
     if (typeof interval === 'number' && interval === gapToLeader) return ' ';
     if (typeof interval === 'number' && !gapToLeader) return `Lapped`;
 
-    return typeof gapToLeader === 'number' && gapToLeader !== 0 ? `(+${gapToLeader.toFixed(3)}s)` : (gapToLeader || ' ');
+    return typeof gapToLeader === 'number' && gapToLeader !== 0 ? `(+${gapToLeader.toFixed(3)}s)` : gapToLeader || ' ';
   }
-
 }

@@ -22,7 +22,7 @@ export class TeamService {
       first(),
       switchMap(season => collectionData(collection(this.#fs, `seasons/${season.id}/teams`).withConverter(converter.timestamp<ITeam>()))),
       map(teams => teams as ITeam[]),
-      shareReplay(1)
+      shareReplay(1),
     );
     this.teams = toSignal(this.teams$, { initialValue: [] });
   }

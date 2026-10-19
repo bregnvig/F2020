@@ -28,8 +28,12 @@ import { ComparePlayerBidComponent } from './compare/compare-player-bid.componen
         <div class="max-width py-3">
           <sha-card-page>
             <div class="flex gap-3">
-              <f2020-compare-player-bid class="flex flex-grow" label="Sammenlign med" [players]="players()" [(compareWithId)]="compareWithId"
-                                        (compareWithIdChange)="compareWithIdChanged($event)" />
+              <f2020-compare-player-bid
+                class="flex flex-grow"
+                label="Sammenlign med"
+                [players]="players()"
+                [(compareWithId)]="compareWithId"
+                (compareWithIdChange)="compareWithIdChanged($event)" />
             </div>
           </sha-card-page>
           <f2020-display-bid [compareWith]="bidToCompare()" [bid]="bid" [race]="race" />
@@ -63,9 +67,12 @@ export class DisplayPlayerBidComponent {
   constructor() {
     const store = inject(RaceStore);
     this.race = store.race;
-    this.players = computed(() => store.bids()
-      .map((bid: Bid) => bid.player)
-      .filter(player => player.uid !== this.bid().player.uid));
+    this.players = computed(() =>
+      store
+        .bids()
+        .map((bid: Bid) => bid.player)
+        .filter(player => player.uid !== this.bid().player.uid),
+    );
     this.bid = computed(() => store.bids()?.find((bid: Bid) => bid.player.uid === this.#route.snapshot.params.uid));
     this.bidToCompare = computed(() => store.bids()?.find(bid => bid.player.uid === this.compareWithId()));
   }
@@ -73,5 +80,4 @@ export class DisplayPlayerBidComponent {
   protected compareWithIdChanged(compareId: string) {
     void this.#router.navigate([filterNullish({ compareId })], { relativeTo: this.#route, replaceUrl: true });
   }
-
 }

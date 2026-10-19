@@ -21,7 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           <mat-option [value]="team.constructorId">
             <span class="flex flex-row items-center gap-2">
               @if (seasonId(); as seasonId) {
-                <sha-team-logo [seasonId]="seasonId" [name]="team.name" [size]="24"/>
+                <sha-team-logo [seasonId]="seasonId" [name]="team.name" [size]="24" />
               }
               {{ team.name }}
             </span>
@@ -38,16 +38,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       multi: true,
     },
   ],
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOptionModule,
-    TeamLogoComponent,
-  ],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatOptionModule, TeamLogoComponent],
 })
 export class SelectTeamComponent extends AbstractControlComponent<string> {
-
   readonly #season = inject(SeasonStore).season;
 
   readonly teams = input.required<ITeam[]>();
@@ -59,9 +52,7 @@ export class SelectTeamComponent extends AbstractControlComponent<string> {
   constructor() {
     super();
     this.setupStandardControl(this.selectControl);
-    this.selectControl.valueChanges.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(teamId => this.propagateChange(teamId));
+    this.selectControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(teamId => this.propagateChange(teamId));
   }
 
   writeValue(value: string): void {

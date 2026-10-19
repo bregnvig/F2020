@@ -3,11 +3,10 @@ import { inject, Pipe, PipeTransform } from '@angular/core';
 import { DateTime } from 'luxon';
 
 @Pipe({
-    name: 'dateTime',
-    standalone: true
+  name: 'dateTime',
+  standalone: true,
 })
 export class DateTimePipe implements PipeTransform {
-
   #datePipe = inject(DatePipe);
 
   transform(value: DateTime, format: string): any {

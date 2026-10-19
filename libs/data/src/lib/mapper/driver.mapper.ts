@@ -19,5 +19,10 @@ export function driver(d: OpenF1Driver): IDriver {
 export const drivers = (_drivers: OpenF1Driver[]) => _drivers.map(driver);
 
 export const joinDrivers = (openF1: IDriver[], drivers: IDriver[]) => {
-  return openF1.map(d => requiredValue(drivers.find(({ code }) => d.code === code), 'Firestore Driver'));
+  return openF1.map(d =>
+    requiredValue(
+      drivers.find(({ code }) => d.code === code),
+      'Firestore Driver',
+    ),
+  );
 };

@@ -20,11 +20,9 @@ export const submitBid = onCall((request: CallableRequest<Bid>) => {
 });
 
 const buildBid = async (player: PlayerImpl, bid: Bid) => {
-
   const season = await currentSeason();
   const race = await getCurrentRace('open');
   const bookie = await getBookie();
-
 
   if (!season || !race) {
     throw logAndCreateError('failed-precondition', 'Missing season or race', season?.name, race?.name);
@@ -51,15 +49,17 @@ const buildBid = async (player: PlayerImpl, bid: Bid) => {
   return db.runTransaction(transaction => {
     transaction.set(bidDoc, firestoreUtils.convertDateTimes({ ...bid, submitted: true }), { merge: true });
     transaction.set(participantDoc, firestoreUtils.convertDateTimes({ submitted: true, player: { ...bid.player } }), { merge: true });
-    transferInTransaction({
-      date: DateTime.local(),
-      amount: 20,
-      message: `Deltagelse i ${race.name}`,
-      from: player.uid,
-      to: bookie.uid,
-      involved: [player.uid, bookie.uid],
-    }, transaction);
+    transferInTransaction(
+      {
+        date: DateTime.local(),
+        amount: 20,
+        message: `Deltagelse i ${race.name}`,
+        from: player.uid,
+        to: bookie.uid,
+        involved: [player.uid, bookie.uid],
+      },
+      transaction,
+    );
     return Promise.resolve('Bid submitted');
   });
-
 };

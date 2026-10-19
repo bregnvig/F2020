@@ -17,14 +17,7 @@ import {
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 
 const resetPoints = (bid: Bid): Bid => {
-  const properties: (keyof Bid)[] = [
-    'qualifyPoints',
-    'fastestDriverPoints',
-    'firstCrashPoints',
-    'podiumPoints',
-    'points',
-    'polePositionTimeDiff',
-  ];
+  const properties: (keyof Bid)[] = ['qualifyPoints', 'fastestDriverPoints', 'firstCrashPoints', 'podiumPoints', 'points', 'polePositionTimeDiff'];
   return Object.fromEntries(Object.entries(bid).filter(([key]) => !properties.includes(key as keyof Bid))) as Bid;
 };
 
@@ -44,31 +37,42 @@ const buildRollback = async (round: string) => {
   }
 
   const db = getFirestore();
-  const bids: Bid[] = await db.collection(collectionPaths.bids(race.season, race.round)).where('submitted', '==', true).get()
+  const bids: Bid[] = await db
+    .collection(collectionPaths.bids(race.season, race.round))
+    .where('submitted', '==', true)
+    .get()
     .then(snapshot => snapshot.docs)
     .then(snapshots => snapshots.map(s => s.data() as Bid))
     .then(bids => bids.sort((a, b) => b.points - a.points));
 
   const winnerPoints = bids[0]?.points;
   const winners = bids.filter(b => b.points === winnerPoints);
-  const winningPrice = Math.floor(bids.length * 20 / winners.length);
+  const winningPrice = Math.floor((bids.length * 20) / winners.length);
 
-  await Promise.all(bids
-    .map(({ player }) => player.tokens)
-    .filter(tokens => tokens?.length)
-    .map(tokens => sendNotification(tokens, 'Fejl i resultatet', `Resultatet for ${race.name} er blevet rullet tilbage, da der var fejl i resultatet😥`, { link: raceLink(race.season, race.round) })),
+  await Promise.all(
+    bids
+      .map(({ player }) => player.tokens)
+      .filter(tokens => tokens?.length)
+      .map(tokens =>
+        sendNotification(tokens, 'Fejl i resultatet', `Resultatet for ${race.name} er blevet rullet tilbage, da der var fejl i resultatet😥`, {
+          link: raceLink(race.season, race.round),
+        }),
+      ),
   );
 
   return db.runTransaction(transaction => {
     winners.forEach(winner => {
-      transferInTransaction({
-        date: DateTime.local(),
-        amount: winningPrice,
-        message: `${race.name} resultatet rullet tilbage`,
-        to: bookie.uid,
-        from: winner.player.uid,
-        involved: [winner.player.uid, bookie.uid],
-      }, transaction);
+      transferInTransaction(
+        {
+          date: DateTime.local(),
+          amount: winningPrice,
+          message: `${race.name} resultatet rullet tilbage`,
+          to: bookie.uid,
+          from: winner.player.uid,
+          involved: [winner.player.uid, bookie.uid],
+        },
+        transaction,
+      );
     });
     bids.map(resetPoints).forEach(withOutPoints => {
       transaction.set(db.doc(documentPaths.bid(race.season, race.round, withOutPoints.player.uid)), withOutPoints);
@@ -76,6 +80,4 @@ const buildRollback = async (round: string) => {
     transaction.update(db.doc(documentPaths.race(race.season, race.round)), { state: 'closed', result: FieldValue.delete() });
     return Promise.resolve(`Rolled back result`);
   });
-
-
 };

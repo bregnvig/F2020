@@ -77,8 +77,10 @@ export class LiveChampionshipComponent {
           change: positionChange(standing),
         }));
     }
-    const gainedByTeam = [...gained].reduce((teams, [driver, points]) =>
-      driver.teamName ? teams.set(driver.teamName, (teams.get(driver.teamName) ?? 0) + points) : teams, new Map<string, number>());
+    const gainedByTeam = [...gained].reduce(
+      (teams, [driver, points]) => (driver.teamName ? teams.set(driver.teamName, (teams.get(driver.teamName) ?? 0) + points) : teams),
+      new Map<string, number>(),
+    );
     return championshipNow(start.teams, gainedByTeam).map(({ key, standing }) => ({
       id: key,
       name: key,

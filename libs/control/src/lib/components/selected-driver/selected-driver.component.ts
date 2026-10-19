@@ -24,15 +24,9 @@ import { MatSelectModule } from '@angular/material/select';
       multi: true,
     },
   ],
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule],
 })
 export class SelectedDriverComponent extends AbstractControlComponent<SelectedDriverValue> implements OnInit {
-
   readonly race = input.required<IRace>();
   fg: FormGroup;
   possiblePositions: number[];
@@ -51,9 +45,7 @@ export class SelectedDriverComponent extends AbstractControlComponent<SelectedDr
       finish: [null, [Validators.required, Validators.min(1), Validators.max(this.race().drivers.length)]],
     });
     this.setupStandardControl(this.fg);
-    this.fg.valueChanges.pipe(
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(value => this.propagateChange(value));
+    this.fg.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(value => this.propagateChange(value));
   }
 
   writeValue(value: SelectedDriverValue): void {
@@ -67,5 +59,4 @@ export class SelectedDriverComponent extends AbstractControlComponent<SelectedDr
   validate(): ValidationErrors | null {
     return this.fg.valid ? null : { required: true };
   }
-
 }

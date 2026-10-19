@@ -77,4 +77,4 @@ bootstrapApplication(AppComponent, {
     Settings.defaultLocale = 'da';
     registerLocaleData(localeDa);
   })
-  .catch((err) => console.log(err));
+  .catch(err => console.log(err));

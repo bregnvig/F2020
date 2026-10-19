@@ -12,14 +12,9 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './login.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./login.component.scss'],
-  imports: [
-    MatButtonModule,
-    FaIconComponent,
-    LoadingComponent,
-  ],
+  imports: [MatButtonModule, FaIconComponent, LoadingComponent],
 })
 export class LoginComponent {
-
   #service = inject(PlayerApiService);
   #router = inject(Router);
 
@@ -36,13 +31,10 @@ export class LoginComponent {
   }
 
   loginWithGoogle() {
-    this.#router.navigate(['/'])
-      .then(() => this.#service.signInWithGoogle());
+    this.#router.navigate(['/']).then(() => this.#service.signInWithGoogle());
   }
 
   loginWithFacebook() {
-    this.#router.navigate(['/'])
-      .then(() => this.#service.signInWithFacebook());
+    this.#router.navigate(['/']).then(() => this.#service.signInWithFacebook());
   }
-
 }

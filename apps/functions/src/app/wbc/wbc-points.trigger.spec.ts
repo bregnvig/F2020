@@ -7,14 +7,24 @@ import { WBCPlayer, WBCResult } from './../../lib/model/wbc.model';
 const clone = require('clone');
 
 describe('WBC points', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   // const readBid = async (uid: string): Promise<Bid> => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).get().then(ref => ref.data() as Bid);
   const writeBid = async (bid: any, uid: string, round: number) => adminFirestore.doc(`${seasonsURL}/9999/races/${round}/bids/${uid}`).set(bid);
-  const byUid = (uid: string) => (wp: WBCPlayer): boolean => wp.player.uid === uid;
+  const byUid =
+    (uid: string) =>
+    (wp: WBCPlayer): boolean =>
+      wp.player.uid === uid;
 
-  const readWBC = (length = 1) => retry(() => adminFirestore.doc(`${seasonsURL}/9999`).get().then(ref => (ref.data()?.wbc?.results ?? [])), (results: WBCResult[]) => results && results.length === length);
+  const readWBC = (length = 1) =>
+    retry(
+      () =>
+        adminFirestore
+          .doc(`${seasonsURL}/9999`)
+          .get()
+          .then(ref => ref.data()?.wbc?.results ?? []),
+      (results: WBCResult[]) => results && results.length === length,
+    );
 
   beforeEach(async () => {
     adminFirestore = adminApp();
@@ -78,14 +88,16 @@ describe('WBC points', () => {
 
   it('should award WBC based on pole time, if points are equal', async () => {
     await writeBid({ ...clone(collections.bids[0]), submitted: true }, collections.players.admin.uid, collections.races[1].round);
-    await writeBid({
+    await writeBid(
+      {
         ...clone(collections.bids[0]),
         player: collections.players.player,
         polePositionTime: collections.results[0].polePositionTime,
         submitted: true,
       },
       collections.players.player.uid,
-      collections.races[1].round);
+      collections.races[1].round,
+    );
 
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.functions.httpsCallable('submitResult')(collections.results[0]))
@@ -137,5 +149,4 @@ describe('WBC points', () => {
         expect(wbc[0].players.find(p => p.player.uid === collections.players.player1.uid)!.points).toBe(0);
       });
   });
-
 });

@@ -7,11 +7,10 @@ import { map } from 'rxjs/operators';
 
 @Service()
 export class StandingService {
-
   #afs = inject(Firestore);
 
   getStandings(seasonId: string | number): Observable<IDriverStanding[]> {
-    return docData(doc(this.#afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[]; }>())).pipe(
+    return docData(doc(this.#afs, `seasons/${seasonId}/standings/all-drivers`).withConverter(converter.timestamp<{ standing: IDriverStanding[] }>())).pipe(
       map(doc => (doc?.standing ?? []) as IDriverStanding[]),
     );
   }
@@ -21,5 +20,4 @@ export class StandingService {
       map(result => result as IDriverResult),
     );
   }
-
 }

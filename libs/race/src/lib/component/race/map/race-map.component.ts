@@ -29,21 +29,22 @@ const trackOptions: google.maps.PolylineOptions = {
   clickable: false,
   zIndex: 2,
   // Arrows in the racing direction. The symbol points up, which the map rotates to follow the line
-  icons: [{
-    icon: {
-      path: 'M 0,-2 L 1.5,1.5 L -1.5,1.5 Z',
-      fillColor: '#ffffff',
-      fillOpacity: 1,
-      strokeWeight: 0,
-      scale: 2.5,
+  icons: [
+    {
+      icon: {
+        path: 'M 0,-2 L 1.5,1.5 L -1.5,1.5 Z',
+        fillColor: '#ffffff',
+        fillOpacity: 1,
+        strokeWeight: 0,
+        scale: 2.5,
+      },
+      offset: '40px',
+      repeat: '120px',
     },
-    offset: '40px',
-    repeat: '120px',
-  }],
+  ],
 };
 
-const sameCenter = (a: google.maps.MapOptions, b: google.maps.MapOptions) =>
-  a.center?.lat === b.center?.lat && a.center?.lng === b.center?.lng;
+const sameCenter = (a: google.maps.MapOptions, b: google.maps.MapOptions) => a.center?.lat === b.center?.lat && a.center?.lng === b.center?.lng;
 
 /**
  * Map of the race's circuit, with the track drawn on it when there is an outline for it.
@@ -52,11 +53,7 @@ const sameCenter = (a: google.maps.MapOptions, b: google.maps.MapOptions) =>
 @Component({
   selector: 'f2020-race-map',
   template: `
-    <google-map
-      width="100%"
-      height="100%"
-      [options]="options()"
-      (mapInitialized)="googleMap.set($event)">
+    <google-map width="100%" height="100%" [options]="options()" (mapInitialized)="googleMap.set($event)">
       @if (track.hasValue()) {
         <map-polyline [path]="track.value()" [options]="outlineOptions" />
         <map-polyline [path]="track.value()" [options]="trackOptions" />
@@ -75,10 +72,7 @@ export class RaceMapComponent {
   protected outlineOptions = outlineOptions;
   protected trackOptions = trackOptions;
   // Only changes when the location does, as every change to the options resets the center and zoom of the map
-  protected options = computed(
-    () => ({ ...baseOptions, center: { lat: this.race().location.lat, lng: this.race().location.lng } }),
-    { equal: sameCenter },
-  );
+  protected options = computed(() => ({ ...baseOptions, center: { lat: this.race().location.lat, lng: this.race().location.lng } }), { equal: sameCenter });
   protected track = httpResource<google.maps.LatLngLiteral[]>(() => {
     const circuitId = this.race().circuitId;
     return circuitId != null ? `assets/tracks/${circuitId}.json` : undefined;

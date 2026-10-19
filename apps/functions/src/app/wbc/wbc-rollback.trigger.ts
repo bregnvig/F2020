@@ -18,16 +18,21 @@ export const rollbackWBCTrigger = onDocumentUpdated('seasons/{seasonId}/races/{r
 });
 
 const rollbackWBCRace = async (race: IRace, ref: DocumentReference) => {
-
-  ref.get()
+  ref
+    .get()
     .then(doc => doc.data())
     .then((season: ISeason) => {
       (season.wbc?.results ?? []).splice(race.round - 1, 1);
       return season.wbc?.results ?? [];
     })
-    .then(results => ref.set({
-      wbc: {
-        results,
-      },
-    }, { merge: true }));
+    .then(results =>
+      ref.set(
+        {
+          wbc: {
+            results,
+          },
+        },
+        { merge: true },
+      ),
+    );
 };

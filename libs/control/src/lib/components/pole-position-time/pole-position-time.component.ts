@@ -23,14 +23,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       multi: true,
     },
   ],
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule],
 })
 export class PolePositionTimeComponent extends AbstractControlComponent<number> {
-
   #fb = inject(FormBuilder);
   fg = this.#fb.group({
     minutes: this.#fb.control<number | null>(null, [Validators.required, Validators.min(0), Validators.max(2)]),
@@ -41,12 +36,13 @@ export class PolePositionTimeComponent extends AbstractControlComponent<number> 
   constructor() {
     super();
     this.setupStandardControl(this.fg);
-    this.fg.valueChanges.pipe(
-      debounceTime(100),
-      map(value => mapper.polePosition.join(value)),
-      takeUntilDestroyed(),
-    ).subscribe(millis => this.propagateChange(millis || null));
-
+    this.fg.valueChanges
+      .pipe(
+        debounceTime(100),
+        map(value => mapper.polePosition.join(value)),
+        takeUntilDestroyed(),
+      )
+      .subscribe(millis => this.propagateChange(millis || null));
   }
 
   writeValue(value: number): void {
@@ -56,5 +52,4 @@ export class PolePositionTimeComponent extends AbstractControlComponent<number> 
   validate(): ValidationErrors | null {
     return this.fg.valid ? null : { required: true };
   }
-
 }

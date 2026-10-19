@@ -12,7 +12,6 @@ import { LiveStatus } from '@f2020/api';
       <h2 class="text-lg font-semibold mb-4">Live Status Monitor</h2>
       <div class="text-sm text-gray-500 mb-2">{{ data()?.length || 0 }} services monitored</div>
       <table mat-table [dataSource]="sortedData()" class="w-full">
-
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef class="font-semibold">Service</th>
@@ -59,16 +58,12 @@ import { LiveStatus } from '@f2020/api';
 
         <!-- Header and Row Definitions -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let _row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let _row; columns: displayedColumns"></tr>
       </table>
     </div>
   `,
-  imports: [
-    MatTableModule,
-    DateTimePipe,
-  ],
+  imports: [MatTableModule, DateTimePipe],
 })
-
 export class LiveStatusComponent {
   data: Signal<(LiveStatus & { name: string })[]> = inject(MAT_BOTTOM_SHEET_DATA);
 

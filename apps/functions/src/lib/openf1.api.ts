@@ -9,17 +9,18 @@ const request = async <T>(url: string, init: RequestInit): Promise<T> => {
   return response.json() as Promise<T>;
 };
 
-const get = <T>(url: string, token: string) => request<T>(url, {
-  headers: {
-    'Authorization': `Bearer ${token}`,
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-  },
-});
+const get = <T>(url: string, token: string) =>
+  request<T>(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
 
 export const openF1Api = {
-  session: async (token: string, seasonId: string | number, circuitKey: number, sessionName: 'Race' | 'Qualifying' | 'Sprint') => get<Session[]>(openF1Url.session(seasonId, circuitKey, sessionName), token)
-    .then(sessions => sessions[0]),
+  session: async (token: string, seasonId: string | number, circuitKey: number, sessionName: 'Race' | 'Qualifying' | 'Sprint') =>
+    get<Session[]>(openF1Url.session(seasonId, circuitKey, sessionName), token).then(sessions => sessions[0]),
 
   sessionResults: async (token: string, sessionKey: number) => get<SessionResult[]>(openF1Url.sessionResults(sessionKey), token),
   championDriverPoints: async (token: string, sessionKey: number) => get<DriverChampionship[]>(openF1Url.championshipDrivers(sessionKey), token),
@@ -30,7 +31,10 @@ export const openF1Api = {
   pitStops: async (token: string, sessionKey: number) => get<PitStop[]>(openF1Url.pitStops(sessionKey), token),
   drivers: async (token: string, sessionKey?: number) => get<Driver[]>(openF1Url.driver(sessionKey), token),
   radio: async (token: string, sessionKey?: number) => get<TeamRadio[]>(openF1Url.radio(sessionKey), token),
-  token: async (username: string = requiredValue(process.env.OPEN_F1_USERNAME, 'OPEN_F1_USERNAME'), password: string = requiredValue(process.env.OPEN_F1_PASSWORD, 'OPEN_F1_PASSWORD')) => {
+  token: async (
+    username: string = requiredValue(process.env.OPEN_F1_USERNAME, 'OPEN_F1_USERNAME'),
+    password: string = requiredValue(process.env.OPEN_F1_PASSWORD, 'OPEN_F1_PASSWORD'),
+  ) => {
     const body = new URLSearchParams();
     body.append('username', username);
     body.append('password', password);
@@ -67,8 +71,8 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const fetchWithRetry = async (path: string, attempt = 0): Promise<Response> => {
   const response = await fetch(openF1ApiUrl + path, {
     headers: {
-      'Authorization': `Bearer ${await serverToken()}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${await serverToken()}`,
+      Accept: 'application/json',
     },
   });
   if (response.status !== tooManyRequests || attempt >= retries) {

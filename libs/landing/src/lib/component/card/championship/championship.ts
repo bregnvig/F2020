@@ -14,4 +14,3 @@ export const topEntries = <T extends IChampionshipPoints>(items: T[], info: (ite
       gained: item.previousPoints === undefined ? 0 : item.points - item.previousPoints,
       change: positionChange(item),
     }));
-

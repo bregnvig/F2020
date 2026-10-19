@@ -5,7 +5,9 @@ import { TeamsList } from '@f2020/shared';
 
 @Component({
   selector: 'teams-season-teams',
-  template: ` <sha-teams-list [drivers]="drivers() ?? []" [teams]="teams()" />`,
+  template: `
+    <sha-teams-list [drivers]="drivers() ?? []" [teams]="teams()" />
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TeamsList],
 })

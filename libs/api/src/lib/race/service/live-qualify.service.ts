@@ -30,60 +30,74 @@ export class LiveQualifyService extends QualifyResultService {
 
   getResult(race: IRace, drivers: IDriver[]): Observable<ILiveQualifyResult> {
     return this.#session(race).pipe(
-      switchMap(session => this.#untilOver(session, combineLatest({
-        positions: withLiveUpdates(
-          this.#openF1HttpService.getPositions(session.session_key),
-          this.#openF1WSSService.positions$.pipe(forSession(session.session_key)),
-          this.#resultStatus$,
-        ).pipe(
-          scan(latestByDriver<Position>(), new Map<number, Position>()),
-          map(positions => [...positions.values()]),
+      switchMap(session =>
+        this.#untilOver(
+          session,
+          combineLatest({
+            positions: withLiveUpdates(
+              this.#openF1HttpService.getPositions(session.session_key),
+              this.#openF1WSSService.positions$.pipe(forSession(session.session_key)),
+              this.#resultStatus$,
+            ).pipe(
+              scan(latestByDriver<Position>(), new Map<number, Position>()),
+              map(positions => [...positions.values()]),
+            ),
+            laps: this.#laps(race),
+            raceControl: this.#raceControlMessages(race),
+          }),
         ),
-        laps: this.#laps(race),
-        raceControl: this.#raceControlMessages(race),
-      }))),
+      ),
       map(({ positions, laps, raceControl }) => mapper.liveQualifyResult({ positions, laps, raceControl, drivers, race })),
-      tap(result => this.#resultStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `Q${result.phase}, ${result.results.length} drivers`,
-      })),
+      tap(result =>
+        this.#resultStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `Q${result.phase}, ${result.results.length} drivers`,
+        }),
+      ),
     );
   }
 
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
     return this.#laps(race).pipe(
       map(laps => mapper.sectors({ laps, drivers })),
-      tap(sectors => this.#sectorStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${sectors.length} driver sectors`,
-      })),
+      tap(sectors =>
+        this.#sectorStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${sectors.length} driver sectors`,
+        }),
+      ),
     );
   }
 
   getRadio(race: IRace, drivers: IDriver[]): Observable<TeamRadio[] | null> {
     return this.#session(race).pipe(
-      switchMap(session => this.#untilOver(session, withLiveUpdates(
-        this.#openF1HttpService.getTeamRadio(race, session.session_key),
-        this.#openF1WSSService.radio$.pipe(forSession(session.session_key)),
-        this.#radioStatus$,
-      ))),
+      switchMap(session =>
+        this.#untilOver(
+          session,
+          withLiveUpdates(this.#openF1HttpService.getTeamRadio(race, session.session_key), this.#openF1WSSService.radio$.pipe(forSession(session.session_key)), this.#radioStatus$),
+        ),
+      ),
       map(messages => mapper.radio({ messages, drivers })),
       scan((previous, current) => [...previous, ...current]),
       map(messages => messages.toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
-      tap(messages => this.#radioStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${messages.length} messages`,
-      })),
+      tap(messages =>
+        this.#radioStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${messages.length} messages`,
+        }),
+      ),
     );
   }
 
   getRaceControl(race: IRace, drivers: IDriver[]): Observable<RaceControl[]> {
     return this.#raceControlMessages(race).pipe(
       map(messages => mapper.raceControl({ messages, drivers })),
-      tap(messages => this.#raceControlStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${messages.length} race control messages`,
-      })),
+      tap(messages =>
+        this.#raceControlStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${messages.length} race control messages`,
+        }),
+      ),
     );
   }
 
@@ -91,11 +105,12 @@ export class LiveQualifyService extends QualifyResultService {
   #laps(race: IRace): Observable<Lap[]> {
     if (!this.#laps$) {
       this.#laps$ = this.#session(race).pipe(
-        switchMap(session => this.#untilOver(session, withLiveUpdates(
-          this.#openF1HttpService.getLaps(session.session_key),
-          this.#openF1WSSService.laps$.pipe(forSession(session.session_key)),
-          this.#resultStatus$,
-        ))),
+        switchMap(session =>
+          this.#untilOver(
+            session,
+            withLiveUpdates(this.#openF1HttpService.getLaps(session.session_key), this.#openF1WSSService.laps$.pipe(forSession(session.session_key)), this.#resultStatus$),
+          ),
+        ),
         scan(mergeLaps, [] as Lap[]),
         shareLatest(),
       );
@@ -107,11 +122,16 @@ export class LiveQualifyService extends QualifyResultService {
   #raceControlMessages(race: IRace): Observable<OpenF1RaceControl[]> {
     if (!this.#raceControl$) {
       this.#raceControl$ = this.#session(race).pipe(
-        switchMap(session => this.#untilOver(session, withLiveUpdates(
-          this.#openF1HttpService.getRaceControl(session.session_key),
-          this.#openF1WSSService.raceControl$.pipe(forSession(session.session_key)),
-          this.#raceControlStatus$,
-        ))),
+        switchMap(session =>
+          this.#untilOver(
+            session,
+            withLiveUpdates(
+              this.#openF1HttpService.getRaceControl(session.session_key),
+              this.#openF1WSSService.raceControl$.pipe(forSession(session.session_key)),
+              this.#raceControlStatus$,
+            ),
+          ),
+        ),
         scan((previous, current) => [...previous, ...current], [] as OpenF1RaceControl[]),
         shareLatest(),
       );
@@ -121,9 +141,7 @@ export class LiveQualifyService extends QualifyResultService {
 
   #session(race: IRace): Observable<Session> {
     this.#openF1WSSService.initializeClient();
-    return this.#openF1HttpService.getSession(race, 'Qualifying').pipe(
-      retry(historyRetry),
-    );
+    return this.#openF1HttpService.getSession(race, 'Qualifying').pipe(retry(historyRetry));
   }
 
   /** Stops the live updates when the qualifying is over */

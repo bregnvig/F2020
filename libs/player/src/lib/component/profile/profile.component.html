@@ -1,6 +1,4 @@
-<mat-toolbar color="primary">
-  Profil
-</mat-toolbar>
+<mat-toolbar color="primary">Profil</mat-toolbar>
 <sha-card-page>
   <mat-card>
     <mat-card-header>
@@ -33,7 +31,7 @@
       <mat-selection-list (selectionChange)="selectionChanged($event)">
         @for (player of players(); track player[0].uid) {
           <mat-list-option [selected]="player[1]" [value]="player[0].uid">
-            <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName">
+            <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName" />
             <h3 matListItemTitle>{{ player[0].displayName }}</h3>
           </mat-list-option>
         }

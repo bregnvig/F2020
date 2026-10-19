@@ -24,12 +24,15 @@ export const StandingStore = signalStore(
     loadStandings: rxMethod<void>(
       pipe(
         tap(() => patchState(store, initialState)),
-        switchMap(() => service.getStandings(season.season().id).pipe(
-          tapResponse({
-            next: standings => patchState(store, { standings, loaded: true }),
-            error: error => patchState(store, { error: error?.toString() }),
-          }),
-        )),
-      )),
+        switchMap(() =>
+          service.getStandings(season.season().id).pipe(
+            tapResponse({
+              next: standings => patchState(store, { standings, loaded: true }),
+              error: error => patchState(store, { error: error?.toString() }),
+            }),
+          ),
+        ),
+      ),
+    ),
   })),
 );

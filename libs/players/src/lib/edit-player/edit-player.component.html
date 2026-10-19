@@ -1,6 +1,6 @@
 @if (player()) {
   <mat-toolbar color="primary">
-    <img class="avatar" height="40" width="40" [ngSrc]="player().photoURL" alt="Profil billede">
+    <img class="avatar" height="40" width="40" [ngSrc]="player().photoURL" alt="Profil billede" />
     <span>{{ player().displayName }}</span>
   </mat-toolbar>
   <sha-card-page [formGroup]="fg">
@@ -18,14 +18,12 @@
       <mat-card-actions class="flex justify-between">
         <button mat-button (click)="updateRoles()">OPDATER</button>
         <div class="flex items-center">
-          <mat-checkbox #confirmedDeletion="matCheckbox"/>
-          <button mat-button color="warn" [disabled]="!confirmedDeletion.checked" (click)="deletePlayer()">
-            SLET
-          </button>
+          <mat-checkbox #confirmedDeletion="matCheckbox" />
+          <button mat-button color="warn" [disabled]="!confirmedDeletion.checked" (click)="deletePlayer()">SLET</button>
         </div>
       </mat-card-actions>
     </mat-card>
   </sha-card-page>
 } @else {
-  <sha-loading/>
+  <sha-loading />
 }

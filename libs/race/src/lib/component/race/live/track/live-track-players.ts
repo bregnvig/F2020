@@ -48,7 +48,7 @@ const minimumSpeed = 1 / 300_000;
 /** The speed of a car in laps per millisecond of the race */
 const speedAt = (samples: { time: number; progress: number }[], now: number): number => {
   const [before, after] = [progressAt(samples, now - speedPeriod), progressAt(samples, now)];
-  const laps = before === undefined || after === undefined ? 0 : ((after - before) % 1 + 1.5) % 1 - 0.5;
+  const laps = before === undefined || after === undefined ? 0 : ((((after - before) % 1) + 1.5) % 1) - 0.5;
   return Math.max(minimumSpeed, laps / speedPeriod);
 };
 
@@ -70,10 +70,12 @@ export const playerGaps = (bids: Bid[]): Map<string, number> => {
 /** How many places ahead of the players with the same points each player is, from the pole position time */
 const tieSteps = (bids: Bid[]): Map<string, number> => {
   const ranked = rank(bids);
-  return new Map(ranked.map(bid => {
-    const tied = ranked.filter(other => other.points === bid.points);
-    return [bid.player!.uid, tied.length - 1 - tied.indexOf(bid)];
-  }));
+  return new Map(
+    ranked.map(bid => {
+      const tied = ranked.filter(other => other.points === bid.points);
+      return [bid.player!.uid, tied.length - 1 - tied.indexOf(bid)];
+    }),
+  );
 };
 
 @Component({
@@ -97,8 +99,12 @@ const tieSteps = (bids: Bid[]): Map<string, number> => {
         }
       </div>
       <!-- The list gives the points of the players, so it is there on small screens as well, only hidden -->
-      <f2020-live-race class="hidden md:block w-80 shrink-0 overflow-y-auto pt-14 pb-4" [race]="data.race" [bids]="data.bids"
-                       [drivers]="data.drivers" (standings)="standings.set($event)" />
+      <f2020-live-race
+        class="hidden md:block w-80 shrink-0 overflow-y-auto pt-14 pb-4"
+        [race]="data.race"
+        [bids]="data.bids"
+        [drivers]="data.drivers"
+        (standings)="standings.set($event)" />
     </div>
     <!-- Last, so it is drawn on top of the track -->
     <button mat-icon-button mat-dialog-close class="!fixed top-2 right-2 z-10 !text-white" aria-label="Luk">
@@ -155,17 +161,19 @@ export class LiveTrackPlayersComponent {
     const gaps = this.#driveTo(this.#gaps(), now, speedAt(car!.samples, now));
     const ahead = tieSteps(this.standings());
     // The last is drawn first, so the leader is on top
-    return rank(this.standings()).map(({ player }, index) => {
-      const gap = gaps.get(player!.uid) ?? 0;
-      const lapsDown = Math.floor(gap + 1e-9);
-      return {
-        id: player!.uid,
-        progress: leaderProgress - gap,
-        ahead: ahead.get(player!.uid),
-        label: `${index + 1}. ${player!.displayName}` + (lapsDown ? ` +${lapsDown}` : ''),
-        image: player!.photoURL,
-      };
-    }).toReversed();
+    return rank(this.standings())
+      .map(({ player }, index) => {
+        const gap = gaps.get(player!.uid) ?? 0;
+        const lapsDown = Math.floor(gap + 1e-9);
+        return {
+          id: player!.uid,
+          progress: leaderProgress - gap,
+          ahead: ahead.get(player!.uid),
+          label: `${index + 1}. ${player!.displayName}` + (lapsDown ? ` +${lapsDown}` : ''),
+          image: player!.photoURL,
+        };
+      })
+      .toReversed();
   });
 
   /**
@@ -175,12 +183,14 @@ export class LiveTrackPlayersComponent {
   #driveTo(gaps: Map<string, number>, now: number, leaderSpeed: number): Map<string, number> {
     const elapsed = this.#shownAt === undefined ? Number.MAX_VALUE : now - this.#shownAt;
     this.#shownAt = now;
-    return new Map([...gaps].map(([id, gap]) => {
-      const shown = this.#shown.get(id);
-      const next = !shown || elapsed < 0 || elapsed > jump ? { gap, velocity: 0 } : this.#drive(shown, gap, elapsed, leaderSpeed);
-      this.#shown.set(id, next);
-      return [id, next.gap];
-    }));
+    return new Map(
+      [...gaps].map(([id, gap]) => {
+        const shown = this.#shown.get(id);
+        const next = !shown || elapsed < 0 || elapsed > jump ? { gap, velocity: 0 } : this.#drive(shown, gap, elapsed, leaderSpeed);
+        this.#shown.set(id, next);
+        return [id, next.gap];
+      }),
+    );
   }
 
   #drive({ gap, velocity }: ShownGap, target: number, elapsed: number, leaderSpeed: number): ShownGap {

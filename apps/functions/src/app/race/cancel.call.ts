@@ -33,25 +33,32 @@ const doCancel = async (round: string) => {
   }
 
   const db = getFirestore();
-  const bids: ({ id: string, bid: Bid; })[] = await db.collection(collectionPaths.bids(race.season, race.round)).get()
+  const bids: { id: string; bid: Bid }[] = await db
+    .collection(collectionPaths.bids(race.season, race.round))
+    .get()
     .then(snapshot => snapshot.docs)
-    .then(snapshots => snapshots.map(s => ({
-      id: s.id,
-      bid: s.data() as Bid,
-    })));
-
+    .then(snapshots =>
+      snapshots.map(s => ({
+        id: s.id,
+        bid: s.data() as Bid,
+      })),
+    );
 
   return Promise.all([
     db.runTransaction(transaction => {
       bids.forEach(({ bid, id }) => {
-        bid.submitted && transferInTransaction({
-          date: DateTime.local(),
-          amount: 20,
-          message: `${race.name} er blevet aflyst`,
-          to: bid.player.uid,
-          from: bookie.uid,
-          involved: [bookie.uid, bid.player.uid],
-        }, transaction);
+        bid.submitted &&
+          transferInTransaction(
+            {
+              date: DateTime.local(),
+              amount: 20,
+              message: `${race.name} er blevet aflyst`,
+              to: bid.player.uid,
+              from: bookie.uid,
+              involved: [bookie.uid, bid.player.uid],
+            },
+            transaction,
+          );
         log(`Deleting bid from season ${race.season} race ${race.round} bid ${id}`);
 
         transaction.delete(db.doc(documentPaths.bid(season.id, race.round, id)));
@@ -65,10 +72,17 @@ const doCancel = async (round: string) => {
 
 const sendNotifications = async (race: IRace) => {
   const db = getFirestore();
-  const players: Player[] = await db.collection(collectionPaths.players())
+  const players: Player[] = await db
+    .collection(collectionPaths.players())
     .where('receiveReminders', '==', true)
     .get()
     .then(snapshot => snapshot.docs.map(d => d.data() as Player))
     .then(players => players.filter(player => player.tokens?.length));
-  return Promise.all(players.map(player => sendNotification(player.tokens, `${race.name} aflyst😥`, `${race.name} er blevet aflyst af FIA og der kan derfor ikke spilles på løbet`, { link: raceLink(race.season, race.round) })));
+  return Promise.all(
+    players.map(player =>
+      sendNotification(player.tokens, `${race.name} aflyst😥`, `${race.name} er blevet aflyst af FIA og der kan derfor ikke spilles på løbet`, {
+        link: raceLink(race.season, race.round),
+      }),
+    ),
+  );
 };

@@ -4,19 +4,19 @@ import { CardPageComponent } from '../card-page/card-page.component';
 import { PlayerStore } from '@f2020/api';
 
 @Component({
-    selector: 'sha-logout',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
+  selector: 'sha-logout',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
     <sha-card-page>
-      <sha-loading/>
+      <sha-loading />
     </sha-card-page>
   `,
-    imports: [CardPageComponent, LoadingComponent]
+  imports: [CardPageComponent, LoadingComponent],
 })
 export class LogoutComponent {
-
   constructor() {
-    inject(PlayerStore).logout().then(() => window.location.href = '/login');
+    inject(PlayerStore)
+      .logout()
+      .then(() => (window.location.href = '/login'));
   }
-
 }

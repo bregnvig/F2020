@@ -23,8 +23,14 @@ const fetchList = <T>(url: string): Promise<T[]> => fetchJson<T[]>(url).catch(()
  */
 const reloadFromOpenF1 = async (seasonId: number): Promise<Map<string, DriverRounds>> => {
   const db = firebaseApp.database;
-  const drivers = await db.collection('drivers').get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
-  const completedRaces = await db.collection(racesURL(seasonId)).withConverter(converter.race).get()
+  const drivers = await db
+    .collection('drivers')
+    .get()
+    .then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
+  const completedRaces = await db
+    .collection(racesURL(seasonId))
+    .withConverter(converter.race)
+    .get()
     .then(snapshot => snapshot.docs.map(doc => doc.data() as IRace))
     .then(races => races.filter(r => r.state === 'completed').sort((a, b) => a.round - b.round));
   console.log(`Reloading ${completedRaces.length} completed races from OpenF1`);
@@ -39,7 +45,10 @@ const reloadFromOpenF1 = async (seasonId: number): Promise<Map<string, DriverRou
     if (!qualifySession) {
       console.warn(`No OpenF1 qualifying session for round ${race.round} ${race.name}. Grid falls back to the finishing position`);
     }
-    const circuit = await db.doc(`circuits/${race.circuitId}`).get().then(doc => doc.data() as Circuit);
+    const circuit = await db
+      .doc(`circuits/${race.circuitId}`)
+      .get()
+      .then(doc => doc.data() as Circuit);
     const basis = mapper.basisRace(circuit, race.round, seasonId);
     const gridPositions = qualifySession
       ? mapper.grid({ positions: await fetchList<GridPosition>(`https://api.openf1.org/v1/starting_grid?session_key=${qualifySession.session_key}`), drivers })
@@ -82,7 +91,9 @@ const reloadFromOpenF1 = async (seasonId: number): Promise<Map<string, DriverRou
 export const fixDriverResults = async (seasonId: number, write: boolean, reload: boolean) => {
   const db = firebaseApp.database;
   const path = `seasons/${seasonId}/standings/drivers/${seasonId}`;
-  const currentResults = await db.collection(path).get()
+  const currentResults = await db
+    .collection(path)
+    .get()
     .then(snapshot => new Map(snapshot.docs.map(doc => [doc.id, doc.data() as IDriverResult])));
 
   const rounds: Map<string, DriverRounds> = reload

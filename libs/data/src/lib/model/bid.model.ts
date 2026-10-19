@@ -1,7 +1,6 @@
 import { Player } from './player.model';
 import { DateTime } from 'luxon';
 
-
 export interface SelectedDriverValue {
   grid: number;
   gridPoints?: number;

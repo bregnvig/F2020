@@ -8,7 +8,6 @@ import { DriversStore } from '@f2020/api';
   standalone: true,
 })
 export class DriverPipe implements PipeTransform {
-
   #previousCode: string;
   #driver: IDriver;
   #drivers: IDriver[];
@@ -23,12 +22,10 @@ export class DriverPipe implements PipeTransform {
   }
 
   transform(driverId: string): IDriver | undefined {
-
     if (driverId && driverId !== this.#previousCode && this.#drivers?.length) {
       this.#previousCode = driverId;
       this.#driver = this.#drivers.find(d => d.driverId === driverId);
     }
     return driverId ? this.#driver : undefined;
   }
-
 }

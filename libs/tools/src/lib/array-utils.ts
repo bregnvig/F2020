@@ -14,24 +14,26 @@ const arrayContainsAll = <T extends number | string | boolean | DateTime>(a: T[]
   if (!Array.isArray(a) || !Array.isArray(b)) {
     throw new Error(`Input must be arrays. A: ${Array.isArray(a)} B: ${Array.isArray(b)}`);
   }
-  const compareValueFn = (a: T): number | string | boolean => a instanceof DateTime ? +a : a as number | string | boolean;
+  const compareValueFn = (a: T): number | string | boolean => (a instanceof DateTime ? +a : (a as number | string | boolean));
   return a.length === b.length && a.every(a => b.some(element => compareValueFn(element) === compareValueFn(a)));
 };
 
-function toRecord<T>(array: T[], property: keyof T): Record<string, T>
-function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty: K): Record<string, T[K]>
+function toRecord<T>(array: T[], property: keyof T): Record<string, T>;
+function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty: K): Record<string, T[K]>;
 function toRecord<T, K extends keyof T>(array: T[], property: keyof T, valueProperty?: K): Record<string, T | T[K]> {
   return Object.fromEntries(array.map(element => [element[property], valueProperty ? element[valueProperty] : element]));
 }
 
-const toMapArray = <T, K = string>(propertyOrFn: keyof T | ((item: T) => K)) => (acc: Map<K, T[]>, item: T): Map<K, T[]> => {
-  const key = (typeof propertyOrFn === 'function' ? propertyOrFn(item) : `${item[propertyOrFn]}`) as K;
-  return acc.set(key, [...(acc.get(key) || []), item]);
-};
+const toMapArray =
+  <T, K = string>(propertyOrFn: keyof T | ((item: T) => K)) =>
+  (acc: Map<K, T[]>, item: T): Map<K, T[]> => {
+    const key = (typeof propertyOrFn === 'function' ? propertyOrFn(item) : `${item[propertyOrFn]}`) as K;
+    return acc.set(key, [...(acc.get(key) || []), item]);
+  };
 
 export type SortDirection = 'asc' | 'desc';
 export type KeyOrGetFn<T> = keyof T | ((obj: T) => T[keyof T] | any);
-export type GetFn<T, V = void> = ((obj: T) => V extends void ? (T[keyof T] | string | number) : V);
+export type GetFn<T, V = void> = (obj: T) => V extends void ? T[keyof T] | string | number : V;
 
 const getSortValue: <T>(a: T, b: T, getFn: GetFn<T>) => number = <T>(a: T, b: T, getFn: GetFn<T>) => {
   const aValue = getFn(a);

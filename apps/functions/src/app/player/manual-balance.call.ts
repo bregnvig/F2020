@@ -8,7 +8,6 @@ interface BalanceData {
 }
 
 export const manualBalance = onCall(async (request: CallableRequest<BalanceData>) => {
-
   return validateAccess(request.auth?.uid, 'bank-admin')
     .then(() => updateBalance(request.data))
     .then(() => true)

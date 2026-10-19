@@ -48,11 +48,13 @@ const getSelectedDriver = (countryCode: string, drivers: IDriver[]) => {
 
 const createRaceTeams = (drivers: IDriver[], teams: ITeam[]): ITeam[] => {
   const teamDrivers = Object.groupBy(drivers, d => d.teamName);
-  return teams.filter(t => teamDrivers[t.name]).map(t => ({
-    ...t,
-    previousDrivers: [],
-    drivers: teamDrivers[t.name].map(d => d.driverId),
-  }));
+  return teams
+    .filter(t => teamDrivers[t.name])
+    .map(t => ({
+      ...t,
+      previousDrivers: [],
+      drivers: teamDrivers[t.name].map(d => d.driverId),
+    }));
 };
 
 /**

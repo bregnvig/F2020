@@ -11,7 +11,7 @@ import { MatCardModule } from '@angular/material/card';
     @if (days()) {
       <mat-card>
         <mat-card-header>
-          <fa-icon mat-card-avatar [icon]="icon" size="2x"/>
+          <fa-icon mat-card-avatar [icon]="icon" size="2x" />
           <mat-card-title>Vejret</mat-card-title>
         </mat-card-header>
         <mat-card-content>
@@ -33,8 +33,6 @@ import { MatCardModule } from '@angular/material/card';
   },
 })
 export class WeatherComponent {
-
   icon = icon.farWeather;
   days: Signal<WeatherDay[]> = inject(WeatherService).weather;
-
 }

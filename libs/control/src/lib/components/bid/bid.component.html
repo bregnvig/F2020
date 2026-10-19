@@ -11,7 +11,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (notBid() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()"/>
+          <f2020-select-drivers formControlName="qualify" [noOfDrivers]="6 + (notBid() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()" />
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #fastestDriver>
@@ -24,8 +24,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (notBid() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()"
-                                [labelFn]="fastestLapLabelFn"/>
+          <f2020-select-drivers formControlName="fastestDriver" [noOfDrivers]="1 + (notBid() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()" [labelFn]="fastestLapLabelFn" />
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #podium>
@@ -38,18 +37,14 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()"
-                                [labelFn]="podiumLabelFn"/>
+          <f2020-select-drivers formControlName="podium" [noOfDrivers]="3 + (isResult() ? 1 : 0)" [drivers]="drivers()" [teams]="teams()" [labelFn]="podiumLabelFn" />
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #selectedDriver>
         <mat-expansion-panel-header>
           <mat-panel-title>{{ race().selectedDriver | driverName }}</mat-panel-title>
           @if (!selectedDriver.expanded) {
-            <mat-panel-description>
-              Start: {{ fg.get('selectedDriver').value?.grid }}
-              Slut: {{ fg.get('selectedDriver').value?.finish }}
-            </mat-panel-description>
+            <mat-panel-description>Start: {{ fg.get('selectedDriver').value?.grid }} Slut: {{ fg.get('selectedDriver').value?.finish }}</mat-panel-description>
           }
         </mat-expansion-panel-header>
         <div>
@@ -78,8 +73,9 @@
             <mat-panel-description>
               @for (team of fg.get('slowestPitStop').value; track team; let first = $first) {
                 @if (!first) {
-                  <span>, </span>
-                }{{ team | teamName }}
+                  <span>,</span>
+                }
+                {{ team | teamName }}
               }
               <f2020-team-logos [constructorIds]="fg.get('slowestPitStop').value" />
             </mat-panel-description>
@@ -99,8 +95,7 @@
           }
         </mat-expansion-panel-header>
         <div>
-          <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult() ? 2 : 0)" [drivers]="drivers()" [teams]="teams()"
-                                [labelFn]="firstCrashLabelFn"/>
+          <f2020-select-drivers formControlName="firstCrash" [noOfDrivers]="1 + (isResult() ? 2 : 0)" [drivers]="drivers()" [teams]="teams()" [labelFn]="firstCrashLabelFn" />
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel [expanded]="true" #time>

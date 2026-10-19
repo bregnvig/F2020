@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase-admin/app';
 
-
 initializeApp();
 
 export * from './app/account';
@@ -13,4 +12,3 @@ export * from './app/race';
 export * from './app/result';
 export * from './app/transaction';
 export * from './app/wbc';
-

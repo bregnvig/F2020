@@ -5,10 +5,8 @@ export const converter = {
   toFirestore(race: IRace): DocumentData {
     return firestoreUtils.convertDateTimes(race);
   },
-  fromFirestore(
-    snapshot: QueryDocumentSnapshot,
-  ): IRace {
+  fromFirestore(snapshot: QueryDocumentSnapshot): IRace {
     const data = snapshot.data()!;
     return firestoreUtils.convertTimestamps(data);
-  }
+  },
 };

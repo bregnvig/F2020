@@ -6,17 +6,21 @@ import { DateTime } from 'luxon';
 import { resolveCircuit } from './circuit.resolver';
 
 export interface SeasonRace {
-  circuit: Circuit,
-  close: DateTime,
-  raceStart: DateTime,
-  url?: string,
+  circuit: Circuit;
+  close: DateTime;
+  raceStart: DateTime;
+  url?: string;
 }
 
 const isTesting = /.*TESTING 20.*/;
 const isPracticeOne = /.*Practice ?1$/;
 const isRace = /.*- Race$/i;
 
-const raceNameOf = (summary: string) => /FORMULA 1(.*) -/.exec(summary)?.[1]?.replace(/\d{4}$/, '').trim();
+const raceNameOf = (summary: string) =>
+  /FORMULA 1(.*) -/
+    .exec(summary)?.[1]
+    ?.replace(/\d{4}$/, '')
+    .trim();
 
 const raceHubHosts = ['cal.f1.com', 'www.formula1.com', 'formula1.com'];
 
@@ -45,22 +49,29 @@ export const raceHubUrl = (description: string | undefined): string | undefined 
 export const readCalendarRaces = async (icsFile: string, circuits: Circuit[]): Promise<SeasonRace[]> => {
   const calendarParsed: VCalendar = parseIcsCalendar(readFileSync(icsFile, 'utf8'));
 
-  const events = calendarParsed.events
-    .filter(e => isPracticeOne.test(e.summary) && !isTesting.test(e.summary))
-    .sort((a, b) => a.start.date.getTime() - b.start.date.getTime());
+  const events = calendarParsed.events.filter(e => isPracticeOne.test(e.summary) && !isTesting.test(e.summary)).sort((a, b) => a.start.date.getTime() - b.start.date.getTime());
 
-  return events.reduce(async (accPromise, event) => {
-    const acc = await accPromise;
-    const raceName = raceNameOf(event.summary);
-    const race = requiredValue(calendarParsed.events.find(e => isRace.test(e.summary) && raceNameOf(e.summary) === raceName), raceName);
-    const circuit = await resolveCircuit(event.summary, event.location, circuits);
-    const url = raceHubUrl(race.description);
-    !url && console.warn('No Race Hub link found for', raceName);
-    return [...acc, {
-      circuit: { ...circuit, name: StringUtils.titleCase(raceName) },
-      close: DateTime.fromJSDate(event.start.date),
-      raceStart: DateTime.fromJSDate(race.start.date),
-      url,
-    } as SeasonRace];
-  }, Promise.resolve([] as SeasonRace[]));
+  return events.reduce(
+    async (accPromise, event) => {
+      const acc = await accPromise;
+      const raceName = raceNameOf(event.summary);
+      const race = requiredValue(
+        calendarParsed.events.find(e => isRace.test(e.summary) && raceNameOf(e.summary) === raceName),
+        raceName,
+      );
+      const circuit = await resolveCircuit(event.summary, event.location, circuits);
+      const url = raceHubUrl(race.description);
+      !url && console.warn('No Race Hub link found for', raceName);
+      return [
+        ...acc,
+        {
+          circuit: { ...circuit, name: StringUtils.titleCase(raceName) },
+          close: DateTime.fromJSDate(event.start.date),
+          raceStart: DateTime.fromJSDate(race.start.date),
+          url,
+        } as SeasonRace,
+      ];
+    },
+    Promise.resolve([] as SeasonRace[]),
+  );
 };

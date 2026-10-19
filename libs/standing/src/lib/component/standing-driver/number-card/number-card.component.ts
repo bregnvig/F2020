@@ -6,20 +6,20 @@ import { IconName, IconPrefix } from '@fortawesome/fontawesome-svg-core';
 @Component({
   selector: 'f2020-number-card',
   template: `
-<mat-card class="flex-auto">
-  <mat-card-header>
-    <div mat-card-avatar>
-      <fa-icon [icon]="icon()" [fixedWidth]="true" size="2x"/>
-    </div>
-    <mat-card-title>{{title()}}</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <h1>
-      {{number()}}
-    </h1>
-  </mat-card-content>
-</mat-card>
-    `,
+    <mat-card class="flex-auto">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <fa-icon [icon]="icon()" [fixedWidth]="true" size="2x" />
+        </div>
+        <mat-card-title>{{ title() }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h1>
+          {{ number() }}
+        </h1>
+      </mat-card-content>
+    </mat-card>
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatCardModule, FaIconComponent],
 })

@@ -16,7 +16,6 @@ const bidConverter = converter.timestamp<Bid>();
 
 @Service()
 export class RacesService {
-
   #firestore = inject(Firestore);
   #functions = inject(Functions);
   #openF1HttpService = inject(OpenF1HttpService);
@@ -29,9 +28,7 @@ export class RacesService {
 
   getBids(seasonId: string, race: IRace | string): Observable<Bid[]> {
     const round = typeof race === 'string' ? race : race.round;
-    return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).withConverter(bidConverter)).pipe(
-      map(bids => bids as Bid[]),
-    );
+    return collectionData(collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids`).withConverter(bidConverter)).pipe(map(bids => bids as Bid[]));
   }
 
   getParticipants(seasonId: string, race: IRace | string): Observable<Participant[]> {
@@ -42,9 +39,7 @@ export class RacesService {
   }
 
   getBid(seasonId: string | number, round: number, uid: string): Observable<Bid> {
-    return docData(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter)).pipe(
-      map(bid => bid as Bid),
-    );
+    return docData(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/races/${round}/bids/${uid}`).withConverter(bidConverter)).pipe(map(bid => bid as Bid));
   }
 
   updateRace(seasonId: string, round: number | string, race: Partial<IRace>): Promise<void> {
@@ -70,13 +65,13 @@ export class RacesService {
       qualifyKey: qualifyKey$,
       raceKey: raceKey$,
     }).pipe(
-      switchMap(({ raceKey, qualifyKey }) => combineLatest({
-        gridPositions: this.#openF1HttpService.getStartingGrid(qualifyKey).pipe(
-          map(positions => mapper.grid({ positions, drivers })),
-        ),
-        sessionResults: this.#openF1HttpService.getSessionResult(raceKey),
-        laps: this.#openF1HttpService.getLaps(raceKey),
-      })),
+      switchMap(({ raceKey, qualifyKey }) =>
+        combineLatest({
+          gridPositions: this.#openF1HttpService.getStartingGrid(qualifyKey).pipe(map(positions => mapper.grid({ positions, drivers }))),
+          sessionResults: this.#openF1HttpService.getSessionResult(raceKey),
+          laps: this.#openF1HttpService.getLaps(raceKey),
+        }),
+      ),
       map(({ sessionResults, gridPositions, laps }) => {
         if (!sessionResults.length) throw new Error('No session results found for race');
         if (!gridPositions.length) throw new Error('No grid positions found for race');
@@ -103,9 +98,7 @@ export class RacesService {
 
   /** The OpenF1 session of the sprint. Undefined on a weekend without a sprint */
   getSprintSession(race: IRace): Observable<Session | undefined> {
-    return this.#openF1HttpService.getSession(race, 'Sprint').pipe(
-      catchError(() => of(undefined)),
-    );
+    return this.#openF1HttpService.getSession(race, 'Sprint').pipe(catchError(() => of(undefined)));
   }
 
   getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]> {
@@ -117,9 +110,7 @@ export class RacesService {
   }
 
   getLastYearResult(seasonId: number, circuitId: string): Promise<RoundResult> {
-    return getDoc(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${circuitId}`)).then(
-      snapshot => snapshot.data() as RoundResult,
-    );
+    return getDoc(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${circuitId}`)).then(snapshot => snapshot.data() as RoundResult);
   }
 
   updateStandings(race: IRace): Promise<unknown> {
@@ -132,8 +123,12 @@ export class RacesService {
   }
 
   async submitBid(bid: Bid, player: Player): Promise<true> {
-    return httpsCallable(this.#functions, 'submitBid')({
-      ...bid, player: {
+    return httpsCallable(
+      this.#functions,
+      'submitBid',
+    )({
+      ...bid,
+      player: {
         uid: player.uid,
         displayName: player.displayName,
         photoURL: player.photoURL,
@@ -145,14 +140,17 @@ export class RacesService {
   }
 
   async updateRaceV2(race: IRace): Promise<true> {
-    return httpsCallable(this.#functions, 'updateRace')({
+    return httpsCallable(
+      this.#functions,
+      'updateRace',
+    )({
       ...firestoreWebUtils.convertToJSON(unfreeze(race)),
       version: 2,
     }).then(() => true);
   }
 
   async submitResult(round: number, result: Bid): Promise<true> {
-    return httpsCallable(this.#functions, 'submitResult')(({ round, result })).then(() => true);
+    return httpsCallable(this.#functions, 'submitResult')({ round, result }).then(() => true);
   }
 
   async submitInterimResult(result: Partial<Bid>): Promise<true> {

@@ -4,7 +4,6 @@ import { AccountsComponent } from './component/accounts/accounts.component';
 import { MyTransactionsComponent } from './component/my-transactions/my-transactions.component';
 import { PlayerTransactionsComponent } from './component/player-transactions/player-transactions.component';
 
-
 export const BankRoutes: Routes = [
   {
     path: 'me',

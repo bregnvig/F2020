@@ -15,7 +15,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   providers: [GithubService],
 })
 export class AboutComponent {
-
   #sanitizer = inject(DomSanitizer);
   service = inject(GithubService);
   angular = this.#sanitizer.bypassSecurityTrustResourceUrl(angularLogo);
@@ -26,5 +25,4 @@ export class AboutComponent {
   cloudMessaging = this.#sanitizer.bypassSecurityTrustResourceUrl(cloudMessagingLogo);
   tailwindCSS = this.#sanitizer.bypassSecurityTrustResourceUrl(tailwindCSS);
   ngrx = this.#sanitizer.bypassSecurityTrustResourceUrl(ngrxLogo);
-
 }

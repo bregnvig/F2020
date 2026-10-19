@@ -89,6 +89,5 @@ export const firestoreWebUtils = {
       }
     });
     return input;
-
   },
 };

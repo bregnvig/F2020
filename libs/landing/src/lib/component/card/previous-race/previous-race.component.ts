@@ -15,7 +15,6 @@ import { NgOptimizedImage } from '@angular/common';
   imports: [MatCardModule, FaIconComponent, MatButtonModule, RouterLink, NgOptimizedImage],
 })
 export class PreviousRaceComponent {
-
   @HostBinding('hidden') isHidden = true;
   wbcResult: Signal<WBCResult>;
   title: Signal<string>;
@@ -25,7 +24,7 @@ export class PreviousRaceComponent {
     const playerStore = inject(PlayerStore);
     const season = inject(SeasonStore).season;
     this.wbcResult = computed(() => season()?.wbc?.results?.at(-1));
-    effect(() => this.isHidden = !this.wbcResult());
+    effect(() => (this.isHidden = !this.wbcResult()));
 
     this.title = computed(() => {
       const index = this.wbcResult()?.players.findIndex(p => p.player.uid === playerStore.player().uid);

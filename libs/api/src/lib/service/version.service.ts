@@ -1,4 +1,4 @@
-import { inject, Service } from "@angular/core";
+import { inject, Service } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { interval, Observable } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
@@ -10,7 +10,6 @@ export interface IVersion {
 
 @Service()
 export class VersionService {
-
   versionOK$: Observable<boolean>;
 
   constructor() {
@@ -21,13 +20,13 @@ export class VersionService {
       map(result => result.data),
       map((expected: IVersion) => ({
         expected,
-        actual: this.#getVersion()
+        actual: this.#getVersion(),
       })),
       map(versions => {
         const uiOK = versions.actual.ui === versions.expected.ui;
         const apiOK = versions.actual.api === versions.expected.api;
-        return uiOK && apiOK || window.location.href.startsWith('http://localhost');
-      })
+        return (uiOK && apiOK) || window.location.href.startsWith('http://localhost');
+      }),
     );
   }
 

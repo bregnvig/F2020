@@ -7,7 +7,6 @@ import { SeasonStore } from '@f2020/api';
 import { Player, WBCResult } from '@f2020/data';
 import { CardPageComponent, FlagURLPipe } from '@f2020/shared';
 
-
 interface WBCRacePlayer {
   round: number;
   raceName: string;
@@ -15,13 +14,14 @@ interface WBCRacePlayer {
   points: number;
 }
 
-const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
-  round: wbc.round,
-  raceName: wbc.raceName,
-  countryCode: wbc.countryCode,
-  points: wbc.players.find(p => p.player.uid === uid)?.points ?? 0,
-});
-
+const racePlayer =
+  (uid: string) =>
+  (wbc: WBCResult): WBCRacePlayer => ({
+    round: wbc.round,
+    raceName: wbc.raceName,
+    countryCode: wbc.countryCode,
+    points: wbc.players.find(p => p.player.uid === uid)?.points ?? 0,
+  });
 
 @Component({
   templateUrl: './wbc-player.component.html',
@@ -29,7 +29,6 @@ const racePlayer = (uid: string) => (wbc: WBCResult): WBCRacePlayer => ({
   imports: [MatToolbarModule, CardPageComponent, MatListModule, RouterLink, FlagURLPipe, NgOptimizedImage],
 })
 export class WbcPlayerComponent {
-
   #route = inject(ActivatedRoute);
 
   races: Signal<WBCRacePlayer[]>;
@@ -39,7 +38,12 @@ export class WbcPlayerComponent {
     const store = inject(SeasonStore);
     const wbc = computed(() => store.season()?.wbc?.results);
     this.races = computed(() => wbc()?.map(racePlayer(this.#route.snapshot.params.uid)));
-    this.player = computed(() => wbc()?.map(w => w.players).flat().find(player => player.player.uid === this.#route.snapshot.params.uid)?.player);
+    this.player = computed(
+      () =>
+        wbc()
+          ?.map(w => w.players)
+          .flat()
+          .find(player => player.player.uid === this.#route.snapshot.params.uid)?.player,
+    );
   }
-
 }

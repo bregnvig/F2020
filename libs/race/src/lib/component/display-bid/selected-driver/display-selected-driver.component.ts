@@ -80,16 +80,17 @@ interface SelectedDriverComparison {
   `,
   imports: [MatListModule, NgClass, FaIconComponent, LoadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [`
-    :host {
-      mat-list-item .mdc-list-item__secondary-text::before {
-        display: none;
+  styles: [
+    `
+      :host {
+        mat-list-item .mdc-list-item__secondary-text::before {
+          display: none;
+        }
       }
-    }
-  `],
+    `,
+  ],
 })
 export class DisplaySelectedDriverComponent {
-
   readonly pointsDiffIcon = computed(() => {
     const { gridPoints, compareGridPoints, finishPoints, compareFinishPoints } = this.selectedDriverComparison();
 

@@ -15,19 +15,9 @@ import { DateTime } from 'luxon';
   selector: 'f2020-live-race',
   templateUrl: 'live-race.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatListItem,
-    MatListItemAvatar,
-    NgOptimizedImage,
-    MatList,
-    FaIconComponent,
-    MatListItemLine,
-    MatListItemTitle,
-    AnimatedForDirective,
-  ],
+  imports: [MatListItem, MatListItemAvatar, NgOptimizedImage, MatList, FaIconComponent, MatListItemLine, MatListItemTitle, AnimatedForDirective],
 })
 export class LiveRaceComponent implements OnInit {
-
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
   bids = input.required<Bid[]>();
@@ -45,12 +35,10 @@ export class LiveRaceComponent implements OnInit {
   #originalPosition?: Map<string, number>;
 
   ngOnInit() {
-
-    const qualify$ = this.#live.getQualify(this.race(), this.drivers()).pipe(
-      shareLatest(),
-    );
+    const qualify$ = this.#live.getQualify(this.race(), this.drivers()).pipe(shareLatest());
     const bids$ = this.#teams.pipe(
-      switchMap(teams => combineLatest([
+      switchMap(teams =>
+        combineLatest([
           this.#live.getResult(this.race(), this.drivers()).pipe(
             tap(({ latestUpdate }) => this.latestUpdate.emit(latestUpdate)),
             map(({ result }) => result),
@@ -68,9 +56,7 @@ export class LiveRaceComponent implements OnInit {
       takeUntilDestroyed(this.#destroyRef),
       shareLatest(),
     );
-    bids$.pipe(
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(bids => {
+    bids$.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(bids => {
       this.standings.emit(bids);
       const ranked = bids.toSorted(compareBids);
       // The places moved are from the first update of the race, so the race starts without any. The interim result is not used,
@@ -89,5 +75,4 @@ export class LiveRaceComponent implements OnInit {
     const original = this.#originalPosition?.get(uid);
     return original === undefined ? 0 : original - index;
   }
-
 }

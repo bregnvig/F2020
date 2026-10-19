@@ -5,13 +5,16 @@ import { seasonsURL } from '../../lib/paths';
 import { IRace } from './../../lib/model/race.model';
 
 describe('Copy race drivers', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
   let round1: IRace;
   let round2: IRace;
 
   const updateRace = async (race: IRace, body: Partial<IRace>): Promise<void> => adminFirestore.doc(`${seasonsURL}/9999/races/${race.round}`).update(body);
-  const readRace = async (round: number): Promise<IRace> => adminFirestore.doc(`${seasonsURL}/9999/races/${round}`).get().then(ref => ref.data() as IRace);
+  const readRace = async (round: number): Promise<IRace> =>
+    adminFirestore
+      .doc(`${seasonsURL}/9999/races/${round}`)
+      .get()
+      .then(ref => ref.data() as IRace);
 
   beforeEach(async () => {
     adminFirestore = adminApp();
@@ -40,5 +43,4 @@ describe('Copy race drivers', () => {
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .catch((error: any) => fail(error));
   });
-
 });

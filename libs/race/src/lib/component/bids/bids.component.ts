@@ -16,7 +16,6 @@ const polePositionDiffComparator = (a: Partial<Bid>, b: Partial<Bid>): number =>
   imports: [MatListModule, FaIconComponent, PartialBidWarningComponent, NgOptimizedImage, RelativeToNowPipe],
 })
 export class BidsComponent {
-
   readonly #router = inject(Router);
   readonly #route = inject(ActivatedRoute);
 
@@ -27,9 +26,9 @@ export class BidsComponent {
 
   readonly bids = input.required<Bid[] | Participant[], Bid[] | Participant[]>({
     transform: value => {
-      return [...value || []].toSorted((a, b) => {
+      return [...(value || [])].toSorted((a, b) => {
         if (this.isBid(a) && this.isBid(b)) {
-          return (b.points - a.points) || (polePositionDiffComparator(a, b));
+          return b.points - a.points || polePositionDiffComparator(a, b);
         }
         return a.player.displayName.localeCompare(b.player.displayName);
       });

@@ -3,18 +3,17 @@ import { getMessaging } from 'firebase-admin/messaging';
 import { logger } from 'firebase-functions';
 import { collectionPaths } from './paths';
 
-const staleTokenErrors = new Set([
-  'messaging/registration-token-not-registered',
-  'messaging/invalid-registration-token',
-]);
+const staleTokenErrors = new Set(['messaging/registration-token-not-registered', 'messaging/invalid-registration-token']);
 
 const removeStaleTokens = async (staleTokens: string[]): Promise<void> => {
   const db = getFirestore();
-  await Promise.all(staleTokens.map(async token => {
-    const players = await db.collection(collectionPaths.players()).where('tokens', 'array-contains', token).get();
-    await Promise.all(players.docs.map(doc => doc.ref.update({ tokens: FieldValue.arrayRemove(token) })));
-    logger.info(`Removed stale token from ${players.size} player(s)`);
-  }));
+  await Promise.all(
+    staleTokens.map(async token => {
+      const players = await db.collection(collectionPaths.players()).where('tokens', 'array-contains', token).get();
+      await Promise.all(players.docs.map(doc => doc.ref.update({ tokens: FieldValue.arrayRemove(token) })));
+      logger.info(`Removed stale token from ${players.size} player(s)`);
+    }),
+  );
 };
 
 const appUrl = 'https://f1.bregnvig.dk';
@@ -33,11 +32,12 @@ interface NotificationOptions {
   data?: { [key: string]: string };
 }
 
-export const sendNotification = async (tokens: string[], title: string, body: string, {
-  badge = appLink('assets/messaging/badge.v2.png'),
-  link = appUrl,
-  data,
-}: NotificationOptions = {}): Promise<void> => {
+export const sendNotification = async (
+  tokens: string[],
+  title: string,
+  body: string,
+  { badge = appLink('assets/messaging/badge.v2.png'), link = appUrl, data }: NotificationOptions = {},
+): Promise<void> => {
   try {
     const response = await getMessaging().sendEachForMulticast({
       data,

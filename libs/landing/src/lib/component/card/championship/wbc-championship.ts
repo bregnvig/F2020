@@ -14,9 +14,15 @@ interface WBCStanding extends IChampionshipPoints {
 
 /** Total points of each player, the one with most points first */
 const totals = (results: WBCResult[]): { player: Player; points: number }[] =>
-  [...results.flatMap(r => r.players).reduce((acc, { player, points }) =>
-    acc.set(player.uid, { player, points: (acc.get(player.uid)?.points ?? 0) + points }), new Map<string, { player: Player; points: number }>()).values()]
-    .sort((a, b) => b.points - a.points);
+  [
+    ...results
+      .flatMap(r => r.players)
+      .reduce(
+        (acc, { player, points }) => acc.set(player.uid, { player, points: (acc.get(player.uid)?.points ?? 0) + points }),
+        new Map<string, { player: Player; points: number }>(),
+      )
+      .values(),
+  ].sort((a, b) => b.points - a.points);
 
 /** The standing after all the results, with points and position before the last result */
 const wbcStandings = (results: WBCResult[]): WBCStanding[] => {
@@ -38,11 +44,11 @@ const wbcStandings = (results: WBCResult[]): WBCStanding[] => {
   template: `
     <mat-card>
       <mat-card-header>
-        <fa-icon mat-card-avatar [icon]="icon" size="2x"/>
+        <fa-icon mat-card-avatar [icon]="icon" size="2x" />
         <mat-card-title>WBC</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <sha-championship-list [entries]="entries()"/>
+        <sha-championship-list [entries]="entries()" />
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [routerLink]="['wbc']">SE MERE</a>
@@ -59,9 +65,11 @@ export class WbcChampionshipComponent {
   #season = inject(SeasonStore).season;
 
   protected readonly icon = icon.farRankingStar;
-  protected readonly entries = computed(() => topEntries(wbcStandings(this.#season()?.wbc?.results ?? []), ({ player }) => ({
-    id: player.uid,
-    name: player.displayName,
-    image: { url: player.photoURL },
-  })));
+  protected readonly entries = computed(() =>
+    topEntries(wbcStandings(this.#season()?.wbc?.results ?? []), ({ player }) => ({
+      id: player.uid,
+      name: player.displayName,
+      image: { url: player.photoURL },
+    })),
+  );
 }

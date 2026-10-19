@@ -32,7 +32,6 @@ console.log(`Building season ${seasonId}`);
 //   .then(teams => writeTeams(seasonId, teams))
 //   .then(count => console.log(`Wrote ${count} teams`));
 
-
 // import { environment } from "./environments/environment";
 
 // buildNewSeason('2022')
@@ -47,7 +46,7 @@ console.log(`Building season ${seasonId}`);
 // Bare skriv de først ti ud
 
 // readCollection('seasons').then(_ => JSON.stringify(_, null, '\t')).then(data => writeFileSync('seasons.json', data));
-// 
+//
 
 // appendRaces('2020').then(() => assignTeamsToSeason(2020))
 //   .then(() => console.log('Done'));
@@ -71,25 +70,22 @@ buildDrivers()
 
 if (args.includes('--fix-driver-standings')) {
   // Rebuild the driver standing from OpenF1. Dry run unless --write is passed. --keep-wins keeps the stored wins and only fetches the last race.
-  fixDriverStandings(seasonId, args.includes('--write'), args.includes('--keep-wins'))
-    .catch(error => {
-      console.error('Fixing driver standings failed', error);
-      process.exitCode = 1;
-    });
+  fixDriverStandings(seasonId, args.includes('--write'), args.includes('--keep-wins')).catch(error => {
+    console.error('Fixing driver standings failed', error);
+    process.exitCode = 1;
+  });
 } else if (args.includes('--fix-team-standings')) {
   // Update the team points and positions from OpenF1. Dry run unless --write is passed.
-  fixTeamStandings(seasonId, args.includes('--write'))
-    .catch(error => {
-      console.error('Fixing team standings failed', error);
-      process.exitCode = 1;
-    });
+  fixTeamStandings(seasonId, args.includes('--write')).catch(error => {
+    console.error('Fixing team standings failed', error);
+    process.exitCode = 1;
+  });
 } else if (args.includes('--fix-driver-results')) {
   // Recalculate retired and average positions of the driver results, from OpenF1 with --reload. Dry run unless --write is passed.
-  fixDriverResults(seasonId, args.includes('--write'), args.includes('--reload'))
-    .catch(error => {
-      console.error('Fixing driver results failed', error);
-      process.exitCode = 1;
-    });
+  fixDriverResults(seasonId, args.includes('--write'), args.includes('--reload')).catch(error => {
+    console.error('Fixing driver results failed', error);
+    process.exitCode = 1;
+  });
 } else if (args.includes('--tracks')) {
   // Write the track outlines for the race map into the UI's assets. Run from the workspace root, as nx serve does.
   const uiAssets = join(process.cwd(), 'apps/ui/src/assets');
@@ -112,7 +108,7 @@ if (args.includes('--fix-driver-standings')) {
 }
 
 /*
-*/
+ */
 // buildCircuits().then(
 //   () => buildNewSeason(seasonId))
 //   .then(() => console.log('Season built'));

@@ -17,11 +17,11 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
       <p>Dog maksimalt {{ data.player.balance | currency: 'DKK' }}</p>
       <mat-form-field>
         <mat-label>Beløb</mat-label>
-        <input formControlName="amount" matInput type="number">
+        <input formControlName="amount" matInput type="number" />
       </mat-form-field>
       <mat-form-field>
         <mat-label>Besked</mat-label>
-        <input formControlName="message" matInput placeholder="Udbetalt via MobilePay">
+        <input formControlName="message" matInput placeholder="Udbetalt via MobilePay" />
       </mat-form-field>
     </div>
     <div mat-dialog-actions>
@@ -29,26 +29,14 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
       <button mat-button (click)="withdraw()" [disabled]="fg.invalid">OK</button>
     </div>
   `,
-  imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    ReactiveFormsModule,
-    CurrencyPipe,
-    MatFormField,
-    MatInput,
-    MatLabel,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
-  ],
+  imports: [MatDialogTitle, MatDialogContent, ReactiveFormsModule, CurrencyPipe, MatFormField, MatInput, MatLabel, MatDialogActions, MatButton, MatDialogClose],
 })
 export class WithdrawDialogComponent {
-
   readonly #fb = inject(FormBuilder);
   readonly #dialogRef = inject(MatDialogRef<DepositDialogComponent>);
   readonly #service = inject(AccountService);
 
-  data = inject<{ player: Player; }>(MAT_DIALOG_DATA);
+  data = inject<{ player: Player }>(MAT_DIALOG_DATA);
 
   fg = this.#fb.group({
     amount: this.#fb.control(0, [Validators.required, Validators.min(0), Validators.max(Math.max(0, this.data.player.balance))]),
@@ -59,5 +47,4 @@ export class WithdrawDialogComponent {
     const { amount, message } = this.fg.value;
     this.#dialogRef.close(this.#service.withdraw(this.data.player.uid, amount, message || 'Udbetalt via MobilePay').then(() => amount));
   }
-
 }

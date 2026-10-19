@@ -11,7 +11,6 @@ import { AccountService } from '../../service';
   providers: [PlayersStore, AccountService],
 })
 export class AccountsComponent {
-
   constructor() {
     inject(PlayersStore).loadPlayers();
   }

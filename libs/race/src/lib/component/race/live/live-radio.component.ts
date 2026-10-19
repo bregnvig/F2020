@@ -21,7 +21,7 @@ import { RadioMessageComponent } from './radio-message.component';
             </h4>
             <div matListItemLine>
               <audio #audio (ended)="audio.pause()">
-                <source [src]="message.recordingUrl" type="audio/mpeg">
+                <source [src]="message.recordingUrl" type="audio/mpeg" />
                 Hov - du kan ikke afspille denne besked
               </audio>
               <span class="text-xs">&#64;{{ message.date | dateTime: 'HH:mm.ss' }}</span>
@@ -31,18 +31,8 @@ import { RadioMessageComponent } from './radio-message.component';
       </mat-list>
     }
   `,
-  imports: [
-    DateTimePipe,
-    MatList,
-    MatListItem,
-    MatListItemAvatar,
-    MatListItemLine,
-    MatListItemTitle,
-    DriverHeadshotComponent,
-    RadioMessageComponent,
-  ],
+  imports: [DateTimePipe, MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle, DriverHeadshotComponent, RadioMessageComponent],
 })
-
 export class LiveRadioComponent {
   #live = inject(LiveSessionProvider);
   race = input.required<IRace>();

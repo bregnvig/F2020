@@ -1,68 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8"/>
-  <title>F2026</title>
-  <base href="/"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
-  <link rel="manifest" href="manifest.webmanifest"/>
-  <meta name="theme-color" content="#303030"/>
-  <script>
-    (g => {
-      var h, a, k, p = 'The Google Maps JavaScript API', c = 'google', l = 'importLibrary', q = '__ib__', m = document, b = window;
-      b = b[c] || (b[c] = {});
-      var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => {
-        await (a = m.createElement('script'));
-        e.set('libraries', [...r] + '');
-        for (k in g) e.set(k.replace(/[A-Z]/g, t => '_' + t[0].toLowerCase()), g[k]);
-        e.set('callback', c + '.maps.' + q);
-        a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
-        d[q] = f;
-        a.onerror = () => h = n(Error(p + ' could not load.'));
-        a.nonce = m.querySelector('script[nonce]')?.nonce || '';
-        m.head.append(a);
-      }));
-      d[l] ? console.warn(p + ' only loads once. Ignoring:', g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n));
-    })({
-      v: 'weekly',
-      key: 'AIzaSyBtmPRthcEnSsISzURI60e8xDyYGo6iuRE'
-    });
-  </script>
-  <style>
-    body {
-      background-color: rgb(48, 48, 48)
-    }
-
-    img.loading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-    }
-
-    @media (min-width: 768px) {
-      img.loading {
-        width: auto;
-        height: auto;
-        max-width: 100vw;
-        max-height: 100vh;
-        object-fit: contain;
+  <head>
+    <meta charset="utf-8" />
+    <title>F2026</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#303030" />
+    <script>
+      (g => {
+        var h,
+          a,
+          k,
+          p = 'The Google Maps JavaScript API',
+          c = 'google',
+          l = 'importLibrary',
+          q = '__ib__',
+          m = document,
+          b = window;
+        b = b[c] || (b[c] = {});
+        var d = b.maps || (b.maps = {}),
+          r = new Set(),
+          e = new URLSearchParams(),
+          u = () =>
+            h ||
+            (h = new Promise(async (f, n) => {
+              await (a = m.createElement('script'));
+              e.set('libraries', [...r] + '');
+              for (k in g)
+                e.set(
+                  k.replace(/[A-Z]/g, t => '_' + t[0].toLowerCase()),
+                  g[k],
+                );
+              e.set('callback', c + '.maps.' + q);
+              a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
+              d[q] = f;
+              a.onerror = () => (h = n(Error(p + ' could not load.')));
+              a.nonce = m.querySelector('script[nonce]')?.nonce || '';
+              m.head.append(a);
+            }));
+        d[l] ? console.warn(p + ' only loads once. Ignoring:', g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+      })({
+        v: 'weekly',
+        key: 'AIzaSyBtmPRthcEnSsISzURI60e8xDyYGo6iuRE',
+      });
+    </script>
+    <style>
+      body {
+        background-color: rgb(48, 48, 48);
       }
-    }
-  </style>
-</head>
 
-<body>
-<div class="mat-typography mat-app-background basic-container">
-  <f2020-root>
-    <img class="loading" src="assets/splash.webp" alt="loading">
-  </f2020-root>
-</div>
-<noscript>Please enable JavaScript to continue using this application.</noscript>
-</body>
+      img.loading {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+      }
+
+      @media (min-width: 768px) {
+        img.loading {
+          width: auto;
+          height: auto;
+          max-width: 100vw;
+          max-height: 100vh;
+          object-fit: contain;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="mat-typography mat-app-background basic-container">
+      <f2020-root>
+        <img class="loading" src="assets/splash.webp" alt="loading" />
+      </f2020-root>
+    </div>
+    <noscript>Please enable JavaScript to continue using this application.</noscript>
+  </body>
 </html>

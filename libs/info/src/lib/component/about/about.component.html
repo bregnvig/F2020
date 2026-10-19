@@ -1,48 +1,48 @@
-<mat-toolbar color="primary">
-  Om spillet
-</mat-toolbar>
+<mat-toolbar color="primary">Om spillet</mat-toolbar>
 <mat-grid-list cols="2">
   @for (contributor of service.contributors$ | async; track contributor) {
     <mat-grid-tile>
       <a [href]="contributor.url">
-        <img class="circle w-4/5" [title]="contributor.login" [src]="contributor.avatarURL">
+        <img class="circle w-4/5" [title]="contributor.login" [src]="contributor.avatarURL" />
       </a>
     </mat-grid-tile>
   }
-  <mat-grid-tile><a href="https://github.com/bregnvig/F2020"><img class="w-4/5" [src]="github"></a></mat-grid-tile>
+  <mat-grid-tile>
+    <a href="https://github.com/bregnvig/F2020"><img class="w-4/5" [src]="github" /></a>
+  </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://angular.io">
-      <img class="w-4/5" [src]="angular">
+      <img class="w-4/5" [src]="angular" />
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/">
-      <img class="w-4/5" [src]="firebase">
+      <img class="w-4/5" [src]="firebase" />
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/products/firestore">
-      <img class="w-4/5" [src]="firestore">
+      <img class="w-4/5" [src]="firestore" />
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/products/functions">
-      <img class="w-4/5" [src]="functions">
+      <img class="w-4/5" [src]="functions" />
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://firebase.google.com/docs/cloud-messaging">
-      <img class="w-4/5" [src]="cloudMessaging">
+      <img class="w-4/5" [src]="cloudMessaging" />
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://tailwindcss.com/">
-      <img class="w-4/5" [src]="tailwindCSS">
+      <img class="w-4/5" [src]="tailwindCSS" />
     </a>
   </mat-grid-tile>
   <mat-grid-tile>
     <a href="https://ngrx.io/guide/signals">
-      <img class="w-4/5" [src]="ngrx">
+      <img class="w-4/5" [src]="ngrx" />
     </a>
   </mat-grid-tile>
 </mat-grid-list>

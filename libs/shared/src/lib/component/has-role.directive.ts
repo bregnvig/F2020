@@ -8,7 +8,6 @@ import { ensureArray } from '@f2020/tools';
   standalone: true,
 })
 export class HasRoleDirective {
-
   #templateRef = inject<TemplateRef<any>>(TemplateRef);
   #viewContainer = inject(ViewContainerRef);
   #thenViewRef: EmbeddedViewRef<NgIfContext> | null = null;
@@ -23,7 +22,6 @@ export class HasRoleDirective {
     alias: 'shaHasRoleElse',
   });
 
-
   constructor() {
     const { player } = inject(PlayerStore);
     effect(() => {
@@ -32,7 +30,7 @@ export class HasRoleDirective {
     });
     effect(() => {
       this.elseTemplateRef();
-      this.#elseViewRef = null;  // clear previous view if any.
+      this.#elseViewRef = null; // clear previous view if any.
       this.#updateView();
     });
   }

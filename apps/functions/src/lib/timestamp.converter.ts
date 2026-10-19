@@ -5,9 +5,7 @@ export const converter = {
   toFirestore<T>(data: T): DocumentData {
     return firestoreUtils.convertDateTimes(data);
   },
-  fromFirestore<T>(
-    data: QueryDocumentSnapshot,
-  ): T {
+  fromFirestore<T>(data: QueryDocumentSnapshot): T {
     return firestoreUtils.convertTimestamps(data.data());
   },
 };

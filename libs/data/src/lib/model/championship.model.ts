@@ -24,8 +24,7 @@ export const championshipPoints = (championship: DriverChampionship | TeamChampi
 /**
  * Places moved since the last race weekend. Positive when moving up. Zero when unknown.
  */
-export const positionChange = ({ position, previousPosition }: IChampionshipPoints): number =>
-  position && previousPosition ? previousPosition - position : 0;
+export const positionChange = ({ position, previousPosition }: IChampionshipPoints): number => (position && previousPosition ? previousPosition - position : 0);
 
 /** The points and place in the championship before a session */
 export interface ChampionshipStart {

@@ -1,7 +1,23 @@
 import { inject, Service } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { IRace } from '@f2020/data';
-import { DriverChampionship, GridPosition, Interval, Lap, Location, openF1Url, PitStop, Position, RaceControl, Session, SessionResult, Stint, TeamChampionship, TeamRadio as OpenF1TeamRadio, Weather } from '@f2020/openf1';
+import {
+  DriverChampionship,
+  GridPosition,
+  Interval,
+  Lap,
+  Location,
+  openF1Url,
+  PitStop,
+  Position,
+  RaceControl,
+  Session,
+  SessionResult,
+  Stint,
+  TeamChampionship,
+  TeamRadio as OpenF1TeamRadio,
+  Weather,
+} from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, Observable, of, shareReplay, tap } from 'rxjs';
@@ -23,16 +39,16 @@ export class OpenF1HttpService {
       const session$ = session
         ? of(session)
         : this.#getList<Session>(openF1Url.session(race.season, race.circuitId, sessionName)).pipe(
-          map(sessions => requiredValue(sessions[0], 'Session')),
-          tap(session => localStorage.setItem(key, JSON.stringify(session))),
-          shareReplay(1),
-        );
+            map(sessions => requiredValue(sessions[0], 'Session')),
+            tap(session => localStorage.setItem(key, JSON.stringify(session))),
+            shareReplay(1),
+          );
       sessionCache.set(key, session$);
     }
     return sessionCache.get(key);
   }
 
-  getPositionAndLabs(race: IRace, sessionKey: number): Observable<{ positions: Position[], laps: Lap[]; }> {
+  getPositionAndLabs(race: IRace, sessionKey: number): Observable<{ positions: Position[]; laps: Lap[] }> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
     const positionQuery = `&date<=${latestEndTime.toISO(toISOOptions)}`;
     const lapsQuery = `&date_start<=${latestEndTime.toISO(toISOOptions)}`;
@@ -104,14 +120,12 @@ export class OpenF1HttpService {
    * The function answers an empty list when OpenF1 has no data
    */
   #getList<T>(url: string): Observable<T[]> {
-    return defer(() => httpsCallable<{ path: string; }, T[]>(this.#functions, 'openF1Call')({ path: url.replace(openF1ApiUrl, '') })).pipe(
-      map(response => response.data),
-    );
+    return defer(() => httpsCallable<{ path: string }, T[]>(this.#functions, 'openF1Call')({ path: url.replace(openF1ApiUrl, '') })).pipe(map(response => response.data));
   }
 
   /** The token for the live updates over MQTT */
   getToken(): Observable<string> {
-    return defer(() => httpsCallable<void, { token: string; }>(this.#functions, 'getToken')().then(response => response.data.token)).pipe(
+    return defer(() => httpsCallable<void, { token: string }>(this.#functions, 'getToken')().then(response => response.data.token)).pipe(
       catchError(error => {
         console.error('Failed to fetch OpenF1 token:', error);
         throw new Error('Failed to fetch OpenF1 token');

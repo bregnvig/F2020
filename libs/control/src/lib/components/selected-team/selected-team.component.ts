@@ -10,10 +10,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div [formGroup]="fg">
-      <f2020-select-driver [driverIds]="driverIds()" label="Kvalifikation"
-                           formControlName="qualify" />
-      <f2020-select-driver [driverIds]="driverIds()" label="Resultat"
-                           formControlName="result" />
+      <f2020-select-driver [driverIds]="driverIds()" label="Kvalifikation" formControlName="qualify" />
+      <f2020-select-driver [driverIds]="driverIds()" label="Resultat" formControlName="result" />
     </div>
   `,
   providers: [
@@ -31,7 +29,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [ReactiveFormsModule, SelectDriverComponent],
 })
 export class SelectedTeamComponent extends AbstractControlComponent<SelectedTeamValue> {
-
   #fb = inject(FormBuilder);
 
   readonly team = input.required<ITeam>();
@@ -45,9 +42,7 @@ export class SelectedTeamComponent extends AbstractControlComponent<SelectedTeam
   constructor() {
     super();
     this.setupStandardControl(this.fg);
-    this.fg.valueChanges.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(value => this.propagateChange(value));
+    this.fg.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => this.propagateChange(value));
   }
 
   writeValue(value: SelectedTeamValue): void {

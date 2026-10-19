@@ -5,12 +5,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Service()
 export class FCMService {
-
-
   setupMessaging: () => Promise<void | string>;
 
   constructor() {
-
     const snackBar = inject(MatSnackBar);
     if (location.hostname === 'localhost') {
       this.setupMessaging = () => Promise.resolve();
@@ -24,24 +21,27 @@ export class FCMService {
           setTimeout(() => {
             const isAlreadyGranted = Notification.permission === 'granted';
             (isAlreadyGranted
-                ? Promise.resolve()
-                : firstValueFrom(snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction())
-            ).then(
-              async () => {
-                await navigator.serviceWorker.register('/assets/firebase-messaging-sw.js', {
+              ? Promise.resolve()
+              : firstValueFrom(snackBar.open('Hvis du vil modtage påmindelse, løbsresultater etc, så skal du godkende at vi må sende notifikationer til dig 👍', 'OK').onAction())
+            ).then(async () => {
+              await navigator.serviceWorker
+                .register('/assets/firebase-messaging-sw.js', {
                   type: 'module',
-                }).then(serviceWorkerRegistration => getToken(messaging, {
-                  serviceWorkerRegistration,
-                }).then(token => {
-                  isAlreadyGranted && console.debug('Already granted', token);
-                  resolve(token);
-                }).catch(error => reject(error)));
-              },
-            );
+                })
+                .then(serviceWorkerRegistration =>
+                  getToken(messaging, {
+                    serviceWorkerRegistration,
+                  })
+                    .then(token => {
+                      isAlreadyGranted && console.debug('Already granted', token);
+                      resolve(token);
+                    })
+                    .catch(error => reject(error)),
+                );
+            });
           });
         });
       };
     }
   }
-
 }

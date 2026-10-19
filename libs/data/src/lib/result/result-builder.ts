@@ -3,10 +3,16 @@ import { Bid, finished, IDriverQualifying, IDriverRaceResult, IPitStop, IQualify
 const getDriverId = (result: IDriverRaceResult | IDriverQualifying) => result.driver.driverId;
 
 export const buildResult = (race: IRaceResult | null, qualify: IQualifyResult | null, pitStops: IPitStop[] | null, selectedDriver: string, selectedTeam: ITeam): Bid => {
-
   const raceResult = race?.results ?? [];
   const qualifyResult = qualify?.results.slice(0, 7).map(getDriverId) ?? [];
-  const pitStopResult = [...new Set<string>((pitStops ?? []).filter(p => p.team).sort((a, b) => b.duration - a.duration).map(p => p.team.constructorId))].slice(0, 2);
+  const pitStopResult = [
+    ...new Set<string>(
+      (pitStops ?? [])
+        .filter(p => p.team)
+        .sort((a, b) => b.duration - a.duration)
+        .map(p => p.team.constructorId),
+    ),
+  ].slice(0, 2);
 
   const fastestDriverResult = [...raceResult]
     .filter(result => !!result.fastestLap)
@@ -15,16 +21,22 @@ export const buildResult = (race: IRaceResult | null, qualify: IQualifyResult | 
     .map(getDriverId);
   const podiumResult = raceResult.slice(0, 4).map(getDriverId) ?? [];
   const driver = raceResult.find(r => r.driver.driverId === selectedDriver);
-  const selectedDriverResult: SelectedDriverValue | null = driver && race
-    ? {
-      grid: driver?.grid || raceResult.length,
-      finish: raceResult.indexOf(driver) !== -1 ? raceResult.indexOf(driver) + 1 : 1,
-    } : null;
+  const selectedDriverResult: SelectedDriverValue | null =
+    driver && race
+      ? {
+          grid: driver?.grid || raceResult.length,
+          finish: raceResult.indexOf(driver) !== -1 ? raceResult.indexOf(driver) + 1 : 1,
+        }
+      : null;
   const selectedTeamResult: Partial<SelectedTeamValue> = {
     qualify: selectedTeam && qualify ? qualify.results.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId))?.driver.driverId : undefined,
     result: selectedTeam && race ? raceResult.find(r => selectedTeam.drivers.some(d => d === r.driver.driverId))?.driver.driverId : undefined,
   };
-  const firstCrashResult = [...raceResult].reverse().filter(r => !finished(r.status)).slice(0, 3).map(getDriverId);
+  const firstCrashResult = [...raceResult]
+    .reverse()
+    .filter(r => !finished(r.status))
+    .slice(0, 3)
+    .map(getDriverId);
   return <Bid>{
     qualify: qualifyResult,
     fastestDriver: fastestDriverResult,

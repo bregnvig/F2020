@@ -1,1 +1,1 @@
-export * from "./lib/standing-routes";
+export * from './lib/standing-routes';

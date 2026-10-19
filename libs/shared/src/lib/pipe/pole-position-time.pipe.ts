@@ -6,7 +6,6 @@ import { mapper } from '@f2020/data';
   standalone: true,
 })
 export class PolePositionTimePipe implements PipeTransform {
-
   transform(value: number): string {
     if (typeof value === 'number') {
       const pole = mapper.polePosition.split(value);
@@ -14,5 +13,4 @@ export class PolePositionTimePipe implements PipeTransform {
     }
     return value;
   }
-
 }

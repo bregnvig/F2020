@@ -12,10 +12,12 @@ const start = ({ points_start, position_start }: DriverChampionship | TeamChampi
 export const map = (drivers: IDriver[], driverChampionship: DriverChampionship[], teamChampionship: TeamChampionship[]): ChampionshipStarts => {
   const driverMap = getDrivers(drivers);
   return {
-    drivers: new Map(driverChampionship
-      .map(championship => ({ driver: findDriver(driverMap, championship.driver_number, 'Championship'), championship }))
-      .filter(({ driver }) => !!driver)
-      .map(({ driver, championship }) => [driver!.driverId, start(championship)])),
+    drivers: new Map(
+      driverChampionship
+        .map(championship => ({ driver: findDriver(driverMap, championship.driver_number, 'Championship'), championship }))
+        .filter(({ driver }) => !!driver)
+        .map(({ driver, championship }) => [driver!.driverId, start(championship)]),
+    ),
     teams: new Map(teamChampionship.map(championship => [championship.team_name, start(championship)])),
   };
 };

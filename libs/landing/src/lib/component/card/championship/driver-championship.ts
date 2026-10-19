@@ -15,11 +15,11 @@ import { topEntries } from './championship';
   template: `
     <mat-card>
       <mat-card-header>
-        <fa-icon mat-card-avatar [icon]="icon" size="2x"/>
+        <fa-icon mat-card-avatar [icon]="icon" size="2x" />
         <mat-card-title>Kørermesterskabet</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <sha-championship-list [entries]="entries()"/>
+        <sha-championship-list [entries]="entries()" />
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [routerLink]="['standings']">SE MERE</a>
@@ -34,15 +34,20 @@ import { topEntries } from './championship';
 })
 export class DriverChampionshipComponent {
   #service = inject(StandingService);
-  #standings = toSignal(toObservable(inject(SeasonStore).season).pipe(
-    truthy(),
-    switchMap(season => this.#service.getStandings(season.id)),
-  ), { initialValue: [] });
+  #standings = toSignal(
+    toObservable(inject(SeasonStore).season).pipe(
+      truthy(),
+      switchMap(season => this.#service.getStandings(season.id)),
+    ),
+    { initialValue: [] },
+  );
 
   protected readonly icon = icon.fasSteeringWheel;
-  protected readonly entries = computed(() => topEntries(this.#standings() ?? [], ({ driver }) => ({
-    id: driver.driverId,
-    name: driver.name,
-    driver,
-  })));
+  protected readonly entries = computed(() =>
+    topEntries(this.#standings() ?? [], ({ driver }) => ({
+      id: driver.driverId,
+      name: driver.name,
+      driver,
+    })),
+  );
 }

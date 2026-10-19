@@ -4,12 +4,14 @@
       @for (transaction of transactions; track $index) {
         <mat-list-item>
           <h4 matListItemTitle>{{ transaction.message }}</h4>
-          <div matListItemLine><small>{{ transaction.date | dateTime: 'short' }}</small></div>
+          <div matListItemLine>
+            <small>{{ transaction.date | dateTime: 'short' }}</small>
+          </div>
           <div class="!text-white !text-base" matListItemMeta>{{ amount(transaction) | currency: 'DKK' }}</div>
         </mat-list-item>
       }
     </mat-list>
   </div>
 } @else {
-  <sha-loading/>
+  <sha-loading />
 }

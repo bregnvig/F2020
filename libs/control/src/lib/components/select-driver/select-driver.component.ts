@@ -22,18 +22,9 @@ import { MatSelectModule } from '@angular/material/select';
       multi: true,
     },
   ],
-  imports: [
-    MatFormFieldModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOptionModule,
-    DriverPipe,
-    DriverHeadshotComponent,
-    TeamLogoComponent,
-  ],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatOptionModule, DriverPipe, DriverHeadshotComponent, TeamLogoComponent],
 })
 export class SelectDriverComponent extends AbstractControlComponent<string> {
-
   readonly #season = inject(SeasonStore).season;
 
   readonly driverIds = input.required<string[]>();
@@ -45,22 +36,24 @@ export class SelectDriverComponent extends AbstractControlComponent<string> {
   allTeamAndDrivers = computed<[string, string[]][]>(() => {
     const teams = this.teams();
     if (!teams?.length) return undefined;
-    return Array.from(this.driverIds().reduce((acc, driverId) => {
-      const team = teams.find(t => t.drivers.includes(driverId));
-      if (!acc.has(team.name)) {
-        acc.set(team.name, []);
-      }
-      acc.get(team.name).push(driverId);
-      return acc;
-    }, new Map<string, string[]>()).entries());
+    return Array.from(
+      this.driverIds()
+        .reduce((acc, driverId) => {
+          const team = teams.find(t => t.drivers.includes(driverId));
+          if (!acc.has(team.name)) {
+            acc.set(team.name, []);
+          }
+          acc.get(team.name).push(driverId);
+          return acc;
+        }, new Map<string, string[]>())
+        .entries(),
+    );
   });
 
   constructor() {
     super();
     this.setupStandardControl(this.selectControl);
-    this.selectControl.valueChanges.pipe(
-      takeUntilDestroyed(),
-    ).subscribe(driverId => this.propagateChange(driverId));
+    this.selectControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(driverId => this.propagateChange(driverId));
   }
 
   writeValue(value: string | null): void {

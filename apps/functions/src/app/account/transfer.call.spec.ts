@@ -6,7 +6,6 @@ import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, 
 import { players } from '../../test-utils/players.collection';
 
 describe('Withdraw unittest', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   beforeEach(async () => {
@@ -14,7 +13,6 @@ describe('Withdraw unittest', () => {
     adminFirestore = adminApp();
     await adminFirestore.doc(`${playersURL}/${players.player.uid}`).set({ ...players.player });
     await adminFirestore.doc(`${playersURL}/${players.admin.uid}`).set({ ...players.admin });
-
   });
 
   afterEach(async () => {
@@ -23,56 +21,47 @@ describe('Withdraw unittest', () => {
 
   it('should deny a transfer, when user not logged in', async () => {
     const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(unauthenticated);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' })).then(unauthenticated);
   });
 
   it('should deny a transfer, when user but not know', async () => {
     const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(notFound);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' })).then(notFound);
   });
 
   it('should deny a transfer, when the amount is not specified or zero', async () => {
     const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 0, message: 'Hello' }))
-      .then(failedPrecondition);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 0, message: 'Hello' })).then(failedPrecondition);
   });
 
   it('should deny a transfer, when the amount is negative', async () => {
     const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: -100, message: 'Hello' }))
-      .then(failedPrecondition);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: -100, message: 'Hello' })).then(failedPrecondition);
   });
 
   it('should deny a transfer, when the user does not have the role of bank-admin', async () => {
     const app = await authedApp({ uid: players.player.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(permissionDenied);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 100, message: 'Hello' })).then(permissionDenied);
   });
 
   it('should deny a transfer, when the from uid is unknown', async () => {
     const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: 'jckS2Q0', toUid: players.admin.uid, amount: 100, message: 'Hello' }))
-      .then(notFound);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: 'jckS2Q0', toUid: players.admin.uid, amount: 100, message: 'Hello' })).then(notFound);
   });
 
   it('should deny a transfer, when the to uid is unknown', async () => {
     const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: 'jckS2Q0', amount: 100, message: 'Hello' }))
-      .then(notFound);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: 'jckS2Q0', amount: 100, message: 'Hello' })).then(notFound);
   });
 
   it('should deny a transfer, when the from and to are identical', async () => {
     const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.player.uid, amount: 100, message: 'Hello' }))
-      .then(failedPrecondition);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.player.uid, amount: 100, message: 'Hello' })).then(failedPrecondition);
   });
 
   it('should deny a transfer, when the account does not have enough money', async () => {
     const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 201, message: 'Hello' }))
-      .then(failedPrecondition);
+    await assertFails(app.functions.httpsCallable('transfer')({ fromUid: players.player.uid, toUid: players.admin.uid, amount: 201, message: 'Hello' })).then(failedPrecondition);
   });
 
   it('should accept a transfer', async () => {
@@ -87,4 +76,3 @@ describe('Withdraw unittest', () => {
       .then((player: Player) => expect(player.balance).toEqual(200));
   });
 });
-

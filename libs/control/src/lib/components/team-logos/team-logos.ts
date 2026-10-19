@@ -13,7 +13,7 @@ import { TeamLogoComponent, TeamNamePipe } from '@f2020/shared';
       @for (constructorId of constructorIds(); track $index) {
         @let name = constructorId | teamName;
         @if (name) {
-          <sha-team-logo [seasonId]="seasonId" [name]="name" [matTooltip]="name"/>
+          <sha-team-logo [seasonId]="seasonId" [name]="name" [matTooltip]="name" />
         }
       }
     }

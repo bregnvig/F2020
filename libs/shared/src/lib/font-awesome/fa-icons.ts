@@ -62,8 +62,7 @@ type Icon =
   | 'farGauge'
   | 'farCloudRain'
   | 'farSun'
-  | 'farArrowUp'
-  ;
+  | 'farArrowUp';
 
 export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farWeather: ['far', 'sun-cloud'],

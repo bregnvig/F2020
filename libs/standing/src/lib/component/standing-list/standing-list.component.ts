@@ -20,7 +20,7 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
         <mat-action-list>
           @for (standing of standings(); track standing) {
             <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
-              <sha-driver-headshot matListItemAvatar [driver]="standing.driver"/>
+              <sha-driver-headshot matListItemAvatar [driver]="standing.driver" />
               <f2020-standing-list-item [standing]="standing" />
             </button>
           }
@@ -31,21 +31,10 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatToolbarModule,
-    MatListModule,
-    RouterLink,
-    StandingListItemComponent,
-    LoadingComponent,
-    LowerCasePipe,
-    DriverHeadshotComponent,
-  ],
-  providers: [
-    StandingStore,
-  ],
+  imports: [MatToolbarModule, MatListModule, RouterLink, StandingListItemComponent, LoadingComponent, LowerCasePipe, DriverHeadshotComponent],
+  providers: [StandingStore],
 })
 export class StandingListComponent {
-
   protected standings: Signal<IDriverStanding[]>;
 
   constructor() {

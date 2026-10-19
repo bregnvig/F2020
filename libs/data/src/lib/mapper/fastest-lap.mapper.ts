@@ -9,11 +9,14 @@ export interface OpenF1FastestLapParams {
 }
 
 /** The best lap of each driver */
-const bestByDriver = (laps: Lap[]) =>
-  [...laps.reduce((best, lap) => {
-    const current = best.get(lap.driver_number);
-    return !current || lap.lap_duration! < current.lap_duration! ? best.set(lap.driver_number, lap) : best;
-  }, new Map<number, Lap>()).values()];
+const bestByDriver = (laps: Lap[]) => [
+  ...laps
+    .reduce((best, lap) => {
+      const current = best.get(lap.driver_number);
+      return !current || lap.lap_duration! < current.lap_duration! ? best.set(lap.driver_number, lap) : best;
+    }, new Map<number, Lap>())
+    .values(),
+];
 
 export const map = ({ laps, drivers }: OpenF1FastestLapParams): IFastestLaps => {
   const driverMap = getDrivers(drivers);
@@ -25,10 +28,14 @@ export const map = ({ laps, drivers }: OpenF1FastestLapParams): IFastestLaps => 
     .toSorted((a, b) => a.lap_duration! - b.lap_duration!)
     .map(lap => ({ driver: findDriver(driverMap, lap.driver_number, 'Fastest lap'), lap: lap.lap_number, time: lap.lap_duration! }))
     .filter((lap): lap is IDriverLapTime => !!lap.driver);
-  const latest = [...timed.reduce((latest, lap) => {
-    const current = latest.get(lap.driver_number);
-    return !current || lap.lap_number > current.lap_number ? latest.set(lap.driver_number, lap) : latest;
-  }, new Map<number, Lap>()).values()]
+  const latest = [
+    ...timed
+      .reduce((latest, lap) => {
+        const current = latest.get(lap.driver_number);
+        return !current || lap.lap_number > current.lap_number ? latest.set(lap.driver_number, lap) : latest;
+      }, new Map<number, Lap>())
+      .values(),
+  ]
     .map(lap => {
       const color: LapColor = lap.lap_duration === overallBest ? 'purple' : lap.lap_duration === driverBest.get(lap.driver_number) ? 'green' : 'yellow';
       return { driver: findDriver(driverMap, lap.driver_number, 'Latest lap'), lap: lap.lap_number, time: lap.lap_duration!, color };

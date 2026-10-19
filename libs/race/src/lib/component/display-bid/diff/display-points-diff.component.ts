@@ -19,20 +19,16 @@ import { FaIconComponent, IconName, IconPrefix } from '@fortawesome/angular-font
       </small>
     }
   `,
-  imports: [
-    FaIconComponent,
-    NgClass,
-  ],
+  imports: [FaIconComponent, NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class DisplayPointsDiffComponent {
   readonly value = input.required<number | undefined, number | nullish>({ transform: undefinedAttribute });
   readonly compareWith = input.required<number | undefined, number | nullish>({ transform: undefinedAttribute });
   readonly postfix = input.required<string | undefined>();
   flipValues = input<boolean, boolean | string>(false, { transform: booleanAttribute });
 
-  diff = computed<{ icon: [IconPrefix, IconName] | undefined, css: string; }>(() => {
+  diff = computed<{ icon: [IconPrefix, IconName] | undefined; css: string }>(() => {
     const value = this.value();
     const compareValue = this.compareWith();
     if (!this.postfix()) return undefined;

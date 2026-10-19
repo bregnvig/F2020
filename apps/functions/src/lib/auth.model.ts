@@ -1,7 +1,6 @@
 import { Player, Role } from '@f2020/data';
 
 export class PlayerImpl implements Player {
-
   readonly uid: string;
   readonly displayName: string;
   readonly photoURL: string;
@@ -9,19 +8,12 @@ export class PlayerImpl implements Player {
   roles: Role[];
   balance: number;
 
-  constructor({
-                uid,
-                displayName,
-                photoURL,
-                email,
-                roles,
-                balance,
-              }: Player) {
+  constructor({ uid, displayName, photoURL, email, roles, balance }: Player) {
     this.uid = uid;
     this.displayName = displayName;
     this.photoURL = photoURL;
     this.email = email;
-    this.roles = [...roles || []];
+    this.roles = [...(roles || [])];
     this.balance = balance || 0;
   }
 

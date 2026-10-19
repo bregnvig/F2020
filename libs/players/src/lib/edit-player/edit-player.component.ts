@@ -20,10 +20,22 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   templateUrl: './edit-player.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, CardPageComponent, ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, LoadingComponent, NgOptimizedImage],
+  imports: [
+    MatToolbarModule,
+    CardPageComponent,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    LoadingComponent,
+    NgOptimizedImage,
+  ],
 })
 export class EditPlayerComponent {
-
   #fb = inject(FormBuilder);
   #router = inject(Router);
   #store = inject(PlayersStore);
@@ -39,30 +51,33 @@ export class EditPlayerComponent {
 
   constructor() {
     effect(() => {
-      this.fg.reset({
-        player: this.player()?.roles.includes('player') ?? false,
-        admin: this.player()?.roles.includes('admin') ?? false,
-        bankAdmin: this.player()?.roles.includes('bank-admin') ?? false,
-      }, { emitEvent: false });
+      this.fg.reset(
+        {
+          player: this.player()?.roles.includes('player') ?? false,
+          admin: this.player()?.roles.includes('admin') ?? false,
+          bankAdmin: this.player()?.roles.includes('bank-admin') ?? false,
+        },
+        { emitEvent: false },
+      );
     });
-    this.#route.params.pipe(
-      map(params => params['id']),
-      takeUntilDestroyed(),
-    ).subscribe(uid => this.#store.setPlayer(uid));
+    this.#route.params
+      .pipe(
+        map(params => params['id']),
+        takeUntilDestroyed(),
+      )
+      .subscribe(uid => this.#store.setPlayer(uid));
   }
 
   updateRoles() {
     const value = Object.values(this.fg.value);
     const roles: Role[] = (['player', 'admin', 'bank-admin'] as Role[]).filter((_, index) => value[index]);
-    this.#service.updatePlayer(this.player().uid, { roles: roles.length ? roles : ['anonymous'] }).then(
-      () => this.#snackBar.open('Roller opdateret', null, { duration: 2000 }),
-    );
+    this.#service.updatePlayer(this.player().uid, { roles: roles.length ? roles : ['anonymous'] }).then(() => this.#snackBar.open('Roller opdateret', null, { duration: 2000 }));
   }
 
   deletePlayer() {
-    this.#service.deletePlayer(this.player().uid)
+    this.#service
+      .deletePlayer(this.player().uid)
       .then(() => this.#router.navigate(['/players']))
       .then(() => this.#snackBar.open('Spiller slettet', null, { duration: 2000 }));
   }
-
 }

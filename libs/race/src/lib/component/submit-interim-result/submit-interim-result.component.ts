@@ -50,7 +50,7 @@ export class SubmitInterimResultComponent {
     const seasonTeams = toSignal(inject(TeamService).teams$);
     this.teams = computed(() => {
       const race = this.race();
-      return race ? race.teams ?? seasonTeams() : [];
+      return race ? (race.teams ?? seasonTeams()) : [];
     });
     this.#store.loadInterimResult();
     effect(() => {

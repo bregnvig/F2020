@@ -8,7 +8,7 @@ const validPath = /^[a-z_]+\?[\w=&<>%:.+-]*$/;
  * Gets a list from the OpenF1 REST API for the app. During a live session OpenF1 answers the CORS preflight of a browser with 401,
  * and a preflight never has the token, so the app can't call OpenF1 directly
  */
-export const openF1Call = onCall(async (request: CallableRequest<{ path: string; }>) => {
+export const openF1Call = onCall(async (request: CallableRequest<{ path: string }>) => {
   return validateAccess(request.auth?.uid, 'player')
     .then(() => {
       const path = request.data?.path;

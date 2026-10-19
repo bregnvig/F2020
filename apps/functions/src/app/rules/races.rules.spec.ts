@@ -3,9 +3,7 @@ import { assertFails, assertSucceeds } from '@firebase/testing';
 import { collections } from '../../test-utils';
 import { playersURL, seasonsURL } from '../../lib/paths';
 
-
 describe('transactions rules', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   beforeEach(async () => {
@@ -49,5 +47,4 @@ describe('transactions rules', () => {
     const app = await authedApp({ uid: 'non-player-id' });
     await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).get()).then(permissionDenied);
   });
-
 });

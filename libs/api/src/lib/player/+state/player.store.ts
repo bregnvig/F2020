@@ -28,46 +28,45 @@ export const PlayerStore = signalStore(
     error: undefined,
   }),
   withMethods((store, service = inject(PlayerApiService)) => ({
-      async updatePlayer(partialPlayer: Partial<Player>) {
-        firstValueFrom(service.updatePlayer(partialPlayer)).then(
-          () => patchState(store, ({ player: { ...this.player(), ...partialPlayer } })),
-          error => patchState(store, { error }),
-        );
-      },
-      async logout() {
-        return service.signOut().then(
-          () => patchState(store, { player: null, authorized: false, unauthorized: true }),
-          error => patchState(store, { error }),
-        );
-      },
-      async joinWBC() {
-        patchState(store, { updatingWBC: true });
-        await service.joinWBC();
-        patchState(store, { updatingWBC: false });
-      },
-      async undoWBC() {
-        patchState(store, { updatingWBC: true });
-        await service.undoWBC();
-        patchState(store, { updatingWBC: false });
-      },
-    }),
-  ),
+    async updatePlayer(partialPlayer: Partial<Player>) {
+      firstValueFrom(service.updatePlayer(partialPlayer)).then(
+        () => patchState(store, { player: { ...this.player(), ...partialPlayer } }),
+        error => patchState(store, { error }),
+      );
+    },
+    async logout() {
+      return service.signOut().then(
+        () => patchState(store, { player: null, authorized: false, unauthorized: true }),
+        error => patchState(store, { error }),
+      );
+    },
+    async joinWBC() {
+      patchState(store, { updatingWBC: true });
+      await service.joinWBC();
+      patchState(store, { updatingWBC: false });
+    },
+    async undoWBC() {
+      patchState(store, { updatingWBC: true });
+      await service.undoWBC();
+      patchState(store, { updatingWBC: false });
+    },
+  })),
 
   withHooks({
     onInit(store) {
-      inject(PlayerApiService).player$.pipe(
-        filterEquals(),
-        takeUntilDestroyed(),
-      ).subscribe({
-        next: player => patchState(store, {
-          player,
-          loaded: true,
-          loading: false,
-          unauthorized: !player,
-          authorized: !!player,
-        }),
-        error: error => patchState(store, { error, loaded: false, loading: false }),
-      });
+      inject(PlayerApiService)
+        .player$.pipe(filterEquals(), takeUntilDestroyed())
+        .subscribe({
+          next: player =>
+            patchState(store, {
+              player,
+              loaded: true,
+              loading: false,
+              unauthorized: !player,
+              authorized: !!player,
+            }),
+          error: error => patchState(store, { error, loaded: false, loading: false }),
+        });
     },
   }),
 );

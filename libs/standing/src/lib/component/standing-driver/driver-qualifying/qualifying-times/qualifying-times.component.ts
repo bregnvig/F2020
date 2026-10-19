@@ -12,12 +12,10 @@ import { PolePositionTimePipe } from '@f2020/shared';
   providers: [PolePositionTimePipe],
 })
 export class QualifyingTimesComponent {
-
   #polePosition = inject(PolePositionTimePipe);
   qualifying = input.required<string, IDriverQualifying>({
     transform: q => {
       return q?.duration ? this.#polePosition.transform(q.duration) : 'Ingen tid';
     },
   });
-
 }

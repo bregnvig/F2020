@@ -22,7 +22,7 @@ export const cachedFetch = async (url: string): Promise<{ json: () => Promise<an
     // console.log(`Cache hit: ${url}`);
     const content = fs.readFileSync(filePath, 'utf-8');
     return {
-      json: () => Promise.resolve(JSON.parse(content))
+      json: () => Promise.resolve(JSON.parse(content)),
     };
   }
 
@@ -30,12 +30,12 @@ export const cachedFetch = async (url: string): Promise<{ json: () => Promise<an
   await new Promise(resolve => setTimeout(resolve, 1000));
   const response = await fetch(url);
   if (!response.ok) {
-     throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+    throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
   }
   const data = await response.json();
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-  
+
   return {
-    json: () => Promise.resolve(data)
+    json: () => Promise.resolve(data),
   };
 };

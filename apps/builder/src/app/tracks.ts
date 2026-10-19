@@ -8,8 +8,8 @@ import { cachedFetch } from './cached-fetch';
 const trackSource = 'https://raw.githubusercontent.com/bacinger/f1-circuits/master/f1-circuits.geojson';
 
 interface TrackFeature {
-  properties: { id: string, Name: string, length: number };
-  geometry: { type: 'LineString', coordinates: [number, number][] };
+  properties: { id: string; Name: string; length: number };
+  geometry: { type: 'LineString'; coordinates: [number, number][] };
 }
 
 /**
@@ -21,7 +21,7 @@ const reversedTracks = new Set([61]);
 const round = (value: number) => Math.round(value * 1e6) / 1e6;
 
 /** A race is the fewest laps over 305 km, except at Monaco where it is 260 km */
-const raceDistance = (trackId: string) => trackId === 'mc-1929' ? 260_000 : 305_000;
+const raceDistance = (trackId: string) => (trackId === 'mc-1929' ? 260_000 : 305_000);
 
 /**
  * Writes the outline of every circuit with a trackId to `{outDir}/{circuitId}.json`, as an array of { lat, lng },
@@ -37,10 +37,12 @@ export const buildTracks = async (outDir: string): Promise<number> => {
   const featureById = new Map(features.map(feature => [feature.properties.id, feature]));
 
   mkdirSync(outDir, { recursive: true });
-  const laps = Object.fromEntries(circuits
-    .map(circuit => [circuit.circuitId, circuit.trackId ? featureById.get(circuit.trackId) : undefined] as const)
-    .filter(([, feature]) => feature?.properties.length)
-    .map(([circuitId, feature]) => [circuitId, Math.ceil(raceDistance(feature!.properties.id) / feature!.properties.length)]));
+  const laps = Object.fromEntries(
+    circuits
+      .map(circuit => [circuit.circuitId, circuit.trackId ? featureById.get(circuit.trackId) : undefined] as const)
+      .filter(([, feature]) => feature?.properties.length)
+      .map(([circuitId, feature]) => [circuitId, Math.ceil(raceDistance(feature!.properties.id) / feature!.properties.length)]),
+  );
   writeFileSync(join(outDir, 'laps.json'), JSON.stringify(laps));
   return circuits.reduce((count, circuit) => {
     const feature = circuit.trackId ? featureById.get(circuit.trackId) : undefined;

@@ -83,11 +83,11 @@ Functions running inside the emulator get these variables automatically. You don
 
 Defined in `.firebaserc`:
 
-| Alias | Project | Use |
-|---|---|---|
-| `default` | `f1-playground-e1f23` | Local development / emulator |
-| `production` | `f1-2024-8ab8e` | Production |
-| `old` | `f1-2020-9dec0` | Old site |
+| Alias        | Project               | Use                          |
+| ------------ | --------------------- | ---------------------------- |
+| `default`    | `f1-playground-e1f23` | Local development / emulator |
+| `production` | `f1-2024-8ab8e`       | Production                   |
+| `old`        | `f1-2020-9dec0`       | Old site                     |
 
 ## Build & deploy
 

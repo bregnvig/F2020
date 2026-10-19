@@ -22,8 +22,7 @@ const formatSeconds = (seconds: number) => Duration.fromObject({ seconds }).toFo
         <span class="ms-auto tabular-nums">{{ elapsedText() }} / {{ durationText() }}</span>
       </div>
       <mat-slider class="!mx-0 !w-full" [min]="0" [max]="duration" [step]="1">
-        <input matSliderThumb aria-label="Tid i løbet" [value]="sliderValue()"
-               (dragStart)="startDrag()" (dragEnd)="dragging.set(false)" (valueChange)="seek($event)">
+        <input matSliderThumb aria-label="Tid i løbet" [value]="sliderValue()" (dragStart)="startDrag()" (dragEnd)="dragging.set(false)" (valueChange)="seek($event)" />
       </mat-slider>
     }
   `,
@@ -47,7 +46,7 @@ export class ReliveControlsComponent {
   });
   #draggedFrom = 0;
   /** The slider is left alone while it is dragged, so the relive moving on doesn't pull it back */
-  protected readonly sliderValue = computed(() => this.dragging() ? this.#draggedFrom : this.#elapsed());
+  protected readonly sliderValue = computed(() => (this.dragging() ? this.#draggedFrom : this.#elapsed()));
   protected readonly elapsedText = computed(() => formatSeconds(this.#elapsed()));
   protected readonly durationText = computed(() => formatSeconds(this.duration() ?? 0));
 

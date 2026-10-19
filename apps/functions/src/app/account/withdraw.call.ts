@@ -23,7 +23,6 @@ export const withdraw = onCall(async (request: CallableRequest<WithdrawData>) =>
 });
 
 const buildWithdraw = async ({ uid, amount, message }: WithdrawData) => {
-
   if (!uid) {
     throw logAndCreateError('not-found', `No uid specified for request `);
   }

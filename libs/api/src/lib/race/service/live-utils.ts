@@ -10,19 +10,17 @@ export const historyRetry = { count: 3, delay: 5000 };
 export const mergeLaps = (previousLaps: Lap[], currentLaps: Lap[]) => {
   const lapMap = new Map(previousLaps.map(lap => [`${lap.lap_number}-${lap.driver_number}`, lap]));
 
-  return Array.from(
-    currentLaps.reduce((map, lap) =>
-      map.set(`${lap.lap_number}-${lap.driver_number}`, lap), lapMap,
-    ).values(),
-  );
+  return Array.from(currentLaps.reduce((map, lap) => map.set(`${lap.lap_number}-${lap.driver_number}`, lap), lapMap).values());
 };
 
 /** Keeps the latest entry of each driver, as the mappers only use that */
-export const latestByDriver = <T extends { driver_number: number }>(isNewer: (current: T, previous: T) => boolean = () => true) =>
-  (previous: Map<number, T>, current: T[]) => current.reduce((map, item) => {
-    const existing = map.get(item.driver_number);
-    return !existing || isNewer(item, existing) ? map.set(item.driver_number, item) : map;
-  }, new Map(previous));
+export const latestByDriver =
+  <T extends { driver_number: number }>(isNewer: (current: T, previous: T) => boolean = () => true) =>
+  (previous: Map<number, T>, current: T[]) =>
+    current.reduce((map, item) => {
+      const existing = map.get(item.driver_number);
+      return !existing || isNewer(item, existing) ? map.set(item.driver_number, item) : map;
+    }, new Map(previous));
 
 /** The live updates are for the session being driven, which may not be the one shown */
 export const forSession = <T extends { session_key: number }>(sessionKey: number): MonoTypeOperatorFunction<T | undefined> =>
@@ -43,22 +41,21 @@ export const withLiveUpdates = <T>(history$: Observable<T[]>, live$: Observable<
       }),
     ),
     live$,
-  ]).pipe(
-    map(([history, update], index) => (index === 0 ? [...history, update] : [update]).filter(isTruthy)),
-  );
+  ]).pipe(map(([history, update], index) => (index === 0 ? [...history, update] : [update]).filter(isTruthy)));
 
 /** Live updates have their dates converted, the history from the HTTP API does not */
-export const toMillis = (date: string | DateTime) => DateTime.isDateTime(date) ? date.toMillis() : Date.parse(date);
+export const toMillis = (date: string | DateTime) => (DateTime.isDateTime(date) ? date.toMillis() : Date.parse(date));
 
 /**
  * Adds the locations to the samples of each driver, oldest first, and drops the samples from before `keepAfter`.
  * OpenF1 has 0, 0 for a car without a location, e.g. one that retired, which is left out
  */
 export const addLocationSamples = (samples: Map<number, LocationSample[]>, locations: Location[], keepAfter = 0): Map<number, LocationSample[]> => {
-  const added = locations.filter(({ x, y }) => x !== 0 || y !== 0).reduce((acc, { driver_number, date, x, y, z }) =>
-    acc.set(driver_number, [...(acc.get(driver_number) ?? []), { time: toMillis(date as string | DateTime), x, y, z }]), new Map(samples));
-  return new Map([...added].map(([driverNumber, driverSamples]) => [
-    driverNumber,
-    driverSamples.filter(({ time }) => time > keepAfter).toSorted((a, b) => a.time - b.time),
-  ]));
+  const added = locations
+    .filter(({ x, y }) => x !== 0 || y !== 0)
+    .reduce(
+      (acc, { driver_number, date, x, y, z }) => acc.set(driver_number, [...(acc.get(driver_number) ?? []), { time: toMillis(date as string | DateTime), x, y, z }]),
+      new Map(samples),
+    );
+  return new Map([...added].map(([driverNumber, driverSamples]) => [driverNumber, driverSamples.filter(({ time }) => time > keepAfter).toSorted((a, b) => a.time - b.time)]));
 };

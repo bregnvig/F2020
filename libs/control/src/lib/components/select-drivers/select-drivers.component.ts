@@ -29,9 +29,9 @@ const uniqueDrivers = (driverArray: FormArray): null | string[] => {
   template: `
     <div [formGroup]="fg" class="flex flex-col">
       @for (_ of driversControl.controls; track $index) {
-      <ng-container formArrayName="drivers">
-        <f2020-select-driver [driverIds]="drivers()" [teams]="teams()" [label]="labelFn()($index + 1)" [error]="errorMessage($index)" [formControlName]="$index" />
-      </ng-container>
+        <ng-container formArrayName="drivers">
+          <f2020-select-driver [driverIds]="drivers()" [teams]="teams()" [label]="labelFn()($index + 1)" [error]="errorMessage($index)" [formControlName]="$index" />
+        </ng-container>
       }
     </div>
   `,
@@ -72,7 +72,7 @@ export class SelectDriversComponent extends AbstractControlComponent<string[]> i
     this.setupStandardControl(this.fg);
     this.driversControl = this.#fb.array(
       Array.from({ length: this.noOfDrivers() }, () => this.#fb.control<string>(null)),
-      [uniqueDrivers]
+      [uniqueDrivers],
     );
     this.fg.setControl('drivers', this.driversControl);
 

@@ -28,19 +28,21 @@ export class RaceControlService {
       duration: 4000,
       horizontalPosition: 'right',
       verticalPosition: 'top',
-
     });
   }
 
   displayMessages(race: IRace, drivers: IDriver[]): void {
-    this.#live.getRaceControl(race, drivers).pipe(
-      tap(messages => this.#messages.set(messages)),
-      withLength(),
-      startWith([] as RaceControl[]), // Start with an empty array to ensure the first emission is handled
-      pairwise(),
-      filter(([previous, current]) => current.length > previous.length),
-      map(([previous, current]) => current.slice(previous.length)),
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(messages => messages.forEach(message => this.#displayRaceControlMessage(message)));
+    this.#live
+      .getRaceControl(race, drivers)
+      .pipe(
+        tap(messages => this.#messages.set(messages)),
+        withLength(),
+        startWith([] as RaceControl[]), // Start with an empty array to ensure the first emission is handled
+        pairwise(),
+        filter(([previous, current]) => current.length > previous.length),
+        map(([previous, current]) => current.slice(previous.length)),
+        takeUntilDestroyed(this.#destroyRef),
+      )
+      .subscribe(messages => messages.forEach(message => this.#displayRaceControlMessage(message)));
   }
 }

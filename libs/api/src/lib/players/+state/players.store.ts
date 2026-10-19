@@ -27,13 +27,15 @@ export const PlayersStore = signalStore(
     setPlayer: (uid: string) => patchState(store, { selectedId: uid }),
     loadPlayers: rxMethod<void>(
       pipe(
-        tap(() => patchState(store, ({ loaded: false }))),
-        switchMap(() => service.getPlayers().pipe(
-          tapResponse({
-            next: players => patchState(store, { players, loaded: true }),
-            error: error => patchState(store, { error: error['message'] ?? error, loaded: false }),
-          }),
-        )),
+        tap(() => patchState(store, { loaded: false })),
+        switchMap(() =>
+          service.getPlayers().pipe(
+            tapResponse({
+              next: players => patchState(store, { players, loaded: true }),
+              error: error => patchState(store, { error: error['message'] ?? error, loaded: false }),
+            }),
+          ),
+        ),
       ),
     ),
   })),

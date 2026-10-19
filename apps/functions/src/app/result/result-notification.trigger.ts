@@ -1,7 +1,21 @@
 import { Bid, ISeason, Player, WBC, WBCResult } from '@f2020/data';
 import { log, warn } from 'firebase-functions/logger';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { aiGeneratedRoast, appLink, collectionPaths, escapeHtml, openai, OpenAIModel, raceLink, resultMail, Roast, roastSections, sendMail, sendNotification, standingsTable } from '../../lib';
+import {
+  aiGeneratedRoast,
+  appLink,
+  collectionPaths,
+  escapeHtml,
+  openai,
+  OpenAIModel,
+  raceLink,
+  resultMail,
+  Roast,
+  roastSections,
+  sendMail,
+  sendNotification,
+  standingsTable,
+} from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const wbcPointsToPosition = {
@@ -20,15 +34,15 @@ const wbcPointsToDescription = {
       ${thirdPlace}
     `;
   },
-  15: (bids: Bid[]) => `${bids[2].player.displayName} kom på tredje pladsen med ${bids[2].points} point. Første pladsen gik til ${bids[0].player.displayName} med ${bids[0].points} point, mens anden pladsen gik til ${bids[1].player.displayName} som fik ${bids[1].points} point`,
+  15: (bids: Bid[]) =>
+    `${bids[2].player.displayName} kom på tredje pladsen med ${bids[2].points} point. Første pladsen gik til ${bids[0].player.displayName} med ${bids[0].points} point, mens anden pladsen gik til ${bids[1].player.displayName} som fik ${bids[1].points} point`,
 };
 
 const userChat = (name: string, raceName: string, wbcPoints: number, bids: Bid[]) => `
   Skriv besked til ${name} der kom på ${wbcPointsToPosition[wbcPoints]} pladsen løbet i ${raceName}. ${wbcPointsToDescription[wbcPoints](bids)}
 `;
 
-const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcPoints: number, bids: Bid[]): Promise<{ subject: string, body: string }> => {
-
+const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcPoints: number, bids: Bid[]): Promise<{ subject: string; body: string }> => {
   const response = await openai().chat.completions.create({
     model: OpenAIModel,
     messages: [
@@ -65,14 +79,14 @@ const aiGeneratedMailMessage = async (playerName: string, raceName: string, wbcP
   return JSON.parse(response.choices[0].message.content);
 };
 
-const aiGeneratedNotificationMessage = async (playerName: string, raceName: string, index: number): Promise<{ title: string, body: string }> => {
-
+const aiGeneratedNotificationMessage = async (playerName: string, raceName: string, index: number): Promise<{ title: string; body: string }> => {
   const response = await openai().chat.completions.create({
     model: OpenAIModel,
     messages: [
       {
         role: 'system',
-        content: 'Du laver morsomme en morsom smart phone notifikations title og body der beskriver deltagerens første anden eller tredje plads i et F1 væddemål. Du bliver oplyst følgende information navn på deltager, navn på løb, placering. Notifikationen skal være på dansk',
+        content:
+          'Du laver morsomme en morsom smart phone notifikations title og body der beskriver deltagerens første anden eller tredje plads i et F1 væddemål. Du bliver oplyst følgende information navn på deltager, navn på løb, placering. Notifikationen skal være på dansk',
       },
       {
         role: 'user',
@@ -114,16 +128,15 @@ const mailBody = (player: Player, wbcPoints: number, result: WBCResult, seasonId
   );
 };
 
-const describe = (result: WBCResult) => (bids: Partial<Bid>[]) => bids
-  .map(bid => `${bid.player?.displayName} med ${bid.points} point og ${result.players.find(p => p.player.uid === bid.player?.uid)?.points ?? 0} WBC point`)
-  .join('\n');
+const describe = (result: WBCResult) => (bids: Partial<Bid>[]) =>
+  bids.map(bid => `${bid.player?.displayName} med ${bid.points} point og ${result.players.find(p => p.player.uid === bid.player?.uid)?.points ?? 0} WBC point`).join('\n');
 
 const notificationBody = (raceName: string, wbcPoints: number) => `${raceName} er nu afgjort - du har fået ${wbcPoints} WBC points`;
 
-type Notification = { title: string, body: string };
+type Notification = { title: string; body: string };
 
 /** One call for the notifications of every player outside the top three. A player missing in the answer gets the plain notification */
-const aiGeneratedNotifications = async (raceName: string, players: { player: Player, points: number, position: number }[]): Promise<Map<string, Notification>> => {
+const aiGeneratedNotifications = async (raceName: string, players: { player: Player; points: number; position: number }[]): Promise<Map<string, Notification>> => {
   if (!players.length) {
     return new Map();
   }
@@ -181,54 +194,61 @@ const aiGeneratedNotifications = async (raceName: string, players: { player: Pla
 };
 
 export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}', async event => {
-
   const before: WBC = event.data.before.data()?.wbc || [];
   const season = event.data.after.data() as ISeason;
   const after: WBC = season?.wbc;
-  if ((after?.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0))) {
+  if (after?.results?.length && (before.results?.length ?? 0) < (after.results?.length ?? 0)) {
     const result: WBCResult = after.results.find(r => !before.results?.some(({ round }) => round === r.round));
     const db = getFirestore();
-    const raceResults = await db.collection(collectionPaths.bids(season.id, result.round)).where('submitted', '==', true).get()
+    const raceResults = await db
+      .collection(collectionPaths.bids(season.id, result.round))
+      .where('submitted', '==', true)
+      .get()
       .then(snapshot => snapshot.docs)
       .then(snapshots => snapshots.map(s => s.data() as Bid))
       .then(raceResults => raceResults.sort((a, b) => b.points - a.points));
     log('Race', result.raceName, 'Is now completed - lets send notifications');
     // The players outside the top three share one roast
     const roast = result.players.length > 3 ? await aiGeneratedRoast(`det endelige resultat af løbet i ${result.raceName}`, raceResults, describe(result)) : undefined;
-    const notifications = await aiGeneratedNotifications(result.raceName, result.players
-      .map((element, index) => ({ ...element, position: index + 1 }))
-      .filter(({ player }, index) => index > 2 && player.tokens?.length));
-    return Promise.all(result.players.map(async (element, index) => {
-      const sendWBCResult = async (place: string, badge?: string) => {
-        const mail = index > 2
-          ? {
-            subject: place,
-            body: mailBody(element.player, element.points, result, season.id, raceResults, roast),
-          }
-          : await aiGeneratedMailMessage(element.player.displayName, result.raceName, element.points, raceResults);
-        const notification = index > 2
-          ? notifications.get(element.player.uid) ?? {
-            title: place,
-            body: notificationBody(result.raceName, element.points),
-          }
-          : await aiGeneratedNotificationMessage(element.player.displayName, result.raceName, index);
-        await sendMail(element.player.email, mail.subject, mail.body).then((msg) => {
-          log(`Mail result :(${msg})`);
-        });
-        if (element.player.tokens?.length) {
-          await sendNotification(element.player.tokens, notification.title, notification.body, { badge, link: appLink(season.id, 'wbc', 'race', result.round) }).then(msg => {
-            log(`Notification result :(${msg})`);
+    const notifications = await aiGeneratedNotifications(
+      result.raceName,
+      result.players.map((element, index) => ({ ...element, position: index + 1 })).filter(({ player }, index) => index > 2 && player.tokens?.length),
+    );
+    return Promise.all(
+      result.players.map(async (element, index) => {
+        const sendWBCResult = async (place: string, badge?: string) => {
+          const mail =
+            index > 2
+              ? {
+                  subject: place,
+                  body: mailBody(element.player, element.points, result, season.id, raceResults, roast),
+                }
+              : await aiGeneratedMailMessage(element.player.displayName, result.raceName, element.points, raceResults);
+          const notification =
+            index > 2
+              ? (notifications.get(element.player.uid) ?? {
+                  title: place,
+                  body: notificationBody(result.raceName, element.points),
+                })
+              : await aiGeneratedNotificationMessage(element.player.displayName, result.raceName, index);
+          await sendMail(element.player.email, mail.subject, mail.body).then(msg => {
+            log(`Mail result :(${msg})`);
           });
+          if (element.player.tokens?.length) {
+            await sendNotification(element.player.tokens, notification.title, notification.body, { badge, link: appLink(season.id, 'wbc', 'race', result.round) }).then(msg => {
+              log(`Notification result :(${msg})`);
+            });
+          }
+        };
+        if ([25, 18, 15].includes(element.points)) {
+          await sendWBCResult('ai generated', 'https://f1.bregnvig.dk/assets/messaging/trophy.png');
+        } else if ([12, 10, 8, 6, 4, 2, 1].includes(element.points)) {
+          await sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
+        } else {
+          await sendWBCResult('🫣 Æv du fik ingen points :-(');
         }
-      };
-      if ([25, 18, 15].includes(element.points)) {
-        await sendWBCResult('ai generated', 'https://f1.bregnvig.dk/assets/messaging/trophy.png');
-      } else if ([12, 10, 8, 6, 4, 2, 1].includes(element.points)) {
-        await sendWBCResult('😒 Selvom du ikke kom i top tre - så fik du da points :-)');
-      } else {
-        await sendWBCResult('🫣 Æv du fik ingen points :-(');
-      }
-    }));
+      }),
+    );
   }
   return Promise.resolve();
 });

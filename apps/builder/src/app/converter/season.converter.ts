@@ -6,10 +6,8 @@ export const converter = {
   toFirestore(season: ISeason): DocumentData {
     return firestoreUtils.convertDateTimes(season);
   },
-  fromFirestore(
-    snapshot: QueryDocumentSnapshot,
-  ): ISeason {
+  fromFirestore(snapshot: QueryDocumentSnapshot): ISeason {
     const data = snapshot.data()!;
     return firestoreUtils.convertTimestamps(data);
-  }
+  },
 };

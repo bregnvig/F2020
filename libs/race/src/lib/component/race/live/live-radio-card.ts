@@ -37,7 +37,5 @@ export class LiveRadioCardComponent {
   drivers = input.required<IDriver[]>();
 
   protected readonly icons = icon;
-  protected readonly error = toSignal(this.#live.radioStatus.pipe(
-    map(status => status.error?.statusText ?? status.error?.message),
-  ));
+  protected readonly error = toSignal(this.#live.radioStatus.pipe(map(status => status.error?.statusText ?? status.error?.message)));
 }

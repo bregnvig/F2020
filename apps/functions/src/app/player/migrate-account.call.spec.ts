@@ -8,10 +8,13 @@ import { permissionDenied } from './../../test-utils/firestore-test-utils';
 import { Transaction } from '../../lib/model';
 
 describe('Migrate unittest', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
-  const readTransaction = async (id: string): Promise<Transaction> => adminFirestore.doc(`${transactionsURL}/${id}`).get().then(snapshot => snapshot.data() as Transaction);
+  const readTransaction = async (id: string): Promise<Transaction> =>
+    adminFirestore
+      .doc(`${transactionsURL}/${id}`)
+      .get()
+      .then(snapshot => snapshot.data() as Transaction);
 
   beforeEach(async () => {
     // depositFn = test.wrap(deposit);
@@ -25,7 +28,6 @@ describe('Migrate unittest', () => {
     await adminFirestore.doc(`${transactionsURL}/2`).set({ from: 'flb', to: 'mba', involved: ['flb', 'mba'], amount: 100, date: new Date() });
     await adminFirestore.doc(`${transactionsURL}/3`).set({ from: null, to: 'flb', involved: ['flb'], amount: 100, date: new Date() });
     await adminFirestore.doc(`${transactionsURL}/4`).set({ from: 'mba', to: 'flb', involved: ['flb', 'mba'], amount: 100, date: new Date() });
-
   });
 
   afterEach(async () => {
@@ -34,18 +36,15 @@ describe('Migrate unittest', () => {
 
   it('should deny a migration, when user not logged in', async () => {
     const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('migrateAccount')({ uid: players.player.uid, playerName: 'flb' }))
-      .then(unauthenticated);
+    await assertFails(app.functions.httpsCallable('migrateAccount')({ uid: players.player.uid, playerName: 'flb' })).then(unauthenticated);
   });
   it('should deny a migration, when user is not bank-admin', async () => {
     const app = await authedApp({ uid: collections.players.player.uid });
-    await assertFails(app.functions.httpsCallable('migrateAccount')({ uid: players.player.uid, playerName: 'flb' }))
-      .then(permissionDenied);
+    await assertFails(app.functions.httpsCallable('migrateAccount')({ uid: players.player.uid, playerName: 'flb' })).then(permissionDenied);
   });
   it('should deny a migration, when user is not bank-admin', async () => {
     const app = await authedApp({ uid: collections.players.player.uid });
-    await assertFails(app.functions.httpsCallable('migrateAccount')({ uid: players.player.uid, playerName: 'flb' }))
-      .then(permissionDenied);
+    await assertFails(app.functions.httpsCallable('migrateAccount')({ uid: players.player.uid, playerName: 'flb' })).then(permissionDenied);
   });
 
   it('should migration the tranaction, when user is bank-admin', async () => {

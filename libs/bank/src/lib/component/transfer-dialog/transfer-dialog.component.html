@@ -6,7 +6,7 @@
     <mat-label>Modtager</mat-label>
     <mat-select formControlName="to">
       @for (player of players(); track player) {
-        <mat-option [value]=player>
+        <mat-option [value]="player">
           {{ player.displayName }}
         </mat-option>
       }
@@ -14,11 +14,11 @@
   </mat-form-field>
   <mat-form-field>
     <mat-label>Beløb</mat-label>
-    <input formControlName="amount" matInput type="number">
+    <input formControlName="amount" matInput type="number" />
   </mat-form-field>
   <mat-form-field>
     <mat-label>Besked</mat-label>
-    <input formControlName="message" matInput>
+    <input formControlName="message" matInput />
   </mat-form-field>
 </div>
 <div mat-dialog-actions>

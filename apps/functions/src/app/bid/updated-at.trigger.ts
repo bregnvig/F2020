@@ -16,7 +16,7 @@ export const updatedAtTrigger = onDocumentUpdated('seasons/{seasonId}/races/{rac
   const compare = deepCompareFn(new Set<string>(['updatedAt']));
   const updatedAtHasPreviouslyBeenSet = !!before.updatedAt;
   const equal = compare(before, after);
-  const recentlyUpdated = (event.data.after.updateTime.toMillis() - event.data.before.updateTime.toMillis()) < 10000;
+  const recentlyUpdated = event.data.after.updateTime.toMillis() - event.data.before.updateTime.toMillis() < 10000;
   const alreadySubmitted = before.submitted && after.submitted;
   log('Update at trigger', { equal, recentlyUpdated, alreadySubmitted, updatedAtHasPreviouslyBeenSet });
 
@@ -25,17 +25,10 @@ export const updatedAtTrigger = onDocumentUpdated('seasons/{seasonId}/races/{rac
   }
 
   const db = getFirestore();
-  const participant = db.doc(documentPaths.participant(
-    event.params['seasonId'],
-    event.params['raceId'],
-    after.player.uid,
-  ));
+  const participant = db.doc(documentPaths.participant(event.params['seasonId'], event.params['raceId'], after.player.uid));
   return db.runTransaction(transaction => {
     const payload = { updatedAt: Timestamp.now() };
-    transaction
-      .update(event.data.after.ref, payload)
-      .update(participant, payload)
-    ;
+    transaction.update(event.data.after.ref, payload).update(participant, payload);
     return Promise.resolve('Updated timestamp');
   });
 });

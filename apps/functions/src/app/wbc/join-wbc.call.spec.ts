@@ -8,7 +8,6 @@ import { Player } from '../../lib/model';
 const clone = require('clone');
 
 describe('Join WBC unittest', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   beforeEach(async () => {
@@ -18,7 +17,8 @@ describe('Join WBC unittest', () => {
     await adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).set(clone(collections.players.bookie));
 
     await adminFirestore.doc(`${seasonsURL}/9999`).set({
-      ...clone(collections.seasons[0]), wbc: {
+      ...clone(collections.seasons[0]),
+      wbc: {
         latestWBCJoinDate: DateTime.local().plus({ day: 1 }).toJSDate(),
       },
     });
@@ -30,20 +30,17 @@ describe('Join WBC unittest', () => {
 
   it('should deny a join request, when user not logged in', async () => {
     const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('joinWBC')())
-      .then(unauthenticated);
+    await assertFails(app.functions.httpsCallable('joinWBC')()).then(unauthenticated);
   });
   it('should deny a join WBC, when user but not know', async () => {
     const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('joinWBC')())
-      .then(notFound);
+    await assertFails(app.functions.httpsCallable('joinWBC')()).then(notFound);
   });
 
   it('should deny a join WBC, when the user has already joined', async () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
     await adminFirestore.doc(`${seasonsURL}/9999`).update({ wbc: { participants: [collections.players.admin.uid] } });
-    await assertFails(app.functions.httpsCallable('joinWBC')())
-      .then(failedPrecondition);
+    await assertFails(app.functions.httpsCallable('joinWBC')()).then(failedPrecondition);
   });
 
   it('should deny join WBC, if the user does not have enough money', async () => {
@@ -68,4 +65,3 @@ describe('Join WBC unittest', () => {
       .then((player: Player) => expect(player.balance).toEqual(100));
   });
 });
-

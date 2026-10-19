@@ -34,9 +34,7 @@ interface Timed<T> {
 }
 
 const timed = <T>(items: T[], date: (item: T) => string | null | undefined): Timed<T> => {
-  const sorted = items
-    .map(item => ({ item, time: date(item) ? Date.parse(date(item)!) : Number.NEGATIVE_INFINITY }))
-    .toSorted((a, b) => a.time - b.time);
+  const sorted = items.map(item => ({ item, time: date(item) ? Date.parse(date(item)!) : Number.NEGATIVE_INFINITY })).toSorted((a, b) => a.time - b.time);
   return { items: sorted.map(({ item }) => item), times: sorted.map(({ time }) => time) };
 };
 
@@ -49,7 +47,7 @@ const upTo = <T>({ items, times }: Timed<T>, time: DateTime): T[] => {
   let [low, high] = [0, times.length];
   while (low < high) {
     const middle = (low + high) >> 1;
-    times[middle] <= milliseconds ? low = middle + 1 : high = middle;
+    times[middle] <= milliseconds ? (low = middle + 1) : (high = middle);
   }
   return items.slice(0, low);
 };
@@ -77,7 +75,7 @@ export interface ReplayClock {
 }
 
 export const replaySpeeds = [1, 2, 3, 5] as const;
-export type ReplaySpeed = typeof replaySpeeds[number];
+export type ReplaySpeed = (typeof replaySpeeds)[number];
 
 /** The relive starts this long before the lights go out, as the pit exit opens long before */
 const beforeLightsOut = 15_000;
@@ -195,15 +193,15 @@ export class ReplayResultService extends RaceResultService {
       weather: timed(weather, w => w.date),
     });
 
-    interval(tick).pipe(
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(() => {
-      const state = this.#replayState$.value;
-      state && state.currentTime < state.end && this.seek(state.currentTime.plus({ milliseconds: tick * this.#speed$.value }));
-    });
+    interval(tick)
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe(() => {
+        const state = this.#replayState$.value;
+        state && state.currentTime < state.end && this.seek(state.currentTime.plus({ milliseconds: tick * this.#speed$.value }));
+      });
   }
 
-  getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null> {
+  getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult; latestUpdate: DateTime } | null> {
     // A start that fails after the retries is shown on the page
     this.#startReplay(race).catch(error => {
       console.error('Failed to start the relive', error);
@@ -219,9 +217,7 @@ export class ReplayResultService extends RaceResultService {
         laps: upTo(state.laps, state.currentTime),
         currentTime: state.currentTime,
       })),
-      switchMap(value => grid$.pipe(
-        map(gridPositions => ({ ...value, gridPositions })),
-      )),
+      switchMap(value => grid$.pipe(map(gridPositions => ({ ...value, gridPositions })))),
       map(({ positions, laps, gridPositions, currentTime }) => {
         const { result, ...raceNoResult } = race;
         const latestUpdate = DateTime.fromISO(laps.at(-1)?.date_start ?? currentTime.toISO());
@@ -245,10 +241,12 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => upTo(state.teamRadio, state.currentTime)),
       map(messages => mapper.radio({ messages, drivers }).toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
-      tap(messages => this.#radioStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${messages.length} messages`,
-      })),
+      tap(messages =>
+        this.#radioStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${messages.length} messages`,
+        }),
+      ),
     );
   }
 
@@ -257,10 +255,12 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => upTo(state.pitStops, state.currentTime)),
       map(pitStops => mapper.pitStops({ pitStops, drivers, teams })),
-      tap(mappedStops => this.#pitStopStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${mappedStops.length} pit stops`,
-      })),
+      tap(mappedStops =>
+        this.#pitStopStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${mappedStops.length} pit stops`,
+        }),
+      ),
     );
   }
 
@@ -293,10 +293,12 @@ export class ReplayResultService extends RaceResultService {
     return this.#replayState$.pipe(
       truthy(),
       map(state => upTo(state.intervals, state.currentTime)),
-      tap(intervals => this.#intervalStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${intervals.length} intervals`,
-      })),
+      tap(intervals =>
+        this.#intervalStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${intervals.length} intervals`,
+        }),
+      ),
       map(intervals => mapper.intervalMapper({ intervals, drivers })),
     );
   }
@@ -306,10 +308,12 @@ export class ReplayResultService extends RaceResultService {
       truthy(),
       map(state => upTo(state.raceControl, state.currentTime)),
       map(messages => mapper.raceControl({ messages, drivers })),
-      tap(mappedMessages => this.#raceControlStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${mappedMessages.length} race control messages`,
-      })),
+      tap(mappedMessages =>
+        this.#raceControlStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${mappedMessages.length} race control messages`,
+        }),
+      ),
     );
   }
 
@@ -325,17 +329,16 @@ export class ReplayResultService extends RaceResultService {
 
         // Filter stints where the lapStart is less than or equal to the current max lap
         // and if lapEnd exists, the current lap should be within the stint range
-        const visibleStints = state.stints.filter(stint =>
-          stint.lap_start <= maxLapNumber &&
-          (stint.lap_end === 0 || maxLapNumber <= stint.lap_end),
-        );
+        const visibleStints = state.stints.filter(stint => stint.lap_start <= maxLapNumber && (stint.lap_end === 0 || maxLapNumber <= stint.lap_end));
 
         return mapper.stints({ stints: visibleStints, drivers });
       }),
-      tap(mappedStints => this.#stintStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${mappedStints.length} stints`,
-      })),
+      tap(mappedStints =>
+        this.#stintStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${mappedStints.length} stints`,
+        }),
+      ),
     );
   }
 
@@ -368,10 +371,12 @@ export class ReplayResultService extends RaceResultService {
       // The relive moves every second, and the weather about once a minute
       distinctUntilChanged((previous, current) => previous.length === current.length),
       map(weather => mapper.weather({ weather })),
-      tap(readings => this.#weatherStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${readings.length} readings`,
-      })),
+      tap(readings =>
+        this.#weatherStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${readings.length} readings`,
+        }),
+      ),
     );
   }
 
@@ -399,15 +404,17 @@ export class ReplayResultService extends RaceResultService {
       }),
       distinctUntilChanged((a, b) => a.from.equals(b.from)),
       // The chunk starts early, as it is fetched before it is needed
-      switchMap(({ sessionKey, from }) => this.#openF1HttpService.getLocations(sessionKey, from.minus({ milliseconds: locationLookahead + 2000 }), from.plus({ milliseconds: locationChunk })).pipe(
-        retry(startRetry),
-        tap(locations => this.#locationStatus$.next({ latestUpdate: DateTime.now(), info: `${locations.length} locations from ${from.toFormat('HH:mm:ss')}` })),
-        catchError(error => {
-          console.error('Failed to fetch the locations', error);
-          this.#locationStatus$.next({ latestUpdate: DateTime.now(), error });
-          return of<Location[]>([]);
-        }),
-      )),
+      switchMap(({ sessionKey, from }) =>
+        this.#openF1HttpService.getLocations(sessionKey, from.minus({ milliseconds: locationLookahead + 2000 }), from.plus({ milliseconds: locationChunk })).pipe(
+          retry(startRetry),
+          tap(locations => this.#locationStatus$.next({ latestUpdate: DateTime.now(), info: `${locations.length} locations from ${from.toFormat('HH:mm:ss')}` })),
+          catchError(error => {
+            console.error('Failed to fetch the locations', error);
+            this.#locationStatus$.next({ latestUpdate: DateTime.now(), error });
+            return of<Location[]>([]);
+          }),
+        ),
+      ),
       map(locations => ({ drivers: mapper.locations({ samples: addLocationSamples(new Map(), locations), drivers }), now: this.#now })),
       shareLatest(),
     );
@@ -418,10 +425,12 @@ export class ReplayResultService extends RaceResultService {
     return this.#replayState$.pipe(
       truthy(),
       map(state => ({ laps: upTo(state.laps, state.currentTime), now: state.currentTime.toMillis() })),
-      tap(({ laps }) => this.#sectorStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${laps.length} driver sectors`,
-      })),
+      tap(({ laps }) =>
+        this.#sectorStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${laps.length} driver sectors`,
+        }),
+      ),
       map(({ laps, now }) => mapper.sectors({ laps, drivers, now })),
     );
   }

@@ -6,11 +6,11 @@ export const getRankedTimes = (laps: Lap[]): Record<number, IFastestLap> => {
     .filter(({ lap_duration }) => typeof lap_duration === 'number')
     .reduce((acc, lap) => {
       const previous = acc.get(lap.driver_number)?.time ?? Number.MAX_SAFE_INTEGER;
-      (lap.lap_duration! * 1000) < previous && acc.set(lap.driver_number, { time: lap.lap_duration! * 1000, lap: lap.lap_number });
+      lap.lap_duration! * 1000 < previous && acc.set(lap.driver_number, { time: lap.lap_duration! * 1000, lap: lap.lap_number });
       return acc;
     }, new Map<number, Omit<IFastestLap, 'rank'>>());
-  return Object.fromEntries([...bestTimes.entries()]
-    .toSorted(([, a], [, b]) => a.time - b.time).map(([driverNumber, lap], index) => [driverNumber, ({ ...lap, rank: index + 1 }) as IFastestLap]),
+  return Object.fromEntries(
+    [...bestTimes.entries()].toSorted(([, a], [, b]) => a.time - b.time).map(([driverNumber, lap], index) => [driverNumber, { ...lap, rank: index + 1 } as IFastestLap]),
   );
 };
 

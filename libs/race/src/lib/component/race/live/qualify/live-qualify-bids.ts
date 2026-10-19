@@ -10,7 +10,7 @@ import { AnimatedForDirective } from '@f2020/shared';
     @if (ranked().length) {
       <mat-list>
         <mat-list-item *shaAnimatedFor="let bid of ranked(); key: playerKey">
-          <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName">
+          <img matListItemAvatar height="40" width="40" [ngSrc]="bid.player.photoURL" [alt]="bid.player.displayName" />
           <div matListItemTitle>{{ bid.player.displayName }}</div>
           <div matListItemLine>{{ bid.points }} point</div>
         </mat-list-item>

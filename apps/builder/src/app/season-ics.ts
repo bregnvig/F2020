@@ -13,7 +13,6 @@ import { assetPath } from './assets';
 import { cachedFetch } from './cached-fetch';
 
 export const buildLastYear = async (seasonId: number) => {
-
   const results: MeetingResult[] = await buildResults(seasonId - 1, seasonId - 1);
   console.log('Building last year', seasonId - 1, 'Number of races:', results.length);
   const db = firebaseApp.database;
@@ -36,9 +35,7 @@ export const buildLastYear = async (seasonId: number) => {
     return new Promise(resolve => setTimeout(() => resolve(result.meeting.name), 1000));
   };
 
-
   return db.runTransaction(async transaction => {
-
     const raceMeetings = results.filter(({ meeting }) => !meeting.name.toLocaleLowerCase().includes('testing'));
 
     // For testing  - use this when not building all races
@@ -54,14 +51,14 @@ export const buildLastYear = async (seasonId: number) => {
 
 const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
   console.log('Building teams', drivers.length);
-  const allDrivers = await getDrivers().then(
-    drivers => drivers.reduce((acc, driver) => {
+  const allDrivers = await getDrivers().then(drivers =>
+    drivers.reduce((acc, driver) => {
       return driver.teamName ? acc.set(driver.driverId, driver.teamName) : acc;
     }, new Map<string, string>()),
   );
   const db = firebaseApp.database;
-  const
-    teams = drivers.reduce((acc, driver) => {
+  const teams = drivers.reduce(
+    (acc, driver) => {
       const teamName = driver.teamName ?? allDrivers.get(driver.driverId);
       const team = acc.find(t => t.name === teamName) ?? { name: teamName, drivers: [] };
       !team.drivers.includes(driver.driverId) && team.drivers.push(driver.driverId);
@@ -69,26 +66,33 @@ const buildTeams = async (seasonId: string, drivers: IDriver[]) => {
         acc.push(team);
       }
       return acc;
-    }, [] as { name: string, drivers: string[] }[]);
+    },
+    [] as { name: string; drivers: string[] }[],
+  );
 
   const teamCollection = db.collection(`seasons/${seasonId}/teams`);
 
   return db.runTransaction(transaction => {
-    teams
-      .forEach(team => {
-        !team.name && console.log('Team without name', team);
-        const constructorId = team.name.toLocaleLowerCase().replace(/ /g, '-');
-        console.log('Updating team', team.name, constructorId, team.drivers);
-        transaction.set(teamCollection.doc(constructorId), { ...team, constructorId });
-      });
+    teams.forEach(team => {
+      !team.name && console.log('Team without name', team);
+      const constructorId = team.name.toLocaleLowerCase().replace(/ /g, '-');
+      console.log('Updating team', team.name, constructorId, team.drivers);
+      transaction.set(teamCollection.doc(constructorId), { ...team, constructorId });
+    });
     return Promise.resolve(teams);
   });
 };
 
 export const buildNewSeason = async (seasonId: number) => {
-  const circuits = await firebaseApp.database.collection('circuits').get().then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
+  const circuits = await firebaseApp.database
+    .collection('circuits')
+    .get()
+    .then(snapshot => snapshot.docs.map(doc => doc.data() as Circuit));
   const drivers = await getDrivers('latest').then(async latest => {
-    const existing = await firebaseApp.database.collection('drivers').get().then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
+    const existing = await firebaseApp.database
+      .collection('drivers')
+      .get()
+      .then(snapshot => snapshot.docs.map(doc => doc.data() as IDriver));
     return mapper.joinDrivers(latest, existing);
   });
 
@@ -102,14 +106,20 @@ export const buildNewSeason = async (seasonId: number) => {
   let previous: IRace | undefined;
   console.log('Building season', seasonId, calenderRaces.length);
   const races = calenderRaces.map((cr, round) => {
-    const race = mapper.race(cr.circuit, !round ? getSelectedDriver(cr.circuit.countryCode2) : undefined, {
-      raceStart: cr.raceStart,
-      url: cr.url,
-      state: !round ? 'open' : 'waiting',
-      close: cr.close,
-      round: round + 1,
-      season: seasonId,
-    }, previous, !round ? drivers : []);
+    const race = mapper.race(
+      cr.circuit,
+      !round ? getSelectedDriver(cr.circuit.countryCode2) : undefined,
+      {
+        raceStart: cr.raceStart,
+        url: cr.url,
+        state: !round ? 'open' : 'waiting',
+        close: cr.close,
+        round: round + 1,
+        season: seasonId,
+      },
+      previous,
+      !round ? drivers : [],
+    );
     previous = race;
     return race;
   });
@@ -121,14 +131,18 @@ export const buildNewSeason = async (seasonId: number) => {
     .then(() => buildLastYear(seasonId))
     .then(() => buildStandings(seasonId, seasonId - 1));
   /*
-  */
+   */
 };
 
 const seasonsURL = 'seasons';
 export const racesURL = seasonId => `${seasonsURL}/${seasonId}/races`;
 
 const writeSeason = async (season: ISeason, races: IRace[]): Promise<WriteResult[]> => {
-  return firebaseApp.database.collection(seasonsURL).doc(season.id).withConverter(converter.season).set(season)
+  return firebaseApp.database
+    .collection(seasonsURL)
+    .doc(season.id)
+    .withConverter(converter.season)
+    .set(season)
     .then(() => {
       const ref = firebaseApp.database.collection(racesURL(season.id));
       const racesWrite = races.map(race => ref.doc(race.round.toString(10)).withConverter(converter.race).set(race));

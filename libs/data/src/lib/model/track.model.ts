@@ -75,14 +75,17 @@ export const buildTrack = (locations: Point3D[]): Track => {
  */
 export const trackNearest = (track: Track, location: Point3D): { progress: number; distance: number } => {
   const { points, length } = track;
-  const { index, fraction, d } = points.reduce((best, point, i) => {
-    const next = points[(i + 1) % points.length];
-    const [dx, dy, dz] = [next.x - point.x, next.y - point.y, next.z - point.z];
-    const segment = dx * dx + dy * dy + dz * dz;
-    const t = segment ? Math.max(0, Math.min(1, ((location.x - point.x) * dx + (location.y - point.y) * dy + (location.z - point.z) * dz) / segment)) : 0;
-    const d = distance(location, { x: point.x + t * dx, y: point.y + t * dy, z: point.z + t * dz });
-    return d < best.d ? { index: i, fraction: t, d } : best;
-  }, { index: 0, fraction: 0, d: Number.MAX_VALUE });
+  const { index, fraction, d } = points.reduce(
+    (best, point, i) => {
+      const next = points[(i + 1) % points.length];
+      const [dx, dy, dz] = [next.x - point.x, next.y - point.y, next.z - point.z];
+      const segment = dx * dx + dy * dy + dz * dz;
+      const t = segment ? Math.max(0, Math.min(1, ((location.x - point.x) * dx + (location.y - point.y) * dy + (location.z - point.z) * dz) / segment)) : 0;
+      const d = distance(location, { x: point.x + t * dx, y: point.y + t * dy, z: point.z + t * dz });
+      return d < best.d ? { index: i, fraction: t, d } : best;
+    },
+    { index: 0, fraction: 0, d: Number.MAX_VALUE },
+  );
   const start = points[index].distance;
   const end = index === points.length - 1 ? length : points[index + 1].distance;
   return { progress: (start + fraction * (end - start)) / length, distance: d };
@@ -122,7 +125,10 @@ const normalAt = ({ points }: Track, index: number) => {
 export const trackPosition = (track: Track, progress: number): { x: number; y: number; nx: number; ny: number } => {
   const { points, length } = track;
   const target = (((progress % 1) + 1) % 1) * length;
-  const index = Math.max(0, points.findLastIndex(p => p.distance <= target));
+  const index = Math.max(
+    0,
+    points.findLastIndex(p => p.distance <= target),
+  );
   const point = points[index];
   const nextIndex = (index + 1) % points.length;
   const next = points[nextIndex];
@@ -144,8 +150,8 @@ export const progressAt = (samples: { time: number; progress: number }[], time: 
   if (next === 0) return samples[0].progress;
   if (next === -1) return samples.at(-1)!.progress;
   const [a, b] = [samples[next - 1], samples[next]];
-  const delta = ((b.progress - a.progress) % 1 + 1.5) % 1 - 0.5;
-  return a.progress + delta * (time - a.time) / (b.time - a.time);
+  const delta = ((((b.progress - a.progress) % 1) + 1.5) % 1) - 0.5;
+  return a.progress + (delta * (time - a.time)) / (b.time - a.time);
 };
 
 /**

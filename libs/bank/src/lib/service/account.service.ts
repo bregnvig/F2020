@@ -7,10 +7,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { converter } from '@f2020/api';
 
-
 @Service()
 export class AccountService {
-
   static readonly transactionsURL = 'transactions';
 
   #afs = inject(Firestore);
@@ -29,7 +27,6 @@ export class AccountService {
   }
 
   getTransactions(uid: string, start: DateTime, numberOfTransactions: number): Observable<Transaction[]> {
-
     const transactionQuery = query(
       collection(this.#afs, AccountService.transactionsURL).withConverter(converter.transaction),
       where('involved', 'array-contains', uid),
@@ -37,8 +34,6 @@ export class AccountService {
       orderBy('date', 'desc'),
       limit(numberOfTransactions),
     );
-    return collectionData(transactionQuery).pipe(
-      map(transactions => transactions as Transaction[]),
-    );
+    return collectionData(transactionQuery).pipe(map(transactions => transactions as Transaction[]));
   }
 }

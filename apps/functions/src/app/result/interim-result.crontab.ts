@@ -10,10 +10,12 @@ import { createInterimResult } from './interim-result.call';
  * OpenF1 has the final results, and it is there before the race is live, which shows the places moved from it.
  * Nothing is fetched from OpenF1 until two days before the race, as the qualifying is the day before
  */
-export const interimResultCrontab = onSchedule({
+export const interimResultCrontab = onSchedule(
+  {
     timeZone: 'Europe/Copenhagen',
     schedule: '*/15 * * * *',
-  }, async () => {
+  },
+  async () => {
     const race = await getCurrentRace('closed');
     if (!race || race.result || race.raceStart.minus({ days: 2 }) > DateTime.local()) {
       return;

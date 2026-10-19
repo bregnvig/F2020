@@ -17,10 +17,23 @@ import { WbcChampionshipComponent } from '../card/championship/wbc-championship'
   selector: 'f2020-landing',
   templateUrl: './landing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardPageComponent, WhatElseComponent, RememberToPlayComponent, PreviousRaceComponent, DriverChampionshipComponent, TeamChampionshipComponent, WbcChampionshipComponent, JoinWbcComponent, LastYearComponent, WeatherComponent, LoadingComponent, HasRoleDirective, SprintStandingsComponent],
+  imports: [
+    CardPageComponent,
+    WhatElseComponent,
+    RememberToPlayComponent,
+    PreviousRaceComponent,
+    DriverChampionshipComponent,
+    TeamChampionshipComponent,
+    WbcChampionshipComponent,
+    JoinWbcComponent,
+    LastYearComponent,
+    WeatherComponent,
+    LoadingComponent,
+    HasRoleDirective,
+    SprintStandingsComponent,
+  ],
 })
 export class LandingComponent {
-
   player = inject(PlayerStore).player;
 
   #hidden = computed(() => hiddenLandingCards(this.player()));
@@ -28,5 +41,4 @@ export class LandingComponent {
   protected shown(card: LandingCard) {
     return !this.#hidden().includes(card);
   }
-
 }

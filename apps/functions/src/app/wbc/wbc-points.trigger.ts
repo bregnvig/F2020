@@ -14,7 +14,8 @@ export const wbcPointsTrigger = onDocumentUpdated('seasons/{seasonId}/races/{rou
   const before: IRace = event.data.before.data() as IRace;
   const after: IRace = event.data.after.data() as IRace;
   if (before.state === 'closed' && after.state === 'completed') {
-    const bids: Bid[] = await db.collection(collectionPaths.bids(event.params.seasonId, event.params.round))
+    const bids: Bid[] = await db
+      .collection(collectionPaths.bids(event.params.seasonId, event.params.round))
       .where('submitted', '==', true)
       .orderBy('points', 'desc')
       .orderBy('polePositionTimeDiff', 'asc')
@@ -38,22 +39,28 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
         email: bid.player?.email,
         tokens: bid.player?.tokens ?? [],
       } as Player,
-      points: bid.points && wbcPoints[index] || 0,
+      points: (bid.points && wbcPoints[index]) || 0,
     })),
   };
   result.players.forEach((b, index) => log(b.player?.displayName, 'Points ', bids[index].points, 'WBC', wbcPoints[index]));
 
-  ref.get()
+  ref
+    .get()
     .then(doc => doc.data())
     .then((season: ISeason) => {
       const results = (season.wbc?.results ?? []).filter(r => r.round !== result.round);
       return [...results, result].sort((a, b) => a.round - b.round);
     })
-    .then(results => ref.set({
-      wbc: {
-        results,
-      },
-    }, { merge: true }))
+    .then(results =>
+      ref.set(
+        {
+          wbc: {
+            results,
+          },
+        },
+        { merge: true },
+      ),
+    )
     .then(() => log(`WBC points distributed for ${race.name}`))
     .catch(internalError);
 };

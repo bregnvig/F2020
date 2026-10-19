@@ -13,8 +13,8 @@ export interface Lap {
   duration_sector_1: number;
   duration_sector_2: number;
   duration_sector_3: number;
-  segments_sector_1: SectorStatus[],
-  segments_sector_2: SectorStatus[],
-  segments_sector_3: SectorStatus[],
+  segments_sector_1: SectorStatus[];
+  segments_sector_2: SectorStatus[];
+  segments_sector_3: SectorStatus[];
   lap_number: number;
 }

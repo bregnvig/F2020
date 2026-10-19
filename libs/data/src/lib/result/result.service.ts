@@ -10,16 +10,21 @@ const sumPoints = (acc: number, points: number): number => acc + points;
 export const offsetPoints = (bid: string[], result: string[], maxOffset: number): number[] => {
   return bid.map((driver, index) => {
     const resultIndex = result.indexOf(driver);
-    return resultIndex === -1 ? 0 : Math.max((maxOffset + 1) - (Math.abs(index - resultIndex)), 0);
+    return resultIndex === -1 ? 0 : Math.max(maxOffset + 1 - Math.abs(index - resultIndex), 0);
   });
 };
 
-export type PropertySet = { [key: string]: number; };
+export type PropertySet = { [key: string]: number };
 export const propertyPoints = (bid: any, result: any, maxPoints = 3): PropertySet => {
-  return Object.keys(bid).filter(key => !key.endsWith('Points')).reduce((acc, key) => {
-    acc[key + 'Points'] = Math.max(maxPoints - Math.abs(bid[key] - result[key]), 0) || 0;
-    return acc;
-  }, <PropertySet>{});
+  return Object.keys(bid)
+    .filter(key => !key.endsWith('Points'))
+    .reduce(
+      (acc, key) => {
+        acc[key + 'Points'] = Math.max(maxPoints - Math.abs(bid[key] - result[key]), 0) || 0;
+        return acc;
+      },
+      <PropertySet>{},
+    );
 };
 
 export const calculateResult = (bid: Bid, result: Bid): Bid => {
@@ -37,16 +42,16 @@ export const calculateResult = (bid: Bid, result: Bid): Bid => {
     calculatedResult.selectedTeam = { ...bid.selectedTeam, qualifyPoints, resultPoints } as SelectedTeamValue;
   }
 
-  calculatedResult.points = calculatedResult.qualifyPoints.reduce(sumPoints, 0)
-    + calculatedResult.fastestDriverPoints.reduce(sumPoints, 0)
-    + calculatedResult.podiumPoints.reduce(sumPoints, 0)
-    + (calculatedResult.selectedDriver.gridPoints ?? 0)
-    + (calculatedResult.selectedDriver.finishPoints ?? 0)
-    + calculatedResult.firstCrashPoints.reduce(sumPoints, 0)
-    + calculatedResult.slowestPitStopPoints.reduce(sumPoints, 0)
-    + (calculatedResult.selectedTeam?.qualifyPoints ?? 0)
-    + (calculatedResult.selectedTeam?.resultPoints ?? 0);
-
+  calculatedResult.points =
+    calculatedResult.qualifyPoints.reduce(sumPoints, 0) +
+    calculatedResult.fastestDriverPoints.reduce(sumPoints, 0) +
+    calculatedResult.podiumPoints.reduce(sumPoints, 0) +
+    (calculatedResult.selectedDriver.gridPoints ?? 0) +
+    (calculatedResult.selectedDriver.finishPoints ?? 0) +
+    calculatedResult.firstCrashPoints.reduce(sumPoints, 0) +
+    calculatedResult.slowestPitStopPoints.reduce(sumPoints, 0) +
+    (calculatedResult.selectedTeam?.qualifyPoints ?? 0) +
+    (calculatedResult.selectedTeam?.resultPoints ?? 0);
 
   return calculatedResult;
 };
@@ -62,9 +67,8 @@ export const calculateInterimResult = (bid: Bid, result: Partial<Bid>): Bid => {
     calculatedResult.polePositionTimeDiff = Math.abs(bid.polePositionTime - result.polePositionTime);
   }
 
-  calculatedResult.points = calculatedResult.qualifyPoints.reduce(sumPoints, 0)
-    + (calculatedResult.selectedDriver?.gridPoints ?? 0)
-    + (calculatedResult.selectedTeam?.qualifyPoints ?? 0);
+  calculatedResult.points =
+    calculatedResult.qualifyPoints.reduce(sumPoints, 0) + (calculatedResult.selectedDriver?.gridPoints ?? 0) + (calculatedResult.selectedTeam?.qualifyPoints ?? 0);
 
   return calculatedResult;
 };

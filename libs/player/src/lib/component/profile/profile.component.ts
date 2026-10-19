@@ -16,16 +16,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   providers: [PlayersStore],
 })
 export class ProfileComponent {
-
   #store = inject(PlayerStore);
   #playersStore = inject(PlayersStore);
 
   protected readonly receiveReminders = computed(() => this.#store.player()?.receiveReminders ?? true);
   protected readonly players = computed<[Player, boolean][]>(() => {
     const player = this.#store.player();
-    return (this.#playersStore.players() ?? [])
-      .filter(p => p.uid !== player?.uid)
-      .map(p => [p, !player?.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)]);
+    return (this.#playersStore.players() ?? []).filter(p => p.uid !== player?.uid).map(p => [p, !player?.receiveBettingStarted || player.receiveBettingStarted.includes(p.uid)]);
   });
   protected readonly landingCards = computed(() => {
     const hidden = hiddenLandingCards(this.#store.player());
@@ -53,5 +50,4 @@ export class ProfileComponent {
   protected updateReceiveReminders(receiveReminders: boolean) {
     this.#store.updatePlayer({ receiveReminders });
   }
-
 }

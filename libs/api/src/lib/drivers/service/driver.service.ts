@@ -6,14 +6,13 @@ import { map, share } from 'rxjs/operators';
 
 @Service()
 export class DriverService {
-
   readonly drivers$: Observable<IDriver[]>;
 
   constructor() {
     const afs = inject(Firestore);
     this.drivers$ = collectionData(collection(afs, 'drivers')).pipe(
       map<IDriver[], IDriver[]>(drivers => drivers.sort((a, b) => a.name.localeCompare(b.name))),
-      share()
+      share(),
     );
   }
 }

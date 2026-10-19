@@ -9,15 +9,12 @@ import { converter } from '../../converter';
 
 @Service()
 export class PlayersApiService {
-
   #afs = inject(Firestore);
   #functions = inject(Functions);
   readonly #players$: Observable<Player[]>;
 
   constructor() {
-    this.#players$ = collectionData(collection(this.#afs, 'players').withConverter(converter.timestamp<Player>())).pipe(
-      map(players => players as Player[]),
-    );
+    this.#players$ = collectionData(collection(this.#afs, 'players').withConverter(converter.timestamp<Player>())).pipe(map(players => players as Player[]));
   }
 
   getPlayers() {
@@ -31,5 +28,4 @@ export class PlayersApiService {
   deletePlayer(uid: string): Promise<true> {
     return httpsCallable(this.#functions, 'deletePlayer')(uid).then(() => true);
   }
-
 }

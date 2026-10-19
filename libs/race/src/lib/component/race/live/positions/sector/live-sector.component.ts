@@ -13,9 +13,8 @@ import { ISector } from '@f2020/data';
             class="complete-sector transition-all duration-200 ease-in-out rounded-md"
             [class]="'bg-' + sectorData.status + '-500'"
             [style.width.px]="40"
-            [style.height.px]="8">
-          </div>
-        } 
+            [style.height.px]="8"></div>
+        }
         <!-- @else if (sectorData.mini && sectorData.mini.length > 0) {
           <div class="mini-sectors flex gap-0 transition-all duration-500 ease-in-out">
             @for (miniColor of sectorData.mini; track $index) {

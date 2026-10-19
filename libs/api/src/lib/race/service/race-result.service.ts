@@ -1,4 +1,24 @@
-import { ChampionshipStarts, IDriver, IFastestLaps, IDriverGridPosition, IDriverInterval, IDriverRaceResult, IDriverSector, IPitStop, IQualifyResult, IRace, IRaceResult, IStint, ITeam, LocationPlayback, mapper, RaceControl, RetiredCars, TeamRadio, IWeatherReading } from '@f2020/data';
+import {
+  ChampionshipStarts,
+  IDriver,
+  IFastestLaps,
+  IDriverGridPosition,
+  IDriverInterval,
+  IDriverRaceResult,
+  IDriverSector,
+  IPitStop,
+  IQualifyResult,
+  IRace,
+  IRaceResult,
+  IStint,
+  ITeam,
+  LocationPlayback,
+  mapper,
+  RaceControl,
+  RetiredCars,
+  TeamRadio,
+  IWeatherReading,
+} from '@f2020/data';
 import { inject, InjectionToken } from '@angular/core';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, combineLatest, map, Observable, of, retry, shareReplay, switchMap, take, tap, timer } from 'rxjs';
@@ -36,7 +56,7 @@ export abstract class RaceResultService extends LiveSessionService {
   abstract readonly weatherStatus: Observable<LiveStatus>;
   abstract readonly currentLap: BehaviorSubject<number>;
 
-  abstract getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult, latestUpdate: DateTime; } | null>;
+  abstract getResult(race: IRace, drivers: IDriver[]): Observable<{ result: IRaceResult; latestUpdate: DateTime } | null>;
 
   abstract getPitStops(race: IRace, drivers: IDriver[], teams: ITeam[]): Observable<IPitStop[]>;
 
@@ -92,13 +112,10 @@ export abstract class RaceResultService extends LiveSessionService {
    */
   getChampionshipStart(race: IRace, drivers: IDriver[]): Observable<ChampionshipStarts> {
     this.#championshipStart$ ??= this.#openF1HttpService.getSession(race, 'Race').pipe(
-      switchMap(({ session_key }) => combineLatest([
-        this.#openF1HttpService.getChampionshipDrivers(session_key),
-        this.#openF1HttpService.getChampionshipTeams(session_key),
-      ])),
-      switchMap(([driverChampionship, teamChampionship]) => driverChampionship.length
-        ? of(mapper.championship(drivers, driverChampionship, teamChampionship))
-        : this.#storedChampionship(race)),
+      switchMap(({ session_key }) => combineLatest([this.#openF1HttpService.getChampionshipDrivers(session_key), this.#openF1HttpService.getChampionshipTeams(session_key)])),
+      switchMap(([driverChampionship, teamChampionship]) =>
+        driverChampionship.length ? of(mapper.championship(drivers, driverChampionship, teamChampionship)) : this.#storedChampionship(race),
+      ),
       retry({ count: 4, delay: (_error, attempt) => timer(2000 * attempt) }),
       tap({
         next: ({ drivers }) => this.#championshipStatus$.next({ latestUpdate: DateTime.now(), info: `${drivers.size} drivers` }),
@@ -110,10 +127,7 @@ export abstract class RaceResultService extends LiveSessionService {
   }
 
   #storedChampionship(race: IRace): Observable<ChampionshipStarts> {
-    return combineLatest([
-      this.#standingService.getStandings(race.season).pipe(take(1)),
-      this.#teamService.teams$.pipe(take(1)),
-    ]).pipe(
+    return combineLatest([this.#standingService.getStandings(race.season).pipe(take(1)), this.#teamService.teams$.pipe(take(1))]).pipe(
       map(([standings, teams]) => ({
         drivers: new Map(standings.map(({ driver, points, position }) => [driver.driverId, { points, position }])),
         teams: new Map(teams.map(({ name, points, position }) => [name, { points, position }])),

@@ -15,7 +15,6 @@ import { RacesStore } from '@f2020/api';
   imports: [MatCardModule, MatButtonModule, RouterLink, RelativeToNowPipe, FlagURLPipe, NgOptimizedImage],
 })
 export class RememberToPlayComponent {
-
   @HostBinding('hidden') isHidden = true;
   race: Signal<IRace | undefined>;
 
@@ -26,7 +25,6 @@ export class RememberToPlayComponent {
         return store.currentRace();
       }
     });
-    effect(() => this.isHidden = !this.race());
+    effect(() => (this.isHidden = !this.race()));
   }
-
 }

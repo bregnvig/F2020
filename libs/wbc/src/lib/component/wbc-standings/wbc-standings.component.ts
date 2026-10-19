@@ -28,7 +28,6 @@ const sum = (acc: Map<string, WBCPlayer>, wbcPlayer: WBCPlayer): Map<string, WBC
   imports: [MatToolbarModule, MatListModule, RouterLink, FaIconComponent, MatButtonModule, MatIconModule, AsyncPipe],
 })
 export class WbcStandingsComponent {
-
   standings$: Observable<WBCPlayer[]>;
   participants$: Observable<string[]>;
   icon = icon.fasStar;
@@ -38,7 +37,15 @@ export class WbcStandingsComponent {
     const store = inject(SeasonStore);
     this.standings$ = toObservable(store.season).pipe(
       map(season => season?.wbc?.results || []),
-      map(results => Array.from<WBCPlayer>(results.map(r => r.players).flat().reduce(sum, new Map<string, WBCPlayer>()).values())),
+      map(results =>
+        Array.from<WBCPlayer>(
+          results
+            .map(r => r.players)
+            .flat()
+            .reduce(sum, new Map<string, WBCPlayer>())
+            .values(),
+        ),
+      ),
       map(players => players.sort((a, b) => b.points - a.points)),
     );
     this.participants$ = toObservable(store.season).pipe(
@@ -46,5 +53,4 @@ export class WbcStandingsComponent {
       shareLatest(),
     );
   }
-
 }

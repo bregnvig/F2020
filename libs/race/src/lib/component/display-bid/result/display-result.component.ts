@@ -11,23 +11,20 @@ import { DisplayBidComponent } from '../display-bid.component';
   template: `
     @if (race()) {
       <mat-toolbar color="primary">
-        <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x"/>
+        <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x" />
         <span class="ml-2" matListItemTitle>Resultat {{ race().name }}</span>
       </mat-toolbar>
       <div class="py-3">
         <f2020-display-bid [bid]="race().result" [race]="race()" />
       </div>
     } @else {
-      <sha-loading/>
+      <sha-loading />
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbarModule, FaIconComponent, MatListModule, DisplayBidComponent, LoadingComponent],
 })
 export class DisplayResultComponent {
-
   race = inject(RaceStore).race;
   icon = icon.fasFlagCheckered;
-
-
 }

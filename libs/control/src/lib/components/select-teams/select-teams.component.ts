@@ -6,20 +6,19 @@ import { TeamNamePipe } from '@f2020/shared';
 import { AbstractControlComponent } from '../../abstract-control-component';
 import { SelectTeamComponent } from '../select-team/select-team.component';
 
-
 type LabelFn = (index: number) => string;
 
 const uniqueTeams = (driverArray: FormArray): null | string[] => {
-  const value: string[] = (driverArray.value || []);
+  const value: string[] = driverArray.value || [];
   const constructorIds: string[] = value.filter((constructorId: string) => !!constructorId);
-  const count: { [key: string]: number; } = constructorIds.reduce((acc, constructorId) => {
+  const count: { [key: string]: number } = constructorIds.reduce((acc, constructorId) => {
     if (!acc[constructorId]) {
       acc[constructorId] = 0;
     }
     acc[constructorId] += 1;
     return acc;
   }, {});
-  const errors: string[] = value.map((constructorId: string) => constructorId && count[constructorId] > 1 ? constructorId : null);
+  const errors: string[] = value.map((constructorId: string) => (constructorId && count[constructorId] > 1 ? constructorId : null));
   return errors.some(error => !!error) ? errors : null;
 };
 
@@ -30,11 +29,7 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
     <div [formGroup]="fg" class="flex flex-col">
       @for (_ of teamsArray.controls; track $index) {
         <ng-container formArrayName="teams">
-          <f2020-select-team
-            [teams]="teams()"
-            [label]="labelFn()($index + 1)"
-            [error]="errorMessage($index)"
-            [formControlName]="$index" />
+          <f2020-select-team [teams]="teams()" [label]="labelFn()($index + 1)" [error]="errorMessage($index)" [formControlName]="$index" />
         </ng-container>
       }
     </div>
@@ -52,13 +47,9 @@ const uniqueTeams = (driverArray: FormArray): null | string[] => {
       multi: true,
     },
   ],
-  imports: [
-    ReactiveFormsModule,
-    SelectTeamComponent,
-  ],
+  imports: [ReactiveFormsModule, SelectTeamComponent],
 })
 export class SelectTeamsComponent extends AbstractControlComponent<string[]> implements OnInit {
-
   readonly teams = input.required<ITeam[]>();
   readonly noOfTeams = input.required<number>();
   readonly labelFn = input<LabelFn>((index: number) => `Vælg ${index}. hold`);
@@ -75,14 +66,15 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
   }
 
   ngOnInit(): void {
-    this.teamsArray = this.#fb.array(Array.from({ length: this.noOfTeams() }, () => [null]), uniqueTeams);
+    this.teamsArray = this.#fb.array(
+      Array.from({ length: this.noOfTeams() }, () => [null]),
+      uniqueTeams,
+    );
     this.fg = this.#fb.group({
       teams: this.teamsArray,
     });
     this.setupStandardControl(this.fg);
-    this.teamsArray.valueChanges.pipe(
-      takeUntilDestroyed(this.#destroyRef),
-    ).subscribe(value => this.propagateChange(value));
+    this.teamsArray.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(value => this.propagateChange(value));
   }
 
   writeValue(value: string[] | string): void {
@@ -98,7 +90,6 @@ export class SelectTeamsComponent extends AbstractControlComponent<string[]> imp
   }
 
   errorMessage(index: number): string {
-    return this.teamsArray.errors && this.teamsArray.errors[index] ? (this.#teamName.transform(this.teamsArray.at(index).value)) + ' må ikke vælges flere gange' : '';
+    return this.teamsArray.errors && this.teamsArray.errors[index] ? this.#teamName.transform(this.teamsArray.at(index).value) + ' må ikke vælges flere gange' : '';
   }
-
 }

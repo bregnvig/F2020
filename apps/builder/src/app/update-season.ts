@@ -28,20 +28,23 @@ export const updateSeasonFromCalendar = async (seasonId: number, icsFile: string
   const db = firebaseApp.database;
   const racesCollection = db.collection(racesURL(seasonId));
 
-  const existingRaces = await racesCollection.withConverter(converter.race).get()
+  const existingRaces = await racesCollection
+    .withConverter(converter.race)
+    .get()
     .then(snapshot => snapshot.docs.map(doc => doc.data() as IRace).sort((a, b) => a.round - b.round));
   const now = new Date();
   const lastStarted = requiredValue(existingRaces.filter(r => r.raceStart.toJSDate() <= now).at(-1), `a started race in season ${seasonId}`);
   console.log(`Last started race is round ${lastStarted.round} ${lastStarted.name} (${lastStarted.state}) ${lastStarted.raceStart.toISO()}`);
 
   const circuits: Circuit[] = JSON.parse(readFileSync(assetPath('circuits.json')).toString());
-  const calendarRaces = await readCalendarRaces(icsFile, circuits)
-    .then(races => races.filter(r => r.raceStart > lastStarted.raceStart));
+  const calendarRaces = await readCalendarRaces(icsFile, circuits).then(races => races.filter(r => r.raceStart > lastStarted.raceStart));
   if (!calendarRaces.length) {
     throw new Error(`No races in ${icsFile} after ${lastStarted.name}`);
   }
 
-  const teams = await db.collection(`seasons/${seasonId}/teams`).get()
+  const teams = await db
+    .collection(`seasons/${seasonId}/teams`)
+    .get()
     .then(snapshot => snapshot.docs.map(doc => doc.data() as ITeam));
   const existingByRound = new Map(existingRaces.map(r => [r.round, r]));
 
@@ -52,25 +55,32 @@ export const updateSeasonFromCalendar = async (seasonId: number, icsFile: string
     if (existing && !overwritableStates.includes(existing.state)) {
       throw new Error(`Round ${round} ${existing.name} is ${existing.state} and will not be overwritten`);
     }
-    const mapped = mapper.race(cr.circuit, undefined, {
-      raceStart: cr.raceStart,
-      url: cr.url,
-      state: 'waiting',
-      close: cr.close,
-      round,
-      season: seasonId,
-    }, previous, []);
-    const race: IRace = existing?.state === 'open'
-      ? {
-        ...mapped,
-        state: existing.state,
-        open: existing.open,
-        drivers: existing.drivers ?? [],
-        teams: existing.teams,
-        selectedDriver: existing.selectedDriver,
-        selectedTeam: existing.selectedTeam,
-      }
-      : { ...mapped, selectedTeam: teams[Math.floor(Math.random() * teams.length)] };
+    const mapped = mapper.race(
+      cr.circuit,
+      undefined,
+      {
+        raceStart: cr.raceStart,
+        url: cr.url,
+        state: 'waiting',
+        close: cr.close,
+        round,
+        season: seasonId,
+      },
+      previous,
+      [],
+    );
+    const race: IRace =
+      existing?.state === 'open'
+        ? {
+            ...mapped,
+            state: existing.state,
+            open: existing.open,
+            drivers: existing.drivers ?? [],
+            teams: existing.teams,
+            selectedDriver: existing.selectedDriver,
+            selectedTeam: existing.selectedTeam,
+          }
+        : { ...mapped, selectedTeam: teams[Math.floor(Math.random() * teams.length)] };
     previous = race;
     return { race, existing };
   });
@@ -82,8 +92,13 @@ export const updateSeasonFromCalendar = async (seasonId: number, icsFile: string
     throw new Error(`Rounds ${blocked.map(r => `${r.round} (${r.state})`).join(', ')} would be deleted, but are not waiting`);
   }
 
-  const bidCount = async (round: number) => racesCollection.doc(round.toString(10)).collection('bids').count().get()
-    .then(snapshot => snapshot.data().count);
+  const bidCount = async (round: number) =>
+    racesCollection
+      .doc(round.toString(10))
+      .collection('bids')
+      .count()
+      .get()
+      .then(snapshot => snapshot.data().count);
 
   for (const { race, existing } of races) {
     const bids = existing ? await bidCount(race.round) : 0;

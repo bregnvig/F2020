@@ -17,7 +17,7 @@ export const nofundsTrigger = onDocumentUpdated('players/{userId}', async event 
   const player: Player = event.data.after.data() as Player;
   if ((player.balance || 0) - 20 < -100) {
     log('player', player.displayName, 'has insufficient founds for next race');
-    return sendMail(player.email, 'Du kan ikke spille mere', mailbody(player)).then((msg) => {
+    return sendMail(player.email, 'Du kan ikke spille mere', mailbody(player)).then(msg => {
       log(`sendMail result :(${msg})`);
     });
   }

@@ -62,16 +62,18 @@ export class ReplayQualifyService extends QualifyResultService {
       const totalSteps = replayDuration / replayStep;
       const timeStep = end.diff(start).as('milliseconds') / totalSteps;
 
-      timer(0, replayStep).pipe(
-        take(totalSteps + 1),
-        map(step => ({
-          currentTime: start.plus({ milliseconds: step * timeStep }),
-          positions,
-          laps,
-          raceControl,
-          teamRadio,
-        })),
-      ).subscribe(state => this.#replayState$.next(state));
+      timer(0, replayStep)
+        .pipe(
+          take(totalSteps + 1),
+          map(step => ({
+            currentTime: start.plus({ milliseconds: step * timeStep }),
+            positions,
+            laps,
+            raceControl,
+            teamRadio,
+          })),
+        )
+        .subscribe(state => this.#replayState$.next(state));
     } catch (error) {
       this.#started = false;
       this.#resultStatus$.next({ latestUpdate: DateTime.now(), error });
@@ -82,17 +84,21 @@ export class ReplayQualifyService extends QualifyResultService {
     this.#startReplay(race);
     return this.#replayState$.pipe(
       truthy(),
-      map(state => mapper.liveQualifyResult({
-        positions: state.positions.filter(position => isBefore(position.date, state.currentTime)),
-        laps: state.laps.filter(lap => !lap.date_start || lapEnd(lap) <= state.currentTime),
-        raceControl: state.raceControl.filter(message => isBefore(message.date, state.currentTime)),
-        drivers,
-        race,
-      })),
-      tap(result => this.#resultStatus$.next({
-        latestUpdate: this.#replayState$.value?.currentTime ?? null,
-        info: `Q${result.phase}, ${result.results.length} drivers`,
-      })),
+      map(state =>
+        mapper.liveQualifyResult({
+          positions: state.positions.filter(position => isBefore(position.date, state.currentTime)),
+          laps: state.laps.filter(lap => !lap.date_start || lapEnd(lap) <= state.currentTime),
+          raceControl: state.raceControl.filter(message => isBefore(message.date, state.currentTime)),
+          drivers,
+          race,
+        }),
+      ),
+      tap(result =>
+        this.#resultStatus$.next({
+          latestUpdate: this.#replayState$.value?.currentTime ?? null,
+          info: `Q${result.phase}, ${result.results.length} drivers`,
+        }),
+      ),
     );
   }
 
@@ -103,10 +109,12 @@ export class ReplayQualifyService extends QualifyResultService {
       // The sectors are shown while the lap is driven, so a lap counts from its start
       map(state => ({ laps: state.laps.filter(lap => isBefore(lap.date_start, state.currentTime)), now: state.currentTime.toMillis() })),
       map(({ laps, now }) => mapper.sectors({ laps, drivers, now })),
-      tap(sectors => this.#sectorStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${sectors.length} driver sectors`,
-      })),
+      tap(sectors =>
+        this.#sectorStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${sectors.length} driver sectors`,
+        }),
+      ),
     );
   }
 
@@ -116,10 +124,12 @@ export class ReplayQualifyService extends QualifyResultService {
       truthy(),
       map(state => state.teamRadio.filter(message => isBefore(message.date, state.currentTime))),
       map(messages => mapper.radio({ messages, drivers }).toSorted((a, b) => b.date.valueOf() - a.date.valueOf())),
-      tap(messages => this.#radioStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${messages.length} messages`,
-      })),
+      tap(messages =>
+        this.#radioStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${messages.length} messages`,
+        }),
+      ),
     );
   }
 
@@ -129,10 +139,12 @@ export class ReplayQualifyService extends QualifyResultService {
       truthy(),
       map(state => state.raceControl.filter(message => isBefore(message.date, state.currentTime))),
       map(messages => mapper.raceControl({ messages, drivers })),
-      tap(messages => this.#raceControlStatus$.next({
-        latestUpdate: DateTime.now(),
-        info: `${messages.length} race control messages`,
-      })),
+      tap(messages =>
+        this.#raceControlStatus$.next({
+          latestUpdate: DateTime.now(),
+          info: `${messages.length} race control messages`,
+        }),
+      ),
     );
   }
 }

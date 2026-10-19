@@ -4,7 +4,6 @@ import { icon } from '@f2020/shared';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
-
 @Component({
   selector: 'f2020-partial-bid-warning',
   template: `
@@ -14,9 +13,8 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
         [icon]="icon"
         size="2x"
         #tooltip="matTooltip"
-        (click)="tooltip.toggle(); $event.preventDefault();"
-        [matTooltip]="bid().player.displayName + ' har ikke indsendt sit bud'"
-      />
+        (click)="tooltip.toggle(); $event.preventDefault()"
+        [matTooltip]="bid().player.displayName + ' har ikke indsendt sit bud'" />
     }
   `,
   styles: [
@@ -30,9 +28,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
   imports: [FaIconComponent, MatTooltip],
 })
 export class PartialBidWarningComponent {
-
   icon = icon.falTireFlat;
 
   bid = input.required<Participant>();
-
 }

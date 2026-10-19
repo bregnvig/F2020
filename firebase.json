@@ -10,11 +10,7 @@
     {
       "target": "ui",
       "public": "dist/apps/ui",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -31,9 +27,7 @@
       "codebase": "functions",
       "source": "dist/apps/functions",
       "runtime": "nodejs24",
-      "ignore": [
-        "*.local"
-      ]
+      "ignore": ["*.local"]
     }
   ],
   "emulators": {

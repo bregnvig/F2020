@@ -23,7 +23,10 @@ export const fixTeamStandings = async (seasonId: number, write: boolean) => {
   console.log(`Last completed race is round ${lastRace.round} ${lastRace.name}`);
 
   const teamsPath = `seasons/${seasonId}/teams`;
-  const teams = await db.collection(teamsPath).get().then(snapshot => snapshot.docs.map(doc => doc.data() as ITeam));
+  const teams = await db
+    .collection(teamsPath)
+    .get()
+    .then(snapshot => snapshot.docs.map(doc => doc.data() as ITeam));
   const championship = await fetchJson<TeamChampionship[]>(`https://api.openf1.org/v1/championship_teams?session_key=${raceSession.session_key}`);
   const updates = championship
     .sort((a, b) => a.position_current - b.position_current)

@@ -119,7 +119,7 @@ npx nx serve builder
 ## Data model
 
 ```json5
-{ 
+{
     season: {
         latestWBCJoinDate: 'before qualify the third race',
         latestRace: 'Denormalized copy of the latest race',
@@ -134,7 +134,7 @@ npx nx serve builder
               bids: [
                 {
                   data: 'Contains the bids and eventually the points tally. Structure not defined'
-                }       
+                }
               ],
               result: {
                 data: 'Contains the result. Structure not defined'
@@ -142,14 +142,14 @@ npx nx serve builder
               selectedDriver: 'The selected driver',
               drivers: [
                 // Any array of drivers active at the specific race
-              ] 
-            }     
+              ]
+            }
         ], // Separate collection
         drivers: [ // Separate collection
           // An array of drivers that has participated in this season.
           // They will be marked as active or not active
         ],
-        wbc:      
+        wbc:
     }
 }
 ```

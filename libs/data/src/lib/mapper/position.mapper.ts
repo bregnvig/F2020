@@ -11,7 +11,6 @@ interface OpenF1PositionParams {
 }
 
 const openF1Map = (source: OpenF1PositionParams): IDriverRaceResult[] => {
-
   const gridPositions = getGridPositions(source.gridPositions);
   const currentPositions = [...source.positions.reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
   const drivers = getDrivers(source.drivers);
@@ -19,12 +18,12 @@ const openF1Map = (source: OpenF1PositionParams): IDriverRaceResult[] => {
   return currentPositions.map(position => {
     const driver = requiredValue(drivers.get(position.driver_number), 'Result driver with driver number', position.driver_number);
     const grid = requiredValue(gridPositions.get(driver.driverId), 'Grid position', driver.driverId);
-    return ({
+    return {
       driver,
       position: position.position,
       grid,
       status: 'Racing',
-    }) as IDriverRaceResult;
+    } as IDriverRaceResult;
   });
 };
 

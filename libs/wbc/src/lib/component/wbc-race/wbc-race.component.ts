@@ -16,7 +16,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
   imports: [MatToolbarModule, MatListModule, RouterLink, LoadingComponent, FlagURLPipe, NgOptimizedImage],
 })
 export class WbcRaceComponent {
-
   result: Signal<WBCResult>;
 
   constructor() {
@@ -25,5 +24,4 @@ export class WbcRaceComponent {
     const round = toSignal(route.params.pipe(map<Params, string>(params => params.round)));
     this.result = computed(() => store.season().wbc?.results.find(result => result.round === parseInt(round(), 10)));
   }
-
 }

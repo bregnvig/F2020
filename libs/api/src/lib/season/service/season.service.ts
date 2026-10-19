@@ -9,16 +9,12 @@ const seasonConverter = converter.timestamp<ISeason>();
 
 @Service()
 export class SeasonService {
-
   static readonly seasonsURL = 'seasons';
   #afs = inject(Firestore);
 
-  readonly previous$: Observable<ISeason[]> = collectionData(query(
-    collection(this.#afs, SeasonService.seasonsURL).withConverter(seasonConverter),
-    where('current', '==', false),
-  )).pipe(
-    map(seasons => seasons as ISeason[]),
-  );
+  readonly previous$: Observable<ISeason[]> = collectionData(
+    query(collection(this.#afs, SeasonService.seasonsURL).withConverter(seasonConverter), where('current', '==', false)),
+  ).pipe(map(seasons => seasons as ISeason[]));
 
   loadSeason(id: string): Observable<ISeason> {
     return docData(doc(this.#afs, `${SeasonService.seasonsURL}/${id}`).withConverter(seasonConverter)).pipe(

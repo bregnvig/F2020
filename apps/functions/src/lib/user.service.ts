@@ -15,13 +15,15 @@ export const validateAccess = async (uid: string | undefined, ...role: Role[]): 
     }
 
     if (!player.isInRole(...role)) {
-      throw logAndCreateError('permission-denied', `${player.displayName} does not have sufficient permissions. Role '${role.join(',')}' required. Has ${player.roles.join(', ')} `);
+      throw logAndCreateError(
+        'permission-denied',
+        `${player.displayName} does not have sufficient permissions. Role '${role.join(',')}' required. Has ${player.roles.join(', ')} `,
+      );
     }
     return player;
   }
   throw logAndCreateError('unauthenticated', `No user was apparently logged in`);
 };
-
 
 let _bookie: Promise<PlayerImpl> | null = null;
 
@@ -29,7 +31,8 @@ export const getBookie = (): Promise<PlayerImpl> => {
   if (_bookie) {
     return _bookie;
   }
-  _bookie = getFirestore().collection(collectionPaths.players())
+  _bookie = getFirestore()
+    .collection(collectionPaths.players())
     .where('roles', 'array-contains', 'bookie')
     .withConverter(converter)
     .get()
@@ -44,4 +47,3 @@ export const getBookie = (): Promise<PlayerImpl> => {
     });
   return _bookie;
 };
-

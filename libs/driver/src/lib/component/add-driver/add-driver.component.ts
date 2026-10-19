@@ -17,17 +17,18 @@ import { DriversStore } from '@f2020/api';
   imports: [MatDialogModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatAutocompleteModule, MatOptionModule, MatButtonModule, DriverNamePipe],
 })
 export class AddDriverComponent {
-
   filteredDrivers: Signal<string[]>;
   driverControl = new FormControl(null, Validators.required);
   currentDrivers = inject<string[]>(MAT_DIALOG_DATA);
   #term: Signal<string>;
 
   constructor() {
-    this.#term = toSignal(this.driverControl.valueChanges.pipe(
-      startWith(''),
-      map<string, string>(term => term.toLocaleLowerCase()),
-    ));
+    this.#term = toSignal(
+      this.driverControl.valueChanges.pipe(
+        startWith(''),
+        map<string, string>(term => term.toLocaleLowerCase()),
+      ),
+    );
     const store = inject(DriversStore);
     this.filteredDrivers = computed(() => {
       const drivers = (store.drivers() ?? []).filter(driver => !this.currentDrivers.some(currentDriver => currentDriver === driver.driverId));

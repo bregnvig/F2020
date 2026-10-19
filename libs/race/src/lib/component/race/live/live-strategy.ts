@@ -56,9 +56,15 @@ interface StintBar {
               <span class="w-10 shrink-0 text-sm font-medium">{{ row.driver.code }}</span>
               <div class="relative flex-1 h-full">
                 @for (bar of row.bars; track bar.key) {
-                  <span class="absolute inset-y-0 rounded-sm text-xs font-bold flex items-center justify-center overflow-hidden border-e border-[#424242] {{ bar.colour }}"
-                        [style.left.%]="bar.left" [style.width.%]="bar.width" [matTooltip]="bar.title" #tooltip="matTooltip"
-                        (click)="tooltip.show()">{{ bar.letter }}</span>
+                  <span
+                    class="absolute inset-y-0 rounded-sm text-xs font-bold flex items-center justify-center overflow-hidden border-e border-[#424242] {{ bar.colour }}"
+                    [style.left.%]="bar.left"
+                    [style.width.%]="bar.width"
+                    [matTooltip]="bar.title"
+                    #tooltip="matTooltip"
+                    (click)="tooltip.show()">
+                    {{ bar.letter }}
+                  </span>
                 }
               </div>
             </div>
@@ -110,17 +116,17 @@ export class LiveStrategyComponent {
   /** The laps between the first and the last, evenly apart, at the end of the lap */
   protected readonly markers = computed(() => {
     const laps = this.laps();
-    return [...new Set([1, 2].map(part => Math.round(laps * part / 3)))]
-      .filter(lap => lap > 1 && lap < laps)
-      .map(lap => ({ lap, left: lap / laps * 100 }));
+    return [...new Set([1, 2].map(part => Math.round((laps * part) / 3)))].filter(lap => lap > 1 && lap < laps).map(lap => ({ lap, left: (lap / laps) * 100 }));
   });
 
   protected readonly rowKey = (row: StrategyRow) => row.driver.driverId;
 
   protected readonly rows = computed<StrategyRow[]>(() => {
     const laps = this.laps();
-    const stints = (this.#strategyValue() ?? []).reduce((byDriver, stint) =>
-      byDriver.set(stint.driver.driverId, [...(byDriver.get(stint.driver.driverId) ?? []), stint]), new Map<string, IStint[]>());
+    const stints = (this.#strategyValue() ?? []).reduce(
+      (byDriver, stint) => byDriver.set(stint.driver.driverId, [...(byDriver.get(stint.driver.driverId) ?? []), stint]),
+      new Map<string, IStint[]>(),
+    );
     const order = new Map((this.#positionsValue() ?? []).map(({ driver, position }) => [driver.driverId, position]));
     return [...stints.values()]
       .map(driverStints => ({
@@ -130,8 +136,8 @@ export class LiveStrategyComponent {
           const stintLaps = stint.lapEnd - stint.lapStart + 1;
           return {
             key: stint.stintNumber,
-            left: (stint.lapStart - 1) / laps * 100,
-            width: stintLaps / laps * 100,
+            left: ((stint.lapStart - 1) / laps) * 100,
+            width: (stintLaps / laps) * 100,
             letter: tyre.letter,
             colour: tyre.colour,
             title: `${tyre.name}, omgang ${stint.lapStart}-${stint.lapEnd}` + (stint.tyreAgeAtStart ? ` (brugt ${stint.tyreAgeAtStart} omg. før)` : ''),

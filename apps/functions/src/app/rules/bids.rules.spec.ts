@@ -6,7 +6,6 @@ import { playersURL, seasonsURL } from '../../lib/paths';
 const clone = require('clone');
 
 describe('bids rules', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   const writeBid = async (bid: any, uid: string) => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).set(bid);
@@ -25,27 +24,33 @@ describe('bids rules', () => {
   });
 
   it('Access to transactions checks - submitted bids', async () => {
-
     await writeBid({ ...clone(collections.bids[0]), submitted: true }, collections.players.admin.uid);
     await writeBid({ ...clone(collections.bids[1]), submitted: true }, collections.players.player.uid);
 
     const app = await authedApp({ uid: collections.players.admin.uid });
     await assertSucceeds(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.admin.uid}`).get());
     await assertSucceeds(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).get());
-    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.admin.uid}`).update({ submitted: false })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).update({ firstCrash: ['hammilton'] })).then(permissionDenied);
+    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.admin.uid}`).update({ submitted: false })).then(
+      permissionDenied,
+    );
+    await assertFails(
+      app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).update({ firstCrash: ['hammilton'] }),
+    ).then(permissionDenied);
   });
 
   it('Access to bids checks - user not submitted bid', async () => {
-
     await writeBid({ ...clone(collections.bids[0]), submitted: true }, collections.players.admin.uid);
     await writeBid({ ...clone(collections.bids[1]) }, collections.players.player.uid);
 
     const app = await authedApp({ uid: collections.players.player.uid });
     await assertSucceeds(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).get());
     await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.admin.uid}`).get()).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).update({ submitted: false })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.admin.uid}`).update({ submitted: true })).then(permissionDenied);
+    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).update({ submitted: false })).then(
+      permissionDenied,
+    );
+    await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.admin.uid}`).update({ submitted: true })).then(
+      permissionDenied,
+    );
     await assertSucceeds(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).update({ firstCrash: ['hammilton'] }));
   });
 
@@ -53,5 +58,4 @@ describe('bids rules', () => {
     const app = await authedApp({ uid: 'non-player-id' });
     await assertFails(app.firestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${collections.players.player.uid}`).get()).then(permissionDenied);
   });
-
 });

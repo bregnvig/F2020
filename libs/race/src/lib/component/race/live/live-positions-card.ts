@@ -12,9 +12,7 @@ import { LivePositionsComponent } from './positions/live-positions.component';
     <mat-card class="h-full">
       <mat-card-header>
         <mat-card-title>Løbspositioner</mat-card-title>
-        <mat-card-subtitle>
-          Sidst opdateret {{ positions.latestUpdate() | dateTime: 'HH:mm.ss' }}
-        </mat-card-subtitle>
+        <mat-card-subtitle>Sidst opdateret {{ positions.latestUpdate() | dateTime: 'HH:mm.ss' }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <f2020-live-positions #positions class="block mt-3" [race]="race()" [drivers]="drivers()" />

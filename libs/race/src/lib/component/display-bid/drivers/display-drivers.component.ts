@@ -13,7 +13,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
         @let driver = id | driver;
         @if (driver) {
           <mat-list-item>
-            <sha-driver-headshot matListItemAvatar [driver]="driver"/>
+            <sha-driver-headshot matListItemAvatar [driver]="driver" />
             <div class="flex w-full justify-between items-center">
               <div class="flex flex-col">
                 <span>{{ driver.name }}</span>
@@ -34,7 +34,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
 export class DisplayDriversComponent {
   readonly driverIds = input.required<string[]>();
   readonly points = input<number[] | undefined, number[] | nullish>([], {
-    transform: value => value?.length && value.every(v => !isNullish(v)) ? value : undefined,
+    transform: value => (value?.length && value.every(v => !isNullish(v)) ? value : undefined),
   });
   readonly compareWith = input<string[]>();
   readonly comparePoints = input<number[]>();

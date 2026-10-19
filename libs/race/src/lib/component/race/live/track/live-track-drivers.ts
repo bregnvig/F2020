@@ -56,19 +56,27 @@ export class LiveTrackDriversComponent {
     if (now === undefined) return [];
     const cars = this.#cars();
     const retired = this.#live.retiredCars;
-    retired.update(cars.map(({ driver, locations }) => ({ id: driver.driverId, locations })), now, frame);
+    retired.update(
+      cars.map(({ driver, locations }) => ({ id: driver.driverId, locations })),
+      now,
+      frame,
+    );
     const inPitLane = carsInPitLane(cars, now);
     return cars.flatMap(({ driver, samples }) => {
       const progress = progressAt(samples, now);
       const retiring = retired.retiring(driver.driverId, now, frame);
-      return progress === undefined || (retiring !== undefined && retiring >= 1) ? [] : [{
-        id: driver.driverId,
-        progress,
-        label: driver.code,
-        color: driver.teamColor ? `#${driver.teamColor}` : undefined,
-        retiring,
-        pit: inPitLane.has(driver.driverId),
-      }];
+      return progress === undefined || (retiring !== undefined && retiring >= 1)
+        ? []
+        : [
+            {
+              id: driver.driverId,
+              progress,
+              label: driver.code,
+              color: driver.teamColor ? `#${driver.teamColor}` : undefined,
+              retiring,
+              pit: inPitLane.has(driver.driverId),
+            },
+          ];
     });
   });
 }

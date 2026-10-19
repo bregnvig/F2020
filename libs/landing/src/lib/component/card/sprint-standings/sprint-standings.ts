@@ -14,7 +14,7 @@ import { NgOptimizedImage } from '@angular/common';
     @if (race(); as race) {
       <mat-card>
         <mat-card-header>
-          <img mat-card-avatar height="40" width="40" [ngSrc]="race | flagURL" [alt]="race.countryCode">
+          <img mat-card-avatar height="40" width="40" [ngSrc]="race | flagURL" [alt]="race.countryCode" />
           <mat-card-title>Stilling efter sprinten</mat-card-title>
           <mat-card-subtitle>{{ race.name }}</mat-card-subtitle>
         </mat-card-header>
@@ -45,14 +45,15 @@ export class SprintStandingsComponent {
   });
 
   /** The closed race, when it is a sprint weekend */
-  protected readonly race = computed(() => this.#sprintSession.hasValue() && this.#sprintSession.value() ? this.#closedRace() : undefined);
+  protected readonly race = computed(() => (this.#sprintSession.hasValue() && this.#sprintSession.value() ? this.#closedRace() : undefined));
   protected readonly updating = signal(false);
 
   protected update() {
     const race = this.race();
     if (!race) return;
     this.updating.set(true);
-    this.#racesService.updateSprintStandings(race)
+    this.#racesService
+      .updateSprintStandings(race)
       .then(
         () => this.#snackBar.open('Stillingen er opdateret', undefined, { duration: 3000 }),
         error => this.#snackBar.open(`Stillingen kunne ikke opdateres: ${error.message}`, undefined, { duration: 10000 }),

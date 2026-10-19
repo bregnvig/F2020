@@ -3,3 +3,5 @@
 /coverage
 /.nx/cache
 .nx/self-healing
+# Written by the builder
+/apps/ui/src/assets/tracks

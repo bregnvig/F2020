@@ -2,49 +2,37 @@
   <sha-card-page>
     <mat-card>
       <mat-card-header>
-        <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode">
+        <img mat-card-avatar height="40" width="40" [ngSrc]="race() | flagURL" [alt]="race().countryCode" />
         <mat-card-title>{{ race().name }}</mat-card-title>
         <mat-card-subtitle>{{ race().raceStart | dateTime: 'medium' }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content style="height: 33vh">
-        <f2020-race-map [race]="race()"/>
+        <f2020-race-map [race]="race()" />
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [href]="race().url" target="_blank">INFO</a>
         <div *shaHasRole="'admin'" class="flex-1 flex items-center">
           @if (race().state !== 'completed') {
-            <a
-                mat-button
-                routerLink="teams">
-              HOLD
-            </a>
+            <a mat-button routerLink="teams">HOLD</a>
           }
           @if (race().state === 'closed') {
-            <a
-                mat-button
-                routerLink="qualify">
+            <a mat-button routerLink="qualify">
               {{ 'Kvalifikation' | uppercase }}
             </a>
           }
           <div>
             @if (race().state === 'completed') {
               <div class="flex items-center">
-                <mat-checkbox #confirmedRollback="matCheckbox"/>
-                <button class="mr-2" mat-button color="warn" [disabled]="!confirmedRollback.checked" (click)="rollbackResult()">
-                  ROLLBACK
-                </button>
-                <mat-checkbox #confirmedStandings="matCheckbox"/>
-                <button mat-button color="warn" [disabled]="!confirmedStandings.checked" (click)="updateStandings()">
-                  STILLING
-                </button>
+                <mat-checkbox #confirmedRollback="matCheckbox" />
+                <button class="mr-2" mat-button color="warn" [disabled]="!confirmedRollback.checked" (click)="rollbackResult()">ROLLBACK</button>
+                <mat-checkbox #confirmedStandings="matCheckbox" />
+                <button mat-button color="warn" [disabled]="!confirmedStandings.checked" (click)="updateStandings()">STILLING</button>
               </div>
             }
             @if (race().state !== 'completed' && race().state !== 'cancelled') {
               <div class="flex items-center">
-                <mat-checkbox #confirmedCancellation="matCheckbox"/>
-                <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">
-                  AFLYS
-                </button>
+                <mat-checkbox #confirmedCancellation="matCheckbox" />
+                <button mat-button color="warn" [disabled]="!confirmedCancellation.checked" (click)="cancelRace()">AFLYS</button>
               </div>
             }
           </div>
@@ -64,7 +52,7 @@
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <f2020-bids [bids]="bids()" [disabled]="!clickable()" [result]="race().result"/>
+            <f2020-bids [bids]="bids()" [disabled]="!clickable()" [result]="race().result" />
           </mat-card-content>
           @if (race().state === 'completed' || isLiveLive() || qualifyLink()) {
             <mat-card-actions>
@@ -86,16 +74,16 @@
   </sha-card-page>
   @if (play()) {
     <button mat-fab color="primary" aria-label="Deltag i løbet" routerLink="bid">
-      <fa-icon [icon]="plusIcon" size="lg"/>
+      <fa-icon [icon]="plusIcon" size="lg" />
     </button>
   }
   <ng-container *shaHasRole="'admin'">
     @if (race().state === 'closed') {
       <button mat-fab color="primary" aria-label="Upload resultat" routerLink="upload-result">
-        <fa-icon [icon]="downloadIcon" size="lg"/>
+        <fa-icon [icon]="downloadIcon" size="lg" />
       </button>
     }
   </ng-container>
 } @else {
-  <sha-loading/>
+  <sha-loading />
 }

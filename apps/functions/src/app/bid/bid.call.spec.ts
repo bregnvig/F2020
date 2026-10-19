@@ -8,7 +8,6 @@ import { SelectedTeamValue } from './../../lib/model/bid.model';
 const clone = require('clone');
 
 describe('Submit bid unittest', () => {
-
   let adminFirestore: firebase.firestore.Firestore;
 
   beforeEach(async () => {
@@ -28,20 +27,16 @@ describe('Submit bid unittest', () => {
 
   it('should deny a submit bid, when user not logged in', async () => {
     const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('submitBid')())
-      .then(unauthenticated);
+    await assertFails(app.functions.httpsCallable('submitBid')()).then(unauthenticated);
   });
   it('should deny a submit bid, when user but not know', async () => {
     const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('submitBid')())
-      .then(notFound);
+    await assertFails(app.functions.httpsCallable('submitBid')()).then(notFound);
   });
-
 
   it('should deny a submit bid, when the user has no bid', async () => {
     const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertFails(app.functions.httpsCallable('submitBid')())
-      .then(notFound);
+    await assertFails(app.functions.httpsCallable('submitBid')()).then(notFound);
   });
 
   it('should deny a submit bid, when bid is invalid', async () => {
@@ -118,7 +113,6 @@ describe('Submit bid unittest', () => {
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
     bid.selectedTeam = { qualify: 'raikkonen', result: 'hamilton' } as SelectedTeamValue;
     await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
   });
 
   it('should deny bid, if the user does not have enough money', async () => {
@@ -140,7 +134,7 @@ describe('Submit bid unittest', () => {
     await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: collections.teams[0] });
     const app = await authedApp({ uid: collections.players.player.uid });
     const bid = clone(collections.bids[1]);
-    bid.selectedTeam = ({ qualify: 'raikkonen', result: 'giovinazzi' }) as SelectedTeamValue;
+    bid.selectedTeam = { qualify: 'raikkonen', result: 'giovinazzi' } as SelectedTeamValue;
     await assertSucceeds(app.functions.httpsCallable('submitBid')(bid))
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
       .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
@@ -148,4 +142,3 @@ describe('Submit bid unittest', () => {
       .then((player: Player) => expect(player.balance).toEqual(180));
   });
 });
-
