@@ -35,9 +35,11 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
 
 ### Firebase/Emulator
 
--
+Start the emulators:
 
-`firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions --project f1-playground-e1f23`
+```bash
+firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebase.json --export-on-exit=./saved-data --import=./saved-data --inspect-functions --project f1-playground-e1f23
+```
 
 - `npm run kill-ports` - Kill occupied ports
 
