@@ -417,12 +417,12 @@ export class ReplayResultService extends RaceResultService {
   getSectorStatus(race: IRace, drivers: IDriver[]): Observable<IDriverSector[]> {
     return this.#replayState$.pipe(
       truthy(),
-      map(state => upTo(state.laps, state.currentTime)),
-      tap(sectors => this.#sectorStatus$.next({
+      map(state => ({ laps: upTo(state.laps, state.currentTime), now: state.currentTime.toMillis() })),
+      tap(({ laps }) => this.#sectorStatus$.next({
         latestUpdate: DateTime.now(),
-        info: `${sectors.length} driver sectors`,
+        info: `${laps.length} driver sectors`,
       })),
-      map(laps => mapper.sectors({ laps, drivers })),
+      map(({ laps, now }) => mapper.sectors({ laps, drivers, now })),
     );
   }
 }

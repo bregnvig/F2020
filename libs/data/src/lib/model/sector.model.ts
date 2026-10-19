@@ -21,6 +21,8 @@ export interface IDriverSector {
   driver: IDriver;
   /** The lap the driver is on */
   lap: number;
+  /** The lap the sectors are from, which is the lap before until the first sector of the lap is driven */
+  sectorsLap: number;
   sector1: ISector;
   sector2?: ISector;
   sector3?: ISector;

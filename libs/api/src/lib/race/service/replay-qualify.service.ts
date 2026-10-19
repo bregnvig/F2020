@@ -101,8 +101,8 @@ export class ReplayQualifyService extends QualifyResultService {
     return this.#replayState$.pipe(
       truthy(),
       // The sectors are shown while the lap is driven, so a lap counts from its start
-      map(state => state.laps.filter(lap => isBefore(lap.date_start, state.currentTime))),
-      map(laps => mapper.sectors({ laps, drivers })),
+      map(state => ({ laps: state.laps.filter(lap => isBefore(lap.date_start, state.currentTime)), now: state.currentTime.toMillis() })),
+      map(({ laps, now }) => mapper.sectors({ laps, drivers, now })),
       tap(sectors => this.#sectorStatus$.next({
         latestUpdate: DateTime.now(),
         info: `${sectors.length} driver sectors`,
