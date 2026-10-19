@@ -7,7 +7,8 @@
     <mat-list-item *shaAnimatedFor="let driver of order(); key: driverKey; let index = index">
       <sha-driver-headshot matListItemAvatar [driver]="driver" placeholder="assets/loading/red.svg"/>
       <div matListItemTitle>
-        <span>{{ driver.name }}</span>
+        @let lapColor = lapFlash().get(driver.driverId);
+        <span class="transition-[color,text-shadow] duration-500" [class]="lapColor ? lapColors[lapColor] : ''">{{ driver.name }}</span>
         @if (inPitLane().has(driver.driverId)) {
           <span class="ms-2 rounded px-1.5 text-xs font-bold bg-white text-black">PIT</span>
         }

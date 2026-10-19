@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input
 import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatList, MatListItem, MatListItemAvatar, MatListItemLine, MatListItemTitle } from '@angular/material/list';
 import { RaceResultProvider, TeamService, TrackService } from '@f2020/api';
-import { IDriver, IDriverInterval, IDriverSector, IPitStop, IRace, IStint } from '@f2020/data';
+import { IDriver, IDriverInterval, IDriverSector, ILatestLap, IPitStop, IRace, IStint, LapColor } from '@f2020/data';
 import { shareLatest, toMap } from '@f2020/tools';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { filter, map, switchMap, take } from 'rxjs/operators';
@@ -12,6 +12,8 @@ import { TyreComponent } from './tyre.component';
 import { LiveSectorStatusComponent } from './sector/live-sector-status.component';
 import { carProgress, carsInPitLane, valueOf } from '../track/car-progress';
 import { AnimatedForDirective, DriverHeadshotComponent } from '@f2020/shared';
+
+const lapFlashTime = 2000;
 
 @Component({
   selector: 'f2020-live-positions',
@@ -82,6 +84,16 @@ export class LivePositionsComponent implements OnInit {
   pitStops$?: Observable<Map<string, IPitStop>>;
   currentLap$: Observable<number>;
 
+  /** The colour of each driver's latest lap, while it is flashed */
+  protected readonly lapFlash = signal(new Map<string, LapColor>());
+  /** A shadow in the same colour, so it glows */
+  protected readonly lapColors: Record<LapColor, string> = {
+    yellow: 'text-yellow-300 font-bold [text-shadow:0_0_8px_currentColor]',
+    green: 'text-green-400 font-bold [text-shadow:0_0_8px_currentColor]',
+    purple: 'text-purple-400 font-bold [text-shadow:0_0_8px_currentColor]',
+  };
+  #latestLaps?: Map<string, number>;
+
   #originalPosition?: Map<string, number>;
   #intervals?: Map<string, IDriverInterval>;
 
@@ -115,9 +127,27 @@ export class LivePositionsComponent implements OnInit {
         .toSorted((a, b) => a.lap - b.lap)
         .reduce((latest, pitStop) => latest.set(pitStop.driver.driverId, pitStop), new Map<string, IPitStop>())),
     );
+    this.#live.getFastestLaps(this.race(), this.drivers()).pipe(
+      takeUntilDestroyed(this.#destroyRef),
+    ).subscribe(({ latest }) => this.#flashNewLaps(latest));
     this.sectors$ = this.#live.getSectorStatus(this.race(), this.drivers()).pipe(
       map(sectors => sectors.reduce(toMap(stint => stint.driver.driverId), new Map<string, IDriverSector>)),
     );
+  }
+
+  /** Only the next lap of a driver is flashed, so not every lap when the page opens or the relive jumps */
+  #flashNewLaps(latest: ILatestLap[]) {
+    const previous = this.#latestLaps;
+    this.#latestLaps = new Map(latest.map(({ driver, lap }) => [driver.driverId, lap]));
+    const flashed = previous ? latest.filter(({ driver, lap }) => lap === (previous.get(driver.driverId) ?? 0) + 1) : [];
+    flashed.forEach(({ driver, color }) => {
+      this.lapFlash.update(flash => new Map(flash).set(driver.driverId, color));
+      setTimeout(() => this.lapFlash.update(flash => {
+        const updated = new Map(flash);
+        updated.delete(driver.driverId);
+        return updated;
+      }), lapFlashTime);
+    });
   }
 
   abs(number: number) {
