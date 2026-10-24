@@ -5,14 +5,13 @@ import { AnalyticsService, PlayersStore, PlayerStore } from '@f2020/api';
 import { hiddenLandingCards, LandingCard, landingCards, Player } from '@f2020/data';
 import { CardPageComponent } from '@f2020/shared';
 import { NgOptimizedImage } from '@angular/common';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'f2020-profile',
   templateUrl: './profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatToolbarModule, MatCardModule, MatListModule, MatSlideToggleModule, NgOptimizedImage, CardPageComponent],
+  imports: [MatToolbarModule, MatCardModule, MatListModule, NgOptimizedImage, CardPageComponent],
   providers: [PlayersStore],
 })
 export class ProfileComponent {

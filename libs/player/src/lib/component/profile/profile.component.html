@@ -5,7 +5,9 @@
       <mat-card-title>Påmindelser</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-slide-toggle [checked]="receiveReminders()" (change)="updateReceiveReminders($event.checked)">Modtag påmindelser</mat-slide-toggle>
+      <mat-selection-list (selectionChange)="updateReceiveReminders($event.options[0].selected)">
+        <mat-list-option [selected]="receiveReminders()">Modtag påmindelser</mat-list-option>
+      </mat-selection-list>
     </mat-card-content>
   </mat-card>
   <mat-card>
