@@ -2,9 +2,10 @@ import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { MatMenu, MatMenuContent, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RaceResultProvider } from '@f2020/api';
-import { AnimatedForDirective } from '@f2020/shared';
+import { AnimatedForDirective, DriverHeadshotComponent } from '@f2020/shared';
 import { IDriver, IRace, IStint, Tyre } from '@f2020/data';
 import { valueOf } from './track/car-progress';
 
@@ -53,7 +54,13 @@ interface StintBar {
           <div class="relative">
             <!-- The rows are padded instead of spaced, as they are moved by their own height -->
             <div *shaAnimatedFor="let row of rows(); key: rowKey" class="flex items-center gap-2 h-7 py-0.5">
-              <span class="w-10 shrink-0 text-sm font-medium">{{ row.driver.code }}</span>
+              <button
+                type="button"
+                class="w-10 shrink-0 cursor-pointer border-0 bg-transparent p-0 text-start text-sm font-medium text-white"
+                [matMenuTriggerFor]="driverMenu"
+                [matMenuTriggerData]="{ driver: row.driver }">
+                {{ row.driver.code }}
+              </button>
               <div class="relative flex-1 h-full">
                 @for (bar of row.bars; track bar.key) {
                   <span
@@ -81,9 +88,17 @@ interface StintBar {
           <p>Venter på dækkene...</p>
         }
       </mat-card-content>
+      <mat-menu #driverMenu="matMenu">
+        <ng-template matMenuContent let-driver="driver">
+          <div class="flex flex-col items-center gap-2 px-4 py-2">
+            <sha-driver-headshot [driver]="driver" [size]="96" placeholder="assets/loading/red.svg" />
+            <span class="text-white">{{ driver.name }}</span>
+          </div>
+        </ng-template>
+      </mat-menu>
     </mat-card>
   `,
-  imports: [AnimatedForDirective, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatTooltip],
+  imports: [AnimatedForDirective, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatTooltip, MatMenu, MatMenuContent, MatMenuTrigger, DriverHeadshotComponent],
 })
 export class LiveStrategyComponent {
   #live = inject(RaceResultProvider);
