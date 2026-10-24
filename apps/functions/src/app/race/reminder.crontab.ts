@@ -1,6 +1,6 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { DateTime } from 'luxon';
-import { finalNotificationMessage, getCurrentRace, mailBody, notificationMessage, playerWithoutBid, sendMail } from '../../lib';
+import { finalNotificationMessage, getCurrentRace, mailBody, notificationMessage, playerWithoutBid, reminderMail, sendMail } from '../../lib';
 import { raceLink, sendNotification } from './../../lib';
 import { logger } from 'firebase-functions';
 
@@ -18,12 +18,14 @@ export const mailReminderCrontab = onSchedule(
         const players = await playerWithoutBid();
         const { subject: notificationSubject, body: notificationBody } = await notificationMessage(race);
         logger.info(`Generated OpenAI notification. Subject: ${notificationSubject}. Body: ${notificationBody}`);
+        const mail = await reminderMail(race);
+        logger.info(`Generated OpenAI mail. Subject: ${mail.subject}. Body: ${mail.body}`);
         await Promise.all(
           players.map(async player => {
             const result: Promise<void>[] = [];
             logger.info(`Should mail to ${player.displayName}`);
             result.push(
-              sendMail(player.email, `Tid til at spille på det ${race.name} `, mailBody(player, race)).then(msg => {
+              sendMail(player.email, mail.subject, mailBody(player, race, mail.body)).then(msg => {
                 logger.info(`sendMail result :(${msg})`);
               }),
             );

@@ -98,11 +98,11 @@ const roastSection = (title: string, text: string) => `
 export const roastSections = (roast: Roast | undefined, bestTitle: string, worstTitle: string): string =>
   roast ? roastSection(bestTitle, roast.best) + roastSection(worstTitle, roast.worst) : '';
 
-export const resultMail = (player: Player, intro: string, content: string, link: string): string =>
+export const resultMail = (player: Player, intro: string, content: string, link: string, linkText = 'Se løbet'): string =>
   `<div style="font-family:Arial,Helvetica,sans-serif;max-width:480px">
      <h3>Hej ${escapeHtml(player.displayName)}</h3>
      <p>${intro}</p>
      ${content}
-     <p style="margin-top:24px"><a href="${link}">Se løbet</a></p>
+     <p style="margin-top:24px"><a href="${link}">${linkText}</a></p>
      <p>Wroouumm,<br/>F1emming</p>
    </div>`;

@@ -4,7 +4,10 @@ import { getCurrentRace } from './race.service';
 import { collectionPaths } from './paths';
 import { DateTime } from 'luxon';
 import { requiredValue } from '@f2020/tools';
+import { warn } from 'firebase-functions/logger';
 import { openai, OpenAIModel } from './openai.service';
+import { raceLink } from './message.service';
+import { escapeHtml, resultMail } from './result-mail';
 
 export const playerWithoutBid = async (): Promise<Player[]> => {
   const currentRace = await getCurrentRace('open');
@@ -42,17 +45,63 @@ const closeText = (closes: DateTime) => {
   return { closeDay, closeTime };
 };
 
-export const mailBody = (player: Player, race: IRace) => {
+export const mailBody = (player: Player, race: IRace, text: string) => resultMail(player, escapeHtml(text), '', raceLink(race.season, race.round), 'Spil her');
+
+type ReminderMail = {
+  subject: string;
+  body: string;
+};
+
+/** One mail for every player who hasn't played. Falls back to a fixed mail when OpenAI fails, so the reminder is always sent */
+export const reminderMail = async (race: IRace): Promise<ReminderMail> => {
   const { closeDay, closeTime } = closeText(race.close);
-  return `<h3>Hej ${player.displayName}</h3>
-     <div> 
-     <p> ${race.name} - lukker snart og du har ikke spillet endnu! Du kan heldigvis stadig nå det, men skynd dig for
-     spillet lukker på ${closeDay} klokken ${closeTime}</p>
-     <p> Du kan spille <a href="https://f1.bregnvig.dk/">her</a>
-     </div>     
-                  
-     Wroouumm,<br/>
-     F1emming`;
+  try {
+    const response = await openai().chat.completions.create({
+      model: OpenAIModel,
+      messages: [
+        {
+          role: 'system',
+          content: `Du skriver en mail, der minder en ven om at spille i et F1 væddemål, inden spillet lukker.
+            Brug tør, sarkastisk dansk humor, og vær gerne lidt drillende. Ingen bandeord.
+            Nævn løbet, og hvornår spillet lukker. Skriv på dansk, tre til fem sætninger.
+            Skriv ikke en hilsen eller en afslutning, de bliver tilføjet bagefter.`,
+        },
+        {
+          role: 'user',
+          content: `Løbet: ${race.name}. Spillet lukker ${closeDay} klokken ${closeTime}`,
+        },
+      ],
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'reminder_mail',
+          strict: true,
+          schema: {
+            type: 'object',
+            properties: {
+              subject: {
+                description: 'Mailens emne. Kort og fængende',
+                type: 'string',
+              },
+              body: {
+                description: 'Mailens tekst. Ren tekst uden HTML, uden hilsen og uden afslutning',
+                type: 'string',
+              },
+            },
+            required: ['subject', 'body'],
+            additionalProperties: false,
+          },
+        },
+      },
+    });
+    return JSON.parse(response.choices[0].message.content!) as ReminderMail;
+  } catch (error) {
+    warn('Could not generate the reminder mail for', race.name, error);
+    return {
+      subject: `Tid til at spille på ${race.name}`,
+      body: `${race.name} lukker snart, og du har ikke spillet endnu! Du kan heldigvis stadig nå det, men skynd dig, for spillet lukker ${closeDay} klokken ${closeTime}.`,
+    };
+  }
 };
 
 // const notificationMessage = (race: IRace, closeDay: string, closeTime: string): string =>
