@@ -38,4 +38,18 @@
       </mat-selection-list>
     </mat-card-content>
   </mat-card>
+  @if (analyticsEnabled) {
+    <mat-card class="mt-6 mb-4">
+      <mat-card-header>
+        <img mat-card-avatar class="rounded-full bg-white p-1.5" src="assets/google-analytics.svg" alt="Google Analytics" />
+        <mat-card-title>Statistik</mat-card-title>
+        <mat-card-subtitle>Google Analytics viser hvordan appen bliver brugt, og sætter cookies fra Google</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-selection-list (selectionChange)="updateAnalytics($event.options[0].selected)">
+          <mat-list-option [selected]="analyticsGranted()">Tillad Google Analytics</mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+    </mat-card>
+  }
 </sha-card-page>
