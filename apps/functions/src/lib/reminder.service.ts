@@ -104,8 +104,6 @@ export const reminderMail = async (race: IRace): Promise<ReminderMail> => {
   }
 };
 
-// const notificationMessage = (race: IRace, closeDay: string, closeTime: string): string =>
-//   `${race.name} lukker ${closeDay} kl.${closeTime}, og du har endnu ikke spillet!`;
 export const finalNotificationMessage = (race: IRace): string => `${race.name} lukker lige om lidt, og du har endnu ikke spillet😲`;
 
 // Define a specific type for the expected JSON response
@@ -115,7 +113,8 @@ type NotificationResponse = {
 };
 
 /**
- * Generates a notification message using a haiku poem from the OpenAI API.
+ * Generates a notification message using a haiku poem from the OpenAI API. Falls back to a fixed message when OpenAI fails,
+ * so the reminders are always sent
  * @param race - The race object containing details like name and close time.
  * @returns A promise that resolves to an object with a subject and body.
  */
@@ -174,8 +173,10 @@ export const notificationMessage = async (race: IRace): Promise<NotificationResp
     // Parse the JSON string and assert its type for type safety
     return JSON.parse(content) as NotificationResponse;
   } catch (error) {
-    // Log the error and return a default/fallback object or re-throw
-    console.error('Failed to generate notification message:', error);
-    throw new Error('Error communicating with OpenAI API.');
+    warn('Could not generate the reminder notification for', race.name, error);
+    return {
+      subject: `Tid til at spille på ${race.name}`,
+      body: `${race.name} lukker ${closeDay} kl. ${closeTime}, og du har endnu ikke spillet!`,
+    };
   }
 };
