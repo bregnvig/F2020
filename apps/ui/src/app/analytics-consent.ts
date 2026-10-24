@@ -5,7 +5,7 @@ import { AnalyticsService } from '@f2020/api';
 
 @Component({
   template: `
-    <div class="flex items-start gap-4 pt-2">
+    <div class="flex items-start gap-4">
       <img class="shrink-0 rounded-full bg-white p-2" width="48" height="48" src="assets/google-analytics.svg" alt="Google Analytics" />
       <div>
         <h3 class="!m-0 text-lg font-medium">Må vi følge med?</h3>
@@ -14,7 +14,7 @@ import { AnalyticsService } from '@f2020/api';
         </p>
       </div>
     </div>
-    <div class="flex justify-end gap-2 py-2">
+    <div class="flex justify-end gap-2 pt-4">
       <button mat-button (click)="answer(false)">Afvis</button>
       <button mat-flat-button color="primary" (click)="answer(true)">Accepter</button>
     </div>

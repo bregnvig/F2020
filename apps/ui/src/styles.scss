@@ -31,11 +31,20 @@ button[mat-fab] {
   bottom: 16px;
 }
 
-/* Material narrows the bottom sheet on wider screens */
-.full-width-bottom-sheet .mat-bottom-sheet-container {
+/* As wide as the screen on phones, and as wide as the cards of a card page on larger screens. Material uses other widths per breakpoint */
+.card-page-bottom-sheet .mat-bottom-sheet-container {
   min-width: 100vw;
   max-width: 100vw;
+  padding: 16px 24px;
   border-radius: 0;
   background: rgb(66 66 66 / 80%);
   backdrop-filter: blur(8px);
+}
+
+@media (min-width: 640px) {
+  .card-page-bottom-sheet .mat-bottom-sheet-container {
+    min-width: 0;
+    /* The cards are inset by the padding (p-3) of the card page */
+    width: calc(min(100vw, 48rem) - 1.5rem);
+  }
 }

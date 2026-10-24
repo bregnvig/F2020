@@ -53,7 +53,7 @@ export class AppComponent {
 
   #askForAnalyticsConsent() {
     if (this.#analytics.enabled && !this.#analytics.consent()) {
-      this.#bottomSheet.open(AnalyticsConsent, { disableClose: true, autoFocus: 'dialog', panelClass: 'full-width-bottom-sheet' });
+      this.#bottomSheet.open(AnalyticsConsent, { disableClose: true, autoFocus: 'dialog', panelClass: 'card-page-bottom-sheet' });
     }
   }
 
