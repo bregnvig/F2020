@@ -18,6 +18,7 @@ import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { ANALYTICS_ID } from '@f2020/api';
 import { DateTimePipe, initializeFontAwesomeFactory } from '@f2020/shared';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { Settings } from 'luxon';
@@ -60,6 +61,10 @@ bootstrapApplication(AppComponent, {
     {
       provide: LOCALE_ID,
       useValue: 'da',
+    },
+    {
+      provide: ANALYTICS_ID,
+      useValue: environment.googleAnalyticsId,
     },
     DatePipe,
     DateTimePipe,

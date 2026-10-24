@@ -30,3 +30,12 @@ button[mat-fab] {
   right: 16px;
   bottom: 16px;
 }
+
+/* Material narrows the bottom sheet on wider screens */
+.full-width-bottom-sheet .mat-bottom-sheet-container {
+  min-width: 100vw;
+  max-width: 100vw;
+  border-radius: 0;
+  background: rgb(66 66 66 / 80%);
+  backdrop-filter: blur(8px);
+}

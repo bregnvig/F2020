@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  googleAnalyticsId: undefined as string | undefined,
   useEmulator: false,
   firebaseConfig: {
     apiKey: 'AIzaSyAZhIDMYcYt01mE3ApPkNBiJqYWpZXqPFQ',

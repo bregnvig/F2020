@@ -5,6 +5,7 @@
 // This is not a real firebase project. This is just for development and testing purposes.
 export const environment = {
   production: false,
+  googleAnalyticsId: undefined as string | undefined,
   useEmulator: true,
   firebaseConfig: {
     apiKey: 'AIzaSyAZhIDMYcYt01mE3ApPkNBiJqYWpZXqPFQ',

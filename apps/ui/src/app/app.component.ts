@@ -1,15 +1,17 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
+import { AnalyticsService, DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { AnalyticsConsent } from './analytics-consent';
 
 @Component({
   selector: 'f2020-root',
@@ -25,11 +27,14 @@ export class AppComponent {
   readonly #versionService = inject(VersionService);
   readonly #snackBar = inject(MatSnackBar);
   readonly #router = inject(Router);
+  readonly #analytics = inject(AnalyticsService);
+  readonly #bottomSheet = inject(MatBottomSheet);
 
   constructor() {
     const racesStore = inject(RacesStore);
     racesStore.loadRaces();
     this.#checkForVersionUpdate();
+    this.#askForAnalyticsConsent();
     effect(() => {
       if (this.#playerStore.authorized()) {
         this.#driverStore.loadDrivers();
@@ -44,6 +49,12 @@ export class AppComponent {
         }
       }
     });
+  }
+
+  #askForAnalyticsConsent() {
+    if (this.#analytics.enabled && !this.#analytics.consent()) {
+      this.#bottomSheet.open(AnalyticsConsent, { disableClose: true, autoFocus: 'dialog', panelClass: 'full-width-bottom-sheet' });
+    }
   }
 
   #checkForVersionUpdate() {

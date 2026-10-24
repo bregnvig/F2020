@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   useEmulator: false,
+  googleAnalyticsId: 'G-Q6QE8CQNS0',
   firebaseConfig: {
     apiKey: 'AIzaSyAK9_kQTf7Lm7TdbYqDP_nFo7fwWvuHfLg',
     authDomain: 'f1.bregnvig.dk',
