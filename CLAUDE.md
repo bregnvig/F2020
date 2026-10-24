@@ -140,6 +140,7 @@ Check the current Angular best practices (the `angular-cli` MCP `get_best_practi
 
 - **File names**: Angular 22 drops the type suffix, so new components are named e.g. `team-logo.ts`, not `team-logo.component.ts`
 - **Template-only members** are `protected`, class-only members `#private`, inputs and outputs public
+- **Services** use `@Service()` from `@angular/core`, not `@Injectable({ providedIn: 'root' })`
 - **Comments** explain why, or what isn't clear from the code. Simple logic doesn't need one, e.g. not
   `/** The same rule as for the data of the page */` above `relive = computed(() => isRaceRelived(this.race()!))`
 
