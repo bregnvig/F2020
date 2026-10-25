@@ -7,6 +7,5 @@
     "useDefineForClassFields": false,
     "moduleResolution": "bundler"
   },
-  "files": ["src/main.ts"],
-  "exclude": ["jest.config.ts"]
+  "files": ["src/main.ts"]
 }
