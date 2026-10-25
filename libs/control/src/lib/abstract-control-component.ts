@@ -5,7 +5,6 @@ export abstract class AbstractControlComponent<T> implements ControlValueAccesso
   #queue: any[] = [];
   #_propagateChange: (_: T) => any;
   #_propagateTouched: (_?: any) => any;
-  readonly #_uniqueId: string;
 
   #setDisabledState: (_: boolean) => void;
   #markAllTouched: () => void;

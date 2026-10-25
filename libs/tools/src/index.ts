@@ -3,3 +3,4 @@ export * from './lib/compare-utils';
 export * from './lib/rxjs-utils';
 export * from './lib/utils';
 export * from './lib/string-utils';
+export * from './lib/openai';

@@ -110,7 +110,7 @@ Available Drivers:`);
 Select a driver for #${driverNumber}:`);
       matches.forEach((d, index) => {
         const numbers = d.permanentNumbers.join(', ');
-        const hasHeadshot = !!d.headshotUrl ? '📸' : '';
+        const hasHeadshot = d.headshotUrl ? '📸' : '';
         console.log(`${index + 1}. ${d.name} (${d.code}) [${numbers}] ${hasHeadshot}`);
       });
 

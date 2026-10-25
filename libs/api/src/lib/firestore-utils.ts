@@ -5,7 +5,7 @@ export const regexISODate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\
 
 export const firestoreWebUtils = {
   convertJSONDate(value: any): any {
-    const reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+    const reMsAjax = /^\/Date\((d|-|.*)\)[/|\\]$/;
     if (typeof value === 'string') {
       let result = regexISODate.exec(value);
       if (result) {

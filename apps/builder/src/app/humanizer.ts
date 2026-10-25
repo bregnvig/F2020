@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { environment } from '../environment/environment';
-import { OpenAIModel } from '../../../functions/src/lib';
+import { OpenAIModel } from '@f2020/tools';
 
 const openai = new OpenAI({
   apiKey: environment.openai.apiKey,

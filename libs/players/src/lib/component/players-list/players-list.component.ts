@@ -1,5 +1,5 @@
 import { PlayersStore } from '@f2020/api';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { Player } from '@f2020/data';
 import { icon, LoadingComponent } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -13,7 +13,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatToolbarModule, MatListModule, RouterLink, FaIconComponent, LoadingComponent],
 })
-export class PlayersListComponent implements OnInit {
+export class PlayersListComponent {
   players: Signal<Player[]>;
   icon = icon;
 
@@ -21,8 +21,6 @@ export class PlayersListComponent implements OnInit {
     const store = inject(PlayersStore);
     this.players = computed(() => (store.players() ?? []).filter(p => !p.roles.includes('bookie')));
   }
-
-  ngOnInit(): void {}
 
   isAnonymous(player: Player): boolean {
     return player.roles.length === 1 && player.roles[0] === 'anonymous';
