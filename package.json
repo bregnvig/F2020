@@ -10,6 +10,7 @@
     "serve:firebase": "nx run firebase:watch",
     "start": "ng serve ui --liveReload false",
     "build-with-stats": "nx build --stats-json",
+    "test": "nx run-many --target=test --all",
     "lint": "nx format:check --all && nx run-many --target=lint --all",
     "kill-ports": "npx kill-port --port 9229,9099,5001,8080,9000,5000,8085,9199,9299,4000,4400,4500",
     "deploy:all": "npm run deploy:hosting && npm run deploy:functions && npm run deploy:rules",
@@ -95,6 +96,7 @@
     "@angular/compiler-cli": "22.2.0",
     "@angular/language-service": "22.2.0",
     "@eslint/eslintrc": "^3.0.0",
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@ngrx/operators": "22.0.1",
     "@ngrx/signals": "22.0.1",
     "@nx/devkit": "23.2.1",
@@ -103,6 +105,7 @@
     "@nx/eslint-plugin": "23.2.1",
     "@nx/js": "23.2.1",
     "@nx/node": "23.2.1",
+    "@nx/vitest": "23.2.1",
     "@nx/workspace": "23.2.1",
     "@schematics/angular": "22.2.0",
     "@simondotm/nx-firebase": "^2.3.0",
@@ -114,7 +117,6 @@
     "dotenv": "10.0.0",
     "eslint": "9.9.1",
     "eslint-config-prettier": "10.1.8",
-    "firebase-functions-test": "^0.2.0",
     "firebase-tools": "^15.34.1",
     "kill-port": "^2.0.1",
     "killport": "^1.0.2",
@@ -125,6 +127,7 @@
     "ts-ics": "^1.6.2",
     "ts-node": "10.9.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "^8.58.0"
+    "typescript-eslint": "^8.58.0",
+    "vitest": "^4.1.12"
   }
 }

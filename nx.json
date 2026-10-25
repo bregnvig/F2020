@@ -92,5 +92,13 @@
   "parallel": 1,
   "defaultBase": "develop",
   "analytics": true,
-  "neverConnectToCloud": true
+  "neverConnectToCloud": true,
+  "plugins": [
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test"
+      }
+    }
+  ]
 }

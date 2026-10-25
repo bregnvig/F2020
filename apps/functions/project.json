@@ -37,6 +37,16 @@
         "command": "nx run firebase:deploy --only functions:functions"
       },
       "dependsOn": ["build"]
+    },
+    "test": {
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/apps/firebase/firestore.rules",
+        {
+          "externalDependencies": ["vitest", "firebase-tools"]
+        }
+      ]
     }
   },
   "tags": ["firebase:function", "firebase:name:functions", "firebase:dep:firebase"]
