@@ -44,7 +44,7 @@ const createWBCRace = async (race: IRace, bids: Bid[], ref: DocumentReference) =
   };
   result.players.forEach((b, index) => log(b.player?.displayName, 'Points ', bids[index].points, 'WBC', wbcPoints[index]));
 
-  ref
+  return ref
     .get()
     .then(doc => doc.data())
     .then((season: ISeason) => {
