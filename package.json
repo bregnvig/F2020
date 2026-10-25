@@ -115,7 +115,7 @@
     "eslint": "9.9.1",
     "eslint-config-prettier": "10.1.8",
     "firebase-functions-test": "^0.2.0",
-    "firebase-tools": "^14.27.0",
+    "firebase-tools": "^15.34.1",
     "kill-port": "^2.0.1",
     "killport": "^1.0.2",
     "nx": "23.2.1",
