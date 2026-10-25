@@ -61,7 +61,9 @@ firebase emulators:start --only=functions,firestore,auth,pubsub --config=firebas
 - `npm run deploy:hosting` - Deploy hosting only
 - `npm run deploy:functions` - Deploy functions only
 
-The user deploys. Never run the deploy scripts, and don't ask or offer to deploy.
+Pushing to `develop` deploys to production with GitHub Actions (`.github/workflows/deploy.yml`, see `.github/README.md`), but only what has
+changed: hosting when `ui` is affected, the functions when `functions` is affected, and the Firestore rules and indexes when they change.
+So a push is a deploy. Never run the deploy scripts, and don't ask or offer to deploy.
 
 ## Project Structure
 
