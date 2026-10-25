@@ -1,60 +1,41 @@
-import { assertFails, assertSucceeds } from '@firebase/testing';
-import { playersURL } from '../../lib/paths';
-import { Player } from '../../lib/model/player.model';
-// import { test } from '../../test-utils/firebase-initialize';
-import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
-import { players } from '../../test-utils/players.collection';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { call, expectError } from '../../test/functions';
+import { players, readTransactions, writePlayers } from '../../test/fixtures';
+import { withdraw } from './withdraw.call';
 
-describe('Withdraw unittest', () => {
-  let adminFirestore: firebase.firestore.Firestore;
+describe('withdraw', () => {
+  beforeEach(() => writePlayers('player', 'bankAdmin'));
 
-  beforeEach(async () => {
-    // depositFn = test.wrap(deposit);
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${players.player.uid}`).set({ ...players.player });
-    await adminFirestore.doc(`${playersURL}/${players.admin.uid}`).set({ ...players.admin });
+  it('should deny a withdraw, when no one is logged in', async () => {
+    await expectError(call(withdraw, { amount: 100, message: 'Hello', uid: players.player.uid }), 'unauthenticated');
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should deny a withdraw, when the user is unknown', async () => {
+    await expectError(call(withdraw, { amount: 100, message: 'Hello', uid: players.player.uid }, 'unknown-uid'), 'not-found');
   });
 
-  it('should deny a with, when user not logged in', async () => {
-    const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('withdraw')({ amount: 100, message: 'Hello' })).then(unauthenticated);
+  it('should deny a withdraw, when the user is not a bank admin', async () => {
+    await expectError(call(withdraw, { amount: 100, message: 'Hello', uid: players.player.uid }, players.player.uid), 'permission-denied');
   });
 
-  it('should deny a withdraw, when user but not know', async () => {
-    const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('withdraw')({ amount: 100, message: 'Hello' })).then(notFound);
+  it('should deny a withdraw, when the player is unknown', async () => {
+    await expectError(call(withdraw, { amount: 100, message: 'Hello', uid: 'unknown-uid' }, players.bankAdmin.uid), 'not-found');
   });
 
-  it('should deny a withdraw, when the amount is not specified or zero', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('withdraw')({ amount: 0, message: 'Hello', uid: players.player.uid })).then(failedPrecondition);
+  it('should deny a withdraw, when the amount is missing or zero', async () => {
+    await expectError(call(withdraw, { amount: 0, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid), 'failed-precondition');
   });
 
   it('should deny a withdraw, when the amount is negative', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('withdraw')({ amount: -100, message: 'Hello', uid: players.player.uid })).then(failedPrecondition);
+    await expectError(call(withdraw, { amount: -100, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid), 'failed-precondition');
   });
 
-  it('should deny a withdraw, when the user does not have the role of bank-admin', async () => {
-    const app = await authedApp({ uid: players.player.uid });
-    await assertFails(app.functions.httpsCallable('withdraw')({ amount: 100, message: 'Hello' })).then(permissionDenied);
+  it('should deny a withdraw, when the player does not have enough money', async () => {
+    await expectError(call(withdraw, { amount: 201, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid), 'failed-precondition');
   });
 
-  it('should deny a withdraw, when the account does not have enough money', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('withdraw')({ amount: 201, message: 'Hello', uid: players.player.uid })).then(failedPrecondition);
-  });
-
-  it('should accept a withdraw', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('withdraw')({ amount: 100, message: 'Hello', uid: players.player.uid }))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 500)))
-      .then(() => adminFirestore.doc(`${playersURL}/${players.player.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(100));
+  it('should withdraw the amount from the player', async () => {
+    expect(await call(withdraw, { amount: 200, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid)).toBe(true);
+    expect(await readTransactions()).toEqual([{ amount: 200, message: 'Hello', from: players.player.uid, to: null, involved: [players.player.uid] }]);
   });
 });

@@ -1,35 +1,30 @@
-// const clone = require('clone');
+import { Player } from '@f2020/data';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { call, expectError } from '../../test/functions';
+import { bids, players, updatePlayer, writeBid, writePlayers, writeRace, writeSeason } from '../../test/fixtures';
+import { withoutBid } from './without-bid.call';
 
-import { assertSucceeds } from '@firebase/testing';
-import { playersURL, seasonsURL } from '../../lib/paths';
-import { collections } from '../../test-utils';
-import { adminApp, authedApp, clearFirestoreData } from '../../test-utils/firestore-test-utils';
+const uids = (players: Player[]) => players.map(p => p.uid).sort();
 
-describe('Reminder unittest', () => {
-  let adminFirestore: firebase.firestore.Firestore;
-
-  // const writeBid = async (bid: any, uid: string) => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).set(bid);
-  // const readBid = async (uid: string): Promise<Bid> => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).get().then(ref => ref.data() as Bid);
-
+describe('players without a bid', () => {
   beforeEach(async () => {
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set({ ...collections.players.admin });
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).set({ ...collections.players.player });
-    await adminFirestore.doc(`${playersURL}/${collections.players.player1.uid}`).set({ ...collections.players.player1 });
-    await adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).set({ ...collections.players.bookie });
-
-    await adminFirestore.doc(`${seasonsURL}/9999`).set(collections.seasons[0]);
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).set({ ...collections.races[1], state: 'open' });
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/1`).set({ ...collections.bids[1] });
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/2`).set({ ...collections.bids[0], submitted: true });
+    await writePlayers('admin', 'player', 'player1', 'bookie');
+    await writeSeason();
+    await writeRace(1, { state: 'open' });
+    await writeBid(1, { ...bids.admin, submitted: true });
+    await writeBid(1, bids.player);
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should deny the list, when the user is not an admin', async () => {
+    await expectError(call(withoutBid, undefined, players.player.uid), 'permission-denied');
   });
 
-  it('should have firebase initialized', async () => {
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('withoutBid')()).then((result: firebase.functions.HttpsCallableResult) => expect(result.data.length).toBe(2));
+  it('should list the players who have not submitted a bid', async () => {
+    expect(uids(await call(withoutBid, undefined, players.admin.uid))).toEqual([players.player.uid, players.player1.uid]);
+  });
+
+  it('should leave out the players who do not want reminders', async () => {
+    await updatePlayer(players.player1.uid, { receiveReminders: false });
+    expect(uids(await call(withoutBid, undefined, players.admin.uid))).toEqual([players.player.uid]);
   });
 });

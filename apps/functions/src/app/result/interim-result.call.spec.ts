@@ -1,160 +1,99 @@
-import { assertFails, assertSucceeds } from '@firebase/testing';
-import { playersURL, seasonsURL } from '../../lib/paths';
-import { collections } from '../../test-utils';
-import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
-import { Bid, SelectedTeamValue } from './../../lib/model/bid.model';
-import { Player } from '../../lib/model';
+import { Bid } from '@f2020/data';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { call, expectError } from '../../test/functions';
+import { bids, clone, drivers, players, readBid, readMails, readRace, results, team, writeBid, writePlayers, writeRace, writeSeason, writeTeam } from '../../test/fixtures';
+import { submitInterimResult } from './interim-result.call';
 
-const clone = require('clone');
+const create = vi.fn();
 
-describe('Submit interim result unittest', () => {
-  let adminFirestore: firebase.firestore.Firestore;
+vi.mock('../../lib/openai.service', () => ({
+  OpenAIModel: 'test-model',
+  openai: () => ({ chat: { completions: { create } } }),
+}));
 
-  const writeBid = async (bid: any, uid: string) => adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`).set(bid);
-  const readBid = async (uid: string): Promise<Bid> =>
-    adminFirestore
-      .doc(`${seasonsURL}/9999/races/${collections.races[1].round}/bids/${uid}`)
-      .get()
-      .then(ref => ref.data() as Bid);
+const interimResult: Partial<Bid> = {
+  qualify: results[0].qualify,
+  selectedDriver: { grid: 5 },
+  selectedTeam: { qualify: 'ant' },
+  polePositionTime: 80_000,
+};
 
+const submit = (result: Partial<Bid>) => call(submitInterimResult, result as Bid, players.admin.uid);
+
+const invalid = (change: (result: Partial<Bid>) => void) => {
+  const result = clone(interimResult);
+  change(result);
+  return result;
+};
+
+describe('submit interim result', () => {
   beforeEach(async () => {
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set({ ...collections.players.admin });
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).set({ ...collections.players.player });
-    await adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).set({ ...collections.players.bookie });
-
-    await adminFirestore.doc(`${seasonsURL}/9999`).set(collections.seasons[0]);
-    await adminFirestore.doc(`${seasonsURL}/9999/teams/${collections.teams[0].constructorId}`).set(collections.teams[0]);
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).set({ ...collections.races[1], state: 'closed', selectedTeam: collections.teams[0] });
+    create.mockReset().mockRejectedValue(new Error('No OpenAI in the tests'));
+    await writePlayers('admin', 'player', 'player1', 'bookie');
+    await writeSeason();
+    await writeTeam();
+    await writeRace(1, { state: 'closed', selectedTeam: team });
+    await writeBid(1, { ...bids.admin, submitted: true, selectedTeam: { qualify: 'ant', result: 'ant' } });
+    await writeBid(1, { ...bids.player, submitted: true, selectedTeam: { qualify: 'rus', result: 'ant' } });
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should deny an interim result, when no one is logged in', async () => {
+    await expectError(call(submitInterimResult, interimResult as Bid), 'unauthenticated');
   });
 
-  it('should deny a interim submit result, when user not logged in', async () => {
-    const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('submitInterimResult')()).then(unauthenticated);
-  });
-  it('should deny a submit result, when user but not know', async () => {
-    const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('submitInterimResult')()).then(notFound);
+  it('should deny an interim result, when the user is unknown', async () => {
+    await expectError(call(submitInterimResult, interimResult as Bid, 'unknown-uid'), 'not-found');
   });
 
-  it('should deny a submit result, when the user is not an admin', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await assertFails(app.functions.httpsCallable('submitInterimResult')()).then(permissionDenied);
+  it('should deny an interim result, when the user is not an admin', async () => {
+    await expectError(call(submitInterimResult, interimResult as Bid, players.player.uid), 'permission-denied');
   });
 
-  it('should deny a submit result, when result is invalid', async () => {
-    const app = await authedApp({ uid: collections.players.admin.uid });
-
-    await assertFails(app.functions.httpsCallable('submitInterimResult')()).then(failedPrecondition);
-
-    let result = clone(collections.interimResults[0]);
-    result.qualify[1] = result.qualify[0];
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-    result = clone(collections.interimResults[0]);
-    result.qualify.push('vettel');
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-    result = clone(collections.interimResults[0]);
-    result.qualify.length = 6;
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-
-    result = clone(collections.interimResults[0]);
-    result.selectedDriver.grid = 0;
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-    result = clone(collections.interimResults[0]);
-    result.selectedDriver.grid = collections.races[1].drivers!.length + 1;
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-
-    result = clone(collections.interimResults[0]);
-    result.selectedTeam = {} as SelectedTeamValue;
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-    result.selectedTeam = { qualify: '', result: '' } as SelectedTeamValue;
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
-    result.selectedTeam = { qualify: 'hamilton' } as SelectedTeamValue;
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(result)).then(failedPrecondition);
+  it.each(['open', 'completed', 'waiting'])('should deny an interim result, when the race is %s', async state => {
+    await writeRace(1, { state, selectedTeam: team });
+    await expectError(submit(interimResult), 'not-found');
   });
 
-  it('should reject interim result, when it cannot find a closed race', async () => {
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).set({ ...collections.races[1], state: 'open' });
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[0])).then(notFound);
-
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).set({ ...collections.races[1], state: 'completed' });
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[0])).then(notFound);
-
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).set({ ...collections.races[1], state: 'waiting' });
-    await assertFails(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[0])).then(notFound);
+  it.each([
+    ['no result', () => undefined as unknown as Partial<Bid>],
+    ['the same driver twice in qualify', () => invalid(result => (result.qualify![1] = result.qualify![0]))],
+    ['eight drivers in qualify', () => invalid(result => result.qualify!.push('alo'))],
+    ['six drivers in qualify', () => invalid(result => (result.qualify!.length = 6))],
+    ['the selected driver starting as 0', () => invalid(result => (result.selectedDriver!.grid = 0))],
+    ['the selected driver starting after the last', () => invalid(result => (result.selectedDriver!.grid = drivers.length + 1))],
+    ['no team', () => invalid(result => (result.selectedTeam = {} as Bid['selectedTeam']))],
+    ['an empty team', () => invalid(result => (result.selectedTeam = { qualify: '' }))],
+    ['a driver from another team', () => invalid(result => (result.selectedTeam = { qualify: 'ham' }))],
+  ])('should deny an interim result with %s', async (_, result) => {
+    await expectError(submit(result()), 'failed-precondition');
   });
 
-  it('should accept submitting of result, when result is valid but there are no bids', async () => {
-    // Non completed bids
-    await writeBid(collections.bids[0], collections.players.admin.uid);
-    await writeBid(collections.bids[1], collections.players.player.uid);
-
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[0]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(40));
+  it('should give the points of the qualifying, the selected driver and the team', async () => {
+    expect(await submit(interimResult)).toBe(true);
+    expect((await readBid(1, players.admin.uid)).points).toBe(12 + 3 + 1);
+    expect((await readBid(1, players.player.uid)).points).toBe(5 + 1 + 0);
+    expect((await readRace(1)).result).toEqual(interimResult);
   });
 
-  it('should accept submitting of result, when result is valid', async () => {
-    await writeBid({ ...clone(collections.bids[0]), selectedTeam: { qualify: 'raikkonen' }, submitted: true }, collections.players.admin.uid);
-    await writeBid({ ...clone(collections.bids[1]), selectedTeam: { qualify: 'giovinazzi' }, submitted: true }, collections.players.player.uid);
-
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[0]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(100))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(200))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(40))
-      .then(() => readBid(collections.players.admin.uid))
-      .then((bid: Bid) => expect(bid.points).toEqual(12 + 3 + 1))
-      .then(() => readBid(collections.players.player.uid))
-      .then((bid: Bid) => expect(bid.points).toEqual(3 + 2 + 0));
+  it('should only give points to submitted bids', async () => {
+    await writeBid(1, { ...bids.player1, selectedTeam: { qualify: 'rus', result: 'rus' } });
+    expect(await submit(interimResult)).toBe(true);
+    expect((await readBid(1, players.player1.uid)).points).toBeUndefined();
   });
 
-  it('should accept submitting of result, when result is valid, Michael is in the lead', async () => {
-    await writeBid({ ...clone(collections.bids[0]), selectedTeam: { qualify: 'raikkonen' }, submitted: true }, collections.players.admin.uid);
-    await writeBid({ ...clone(collections.bids[1]), selectedTeam: { qualify: 'giovinazzi' }, submitted: true }, collections.players.player.uid);
-
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[1]))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(100))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(200))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(40))
-      .then(() => readBid(collections.players.player.uid))
-      .then((bid: Bid) => expect(bid.points).toEqual(12 + 3 + 1))
-      .then(() => readBid(collections.players.admin.uid))
-      .then((bid: Bid) => expect(bid.points).toEqual(2 + 2 + 0));
+  it('should mail every player who played, also when OpenAI fails', async () => {
+    expect(await submit(interimResult)).toBe(true);
+    const mails = await readMails();
+    expect(mails.map(mail => mail.to).sort()).toEqual([[players.admin.email], [players.player.email]]);
+    expect(mails.every(mail => mail.message.subject === 'Så er der mellemresultat for Azerbaijan Grand Prix')).toBe(true);
   });
 
-  it('should only include bids that have been submitted', async () => {
-    await writeBid({ ...clone(collections.bids[0]), selectedTeam: { qualify: 'raikkonen' } }, collections.players.admin.uid);
-    await writeBid({ ...clone(collections.bids[1]), selectedTeam: { qualify: 'raikkonen' }, submitted: true }, collections.players.player.uid);
-
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('submitInterimResult')(collections.interimResults[1]))
-      .then(() => readBid(collections.players.player.uid))
-      .then((bid: Bid) => expect(bid.points).toBeDefined())
-      .then(() => readBid(collections.players.admin.uid))
-      .then((bid: Bid) => expect(bid.points).toBeUndefined());
+  it('should not tell OpenAI the drivers, so the roast cannot spoil the qualifying', async () => {
+    create.mockResolvedValue({ choices: [{ message: { content: JSON.stringify({ best: 'Godt', worst: 'Skidt' }) } }] });
+    expect(await submit(interimResult)).toBe(true);
+    const prompt: string = create.mock.calls[0][0].messages[1].content;
+    expect(prompt).toContain(players.admin.displayName);
+    drivers.forEach(driver => expect(prompt).not.toMatch(new RegExp(`\\b${driver}\\b`, 'i')));
+    expect((await readMails())[0].message.html).toContain('Godt');
   });
 });

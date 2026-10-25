@@ -1,73 +1,61 @@
-import { permissionDenied } from './../../test-utils/firestore-test-utils';
-import { assertFails, assertSucceeds } from '@firebase/testing';
-import { adminApp, authedApp, clearFirestoreData } from '../../test-utils/firestore-test-utils';
-import { collections } from '../../test-utils';
-import { playersURL } from '../../lib/paths';
+import { assertFails, assertSucceeds } from '@firebase/rules-unit-testing';
+import { beforeEach, describe, it } from 'vitest';
+import { players, writePlayers } from '../../test/fixtures';
+import { rulesTestEnvironment } from '../../test/rules';
 
-describe('Player rules', () => {
-  let adminFirestore: firebase.firestore.Firestore;
+const firestoreAs = rulesTestEnvironment();
+const player = `players/${players.player.uid}`;
+const newPlayer = { uid: 'new-uid', displayName: 'New', roles: ['player'] };
 
-  beforeEach(async () => {
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).set({ ...collections.players.player });
-    await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set({ ...collections.players.admin });
-    await adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).set({ ...collections.players.bookie });
-    await adminFirestore.doc(`${playersURL}/${collections.players.bankadmin.uid}`).set({ ...collections.players.bankadmin });
+describe('player rules', () => {
+  beforeEach(() => writePlayers('admin', 'player', 'player1', 'bookie', 'bankAdmin'));
+
+  it('should let an admin change other players, but not their balance or uid', async () => {
+    const db = firestoreAs(players.admin.uid);
+    await assertSucceeds(db.doc(player).get());
+    await assertSucceeds(db.doc(player).update({ displayName: 'Mickey Mouse' }));
+    await assertSucceeds(db.doc(player).update({ roles: ['player', 'admin'] }));
+    await assertFails(db.doc(player).update({ balance: 9999 }));
+    await assertFails(db.doc(player).update({ uid: 'other-uid' }));
+    await assertSucceeds(db.doc('players/new-uid').set(newPlayer));
+    await assertSucceeds(db.doc(player).delete());
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should let a player change themselves, but not their balance, uid or roles', async () => {
+    const db = firestoreAs(players.player.uid);
+    await assertSucceeds(db.doc(player).get());
+    await assertSucceeds(db.doc(player).update({ displayName: 'Mickey Mouse', email: 'mickey@example.com', receiveReminders: false }));
+    await assertFails(db.doc(player).update({ balance: 9999 }));
+    await assertFails(db.doc(player).update({ uid: 'other-uid' }));
+    await assertFails(db.doc(player).update({ roles: ['player', 'admin'] }));
+    await assertFails(db.doc(player).delete());
   });
 
-  it('admin checks', async () => {
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ displayName: 'Mickey Mouse' }));
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ balance: 9999 })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ uid: 'XXXX' })).then(permissionDenied);
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ roles: ['NO!'] }));
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ NickName: 'Mike' }));
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).delete());
-    await assertSucceeds(app.firestore.doc(`${playersURL}/player200`).set({ roles: ['player'], uid: 'player200-uid', displayName: 'TestID' }));
+  it('should not let a player read or change other players', async () => {
+    const db = firestoreAs(players.player1.uid);
+    await assertFails(db.doc(player).get());
+    await assertFails(db.doc(player).update({ displayName: 'Mickey Mouse' }));
+    await assertFails(db.doc('players/new-uid').set(newPlayer));
   });
 
-  it('player checks', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ displayName: 'Mickey Mouse' }));
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ email: 'Flemming@bregnvig.dk' }));
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ balance: 9999 })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ uid: 'XXXXX' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ roles: ['NO!'] })).then(permissionDenied);
-    await assertSucceeds(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ NickName: 'Mike' }));
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).delete()).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/player200`).set({ roles: ['player'], uid: 'player200-uid', displayName: 'TestID' })).then(permissionDenied);
+  it.each([
+    ['bookie', players.bookie.uid],
+    ['bank admin', players.bankAdmin.uid],
+  ])('should not let a %s change other players', async (_, uid) => {
+    const db = firestoreAs(uid);
+    await assertFails(db.doc(player).update({ displayName: 'Mickey Mouse' }));
+    await assertFails(db.doc(player).update({ balance: 9999 }));
+    await assertFails(db.doc(player).delete());
   });
 
-  it('bookie checks', async () => {
-    const app = await authedApp({ uid: collections.players.bookie.uid });
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ displayName: 'Mickey Mouse' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ balance: 9999 })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ uid: 'XXXXX' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ roles: ['NO!'] })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ NickName: 'Mike' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ email: 'Flemming@bregnvig.dk' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).delete()).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/player200`).set({ roles: ['player'], uid: 'player200-uid', displayName: 'TestID' })).then(permissionDenied);
+  it('should let a new user create themselves, but not with roles or a balance', async () => {
+    const db = firestoreAs('new-uid');
+    await assertFails(db.doc('players/new-uid').set(newPlayer));
+    await assertFails(db.doc('players/new-uid').set({ uid: 'new-uid', displayName: 'New', balance: 1000 }));
+    await assertSucceeds(db.doc('players/new-uid').set({ uid: 'new-uid', displayName: 'New' }));
   });
 
-  it('bank admin checks', async () => {
-    const app = await authedApp({ uid: collections.players.bankadmin.uid });
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ displayName: 'Mickey Mouse' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ balance: 9999 })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ uid: 'XXXXX' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ roles: ['NO!'] })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ NickName: 'Mike' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ email: 'Flemming@bregnvig.dk' })).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/${collections.players.player.uid}`).delete()).then(permissionDenied);
-    await assertFails(app.firestore.doc(`${playersURL}/player200`).set({ roles: ['player'], uid: 'player200-uid', displayName: 'TestID' })).then(permissionDenied);
-  });
-
-  it('non-player should not be allowed to read players', async () => {
-    const app = await authedApp({ uid: 'non-player-id' });
-    await assertFails(app.firestore.collection(`${playersURL}`).get()).then(permissionDenied);
+  it('should not let someone who is not a player list the players', async () => {
+    await assertFails(firestoreAs('non-player-uid').collection('players').get());
   });
 });

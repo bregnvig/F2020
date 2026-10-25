@@ -1,144 +1,113 @@
-import { assertFails, assertSucceeds } from '@firebase/testing';
-import { playersURL, seasonsURL } from '../../lib/paths';
-import { Player } from '../../lib/model/player.model';
-import { collections } from '../../test-utils';
-import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, unauthenticated } from '../../test-utils/firestore-test-utils';
-import { SelectedTeamValue } from './../../lib/model/bid.model';
+import { Bid } from '@f2020/data';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { call, expectError } from '../../test/functions';
+import { bids, clone, drivers, players, readBid, readTransactions, team, updatePlayer, writePlayers, writeRace, writeSeason, writeTeam } from '../../test/fixtures';
+import { submitBid } from './bid.call';
 
-const clone = require('clone');
+const submit = (bid: Bid) => call(submitBid, bid, players.player.uid);
 
-describe('Submit bid unittest', () => {
-  let adminFirestore: firebase.firestore.Firestore;
+/** The player's bid, changed by the function */
+const invalid = (change: (bid: Bid) => void) => {
+  const bid = clone(bids.player);
+  change(bid);
+  return bid;
+};
 
+describe('submit bid', () => {
   beforeEach(async () => {
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).set({ ...collections.players.player });
-    await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set({ ...collections.players.admin });
-    await adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).set({ ...collections.players.bookie });
-
-    await adminFirestore.doc(`${seasonsURL}/9999`).set(collections.seasons[0]);
-    await adminFirestore.doc(`${seasonsURL}/9999/teams/${collections.teams[0].constructorId}`).set(collections.teams[0]);
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).set(collections.races[1]);
+    await writePlayers('player', 'admin', 'bookie');
+    await writeSeason();
+    await writeTeam();
+    await writeRace(1, { state: 'open' });
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should deny a bid, when no one is logged in', async () => {
+    await expectError(call(submitBid, bids.player), 'unauthenticated');
   });
 
-  it('should deny a submit bid, when user not logged in', async () => {
-    const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('submitBid')()).then(unauthenticated);
-  });
-  it('should deny a submit bid, when user but not know', async () => {
-    const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('submitBid')()).then(notFound);
+  it('should deny a bid, when the user is unknown', async () => {
+    await expectError(call(submitBid, bids.player, 'unknown-uid'), 'not-found');
   });
 
-  it('should deny a submit bid, when the user has no bid', async () => {
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await assertFails(app.functions.httpsCallable('submitBid')()).then(notFound);
+  it('should deny a bid, when the user is not a player', async () => {
+    await expectError(call(submitBid, bids.player, players.bookie.uid), 'permission-denied');
   });
 
-  it('should deny a submit bid, when bid is invalid', async () => {
-    const app = await authedApp({ uid: collections.players.admin.uid });
-
-    let bid = clone(collections.bids[0]);
-    bid.qualify[1] = bid.qualify[0];
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.qualify.push('hamilton');
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.qualify.length = 5;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
-    bid = clone(collections.bids[0]);
-    bid.podium[1] = bid.podium[0];
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.podium.push('hamilton');
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.podium.length = 2;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
-    bid = clone(collections.bids[0]);
-    bid.fastestDriver.push('hamilton');
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.fastestDriver.length = 0;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
-    bid = clone(collections.bids[0]);
-    bid.firstCrash.push('hamilton');
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.firstCrash.length = 0;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
-    bid = clone(collections.bids[0]);
-    bid.selectedDriver.grid = 0;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.selectedDriver.grid = collections.races[1].drivers!.length + 1;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.selectedDriver.finish = 0;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.selectedDriver.finish = collections.races[1].drivers!.length + 1;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.selectedDriver.finish = -1;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
-    bid = clone(collections.bids[0]);
-    bid.polePositionTime = -1;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.polePositionTime = 1000 * 60 * 2;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.polePositionTime = 1000 * 50;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-
-    // Add team to race
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: collections.teams[0] });
-    bid = clone(collections.bids[0]);
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid = clone(collections.bids[0]);
-    bid.selectedTeam = {} as SelectedTeamValue;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid.selectedTeam = { qualify: '', result: '' } as SelectedTeamValue;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
-    bid.selectedTeam = { qualify: 'raikkonen', result: 'hamilton' } as SelectedTeamValue;
-    await assertFails(app.functions.httpsCallable('submitBid')(bid)).then(failedPrecondition);
+  it('should deny a bid, when there is no bid', async () => {
+    await expectError(call(submitBid, undefined, players.player.uid), 'not-found');
   });
 
-  it('should deny bid, if the user does not have enough money', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ balance: -100 });
-    await assertFails(app.functions.httpsCallable('submitBid')(clone(collections.bids[1]))).then(failedPrecondition);
+  it('should deny a bid, when it is for another player', async () => {
+    await expectError(call(submitBid, bids.admin, players.player.uid), 'permission-denied');
   });
 
-  it('should accept submitting of bid, when bid is valid', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await assertSucceeds(app.functions.httpsCallable('submitBid')(clone(collections.bids[1])))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(180));
+  it('should deny a bid, when there is no open race', async () => {
+    await writeRace(1, { state: 'closed' });
+    await expectError(submit(bids.player), 'failed-precondition');
   });
 
-  it('should accept submitting of bid with teams, when bid is valid', async () => {
-    await adminFirestore.doc(`${seasonsURL}/9999/races/${collections.races[1].round}`).update({ selectedTeam: collections.teams[0] });
-    const app = await authedApp({ uid: collections.players.player.uid });
-    const bid = clone(collections.bids[1]);
-    bid.selectedTeam = { qualify: 'raikkonen', result: 'giovinazzi' } as SelectedTeamValue;
-    await assertSucceeds(app.functions.httpsCallable('submitBid')(bid))
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(180));
+  it.each([
+    ['the same driver twice in qualify', (bid: Bid) => (bid.qualify[1] = bid.qualify[0])],
+    ['seven drivers in qualify', (bid: Bid) => bid.qualify.push('alo')],
+    ['five drivers in qualify', (bid: Bid) => ((bid.qualify as string[]).length = 5)],
+    ['the same driver twice in the podium', (bid: Bid) => (bid.podium[1] = bid.podium[0])],
+    ['four drivers in the podium', (bid: Bid) => bid.podium.push('alo')],
+    ['two drivers in the podium', (bid: Bid) => ((bid.podium as string[]).length = 2)],
+    ['two fastest drivers', (bid: Bid) => bid.fastestDriver.push('alo')],
+    ['no fastest driver', (bid: Bid) => ((bid.fastestDriver as string[]).length = 0)],
+    ['two first crashes', (bid: Bid) => bid.firstCrash.push('alo')],
+    ['no first crash', (bid: Bid) => (bid.firstCrash.length = 0)],
+    ['no slowest pit stop', (bid: Bid) => ((bid.slowestPitStop as string[]).length = 0)],
+    ['the selected driver starting as 0', (bid: Bid) => (bid.selectedDriver.grid = 0)],
+    ['the selected driver starting after the last', (bid: Bid) => (bid.selectedDriver.grid = drivers.length + 1)],
+    ['the selected driver finishing as 0', (bid: Bid) => (bid.selectedDriver.finish = 0)],
+    ['the selected driver finishing after the last', (bid: Bid) => (bid.selectedDriver.finish = drivers.length + 1)],
+    ['the selected driver finishing as -1', (bid: Bid) => (bid.selectedDriver.finish = -1)],
+    ['a negative pole position time', (bid: Bid) => (bid.polePositionTime = -1)],
+    ['a pole position time of 2 minutes', (bid: Bid) => (bid.polePositionTime = 1000 * 60 * 2)],
+    ['a pole position time of 50 seconds', (bid: Bid) => (bid.polePositionTime = 1000 * 50)],
+  ])('should deny a bid with %s', async (_, change) => {
+    await expectError(submit(invalid(change)), 'failed-precondition');
+  });
+
+  describe('with a selected team', () => {
+    beforeEach(() => writeRace(1, { state: 'open', selectedTeam: team }));
+
+    it.each([
+      ['no team', (bid: Bid) => delete bid.selectedTeam],
+      ['an empty team', (bid: Bid) => (bid.selectedTeam = { qualify: '', result: '' })],
+      ['a driver from another team', (bid: Bid) => (bid.selectedTeam = { qualify: 'rus', result: 'ham' })],
+    ])('should deny a bid with %s', async (_, change) => {
+      await expectError(submit(invalid(change)), 'failed-precondition');
+    });
+
+    it('should accept a bid with a driver of the team', async () => {
+      expect(await submit({ ...bids.player, selectedTeam: { qualify: 'rus', result: 'ant' } })).toBe(true);
+      expect((await readBid(1, players.player.uid)).selectedTeam).toEqual({ qualify: 'rus', result: 'ant' });
+    });
+  });
+
+  it('should deny a bid, when the player owes more than 100', async () => {
+    await updatePlayer(players.player.uid, { balance: -81 });
+    await expectError(submit(bids.player), 'failed-precondition');
+  });
+
+  it('should accept a bid, when the player owes 100 after paying', async () => {
+    await updatePlayer(players.player.uid, { balance: -80 });
+    expect(await submit(bids.player)).toBe(true);
+  });
+
+  it('should store the bid as submitted, and pay the bookie', async () => {
+    expect(await submit(bids.player)).toBe(true);
+    expect(await readBid(1, players.player.uid)).toEqual({ ...bids.player, submitted: true });
+    expect(await readTransactions()).toEqual([
+      {
+        amount: 20,
+        message: 'Deltagelse i Azerbaijan Grand Prix',
+        from: players.player.uid,
+        to: players.bookie.uid,
+        involved: [players.player.uid, players.bookie.uid],
+      },
+    ]);
   });
 });

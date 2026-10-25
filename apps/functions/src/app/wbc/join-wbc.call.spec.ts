@@ -1,67 +1,43 @@
-import { assertFails, assertSucceeds } from '@firebase/testing';
 import { DateTime } from 'luxon';
-import { playersURL, seasonsURL } from '../../lib/paths';
-import { collections } from '../../test-utils';
-import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, unauthenticated } from '../../test-utils/firestore-test-utils';
-import { Player } from '../../lib/model';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { call, expectError } from '../../test/functions';
+import { players, readSeason, readTransactions, updatePlayer, writePlayers, writeSeason } from '../../test/fixtures';
+import { joinWBC } from './join-wbc.call';
 
-const clone = require('clone');
-
-describe('Join WBC unittest', () => {
-  let adminFirestore: firebase.firestore.Firestore;
-
+describe('join WBC', () => {
   beforeEach(async () => {
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).set(clone(collections.players.player));
-    await adminFirestore.doc(`${playersURL}/${collections.players.admin.uid}`).set(clone(collections.players.admin));
-    await adminFirestore.doc(`${playersURL}/${collections.players.bookie.uid}`).set(clone(collections.players.bookie));
-
-    await adminFirestore.doc(`${seasonsURL}/9999`).set({
-      ...clone(collections.seasons[0]),
-      wbc: {
-        latestWBCJoinDate: DateTime.local().plus({ day: 1 }).toJSDate(),
-      },
-    });
+    await writePlayers('player', 'admin', 'bookie');
+    await writeSeason();
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should deny joining, when no one is logged in', async () => {
+    await expectError(call(joinWBC), 'unauthenticated');
   });
 
-  it('should deny a join request, when user not logged in', async () => {
-    const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('joinWBC')()).then(unauthenticated);
-  });
-  it('should deny a join WBC, when user but not know', async () => {
-    const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('joinWBC')()).then(notFound);
+  it('should deny joining, when the user is unknown', async () => {
+    await expectError(call(joinWBC, undefined, 'unknown-uid'), 'not-found');
   });
 
-  it('should deny a join WBC, when the user has already joined', async () => {
-    const app = await authedApp({ uid: collections.players.admin.uid });
-    await adminFirestore.doc(`${seasonsURL}/9999`).update({ wbc: { participants: [collections.players.admin.uid] } });
-    await assertFails(app.functions.httpsCallable('joinWBC')()).then(failedPrecondition);
+  it('should deny joining, when the player has already joined', async () => {
+    await writeSeason({ wbc: { latestWBCJoinDate: DateTime.local().plus({ days: 1 }).toJSDate(), participants: [players.player.uid] } });
+    await expectError(call(joinWBC, undefined, players.player.uid), 'failed-precondition');
   });
 
-  it('should deny join WBC, if the user does not have enough money', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).update({ balance: -100 });
-    await assertFails(app.functions.httpsCallable('joinWBC')()).then(failedPrecondition);
+  it('should deny joining, when the player does not have enough money', async () => {
+    await updatePlayer(players.player.uid, { balance: -1 });
+    await expectError(call(joinWBC, undefined, players.player.uid), 'failed-precondition');
   });
 
-  it('should deny join WBC, if is too late', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await adminFirestore.doc(`${seasonsURL}/9999`).update({ wbc: { latestWBCJoinDate: DateTime.local().minus({ day: 1 }).toJSDate() } });
-    await assertFails(app.functions.httpsCallable('joinWBC')()).then(failedPrecondition);
+  it('should deny joining, when it is too late', async () => {
+    await writeSeason({ wbc: { latestWBCJoinDate: DateTime.local().minus({ days: 1 }).toJSDate() } });
+    await expectError(call(joinWBC, undefined, players.player.uid), 'failed-precondition');
   });
 
-  it('should accept joining WBC, when everything is alright', async () => {
-    const app = await authedApp({ uid: collections.players.player.uid });
-    await adminFirestore.doc(`${seasonsURL}/9999`).update({ wbc: { latestWBCJoinDate: DateTime.local().plus({ day: 1 }).toJSDate() } });
-    await assertSucceeds(app.functions.httpsCallable('joinWBC')())
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 2000)))
-      .then(() => adminFirestore.doc(`${playersURL}/${collections.players.player.uid}`).get())
-      .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data())
-      .then((player: Player) => expect(player.balance).toEqual(100));
+  it('should add the player to the WBC, and pay the bookie', async () => {
+    expect(await call(joinWBC, undefined, players.player.uid)).toBe(true);
+    expect((await readSeason()).wbc.participants).toEqual([players.player.uid]);
+    expect(await readTransactions()).toEqual([
+      { amount: 100, message: 'Deltagelse WBC', from: players.player.uid, to: players.bookie.uid, involved: [players.player.uid, players.bookie.uid] },
+    ]);
   });
 });

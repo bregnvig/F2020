@@ -1,60 +1,37 @@
-import { retry } from './../../test-utils/firestore-test-utils';
-import { assertFails, assertSucceeds } from '@firebase/testing';
-import { Player } from '../../lib/model/player.model';
-import { adminApp, authedApp, clearFirestoreData, failedPrecondition, notFound, permissionDenied, unauthenticated } from '../../test-utils/firestore-test-utils';
-import { players } from '../../test-utils/players.collection';
-import { playersURL } from '../../lib/paths';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { call, expectError } from '../../test/functions';
+import { players, readTransactions, writePlayers } from '../../test/fixtures';
+import { deposit } from './deposit.call';
 
-describe('Deposit unittest', () => {
-  let adminFirestore: firebase.firestore.Firestore;
+describe('deposit', () => {
+  beforeEach(() => writePlayers('player', 'bankAdmin'));
 
-  beforeEach(async () => {
-    // depositFn = test.wrap(deposit);
-    adminFirestore = adminApp();
-    await adminFirestore.doc(`${playersURL}/${players.player.uid}`).set({ ...players.player });
-    await adminFirestore.doc(`${playersURL}/${players.admin.uid}`).set({ ...players.admin });
+  it('should deny a deposit, when no one is logged in', async () => {
+    await expectError(call(deposit, { amount: 100, message: 'Hello', uid: players.player.uid }), 'unauthenticated');
   });
 
-  afterEach(async () => {
-    await clearFirestoreData();
+  it('should deny a deposit, when the user is unknown', async () => {
+    await expectError(call(deposit, { amount: 100, message: 'Hello', uid: players.player.uid }, 'unknown-uid'), 'not-found');
   });
 
-  it('should deny a deposit, when user not logged in', async () => {
-    const app = await authedApp();
-    await assertFails(app.functions.httpsCallable('deposit')({ amount: 100, message: 'Hello' })).then(unauthenticated);
+  it('should deny a deposit, when the user is not a bank admin', async () => {
+    await expectError(call(deposit, { amount: 100, message: 'Hello', uid: players.player.uid }, players.player.uid), 'permission-denied');
   });
 
-  it('should deny a deposit, when user but not know', async () => {
-    const app = await authedApp({ uid: 'jckS2Q0' });
-    await assertFails(app.functions.httpsCallable('deposit')({ amount: 100, message: 'Hello' })).then(notFound);
-  });
-
-  it('should deny a deposit, when the amount is not specified or zero', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('deposit')({ amount: 0, message: 'Hello', uid: players.player.uid })).then(failedPrecondition);
+  it('should deny a deposit, when the amount is missing or zero', async () => {
+    await expectError(call(deposit, { amount: 0, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid), 'failed-precondition');
   });
 
   it('should deny a deposit, when the amount is negative', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertFails(app.functions.httpsCallable('deposit')({ amount: -100, message: 'Hello', uid: players.player.uid })).then(failedPrecondition);
+    await expectError(call(deposit, { amount: -100, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid), 'failed-precondition');
   });
 
-  it('should deny a deposit, when the user does not have the role of bank-admin', async () => {
-    const app = await authedApp({ uid: players.player.uid });
-    await assertFails(app.functions.httpsCallable('deposit')({ amount: 100, message: 'Hello', uid: players.player.uid })).then(permissionDenied);
+  it('should deny a deposit, when no player is given', async () => {
+    await expectError(call(deposit, { amount: 100, message: 'Hello', uid: '' }, players.bankAdmin.uid), 'not-found');
   });
 
-  it('should accept a deposit', async () => {
-    const app = await authedApp({ uid: players.admin.uid });
-    await assertSucceeds(app.functions.httpsCallable('deposit')({ amount: 100, message: 'Hello', uid: players.player.uid })).then(() =>
-      retry(
-        () =>
-          adminFirestore
-            .doc(`${playersURL}/${players.player.uid}`)
-            .get()
-            .then((snapshot: firebase.firestore.DocumentSnapshot) => snapshot.data()! as Player),
-        (p: Player) => p && p.balance === 300,
-      ),
-    );
+  it('should deposit the amount to the player', async () => {
+    expect(await call(deposit, { amount: 100, message: 'Hello', uid: players.player.uid }, players.bankAdmin.uid)).toBe(true);
+    expect(await readTransactions()).toEqual([{ amount: 100, message: 'Hello', from: null, to: players.player.uid, involved: [players.player.uid] }]);
   });
 });
