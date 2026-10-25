@@ -1,0 +1,86 @@
+# Builds, tests and deploys to production, when something is pushed to develop. Only what has changed since the last successful deploy
+# is deployed: hosting when the UI is affected, the functions when they are affected, and the Firestore rules and indexes when they change.
+# See .github/README.md for the secrets it needs
+name: Deploy
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+# One deploy at a time, and a deploy is never stopped halfway
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  # nx-set-shas finds the last successful run
+  actions: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      # The function tests start a Firestore emulator
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - run: npm ci
+
+      # The commit of the last successful deploy is the base, so a failed deploy is tried again with the next push.
+      # Before the first successful deploy it is the previous commit
+      - uses: nrwl/nx-set-shas@v5
+        with:
+          main-branch-name: develop
+
+      - name: Find what to deploy
+        id: changed
+        run: |
+          affected=$(npx nx show projects --affected --base="$NX_BASE" --head="$NX_HEAD" --json)
+          firestore=$(git diff --name-only "$NX_BASE" "$NX_HEAD" -- apps/firebase/firestore.rules apps/firebase/firestore.indexes.json)
+          is() { echo "$affected" | jq -e --arg project "$1" 'index($project)' > /dev/null; }
+          echo "ui=$(is ui && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "functions=$(is functions && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "firestore=$([ -n "$firestore" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "Changed since $NX_BASE:"
+          cat "$GITHUB_OUTPUT"
+
+      - name: Lint and test what changed
+        run: npx nx affected -t lint test
+
+      - uses: google-github-actions/auth@v3
+        if: steps.changed.outputs.ui == 'true' || steps.changed.outputs.functions == 'true' || steps.changed.outputs.firestore == 'true'
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Deploy hosting
+        if: steps.changed.outputs.ui == 'true'
+        run: |
+          npx nx build ui --configuration=production
+          npx firebase deploy --only hosting --project production --non-interactive
+
+      - name: Deploy functions
+        if: steps.changed.outputs.functions == 'true'
+        env:
+          FUNCTIONS_ENV: ${{ secrets.FUNCTIONS_ENV }}
+        run: |
+          mkdir -p apps/functions/environment
+          printf '%s\n' "$FUNCTIONS_ENV" > apps/functions/environment/.env
+          npx nx build firebase
+          npx firebase deploy --only functions --project production --non-interactive
+
+      - name: Deploy Firestore rules and indexes
+        if: steps.changed.outputs.firestore == 'true'
+        run: npx firebase deploy --only firestore:rules,firestore:indexes --project production --non-interactive

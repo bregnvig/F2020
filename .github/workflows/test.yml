@@ -1,0 +1,46 @@
+# Lints, tests and builds what a pull request to develop changes. Required to pass before the pull request can be merged,
+# see .github/README.md
+name: Test
+
+on:
+  pull_request:
+    branches: [develop]
+
+# A new push to the pull request stops the run of the previous one
+concurrency:
+  group: test-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      # The function tests start a Firestore emulator
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - run: npm ci
+
+      # Compares the pull request with develop
+      - uses: nrwl/nx-set-shas@v5
+        with:
+          main-branch-name: develop
+
+      # The firebase project only copies the secret .env of the functions, which a pull request does not have
+      - name: Lint, test and build what changed
+        run: npx nx affected -t lint test build --exclude=firebase
