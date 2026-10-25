@@ -21,7 +21,18 @@ F2020 is a Formula 1 betting application built with Angular and Firebase. The ap
 
 ### Testing & Quality
 
-- `npm test` - Run tests
+- `npm test` - Run tests. The functions (`nx test functions`) and `@f2020/data` (`nx test data`) have tests, with Vitest
+
+### Function Tests
+
+The tests start their own Firestore emulator on port 8180 with the project `demo-f2020` (`apps/functions/firebase.test.json`), so they
+run next to the emulators used for development without touching their data. Java 21 is needed, as for the other emulators.
+
+- Callables are called in the test with `call(fn, data, uid)`, and triggers with `updateAndTrigger()` and `createdTrigger()`, from
+  `apps/functions/src/test/functions.ts`. One trigger does not set off another, so test each on its own
+- Players, races, bids and results are in `apps/functions/src/test/fixtures.ts`. The comments there have the points each bid gets
+- The rules specs in `apps/functions/src/app/rules` test `apps/firebase/firestore.rules`
+- OpenAI and OpenF1 are mocked with `vi.mock` where they are used. Firestore is cleared after each test
 - `npm run lint` - Run linting
 - `npm run format` - Format code
 

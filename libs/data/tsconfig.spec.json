@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": ["node"],
+    "module": "es2022"
+  },
+  "include": ["vitest.config.mts", "src/**/*.spec.ts"]
+}

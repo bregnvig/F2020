@@ -1,6 +1,41 @@
-import { collections } from '../test-utils';
-import { SelectedDriverValue } from './model/bid.model';
-import { calculateResult, offsetPoints, propertyPoints } from './result.service';
+import { describe, expect, it } from 'vitest';
+import { Bid, SelectedDriverValue } from '../model';
+import { calculateInterimResult, calculateResult, compareBids, offsetPoints, propertyPoints } from './result.service';
+
+const result: Bid = {
+  qualify: ['ver', 'had', 'nor', 'pia', 'lec', 'ham', 'rus'],
+  podium: ['ver', 'had', 'nor', 'pia'],
+  fastestDriver: ['ver', 'had'],
+  firstCrash: ['str', 'gas'],
+  slowestPitStop: ['mclaren', 'ferrari'],
+  selectedDriver: { grid: 5, finish: 4 },
+  selectedTeam: { qualify: 'ant', result: 'rus' },
+  polePositionTime: 80_000,
+};
+
+/** Every guess is right */
+const perfectBid: Bid = {
+  qualify: ['ver', 'had', 'nor', 'pia', 'lec', 'ham'],
+  podium: ['ver', 'had', 'nor'],
+  fastestDriver: ['ver'],
+  firstCrash: ['str'],
+  slowestPitStop: ['mclaren'],
+  selectedDriver: { grid: 5, finish: 4 },
+  selectedTeam: { qualify: 'ant', result: 'rus' },
+  polePositionTime: 80_100,
+};
+
+/** Every guess is one place off, or a driver who is not in the result */
+const offBid: Bid = {
+  qualify: ['had', 'ver', 'pia', 'nor', 'ham', 'alo'],
+  podium: ['had', 'ver', 'pia'],
+  fastestDriver: ['had'],
+  firstCrash: ['gas'],
+  slowestPitStop: ['ferrari'],
+  selectedDriver: { grid: 7, finish: 1 },
+  selectedTeam: { qualify: 'rus', result: 'ant' },
+  polePositionTime: 81_112,
+};
 
 describe('Result service test', () => {
   it('should award points to qualify', () => {
@@ -80,52 +115,66 @@ describe('Result service test', () => {
     expect(propertyPoints(bid, result)).toStrictEqual({ gridPoints: 0, finishPoints: 0 });
   });
 
-  it('should calculate the result of Flemmings bid', () => {
-    const bid = collections.bids[0];
-    const result = collections.results[0];
-    const calculatedResult = calculateResult(bid, result);
+  it('should give every point to a perfect bid', () => {
+    const calculated = calculateResult(perfectBid, result);
 
-    expect(calculatedResult.points).toBe(12 + 2 + 6 + 3 + 3 + 3);
-
-    expect(calculatedResult.qualifyPoints).toStrictEqual([2, 2, 2, 2, 2, 2]);
-    expect(calculatedResult.fastestDriverPoints).toStrictEqual([2]);
-    expect(calculatedResult.podiumPoints).toStrictEqual([2, 2, 2]);
-    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(3);
-    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(3);
-    expect(calculatedResult.firstCrashPoints).toStrictEqual([3]);
-    expect(calculatedResult.polePositionTimeDiff).toStrictEqual(100);
+    expect(calculated.qualifyPoints).toStrictEqual([2, 2, 2, 2, 2, 2]);
+    expect(calculated.podiumPoints).toStrictEqual([2, 2, 2]);
+    expect(calculated.fastestDriverPoints).toStrictEqual([2]);
+    expect(calculated.firstCrashPoints).toStrictEqual([3]);
+    expect(calculated.slowestPitStopPoints).toStrictEqual([2]);
+    expect(calculated.selectedDriver).toStrictEqual({ grid: 5, finish: 4, gridPoints: 3, finishPoints: 3 });
+    expect(calculated.selectedTeam).toStrictEqual({ qualify: 'ant', result: 'rus', qualifyPoints: 1, resultPoints: 1 });
+    expect(calculated.polePositionTimeDiff).toBe(100);
+    expect(calculated.points).toBe(12 + 6 + 2 + 3 + 2 + 6 + 2);
   });
 
-  it('should calculate the result of Michaels bid', () => {
-    const bid = collections.bids[1];
-    const result = collections.results[0];
-    const calculatedResult = calculateResult(bid, result);
+  it('should give points for guesses that are one place off', () => {
+    const calculated = calculateResult(offBid, result);
 
-    expect(calculatedResult.points).toBe(3 + 0 + 1 + 2 + 0 + 1);
-
-    expect(calculatedResult.qualifyPoints).toStrictEqual([1, 0, 0, 0, 1, 1]);
-    expect(calculatedResult.fastestDriverPoints).toStrictEqual([0]);
-    expect(calculatedResult.podiumPoints).toStrictEqual([0, 0, 1]);
-    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(2);
-    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(0);
-    expect(calculatedResult.firstCrashPoints).toStrictEqual([1]);
-    expect(calculatedResult.polePositionTimeDiff).toStrictEqual(1112);
+    expect(calculated.qualifyPoints).toStrictEqual([1, 1, 1, 1, 1, 0]);
+    expect(calculated.podiumPoints).toStrictEqual([1, 1, 1]);
+    expect(calculated.fastestDriverPoints).toStrictEqual([1]);
+    expect(calculated.firstCrashPoints).toStrictEqual([2]);
+    expect(calculated.slowestPitStopPoints).toStrictEqual([1]);
+    expect(calculated.selectedDriver).toStrictEqual({ grid: 7, finish: 1, gridPoints: 1, finishPoints: 0 });
+    expect(calculated.selectedTeam).toStrictEqual({ qualify: 'rus', result: 'ant', qualifyPoints: 0, resultPoints: 0 });
+    expect(calculated.polePositionTimeDiff).toBe(1112);
+    expect(calculated.points).toBe(5 + 3 + 1 + 2 + 1 + 1);
   });
 
-  it('should calculate the result even if fastest driver is missing', () => {
-    const bid = collections.bids[1];
-    const result = { ...collections.results[0] };
-    result.fastestDriver = [];
-    const calculatedResult = calculateResult(bid, result);
+  it('should calculate the result, when there is no fastest driver, first crash or slowest pit stop', () => {
+    const calculated = calculateResult(perfectBid, { ...result, fastestDriver: [], firstCrash: [], slowestPitStop: undefined });
 
-    expect(calculatedResult.points).toBe(3 + 0 + 1 + 2 + 0 + 1);
+    expect(calculated.fastestDriverPoints).toStrictEqual([0]);
+    expect(calculated.firstCrashPoints).toStrictEqual([0]);
+    expect(calculated.slowestPitStopPoints).toStrictEqual([0]);
+    expect(calculated.points).toBe(12 + 6 + 6 + 2);
+  });
 
-    expect(calculatedResult.qualifyPoints).toStrictEqual([1, 0, 0, 0, 1, 1]);
-    expect(calculatedResult.fastestDriverPoints).toStrictEqual([0]);
-    expect(calculatedResult.podiumPoints).toStrictEqual([0, 0, 1]);
-    expect(calculatedResult.selectedDriver.gridPoints).toStrictEqual(2);
-    expect(calculatedResult.selectedDriver.finishPoints).toStrictEqual(0);
-    expect(calculatedResult.firstCrashPoints).toStrictEqual([1]);
-    expect(calculatedResult.polePositionTimeDiff).toStrictEqual(1112);
+  it('should leave out the team, when the race has no selected team', () => {
+    const calculated = calculateResult({ ...perfectBid, selectedTeam: undefined }, result);
+
+    expect(calculated.selectedTeam).toBeUndefined();
+    expect(calculated.points).toBe(12 + 6 + 2 + 3 + 2 + 6);
+  });
+
+  it('should only give the points of the qualifying in the interim result', () => {
+    const interimResult: Partial<Bid> = { qualify: result.qualify, selectedDriver: { grid: 5 }, selectedTeam: { qualify: 'ant' }, polePositionTime: 80_000 };
+
+    expect(calculateInterimResult(perfectBid, interimResult)).toMatchObject({ points: 12 + 3 + 1, polePositionTimeDiff: 100 });
+    expect(calculateInterimResult(offBid, interimResult)).toMatchObject({ points: 5 + 1 + 0, polePositionTimeDiff: 1112 });
+  });
+
+  it('should leave out the pole position time in the interim result, when the qualifying has none', () => {
+    const interimResult: Partial<Bid> = { qualify: result.qualify, selectedDriver: { grid: 5 }, selectedTeam: { qualify: 'ant' } };
+
+    expect(calculateInterimResult(perfectBid, interimResult).polePositionTimeDiff).toBeUndefined();
+  });
+
+  it('should order the bids by points, and by the pole position time when the points are equal', () => {
+    const bids: Partial<Bid>[] = [{ points: 10, polePositionTimeDiff: 500 }, { points: 20, polePositionTimeDiff: 900 }, { points: 10, polePositionTimeDiff: 100 }, { points: 10 }];
+
+    expect([...bids].sort(compareBids)).toStrictEqual([bids[1], bids[2], bids[0], bids[3]]);
   });
 });
