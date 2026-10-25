@@ -30,7 +30,8 @@ export const aiGeneratedRoast = async (situation: string, results: Partial<Bid>[
           content: `Du er kommentator i et F1 væddemål mellem venner, og skriver om ${situation}.
             Brug tør, sarkastisk dansk humor. Vær drillende og gerne lidt fræk og uforskammet, som når gode venner sviner hinanden til,
             men hold det til deres evner som F1-tippere. Ingen bandeord. Skriv på dansk, to til fire sætninger til hver.
-            Er der flere med samme point, så nævn dem alle.`,
+            Er der flere med samme point, så nævn dem alle.
+            Nævn aldrig kørere, hold eller placeringer i kvalifikationen eller løbet. Nogle har ikke set det endnu.`,
         },
         {
           role: 'user',

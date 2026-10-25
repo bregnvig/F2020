@@ -20,17 +20,9 @@ import {
   validateAccess,
 } from '../../lib';
 
-/** Driver ids are e.g. max_verstappen */
-const driverName = (driverId?: string) => driverId?.replace(/_/g, ' ') ?? 'ingen';
-
-const describe = (result: Partial<Bid>) => (bids: Partial<Bid>[]) =>
-  bids
-    .map(
-      bid =>
-        `${bid.player?.displayName} med ${bid.points} point. Gættede kvalifikationen ${bid.qualify?.slice(0, 6).map(driverName).join(', ')}` +
-        ` og ramte ${bid.qualifyPoints?.filter(p => p > 0).length ?? 0} af dem`,
-    )
-    .join('\n') + `\nDen rigtige kvalifikation blev ${result.qualify?.slice(0, 6).map(driverName).join(', ')}`;
+/** Without drivers, as a player reading the mail may not have seen the qualifying yet */
+const describe = (bids: Partial<Bid>[]) =>
+  bids.map(bid => `${bid.player?.displayName} med ${bid.points} point, og ramte ${bid.qualifyPoints?.filter(p => p > 0).length ?? 0} i top-6 af kvalifikationen`).join('\n');
 
 const mailBody = (player: Player, race: IRace, results: Partial<Bid>[], roast?: Roast): string =>
   resultMail(
@@ -85,7 +77,7 @@ export const createInterimResult = async (race: IRace | undefined, result: Parti
     })
     .then(async () => {
       const players = calculatedResults.map(cr => cr.player!);
-      const roast = await aiGeneratedRoast(`mellemresultatet efter kvalifikationen i ${race.name}`, calculatedResults, describe(result));
+      const roast = await aiGeneratedRoast(`mellemresultatet efter kvalifikationen i ${race.name}`, calculatedResults, describe);
       return Promise.all(
         players.map(async player => {
           log(`Should mail to ${player.displayName}`);
