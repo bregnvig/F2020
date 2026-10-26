@@ -16,7 +16,8 @@ from the Actions tab works the same way.
 
 ## Pull requests
 
-`workflows/test.yml` lints, tests and builds what a pull request to `develop` changes. `rulesets/develop-test.json` stops a pull request
+`workflows/test.yml` lints, tests and builds what a pull request to `develop` changes. The builder is linted but not built, as its
+environment with the keys is not in git. `rulesets/develop-test.json` stops a pull request
 from being merged before the check `test` has passed. Import it under _Settings → Rules → Rulesets → New ruleset → Import a ruleset_ in
 GitHub.
 
