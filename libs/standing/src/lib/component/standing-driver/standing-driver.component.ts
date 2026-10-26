@@ -7,9 +7,8 @@ import { shareLatest } from '@f2020/tools';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DriverPipe } from '@f2020/driver';
-import { DriverResultComponent } from './driver-result/driver-result.component';
-import { DriverQualifyingComponent } from './driver-qualifying/driver-qualifying.component';
-import { MatTabsModule } from '@angular/material/tabs';
+import { DriverSeasonGraph } from './driver-season-graph/driver-season-graph';
+import { DriverSeasonTabs } from './driver-season-tabs/driver-season-tabs';
 import { NumberCardComponent } from './number-card/number-card.component';
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,9 +23,8 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
     MatToolbarModule,
     CardPageComponent,
     NumberCardComponent,
-    MatTabsModule,
-    DriverQualifyingComponent,
-    DriverResultComponent,
+    DriverSeasonGraph,
+    DriverSeasonTabs,
     LoadingComponent,
     AsyncPipe,
     DecimalPipe,

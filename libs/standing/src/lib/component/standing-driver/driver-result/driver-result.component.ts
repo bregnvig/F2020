@@ -7,7 +7,7 @@ import { MatListModule } from '@angular/material/list';
   selector: 'f2020-driver-result',
   template: `
     <mat-list>
-      @for (race of driverResult()?.races; track $index) {
+      @for (race of driverResult()?.races ?? []; track $index) {
         <mat-list-item>
           <h3 matListItemTitle>{{ race.name }}</h3>
           <span matListItemLine>{{ race.results[0].status }}</span>
@@ -20,5 +20,5 @@ import { MatListModule } from '@angular/material/list';
   imports: [MatListModule],
 })
 export class DriverResultComponent {
-  driverResult = input.required<IDriverResult>();
+  driverResult = input.required<IDriverResult | null | undefined>();
 }
