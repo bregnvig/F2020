@@ -1,9 +1,8 @@
 import { firebaseApp } from './firebase';
 import { Circuit, IDriver, IDriverGridPosition, IQualifyResult, IRaceResult, mapper } from '@f2020/data';
-import { GridPosition, Session } from '@f2020/openf1';
+import { Driver, GridPosition, openF1Url, Session } from '@f2020/openf1';
 import { arrayUtils } from '@f2020/tools';
 import { resolveCircuit } from './circuit.resolver';
-import { resolveDriver } from './driver.resolver';
 import { cachedFetch } from './cached-fetch';
 
 interface Meeting {
@@ -21,6 +20,19 @@ export interface MeetingResult {
   race: IRaceResult;
   qualify: IQualifyResult;
 }
+
+/**
+ * The drivers of the session, with the number each had then. The results only have the number, and a number can belong to another
+ * driver in a later season, e.g. 1 is the number of the champion. A driver who is not in the drivers collection is taken from OpenF1
+ */
+const sessionDrivers = async (drivers: IDriver[], sessionKey: number): Promise<IDriver[]> => {
+  const openF1Drivers: Driver[] = await cachedFetch(openF1Url.driver(sessionKey)).then(r => r.json());
+  return openF1Drivers.map(openF1Driver => {
+    const driver = mapper.driver(openF1Driver);
+    const known = drivers.find(d => d.driverId === driver.driverId) ?? drivers.find(d => d.code === driver.code);
+    return { ...(known ?? driver), permanentNumbers: [openF1Driver.driver_number], activeNumber: openF1Driver.driver_number };
+  });
+};
 
 export const buildResults = async (seasonId: number, year: number): Promise<MeetingResult[]> => {
   const circuits = await firebaseApp.database
@@ -58,33 +70,25 @@ export const buildResults = async (seasonId: number, year: number): Promise<Meet
     const raceLaps = await cachedFetch(`https://api.openf1.org/v1/laps?session_key=${meeting.raceId}`).then(r => r.json());
     const raceSessionResult = await cachedFetch(`https://api.openf1.org/v1/session_result?session_key=${meeting.raceId}`).then(r => r.json());
     const positions = (await cachedFetch(`https://api.openf1.org/v1/starting_grid?session_key=${meeting.qualifyId}`).then(r => r.json())) as GridPosition[];
+    const raceDrivers = await sessionDrivers(drivers, meeting.raceId);
+    const qualifyDrivers = await sessionDrivers(drivers, meeting.qualifyId);
 
-    const gridPositions = await positions.reduce(
-      async (accPromise, p) => {
-        const acc = await accPromise;
-        return [
-          ...acc,
-          {
-            driver: await resolveDriver(drivers, p),
-            grid: p.position,
-          },
-        ];
-      },
-      Promise.resolve([] as IDriverGridPosition[]),
-    );
+    const gridPositions: IDriverGridPosition[] = positions
+      .map(p => ({ driver: raceDrivers.find(d => d.activeNumber === p.driver_number)!, grid: p.position }))
+      .filter(p => p.driver);
 
     const qualifySessionResult = await cachedFetch(`https://api.openf1.org/v1/session_result?session_key=${meeting.qualifyId}`).then(r => r.json());
     const circuit = await resolveCircuit(meeting.name, meeting.location, circuits);
     const basisRace = mapper.basisRace(circuit, round++, seasonId);
     const raceResult = mapper.raceResult({
-      drivers,
+      drivers: raceDrivers,
       laps: raceLaps,
       gridPositions,
       race: basisRace,
       sessionResults: raceSessionResult,
     });
     const qualifyResult = mapper.qualifyResult({
-      drivers,
+      drivers: qualifyDrivers,
       race: basisRace,
       sessionResults: qualifySessionResult,
     });

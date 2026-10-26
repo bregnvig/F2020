@@ -1,7 +1,8 @@
 import { environment } from './environment/environment';
 import { buildDrivers } from './app/drivers-openf1';
 import { buildCircuits } from './app/circuits';
-import { buildNewSeason } from './app/season-ics';
+import { buildLastYear, buildNewSeason } from './app/season-ics';
+import { buildStandings } from './app/build-standings-openf1';
 import { initCache } from './app/cached-fetch';
 import { updateSeasonFromCalendar } from './app/update-season';
 import { assetPath } from './app/assets';
@@ -86,6 +87,15 @@ if (args.includes('--fix-driver-standings')) {
     console.error('Fixing driver results failed', error);
     process.exitCode = 1;
   });
+} else if (args.includes('--build-last-year')) {
+  // Rebuild last year at each circuit and the results of last year of each driver from OpenF1. Dry run unless --write is passed.
+  const write = args.includes('--write');
+  buildLastYear(seasonId, write)
+    .then(() => buildStandings(seasonId, seasonId - 1, write))
+    .catch(error => {
+      console.error('Building last year failed', error);
+      process.exitCode = 1;
+    });
 } else if (args.includes('--tracks')) {
   // Write the track outlines for the race map into the UI's assets. Run from the workspace root, as nx serve does.
   const uiAssets = join(process.cwd(), 'apps/ui/src/assets');

@@ -12,9 +12,19 @@ import { readCalendarRaces } from './calendar';
 import { assetPath } from './assets';
 import { cachedFetch } from './cached-fetch';
 
-export const buildLastYear = async (seasonId: number) => {
+/** The qualifying and race of last year at each circuit. A dry run only logs the races */
+export const buildLastYear = async (seasonId: number, write = true) => {
   const results: MeetingResult[] = await buildResults(seasonId - 1, seasonId - 1);
   console.log('Building last year', seasonId - 1, 'Number of races:', results.length);
+  if (!write) {
+    results.forEach(({ meeting, race }) =>
+      console.log(
+        meeting.name,
+        race.results.slice(0, 3).map(r => r.driver.driverId),
+      ),
+    );
+    return;
+  }
   const db = firebaseApp.database;
 
   const collection = `seasons/${seasonId}/lastYear`;
