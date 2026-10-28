@@ -48,7 +48,7 @@ const lighten = (hex: string, amount = 0.45) =>
                 [aria-label]="'Vis ' + (team.name || 'kørere uden hold')" />
             </div>
             @for (driver of team.drivers; track driver.id) {
-              <mat-list-option [value]="driver" [selected]="driver.shown">
+              <mat-list-option [value]="driver.id" [selected]="driver.shown">
                 <sha-driver-headshot matListItemAvatar [driver]="driver.driver" />
                 <span matListItemTitle class="flex items-center gap-2">
                   <span class="inline-block size-3 rounded-sm" [style.background]="driver.color"></span>
@@ -119,8 +119,9 @@ export class StandingGraph {
     this.#store.loadStandings();
   }
 
+  /** The value is the id, as Material deselects an option when its value changes, and the drivers are built again on every change */
   protected toggle({ options: [option] }: MatSelectionListChange) {
-    this.showDrivers([option.value], option.selected);
+    this.showDrivers([{ id: option.value }], option.selected);
   }
 
   protected showDrivers(drivers: { id: string }[], show: boolean) {
