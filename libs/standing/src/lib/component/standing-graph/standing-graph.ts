@@ -6,9 +6,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerStore, SeasonStore, StandingService } from '@f2020/api';
-import { DriverHeadshotComponent, LoadingComponent, TeamLogoComponent } from '@f2020/shared';
+import { DriverHeadshotComponent, LoadingComponent, SeasonChart, SeasonLine, TeamLogoComponent } from '@f2020/shared';
 import { StandingStore } from '../../+state/standing.store';
-import { SeasonChart, SeasonLine } from '../season-chart/season-chart';
+import { injectRaceNames } from '../race-names';
 
 /** The color mixed a part of the way to white, for the second driver of a team */
 const lighten = (hex: string, amount = 0.45) =>
@@ -31,7 +31,7 @@ const lighten = (hex: string, amount = 0.45) =>
           <mat-button-toggle value="qualify">Kvalifikation</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
-      <f2020-season-chart class="h-[60vh] px-2" [lines]="lines()" />
+      <sha-season-chart class="h-[60vh] px-2" [lines]="lines()" />
       <div class="max-w-3xl mx-auto pb-20">
         <mat-selection-list (selectionChange)="toggle($event)">
           @for (team of teams(); track team.name) {
@@ -78,6 +78,7 @@ export class StandingGraph {
   #service = inject(StandingService);
   #player = inject(PlayerStore);
   #season = inject(SeasonStore);
+  #named = injectRaceNames();
 
   protected readonly session = signal<'races' | 'qualify'>('races');
   protected readonly seasonId = computed(() => this.#season.season().id);
@@ -112,7 +113,7 @@ export class StandingGraph {
   protected readonly lines = computed<SeasonLine[]>(() =>
     this.drivers()
       .filter(d => d.shown)
-      .map(d => ({ name: d.driver.name, color: d.color, races: this.results.value()?.find(r => r.driverId === d.id)?.[this.session()] ?? [] })),
+      .map(d => ({ name: d.driver.name, color: d.color, races: this.#named(this.results.value()?.find(r => r.driverId === d.id)?.[this.session()]) })),
   );
 
   constructor() {
