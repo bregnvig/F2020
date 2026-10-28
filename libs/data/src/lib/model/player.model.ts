@@ -37,6 +37,8 @@ export interface Player {
   hiddenLandingCards?: LandingCard[];
   /** Drivers hidden in the graph of the standings, by driver id in lower case. All are shown when missing */
   hiddenGraphDrivers?: string[];
+  /** Players hidden in the WBC graph, by uid. All are shown when missing */
+  hiddenWBCPlayers?: string[];
   balance?: number;
   almostTimeReminder?: DateTime;
 }

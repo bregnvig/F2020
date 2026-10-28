@@ -1,25 +1,23 @@
-<div class="fit">
-  <ngx-charts-line-chart
-    [legend]="false"
-    [activeEntries]="activeEntries()"
-    [showXAxisLabel]="false"
-    [showYAxisLabel]="false"
-    [xAxis]="true"
-    [yAxis]="false"
-    xAxisLabel="Løb"
-    yAxisLabel="Position"
-    [tooltipDisabled]="true"
-    [autoScale]="false"
-    [results]="data()" />
-</div>
-<div>
-  <mat-selection-list>
-    @for (entry of playerEntries(); track entry) {
-      <mat-list-option (click)="toggle(entry.player)" [selected]="isSelected(entry)">
-        <img matListItemAvatar height="40" width="40" [ngSrc]="entry.player.photoURL" />
-        <h3 matListItemLine class="selected">{{ entry.player.displayName }}</h3>
-        <p matListItemLine>{{ entry.points }} point</p>
+<mat-toolbar color="primary">
+  <span>WBC</span>
+</mat-toolbar>
+<sha-season-chart class="h-[60vh] px-2 pt-4" [lines]="lines()" [places]="players().length" />
+<div class="max-w-3xl mx-auto pb-20">
+  <mat-selection-list (selectionChange)="toggle($event)">
+    @for (entry of players(); track entry.player.uid) {
+      <mat-list-option [value]="entry.player.uid" [selected]="entry.shown">
+        <img matListItemAvatar height="40" width="40" [ngSrc]="entry.player.photoURL" alt="" />
+        <span matListItemTitle class="flex items-center gap-2">
+          <span class="inline-block size-3 rounded-sm" [style.background]="entry.color"></span>
+          {{ entry.player.displayName }}
+        </span>
+        <span matListItemLine>{{ entry.points }} point</span>
       </mat-list-option>
     }
   </mat-selection-list>
 </div>
+@if (anyShown()) {
+  <button mat-fab extended (click)="showAll(false)">Fravælg alle</button>
+} @else {
+  <button mat-fab extended (click)="showAll(true)">Vælg alle</button>
+}

@@ -1,56 +1,48 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, Signal } from '@angular/core';
-import { SeasonStore } from '@f2020/api';
-import { Player } from '@f2020/data';
-import { WBCGraph, WBCGraphPlayerEntry } from '../../model/wbc-graph.model';
-import { WBCGraphEntry } from './../../model/wbc-graph.model';
 import { NgOptimizedImage } from '@angular/common';
-import { MatListModule } from '@angular/material/list';
-import { LineChartModule } from '@swimlane/ngx-charts';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { PlayerStore, SeasonStore } from '@f2020/api';
+import { SeasonChart, SeasonLine } from '@f2020/shared';
+import { wbcGraph } from '../../model/wbc-graph.model';
 
-interface GraphEntry {
-  name: string;
-  series: WBCGraphPlayerEntry[];
-}
+const palette = ['#e91e63', '#03a9f4', '#ffeb3b', '#4caf50', '#ff9800', '#ba68c8', '#00e5ff', '#f44336', '#cddc39', '#a1887f', '#90a4ae', '#ff80ab'];
 
 @Component({
   selector: 'f2020-wbc-graph',
   templateUrl: './wbc-graph.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./wbc-graph.component.scss'],
-  imports: [LineChartModule, MatListModule, NgOptimizedImage],
+  imports: [MatToolbarModule, MatListModule, MatButtonModule, NgOptimizedImage, SeasonChart],
 })
 export class WbcGraphComponent {
-  data: Signal<GraphEntry[]>;
-  activeEntries: Signal<GraphEntry[]>;
-  playerEntries: Signal<WBCGraphEntry[]>;
+  #season = inject(SeasonStore);
+  #player = inject(PlayerStore);
 
-  #selected = signal<string[]>(JSON.parse(localStorage.getItem('selectedWBCPlayers')) ?? []);
+  #hidden = computed(() => this.#player.player()?.hiddenWBCPlayers ?? []);
 
-  constructor() {
-    const store = inject(SeasonStore);
-    const graph = computed(() => new WBCGraph(store.season().wbc));
-    this.data = computed(() =>
-      graph()?.entries.map(e => ({
-        name: e.player.displayName,
-        series: e.entries,
-      })),
-    );
-    this.activeEntries = computed(() => this.data()?.filter(e => this.#selected().includes(e.name)));
-    effect(() => localStorage.setItem('selectedWBCPlayers', JSON.stringify(this.#selected())));
-    this.playerEntries = computed(() => [...(graph()?.entries ?? [])].sort((a, b) => b.points - a.points));
+  /** The players with the most WBC points first, each with a color of their own */
+  protected readonly players = computed(() =>
+    wbcGraph(this.#season.season().wbc)
+      .sort((a, b) => b.points - a.points || a.player.displayName.localeCompare(b.player.displayName))
+      .map((entry, index) => ({ ...entry, color: palette[index % palette.length], shown: !this.#hidden().includes(entry.player.uid) })),
+  );
+
+  protected readonly anyShown = computed(() => this.players().some(p => p.shown));
+
+  protected readonly lines = computed<SeasonLine[]>(() =>
+    this.players()
+      .filter(p => p.shown)
+      .map(({ player, color, races }) => ({ name: player.displayName, color, races })),
+  );
+
+  /** The value is the uid, as Material deselects an option when its value changes, and the players are built again on every change */
+  protected toggle({ options: [option] }: MatSelectionListChange) {
+    const hidden = this.#hidden().filter(uid => uid !== option.value);
+    this.#player.updatePlayer({ hiddenWBCPlayers: option.selected ? hidden : [...hidden, option.value] });
   }
 
-  toggle(player: Player) {
-    this.#selected.set(
-      this.#selected().some(name => name === player.displayName) ? this.#selected().filter(name => name !== player.displayName) : [...this.#selected(), player.displayName],
-    );
+  protected showAll(show: boolean) {
+    this.#player.updatePlayer({ hiddenWBCPlayers: show ? [] : this.players().map(p => p.player.uid) });
   }
-
-  isSelected(entry: WBCGraphEntry): boolean {
-    return (this.activeEntries() || []).some(e => e.name === entry.player.displayName);
-  }
-
-  // ngxBug() {
-  //   this.activeEntries = [...this.activeEntries];
-  // }
 }
