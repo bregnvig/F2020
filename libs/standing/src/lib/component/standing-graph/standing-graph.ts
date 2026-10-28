@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerStore, SeasonStore, StandingService } from '@f2020/api';
 import { DriverHeadshotComponent, LoadingComponent, SeasonChart, SeasonLine, TeamLogoComponent } from '@f2020/shared';
 import { StandingStore } from '../../+state/standing.store';
+import { injectRaceNames } from '../race-names';
 
 /** The color mixed a part of the way to white, for the second driver of a team */
 const lighten = (hex: string, amount = 0.45) =>
@@ -77,6 +78,7 @@ export class StandingGraph {
   #service = inject(StandingService);
   #player = inject(PlayerStore);
   #season = inject(SeasonStore);
+  #named = injectRaceNames();
 
   protected readonly session = signal<'races' | 'qualify'>('races');
   protected readonly seasonId = computed(() => this.#season.season().id);
@@ -111,7 +113,7 @@ export class StandingGraph {
   protected readonly lines = computed<SeasonLine[]>(() =>
     this.drivers()
       .filter(d => d.shown)
-      .map(d => ({ name: d.driver.name, color: d.color, races: this.results.value()?.find(r => r.driverId === d.id)?.[this.session()] ?? [] })),
+      .map(d => ({ name: d.driver.name, color: d.color, races: this.#named(this.results.value()?.find(r => r.driverId === d.id)?.[this.session()]) })),
   );
 
   constructor() {

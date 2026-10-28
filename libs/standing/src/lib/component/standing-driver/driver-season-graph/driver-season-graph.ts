@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { IDriverResult } from '@f2020/data';
 import { MatCardModule } from '@angular/material/card';
+import { injectRaceNames } from '../../race-names';
 import { SeasonChart, SeasonLine } from '@f2020/shared';
 
 @Component({
@@ -26,8 +27,10 @@ import { SeasonChart, SeasonLine } from '@f2020/shared';
 export class DriverSeasonGraph {
   readonly driverResult = input.required<IDriverResult>();
 
+  #named = injectRaceNames();
+
   protected readonly lines = computed<SeasonLine[]>(() => [
-    { name: 'Kvalifikation', color: '#90a4ae', races: this.driverResult().qualify },
-    { name: 'Resultat', color: '#e91e63', races: this.driverResult().races },
+    { name: 'Kvalifikation', color: '#90a4ae', races: this.#named(this.driverResult().qualify) },
+    { name: 'Resultat', color: '#e91e63', races: this.#named(this.driverResult().races) },
   ]);
 }
