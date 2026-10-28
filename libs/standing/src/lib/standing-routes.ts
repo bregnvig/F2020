@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { StandingDriverComponent } from './component/standing-driver/standing-driver.component';
+import { StandingGraph } from './component/standing-graph/standing-graph';
 import { StandingLastYearComponent } from './component/standing-last-year/standing-last-year.component';
 import { StandingListComponent } from './component/standing-list/standing-list.component';
 
@@ -11,6 +12,10 @@ export const StandingRoutes: Routes = [
   {
     path: 'last-year',
     component: StandingLastYearComponent,
+  },
+  {
+    path: 'graph',
+    component: StandingGraph,
   },
   {
     path: ':driverId',

@@ -35,6 +35,8 @@ export interface Player {
   receiveBettingStarted?: string[];
   /** Cards hidden on the landing page. All are shown when missing, so new cards are shown by default */
   hiddenLandingCards?: LandingCard[];
+  /** Drivers hidden in the graph of the standings, by driver id in lower case. All are shown when missing */
+  hiddenGraphDrivers?: string[];
   balance?: number;
   almostTimeReminder?: DateTime;
 }

@@ -2,40 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { IDriverResult } from '@f2020/data';
 import { MatCardModule } from '@angular/material/card';
 import { LineChartModule } from '@swimlane/ngx-charts';
-
-interface Race {
-  round: number;
-  name: string;
-  results: { position?: number }[];
-}
-
-interface Point {
-  name: number;
-  value: number;
-}
-
-/** The name of the race without "Grand Prix", so it fits on the axis */
-const shortName = (race: Race) => race.name.replace(/ Grand Prix$/, '');
-
-/** The points split where a race has no place, as ngx-charts draws a line across the gap */
-const segments = (points: Point[]): Point[][] =>
-  points.reduce<Point[][]>((acc, point, index) => {
-    if (index && point.name - points[index - 1].name === 1) {
-      acc.at(-1)!.push(point);
-    } else {
-      acc.push([point]);
-    }
-    return acc;
-  }, []);
-
-/** A race with no place on either side is a single point, which ngx-charts does not draw, so it is drawn as a short dash */
-const dash = (segment: Point[]): Point[] =>
-  segment.length === 1
-    ? [
-        { name: segment[0].name - 0.15, value: segment[0].value },
-        { name: segment[0].name + 0.15, value: segment[0].value },
-      ]
-    : segment;
+import { dash, lastPlace, place, placeTicks, points, seasonRaces, segments } from '../../season-graph';
 
 const lines = [
   { label: 'Kvalifikation', color: '#90a4ae' },
@@ -89,21 +56,16 @@ export class DriverSeasonGraph {
   readonly driverResult = input.required<IDriverResult>();
 
   protected readonly lines = lines;
+  protected readonly place = place;
 
-  /** Every race of the season in order. The x of a race is its index, so the races are evenly spaced and in order, also when the driver
-   * has no place in one of them */
-  protected readonly races = computed(() =>
-    [...new Map([...this.driverResult().qualify, ...this.driverResult().races].map(race => [race.round, shortName(race)])).entries()]
-      .sort(([a], [b]) => a - b)
-      .map(([round, name]) => ({ round, name })),
-  );
+  protected readonly races = computed(() => seasonRaces([...this.driverResult().qualify, ...this.driverResult().races]));
 
   protected readonly xTicks = computed(() => this.races().map((_, index) => index));
 
   /** A series for each part of a line, named e.g. Resultat#2. They are told apart by the name, and get the color of the line */
   protected readonly data = computed(() =>
     [this.driverResult().qualify, this.driverResult().races].flatMap((races, line) =>
-      segments(this.#points(races)).map((segment, index) => ({ name: `${lines[line].label}#${index}`, series: dash(segment) })),
+      segments(points(races, this.races())).map((segment, index) => ({ name: `${lines[line].label}#${index}`, series: dash(segment) })),
     ),
   );
 
@@ -112,24 +74,11 @@ export class DriverSeasonGraph {
   /** The x of a dash is a little off the race */
   protected readonly raceName = (x: number) => this.races()[Math.round(x)]?.name ?? '';
 
-  /** The lowest place of the season, and at least 20 so the graph does not jump between drivers */
-  protected readonly last = computed(() => Math.max(20, ...this.data().flatMap(d => d.series.map(p => -p.value))));
+  protected readonly last = computed(() => lastPlace(this.data()));
 
-  protected readonly ticks = computed(() => [1, 5, 10, 15, 20, this.last()].filter((tick, index, ticks) => ticks.indexOf(tick) === index).map(tick => -tick));
-
-  /** The places are negative, so 1 is at the top of the graph */
-  #points(races: Race[] = []): Point[] {
-    return races
-      .filter(race => race.results[0]?.position)
-      .map(race => ({ name: this.races().findIndex(r => r.round === race.round), value: -race.results[0].position! }))
-      .sort((a, b) => a.name - b.name);
-  }
+  protected readonly ticks = computed(() => placeTicks(this.last()));
 
   protected label(series: string) {
     return series.split('#')[0];
-  }
-
-  protected place(value: number) {
-    return `${Math.abs(value)}`;
   }
 }
