@@ -32,32 +32,34 @@ const lighten = (hex: string, amount = 0.45) =>
         </mat-button-toggle-group>
       </div>
       <f2020-season-chart class="h-[60vh] px-2" [lines]="lines()" />
-      <mat-selection-list class="max-w-3xl mx-auto pb-20" (selectionChange)="toggle($event)">
-        @for (team of teams(); track team.name) {
-          <div mat-subheader class="flex items-center gap-2">
-            @if (team.name) {
-              <sha-team-logo [seasonId]="seasonId()" [name]="team.name" [size]="24" />
+      <div class="max-w-3xl mx-auto pb-20">
+        <mat-selection-list (selectionChange)="toggle($event)">
+          @for (team of teams(); track team.name) {
+            <div mat-subheader class="flex items-center gap-2">
+              @if (team.name) {
+                <sha-team-logo [seasonId]="seasonId()" [name]="team.name" [size]="24" />
+              }
+              {{ team.name || 'Uden hold' }}
+              <mat-checkbox
+                class="ml-auto -mr-2"
+                [checked]="team.shown === team.drivers.length"
+                [indeterminate]="team.shown > 0 && team.shown < team.drivers.length"
+                (change)="showDrivers(team.drivers, $event.checked)"
+                [aria-label]="'Vis ' + (team.name || 'kørere uden hold')" />
+            </div>
+            @for (driver of team.drivers; track driver.id) {
+              <mat-list-option [value]="driver" [selected]="driver.shown">
+                <sha-driver-headshot matListItemAvatar [driver]="driver.driver" />
+                <span matListItemTitle class="flex items-center gap-2">
+                  <span class="inline-block size-3 rounded-sm" [style.background]="driver.color"></span>
+                  {{ driver.driver.name }}
+                </span>
+                <span matListItemLine>{{ driver.points }} point</span>
+              </mat-list-option>
             }
-            {{ team.name || 'Uden hold' }}
-            <mat-checkbox
-              class="ml-auto -mr-2"
-              [checked]="team.shown === team.drivers.length"
-              [indeterminate]="team.shown > 0 && team.shown < team.drivers.length"
-              (change)="showDrivers(team.drivers, $event.checked)"
-              [aria-label]="'Vis ' + (team.name || 'kørere uden hold')" />
-          </div>
-          @for (driver of team.drivers; track driver.id) {
-            <mat-list-option [value]="driver" [selected]="driver.shown">
-              <sha-driver-headshot matListItemAvatar [driver]="driver.driver" />
-              <span matListItemTitle class="flex items-center gap-2">
-                <span class="inline-block size-3 rounded-sm" [style.background]="driver.color"></span>
-                {{ driver.driver.name }}
-              </span>
-              <span matListItemLine>{{ driver.points }} point</span>
-            </mat-list-option>
           }
-        }
-      </mat-selection-list>
+        </mat-selection-list>
+      </div>
       @if (anyShown()) {
         <button mat-fab extended (click)="showDrivers(drivers(), false)">Fravælg alle</button>
       } @else {
