@@ -80,7 +80,9 @@ export class PlayerApiService {
         tokens: arrayUnion(...partialPlayer.tokens),
       };
     }
+    // Only the first player, as the write makes player$ emit again, which would write again
     return this.player$.pipe(
+      first(),
       switchMap(player => updateDoc(doc(this.#afs, `${PlayerApiService.playersURL}/${player.uid}`), payload).then(() => player)),
       switchMap(player => docData(doc(this.#afs, `${PlayerApiService.playersURL}/${player.uid}`))),
       first(),
