@@ -10,3 +10,4 @@ export * from './team-logo/team-logo';
 export * from './driver-headshot/driver-headshot';
 export * from './championship-list/championship-list';
 export * from './animated-for/animated-for';
+export * from './season-chart/season-chart';

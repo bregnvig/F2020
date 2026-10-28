@@ -4,7 +4,8 @@ import { LineChartModule } from '@swimlane/ngx-charts';
 interface Race {
   round: number;
   name: string;
-  results: { position?: number }[];
+  /** The first is the place, and points are shown in the tooltip when there */
+  results: { position?: number; points?: number }[];
 }
 
 export interface SeasonLine {
@@ -40,36 +41,39 @@ const dash = (segment: Point[]): Point[] =>
 
 /** The places of each line through the season, with 1 at the top. It fills its host */
 @Component({
-  selector: 'f2020-season-chart',
+  selector: 'sha-season-chart',
   template: `
-    <ngx-charts-line-chart
-      [results]="data()"
-      [customColors]="colors()"
-      [legend]="false"
-      [xAxis]="true"
-      [yAxis]="true"
-      [autoScale]="false"
-      [xScaleMin]="0"
-      [xScaleMax]="races().length - 1"
-      [xAxisTicks]="xTicks()"
-      [xAxisTickFormatting]="shortRaceName"
-      [yScaleMin]="-last()"
-      [yScaleMax]="-1"
-      [yAxisTicks]="yTicks()"
-      [yAxisTickFormatting]="place">
-      <ng-template #tooltipTemplate let-model="model">{{ lineName(model.series) }}, {{ raceName(model.name) }}: {{ place(model.value) }}</ng-template>
-      <ng-template #seriesTooltipTemplate let-model="model">
-        <div class="py-1 text-left">
-          <div class="pb-1 font-medium">{{ raceName(model[0]?.name) }}</div>
-          @for (item of byPlace(model); track item.series) {
-            <div class="flex items-center gap-2">
-              <span class="inline-block size-3 rounded-sm" [style.background]="item.color"></span>
-              {{ place(item.value) }}. {{ lineName(item.series) }}
-            </div>
-          }
-        </div>
-      </ng-template>
-    </ngx-charts-line-chart>
+    <!-- ngx-charts takes the size of its parent, padding included, so padding on the host would make it too big -->
+    <div class="size-full">
+      <ngx-charts-line-chart
+        [results]="data()"
+        [customColors]="colors()"
+        [legend]="false"
+        [xAxis]="true"
+        [yAxis]="true"
+        [autoScale]="false"
+        [xScaleMin]="0"
+        [xScaleMax]="races().length - 1"
+        [xAxisTicks]="xTicks()"
+        [xAxisTickFormatting]="shortRaceName"
+        [yScaleMin]="-last()"
+        [yScaleMax]="-1"
+        [yAxisTicks]="yTicks()"
+        [yAxisTickFormatting]="place">
+        <ng-template #tooltipTemplate let-model="model">{{ lineName(model.series) }}, {{ raceName(model.name) }}: {{ place(model.value) }}{{ points(model) }}</ng-template>
+        <ng-template #seriesTooltipTemplate let-model="model">
+          <div class="py-1 text-left">
+            <div class="pb-1 font-medium">{{ raceName(model[0]?.name) }}</div>
+            @for (item of byPlace(model); track item.series) {
+              <div class="flex items-center gap-2">
+                <span class="inline-block size-3 rounded-sm" [style.background]="item.color"></span>
+                {{ place(item.value) }}. {{ lineName(item.series) }}{{ points(item) }}
+              </div>
+            }
+          </div>
+        </ng-template>
+      </ngx-charts-line-chart>
+    </div>
   `,
   styles: `
     :host {
@@ -84,6 +88,8 @@ const dash = (segment: Point[]): Point[] =>
 })
 export class SeasonChart {
   readonly lines = input.required<SeasonLine[]>();
+  /** The lowest place on the axis at least, so it does not jump when the lines change */
+  readonly places = input(20);
 
   /** Every race in order. The x of a race is its index, so the races are evenly spaced, also when a line has no place in one of them */
   protected readonly races = computed(() =>
@@ -107,10 +113,9 @@ export class SeasonChart {
 
   protected readonly colors = computed(() => this.data().map(({ name }) => ({ name, value: this.#line(name).color })));
 
-  /** The lowest place, and at least 20 so the axis does not jump */
-  protected readonly last = computed(() => Math.max(20, ...this.data().flatMap(d => d.series.map(p => -p.value))));
+  protected readonly last = computed(() => Math.max(this.places(), ...this.data().flatMap(d => d.series.map(p => -p.value))));
 
-  protected readonly yTicks = computed(() => [...new Set([1, 5, 10, 15, 20, this.last()])].map(tick => -tick));
+  protected readonly yTicks = computed(() => [...new Set([1, 5, 10, 15, 20, this.last()])].filter(tick => tick <= this.last()).map(tick => -tick));
 
   /** The x of a dash is a little off the race */
   protected readonly raceName = (x: number) => this.races()[Math.round(x)]?.name ?? '';
@@ -121,8 +126,15 @@ export class SeasonChart {
   protected readonly place = (value: number) => `${Math.abs(value)}`;
 
   /** The lines at a race, best place first */
-  protected byPlace(items: { series: string; value: number; color: string }[]) {
+  protected byPlace(items: { series: string; name: number; value: number; color: string }[]) {
     return items.toSorted((a, b) => b.value - a.value);
+  }
+
+  /** The points of a line at a race, when the line has them */
+  protected points({ series, name }: { series: string; name: number }) {
+    const round = this.races()[Math.round(name)]?.round;
+    const points = this.#line(series).races.find(race => race.round === round)?.results[0]?.points;
+    return points === undefined ? '' : `, ${points} point`;
   }
 
   protected lineName(series: string) {
