@@ -52,12 +52,23 @@ const dash = (segment: Point[]): Point[] =>
       [xScaleMin]="0"
       [xScaleMax]="races().length - 1"
       [xAxisTicks]="xTicks()"
-      [xAxisTickFormatting]="raceName"
+      [xAxisTickFormatting]="shortRaceName"
       [yScaleMin]="-last()"
       [yScaleMax]="-1"
       [yAxisTicks]="yTicks()"
       [yAxisTickFormatting]="place">
       <ng-template #tooltipTemplate let-model="model">{{ lineName(model.series) }}, {{ raceName(model.name) }}: {{ place(model.value) }}</ng-template>
+      <ng-template #seriesTooltipTemplate let-model="model">
+        <div class="py-1 text-left">
+          <div class="pb-1 font-medium">{{ raceName(model[0]?.name) }}</div>
+          @for (item of byPlace(model); track item.series) {
+            <div class="flex items-center gap-2">
+              <span class="inline-block size-3 rounded-sm" [style.background]="item.color"></span>
+              {{ place(item.value) }}. {{ lineName(item.series) }}
+            </div>
+          }
+        </div>
+      </ng-template>
     </ngx-charts-line-chart>
   `,
   styles: `
@@ -74,10 +85,9 @@ const dash = (segment: Point[]): Point[] =>
 export class SeasonChart {
   readonly lines = input.required<SeasonLine[]>();
 
-  /** Every race in order, without "Grand Prix" so the names fit. The x of a race is its index, so the races are evenly spaced,
-   * also when a line has no place in one of them */
+  /** Every race in order. The x of a race is its index, so the races are evenly spaced, also when a line has no place in one of them */
   protected readonly races = computed(() =>
-    [...new Map(this.lines().flatMap(line => line.races.map(race => [race.round, race.name.replace(/ Grand Prix$/, '')] as const))).entries()]
+    [...new Map(this.lines().flatMap(line => line.races.map(race => [race.round, race.name] as const))).entries()]
       .sort(([a], [b]) => a - b)
       .map(([round, name]) => ({ round, name })),
   );
@@ -105,7 +115,15 @@ export class SeasonChart {
   /** The x of a dash is a little off the race */
   protected readonly raceName = (x: number) => this.races()[Math.round(x)]?.name ?? '';
 
+  /** Without "Grand Prix", so the names fit on the axis */
+  protected readonly shortRaceName = (x: number) => this.raceName(x).replace(/ Grand Prix$/, '');
+
   protected readonly place = (value: number) => `${Math.abs(value)}`;
+
+  /** The lines at a race, best place first */
+  protected byPlace(items: { series: string; value: number; color: string }[]) {
+    return items.toSorted((a, b) => b.value - a.value);
+  }
 
   protected lineName(series: string) {
     return this.#line(series).name;
