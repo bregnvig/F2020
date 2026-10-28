@@ -1,21 +1,7 @@
 import { Bid, ISeason, Player, WBC, WBCResult } from '@f2020/data';
 import { log, warn } from 'firebase-functions/logger';
 import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import {
-  aiGeneratedRoast,
-  appLink,
-  collectionPaths,
-  escapeHtml,
-  openai,
-  OpenAIModel,
-  raceLink,
-  resultMail,
-  Roast,
-  roastSections,
-  sendMail,
-  sendNotification,
-  standingsTable,
-} from '../../lib';
+import { appLink, collectionPaths, escapeHtml, openai, OpenAIModel, raceLink, resultMail, sendMail, sendNotification, standingsTable } from '../../lib';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const wbcPointsToPosition = {
@@ -118,18 +104,85 @@ const aiGeneratedNotificationMessage = async (playerName: string, raceName: stri
   return JSON.parse(response.choices[0].message.content);
 };
 
-const mailBody = (player: Player, wbcPoints: number, result: WBCResult, seasonId: string, bids: Bid[], roast?: Roast) => {
+type PersonalMessage = { subject: string; text: string };
+
+/**
+ * What a player outside the top three is told about: their own place, and the player just in front and just behind.
+ * Players with the same points share the place, and the last are those with the fewest points
+ */
+export const personalSituation = (bids: Bid[], uid: string, wbcPoints: number) => {
+  const index = bids.findIndex(bid => bid.player.uid === uid);
+  if (index < 0) {
+    return undefined;
+  }
+  const { player, points } = bids[index];
+  const front = bids[index - 1];
+  const behind = bids[index + 1];
+  const last = points === bids.at(-1)!.points;
+  const neighbour = (where: string, bid: Bid) => `${where}: ${bid.player.displayName} med ${bid.points} point.`;
+  return {
+    last,
+    content: [
+      `${player.displayName} kom på ${bids.findIndex(bid => bid.points === points) + 1}. pladsen med ${points} point og fik ${wbcPoints} WBC point.`,
+      front && neighbour('Lige foran', front),
+      behind && neighbour('Lige bagved', behind),
+    ]
+      .filter(Boolean)
+      .join('\n'),
+  };
+};
+
+/** A mail of its own to a player outside the top three. The mail is sent without it when OpenAI fails */
+const aiGeneratedPersonalMessage = async (raceName: string, situation: { last: boolean; content: string }): Promise<PersonalMessage | undefined> => {
+  const about = situation.last
+    ? `Deltageren kom sidst. Giv et drillende spark, men hold det rimeligt og venligt, så det kan tåles. Slut med lidt opmuntring til næste løb.`
+    : `Deltageren kom ikke i top tre. Skriv om kampen mod den der lå lige foran og den der lå lige bagved: hvor tæt det var,
+       hvem der skal hentes, og hvem der ånder deltageren i nakken. Brug tør, sarkastisk dansk humor, og vær gerne lidt fræk og
+       uforskammet, som når gode venner sviner hinanden til.`;
+  try {
+    const response = await openai().chat.completions.create({
+      model: OpenAIModel,
+      messages: [
+        {
+          role: 'system',
+          content: `Du skriver en personlig mail til en deltager i et F1 væddemål mellem venner, om det endelige resultat af løbet i ${raceName}.
+            ${about} Hold det til deres evner som F1-tippere. Ingen bandeord. Skriv på dansk, to til fire sætninger, direkte til deltageren.`,
+        },
+        { role: 'user', content: situation.content },
+      ],
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'personal_result',
+          strict: true,
+          schema: {
+            type: 'object',
+            properties: {
+              subject: { description: 'Emne til mailen, højst 60 tegn', type: 'string' },
+              text: { description: 'Beskeden. Ren tekst uden HTML og uden hilsen til sidst', type: 'string' },
+            },
+            required: ['subject', 'text'],
+            additionalProperties: false,
+          },
+        },
+      },
+    });
+    return JSON.parse(response.choices[0].message.content!) as PersonalMessage;
+  } catch (error) {
+    warn('Could not generate the personal result of', raceName, error);
+    return undefined;
+  }
+};
+
+const mailBody = (player: Player, wbcPoints: number, result: WBCResult, seasonId: string, bids: Bid[], message?: PersonalMessage) => {
   const wbcPointsOf = (bid: Partial<Bid>) => result.players.find(p => p.player.uid === bid.player?.uid)?.points ?? 0;
   return resultMail(
     player,
     `${escapeHtml(result.raceName)} er nu afgjort - du har fået ${wbcPoints} WBC point`,
-    standingsTable(player, bids, bid => `${wbcPointsOf(bid)} WBC`) + roastSections(roast, '🏆 Vinderen', '🐌 Bundproppen'),
+    (message ? `<p>${escapeHtml(message.text)}</p>` : '') + standingsTable(player, bids, bid => `${wbcPointsOf(bid)} WBC`),
     raceLink(seasonId, result.round),
   );
 };
-
-const describe = (result: WBCResult) => (bids: Partial<Bid>[]) =>
-  bids.map(bid => `${bid.player?.displayName} med ${bid.points} point og ${result.players.find(p => p.player.uid === bid.player?.uid)?.points ?? 0} WBC point`).join('\n');
 
 const notificationBody = (raceName: string, wbcPoints: number) => `${raceName} er nu afgjort - du har fået ${wbcPoints} WBC points`;
 
@@ -208,8 +261,6 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
       .then(snapshots => snapshots.map(s => s.data() as Bid))
       .then(raceResults => raceResults.sort((a, b) => b.points - a.points));
     log('Race', result.raceName, 'Is now completed - lets send notifications');
-    // The players outside the top three share one roast
-    const roast = result.players.length > 3 ? await aiGeneratedRoast(`det endelige resultat af løbet i ${result.raceName}`, raceResults, describe(result)) : undefined;
     const notifications = await aiGeneratedNotifications(
       result.raceName,
       result.players.map((element, index) => ({ ...element, position: index + 1 })).filter(({ player }, index) => index > 2 && player.tokens?.length),
@@ -217,11 +268,13 @@ export const resultNotificationTrigger = onDocumentUpdated('seasons/{seasonId}',
     return Promise.all(
       result.players.map(async (element, index) => {
         const sendWBCResult = async (place: string, badge?: string) => {
+          const situation = index > 2 ? personalSituation(raceResults, element.player.uid, element.points) : undefined;
+          const message = situation && (await aiGeneratedPersonalMessage(result.raceName, situation));
           const mail =
             index > 2
               ? {
-                  subject: place,
-                  body: mailBody(element.player, element.points, result, season.id, raceResults, roast),
+                  subject: message?.subject ?? place,
+                  body: mailBody(element.player, element.points, result, season.id, raceResults, message),
                 }
               : await aiGeneratedMailMessage(element.player.displayName, result.raceName, element.points, raceResults);
           const notification =
