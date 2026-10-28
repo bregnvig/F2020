@@ -41,6 +41,9 @@ jobs:
         with:
           main-branch-name: develop
 
-      # The firebase project only copies the secret .env of the functions, which a pull request does not have
-      - name: Lint, test and build what changed
-        run: npx nx affected -t lint test build --exclude=firebase
+      - name: Lint and test what changed
+        run: npx nx affected -t lint test
+
+      # Firebase packaging and the local data builder require secret environment files unavailable to pull requests
+      - name: Build what changed
+        run: npx nx affected -t build --exclude=firebase,builder
