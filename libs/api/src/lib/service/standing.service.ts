@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { doc, docData, Firestore } from '@angular/fire/firestore';
+import { collection, collectionData, doc, docData, Firestore } from '@angular/fire/firestore';
 import { converter } from '../converter';
 import { IDriverResult, IDriverStanding } from '@f2020/data';
 import { Observable } from 'rxjs';
@@ -19,5 +19,12 @@ export class StandingService {
     return docData(doc(this.#afs, `seasons/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`).withConverter(converter.timestamp<IDriverResult>())).pipe(
       map(result => result as IDriverResult),
     );
+  }
+
+  /** The results of every driver in a season, with the id of the driver */
+  getDriverResults(seasonId: string | number, resultSeasonId: string | number): Observable<(IDriverResult & { driverId: string })[]> {
+    return collectionData(collection(this.#afs, `seasons/${seasonId}/standings/drivers/${resultSeasonId}`).withConverter(converter.timestamp<IDriverResult & { driverId: string }>()), {
+      idField: 'driverId',
+    }).pipe(map(results => results as (IDriverResult & { driverId: string })[]));
   }
 }
