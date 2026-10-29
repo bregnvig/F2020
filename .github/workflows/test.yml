@@ -23,18 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-
-      # The function tests start a Firestore emulator
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - run: npm ci
+      - uses: ./.github/actions/setup
 
       # Compares the pull request with develop
       - uses: nrwl/nx-set-shas@v5
