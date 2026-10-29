@@ -17,6 +17,7 @@ export const documentPaths = {
   standing: {
     allDriver: (seasonId: string | number) => `${seasonsURL}/${seasonId}/standings/all-drivers`,
     driver: (seasonId: string | number, resultSeasonId: string | number, driverId: string) => `${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`,
+    teams: (seasonId: string | number) => `${seasonsURL}/${seasonId}/standings/teams`,
   },
 };
 

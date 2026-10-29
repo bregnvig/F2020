@@ -12,7 +12,7 @@ import {
   ITeam,
   mapper,
 } from '@f2020/data';
-import { getFirestore } from 'firebase-admin/firestore';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { collectionPaths, documentPaths } from './paths';
 import { openF1Api } from './openf1.api';
 import { requiredValue } from '@f2020/tools';
@@ -41,9 +41,11 @@ export const setStandings = async (race: IRace) => {
   const season = await currentSeason();
   const token = requiredValue(await openF1Api.token(), 'Token')?.access_token;
   const weekendInfo = await getWeekendInfo(token, season.id, race);
-  await setDriverStatistics(weekendInfo)
-    .then(results => setDriverStandings(weekendInfo, race, results))
-    .then(() => setTeamsStanding(token, season.id, weekendInfo.raceSession, weekendInfo.sprintSession));
+  const results = await setDriverStatistics(weekendInfo);
+  const sprintWinner = await sprintRaceWinner(weekendInfo);
+  const winners = [results.find(r => r.position === 1)?.driver, sprintWinner].filter(driver => !!driver);
+  await setDriverStandings(weekendInfo, winners);
+  await setTeamsStanding(token, season.id, weekendInfo.raceSession, weekendInfo.sprintSession, { round: race.round, winners });
 };
 
 /**
@@ -72,18 +74,17 @@ export const setSprintStandings = async (race: IRace) => {
   await setTeamsStanding(token, season.id, sprintSession);
 };
 
-const setDriverStandings = async ({ token, seasonId, drivers, raceSession, sprintSession }: WeekendInfo, race: IRace, results: IDriverRaceResult[]) => {
+/** The winners are of the race and the sprint */
+const setDriverStandings = async ({ token, seasonId, drivers, raceSession, sprintSession }: WeekendInfo, winners: IDriver[]) => {
   const db = getFirestore();
   const allDrivers = await db
     .doc(documentPaths.standing.allDriver(seasonId))
     .get()
     .then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
-  const sprintWinner = await sprintRaceWinner(token, seasonId, race.circuitId, drivers);
-  const raceWinner = results.find(r => r.position === 1)?.driver.driverId;
   const championship = await driverStandings(token, raceSession, drivers, sprintSession);
   const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => {
     const previous = allDrivers.standing.find(s => s.driver.driverId === driver.driverId);
-    const wins = (previous?.wins ?? 0) + (driver.driverId === sprintWinner ? 1 : 0) + (driver.driverId === raceWinner ? 1 : 0);
+    const wins = (previous?.wins ?? 0) + winners.filter(winner => winner.driverId === driver.driverId).length;
     return {
       driver,
       ...points,
@@ -127,14 +128,13 @@ const setDriverStatistics = async (weekendInfo: WeekendInfo) => {
     .then(() => raceResult.results);
 };
 
-const sprintRaceWinner = async (token: string, seasonId: string, circuitId: number, drivers: IDriver[]): Promise<string | undefined> => {
-  const session = await findSession(token, seasonId, circuitId, 'Sprint');
-  if (!session) return undefined;
+const sprintRaceWinner = async ({ token, sprintSession, drivers }: WeekendInfo): Promise<IDriver | undefined> => {
+  if (!sprintSession) return undefined;
 
-  const results = await openF1Api.sessionResults(token, session.session_key);
+  const results = await openF1Api.sessionResults(token, sprintSession.session_key);
   const winner = results.find(r => r.position === 1);
 
-  return winner ? findDriverFn(drivers)(winner.driver_number)?.driverId : undefined;
+  return winner ? findDriverFn(drivers)(winner.driver_number) : undefined;
 };
 
 type DriverPoints = Omit<IDriverStanding, 'wins'>;
@@ -168,7 +168,11 @@ const driverStandings = async (token: string, session: Session, drivers: IDriver
     .map(({ driver, championship }) => ({ driver, ...championshipPoints(championship, sprint?.get(championship.driver_number)) }));
 };
 
-const setTeamsStanding = async (token: string, seasonId: string, session: Session, sprintSession?: Session) => {
+/**
+ * Updates the championship of the teams in standings/teams. After a race, `race` has its round and winners, which add to the wins of
+ * their teams and store the place of each team after the round. The sprint leaves it out, as the race does it for the weekend
+ */
+const setTeamsStanding = async (token: string, seasonId: string, session: Session, sprintSession?: Session, race?: { round: number; winners: IDriver[] }) => {
   const standings = await openF1Api.championTeamsPoints(token, session.session_key);
   const sprint =
     sprintSession && session.session_key !== sprintSession.session_key
@@ -180,22 +184,32 @@ const setTeamsStanding = async (token: string, seasonId: string, session: Sessio
     .collection(collectionPaths.teams(seasonId))
     .get()
     .then(({ docs }) => docs.map(doc => doc.data() as ITeam));
-  const nameToTeam = teams.reduce((acc, team) => {
-    acc.set(team.name, team);
-    return acc;
-  }, new Map<string, ITeam>());
-  await db.runTransaction(async transaction => {
-    standings.forEach(s => {
-      const team = nameToTeam.get(s.team_name);
-      if (!team) {
-        logger.warn(`${s.team_name} does not exist`);
-        return;
-      }
-      transaction.set(db.doc(documentPaths.team(seasonId, team.constructorId)), championshipPoints(s, sprint?.get(s.team_name)) as Partial<ITeam>, {
-        merge: true,
-      });
-    });
-  });
+  const nameToTeam = new Map(teams.map(team => [team.name, team]));
+  const update = Object.fromEntries(
+    standings
+      .map(s => {
+        const team = nameToTeam.get(s.team_name);
+        if (!team) {
+          logger.warn(`${s.team_name} does not exist`);
+          return undefined;
+        }
+        const standing = championshipPoints(s, sprint?.get(s.team_name));
+        return [
+          team.constructorId,
+          race
+            ? {
+                ...standing,
+                // The wins are counted where they are stored, so a team's wins are not read first
+                wins: FieldValue.increment(race.winners.filter(winner => winner.teamName === team.name).length),
+                rounds: { [race.round]: { position: s.position_current, points: s.points_current } },
+              }
+            : standing,
+        ] as const;
+      })
+      .filter(entry => !!entry),
+  );
+  // Merged, so the rounds before this one are kept
+  await db.doc(documentPaths.standing.teams(seasonId)).set(update, { merge: true });
 };
 
 const getWeekendInfo = async (token: string, seasonId: string, race: IRace): Promise<WeekendInfo> => {
