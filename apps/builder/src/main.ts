@@ -76,7 +76,7 @@ if (args.includes('--fix-driver-standings')) {
     process.exitCode = 1;
   });
 } else if (args.includes('--fix-team-standings')) {
-  // Update the team points and positions from OpenF1. Dry run unless --write is passed.
+  // Rebuild the championship of the teams, with their wins and the place after each race, from OpenF1. Dry run unless --write is passed.
   fixTeamStandings(seasonId, args.includes('--write')).catch(error => {
     console.error('Fixing team standings failed', error);
     process.exitCode = 1;
