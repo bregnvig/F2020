@@ -105,8 +105,8 @@ export const fixTeamStandings = async (seasonId: number, write: boolean) => {
   }
 };
 
-/** The championship that was on the teams, before it moved to standings/teams */
-const championshipFields = ['points', 'position', 'previousPoints', 'previousPosition'];
+/** The championship that was on the teams, before it moved to standings/teams. The wins were only there in an early version of --fix-team-standings */
+const championshipFields = ['points', 'position', 'previousPoints', 'previousPosition', 'wins'];
 
 /**
  * Removes the championship fields from seasons/{seasonId}/teams, so a team has only what an admin edits. The races keep their copy of the
