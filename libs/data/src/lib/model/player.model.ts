@@ -39,6 +39,8 @@ export interface Player {
   hiddenGraphDrivers?: string[];
   /** Players hidden in the WBC graph, by uid. All are shown when missing */
   hiddenWBCPlayers?: string[];
+  /** Teams hidden in the graph of the teams, by constructor id. All are shown when missing */
+  hiddenGraphTeams?: string[];
   balance?: number;
   almostTimeReminder?: DateTime;
 }
