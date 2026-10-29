@@ -11,7 +11,7 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 import { fixDriverStandings } from './app/fix-driver-standings';
 import { fixDriverResults } from './app/fix-driver-results';
-import { fixTeamStandings } from './app/fix-team-standings';
+import { cleanTeams, fixTeamStandings } from './app/fix-team-standings';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -79,6 +79,12 @@ if (args.includes('--fix-driver-standings')) {
   // Rebuild the championship of the teams, with their wins and the place after each race, from OpenF1. Dry run unless --write is passed.
   fixTeamStandings(seasonId, args.includes('--write')).catch(error => {
     console.error('Fixing team standings failed', error);
+    process.exitCode = 1;
+  });
+} else if (args.includes('--clean-teams')) {
+  // Remove the championship from the teams, as it is in standings/teams. Dry run unless --write is passed.
+  cleanTeams(seasonId, args.includes('--write')).catch(error => {
+    console.error('Cleaning the teams failed', error);
     process.exitCode = 1;
   });
 } else if (args.includes('--fix-driver-results')) {

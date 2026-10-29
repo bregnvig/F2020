@@ -42,6 +42,8 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
 
 - `--fix-driver-standings` - Rebuild `standings/all-drivers` from OpenF1. Add `--keep-wins` to keep the stored wins and only fetch the last race
 - `--fix-team-standings` - Rebuild the championship of the teams in `standings/teams` from OpenF1: points, positions, wins and the place after each race
+- `--clean-teams` - Remove the championship fields from the teams, which is in `standings/teams` now. Run it when the app reads
+  `standings/teams`
 - `--fix-driver-results` - Recalculate the driver results, from OpenF1 with `--reload`
 - `--build-last-year` - Rebuild `lastYear` and the driver results of last year (`standings/drivers/<last year>`) from OpenF1. Drivers are
   found by the number they had in each session, as numbers change between seasons. The circuit of a race may have to be picked by hand
