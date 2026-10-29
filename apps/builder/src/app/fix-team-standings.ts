@@ -1,5 +1,6 @@
 import { championshipPoints, IRace, ITeam, ITeamRound, ITeamStandings } from '@f2020/data';
 import { Driver, Session, SessionResult, TeamChampionship } from '@f2020/openf1';
+import { FieldValue } from 'firebase-admin/firestore';
 import { firebaseApp } from './firebase';
 import { fetchJson, findSession, getCompletedRaces } from './fix-driver-standings';
 
@@ -101,5 +102,32 @@ export const fixTeamStandings = async (seasonId: number, write: boolean) => {
     console.log(`Wrote ${Object.keys(standings).length} teams to ${path}`);
   } else {
     console.log(`Dry run. Pass --write to write ${Object.keys(standings).length} teams to ${path}`);
+  }
+};
+
+/** The championship that was on the teams, before it moved to standings/teams. The wins were only there in an early version of --fix-team-standings */
+const championshipFields = ['points', 'position', 'previousPoints', 'previousPosition', 'wins'];
+
+/**
+ * Removes the championship fields from seasons/{seasonId}/teams, so a team has only what an admin edits. The races keep their copy of the
+ * teams as they were. Nothing is written unless `write` is true.
+ */
+export const cleanTeams = async (seasonId: number, write: boolean) => {
+  const db = firebaseApp.database;
+  const teamsPath = `seasons/${seasonId}/teams`;
+  const teams = await db
+    .collection(teamsPath)
+    .get()
+    .then(snapshot => snapshot.docs.filter(doc => championshipFields.some(field => doc.get(field) !== undefined)));
+
+  console.table(teams.map(doc => ({ constructorId: doc.id, ...Object.fromEntries(championshipFields.map(field => [field, doc.get(field)])) })));
+
+  if (write) {
+    const batch = db.batch();
+    teams.forEach(doc => batch.update(doc.ref, Object.fromEntries(championshipFields.map(field => [field, FieldValue.delete()]))));
+    await batch.commit();
+    console.log(`Removed the championship from ${teams.length} teams in ${teamsPath}`);
+  } else {
+    console.log(`Dry run. Pass --write to remove the championship from ${teams.length} teams in ${teamsPath}`);
   }
 };

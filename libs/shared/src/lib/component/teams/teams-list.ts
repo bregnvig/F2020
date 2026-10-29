@@ -41,14 +41,22 @@ export class TeamsList {
   readonly #season = inject(SeasonStore).season;
   race = input<IRace | undefined>(undefined);
   header = computed(() => (this.race() ? `Hold - ${this.race().name}` : 'Hold'));
-  teams = input.required<ITeam[], ITeam[]>({
-    transform: value => value.toSorted((a, b) => (b.points ?? 0) - (a.points ?? 0)),
-  });
+  teams = input.required<ITeam[]>();
   drivers = input.required<IDriver[]>();
   protected icon = icon;
   protected readonly seasonId = computed(() => this.#season()?.id);
 
   protected noDrivers = computed(() => !this.drivers()?.length);
+
+  /** The teams with the most points first, with a trophy for each win */
+  protected readonly sorted = computed(() =>
+    this.teams()
+      .map(team => {
+        const standing = this.#service.standings()?.[team.constructorId];
+        return { team, points: standing?.points ?? 0, wins: Array(standing?.wins ?? 0) };
+      })
+      .sort((a, b) => b.points - a.points),
+  );
 
   protected addDriver(team: ITeam) {
     this.#dialog

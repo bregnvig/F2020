@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { IDriverResult } from '@f2020/data';
 import { MatCardModule } from '@angular/material/card';
-import { injectRaceNames } from '../../race-names';
-import { SeasonChart, SeasonLine } from '@f2020/shared';
+import { injectRaceNames, SeasonChart, SeasonLine } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-driver-season-graph',

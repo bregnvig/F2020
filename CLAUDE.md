@@ -42,6 +42,8 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
 
 - `--fix-driver-standings` - Rebuild `standings/all-drivers` from OpenF1. Add `--keep-wins` to keep the stored wins and only fetch the last race
 - `--fix-team-standings` - Rebuild the championship of the teams in `standings/teams` from OpenF1: points, positions, wins and the place after each race
+- `--clean-teams` - Remove the championship fields from the teams, which is in `standings/teams` now. Run it when the app reads
+  `standings/teams`
 - `--fix-driver-results` - Recalculate the driver results, from OpenF1 with `--reload`
 - `--build-last-year` - Rebuild `lastYear` and the driver results of last year (`standings/drivers/<last year>`) from OpenF1. Drivers are
   found by the number they had in each session, as numbers change between seasons. The circuit of a race may have to be picked by hand
@@ -107,11 +109,13 @@ a preflight never has the token. `OpenF1HttpService` calls the callable function
 
 - **UI text is Danish**, code and comments are English
 - **Dark theme**: the app uses the prebuilt `pink-bluegrey` Material theme. Black logos disappear on it, so logos are shown in a white circle
-- **Championship points**: drivers (`IDriverStanding`) and teams (`ITeam`) extend `IChampionshipPoints` with `points`, `position`,
+- **Championship points**: drivers (`IDriverStanding`) and teams (`ITeamStanding`) extend `IChampionshipPoints` with `points`, `position`,
   `previousPoints` and `previousPosition`. They come from the OpenF1 championship endpoints, where `points_start` and `position_start`
   are before the session. On a sprint weekend pass the sprint's championship as `weekendStart`, so the previous standing is from before
   the weekend. Map them with `championshipPoints()` and get places moved with `positionChange()` (positive is up).
   Show places moved with `<sha-position-change>`
+- **Team standings**: an admin edits the teams in `seasons/{season}/teams`. Their championship from OpenF1, with wins and the place after
+  each race, is in `standings/teams` by constructor id (`ITeamStandings`), read with `TeamService.standings`
 - **WBC standings** are not stored. They are summed from `season.wbc.results`
 
 ### Images from formula1.com

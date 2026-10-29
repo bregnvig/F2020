@@ -1,6 +1,6 @@
 import { IChampionshipPoints } from './championship.model';
 
-export interface ITeam extends IChampionshipPoints {
+export interface ITeam {
   constructorId: string;
   name: string;
   drivers: string[];

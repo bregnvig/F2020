@@ -6,9 +6,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PlayerStore, SeasonStore, StandingService } from '@f2020/api';
-import { DriverHeadshotComponent, LoadingComponent, SeasonChart, SeasonLine, TeamLogoComponent } from '@f2020/shared';
+import { DriverHeadshotComponent, LoadingComponent, injectRaceNames, SeasonChart, SeasonLine, TeamLogoComponent } from '@f2020/shared';
 import { StandingStore } from '../../+state/standing.store';
-import { injectRaceNames } from '../race-names';
 
 /** The color mixed a part of the way to white, for the second driver of a team */
 const lighten = (hex: string, amount = 0.45) =>

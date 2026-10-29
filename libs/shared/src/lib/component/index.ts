@@ -11,3 +11,4 @@ export * from './driver-headshot/driver-headshot';
 export * from './championship-list/championship-list';
 export * from './animated-for/animated-for';
 export * from './season-chart/season-chart';
+export * from './season-chart/race-names';

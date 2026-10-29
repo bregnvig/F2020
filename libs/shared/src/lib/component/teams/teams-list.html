@@ -4,14 +4,21 @@
 <sha-card-page>
   @if (teams(); as teams) {
   <mat-list>
-    @for (team of teams; track team.constructorId; ) {
+    @for (entry of sorted(); track entry.team.constructorId; ) { @let team = entry.team;
     <h2 class="!flex items-center gap-3" [class.!mt-2]="!$first" matSubheader>
       @if (seasonId(); as seasonId) {
       <sha-team-logo [seasonId]="seasonId" [name]="team.name" [size]="32" />
       }
-      <span class="grow">{{ team.name }}</span>
-      @if (team.points) {
-      <span class="mr-4">{{ team.points }} point</span>
+      <span class="grow flex flex-col">
+        <span>{{ team.name }}</span>
+        <span class="flex gap-1 text-xs">
+          @for (_ of entry.wins; track $index) {
+          <fa-icon [icon]="icon.farTrophy" size="xs" />
+          }
+        </span>
+      </span>
+      @if (entry.points) {
+      <span class="mr-4">{{ entry.points }} point</span>
       }
     </h2>
     @let drivers = allDrivers(team); @for (driverId of drivers; track driverId) {

@@ -30,14 +30,17 @@ import { topEntries } from './championship';
   },
 })
 export class TeamChampionshipComponent {
-  #teams = inject(TeamService).teams;
+  #service = inject(TeamService);
   #season = inject(SeasonStore).season;
 
   protected readonly icon = icon.fasPeopleGroup;
   protected readonly entries = computed(() =>
     topEntries(
-      this.#teams().filter(t => t.points > 0),
-      team => ({
+      this.#service
+        .teams()
+        .map(team => ({ ...this.#service.standings()?.[team.constructorId], team }))
+        .filter(standing => standing.points > 0),
+      ({ team }) => ({
         id: team.constructorId,
         name: team.name,
         logo: { seasonId: this.#season().id },

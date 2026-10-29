@@ -127,10 +127,10 @@ export abstract class RaceResultService extends LiveSessionService {
   }
 
   #storedChampionship(race: IRace): Observable<ChampionshipStarts> {
-    return combineLatest([this.#standingService.getStandings(race.season).pipe(take(1)), this.#teamService.teams$.pipe(take(1))]).pipe(
-      map(([standings, teams]) => ({
+    return combineLatest([this.#standingService.getStandings(race.season).pipe(take(1)), this.#teamService.teams$.pipe(take(1)), this.#teamService.standings$.pipe(take(1))]).pipe(
+      map(([standings, teams, teamStandings]) => ({
         drivers: new Map(standings.map(({ driver, points, position }) => [driver.driverId, { points, position }])),
-        teams: new Map(teams.map(({ name, points, position }) => [name, { points, position }])),
+        teams: new Map(teams.map(({ constructorId, name }) => [name, { points: teamStandings[constructorId]?.points ?? 0, position: teamStandings[constructorId]?.position }])),
       })),
     );
   }
