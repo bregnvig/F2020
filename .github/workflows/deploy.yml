@@ -26,18 +26,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
-
-      # The function tests start a Firestore emulator
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - run: npm ci
+      - uses: ./.github/actions/setup
 
       # The commit of the last successful deploy is the base, so a failed deploy is tried again with the next push.
       # Before the first successful deploy it is the previous commit

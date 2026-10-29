@@ -23,6 +23,12 @@ GitHub.
 
 Repository admins can bypass it, so you can push to `develop` directly as before, and the deploy runs the lint and the tests itself.
 
+## Caching
+
+Both workflows set up with `.github/actions/setup`. It restores `node_modules` from a cache, and only runs `npm ci` when `package-lock.json` has
+changed. Pull requests use the cache the deploy saved on `develop`, so the first pull request after a change of the lock file installs
+from scratch. The Firestore emulator for the function tests is cached too.
+
 ## Setup
 
 The workflow needs two secrets, under _Settings → Secrets and variables → Actions_ in GitHub.
