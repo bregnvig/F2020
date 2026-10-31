@@ -82,6 +82,9 @@ const dash = (segment: Point[]): Point[] =>
     :host ::ng-deep .ngx-charts text {
       fill: currentColor;
     }
+    :host ::ng-deep .ngx-charts .gridline-path {
+      stroke: var(--mat-sys-outline-variant);
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [LineChartModule],

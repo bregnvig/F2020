@@ -12,7 +12,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
         <mat-list-item>
           <sha-driver-headshot matListItemAvatar [driver]="result.driver" />
           <h5 matListItemTitle>{{ result.driver.name }}</h5>
-          <p matListItemMeta class="!text-base !text-white">{{ result.points }}</p>
+          <p matListItemMeta class="!text-base !text-on-surface">{{ result.points }}</p>
           <p matListItemLine>{{ result.status }}</p>
         </mat-list-item>
       }

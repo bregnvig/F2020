@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webmanifest" />
-    <meta name="theme-color" content="#303030" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff8f8" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171213" />
     <script>
       (g => {
         var h,
@@ -47,8 +48,15 @@
       });
     </script>
     <style>
+      /* The surface of the theme, before the styles are loaded */
       body {
-        background-color: rgb(48, 48, 48);
+        background-color: #fff8f8;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #171213;
+        }
       }
 
       img.loading {

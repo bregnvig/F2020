@@ -9,7 +9,7 @@
         <h3 matListItemTitle>{{ standing.player.displayName }}</h3>
         <p matListItemLine>{{ standing.points }} points</p>
         @if ((participants$ | async)?.includes(standing.player.uid)) {
-          <fa-icon matListItemMeta class="text-white" [icon]="icon" />
+          <fa-icon matListItemMeta class="text-on-surface" [icon]="icon" />
         }
       </mat-list-item>
     }

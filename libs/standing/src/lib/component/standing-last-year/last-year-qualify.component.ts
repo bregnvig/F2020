@@ -13,7 +13,7 @@ import { DriverHeadshotComponent } from '@f2020/shared';
         <mat-list-item>
           <sha-driver-headshot matListItemAvatar [driver]="result.driver" />
           <h5 matListItemTitle class="flex flex-row justify-between">{{ result.driver.name }}</h5>
-          <p matListItemMeta class="!text-base !text-white">{{ result.position }}</p>
+          <p matListItemMeta class="!text-base !text-on-surface">{{ result.position }}</p>
           <p matListItemLine>
             <f2020-qualifying-times [qualifying]="result" />
           </p>

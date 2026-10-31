@@ -7,7 +7,7 @@ import { PlayerStore, SeasonStore } from '@f2020/api';
 import { SeasonChart, SeasonLine } from '@f2020/shared';
 import { wbcGraph } from '../../model/wbc-graph.model';
 
-const palette = ['#e91e63', '#03a9f4', '#ffeb3b', '#4caf50', '#ff9800', '#ba68c8', '#00e5ff', '#f44336', '#cddc39', '#a1887f', '#90a4ae', '#ff80ab'];
+const palette = ['#e91e63', '#03a9f4', '#fbc02d', '#4caf50', '#ff9800', '#ba68c8', '#00acc1', '#f44336', '#9e9d24', '#a1887f', '#90a4ae', '#ff80ab'];
 
 @Component({
   selector: 'f2020-wbc-graph',
