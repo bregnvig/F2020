@@ -72,12 +72,12 @@ interface ScheduleDay {
                   }
                   <span matListItemMeta class="self-center">
                     @if (session.live) {
-                      <span class="flex items-center gap-2 rounded-full py-1 px-3 text-sm font-medium bg-pink-600 text-white">
-                        <span class="size-2 rounded-full bg-white animate-pulse"></span>
+                      <span class="flex items-center gap-2 rounded-full py-1 px-3 text-sm font-medium bg-primary text-on-primary">
+                        <span class="size-2 rounded-full bg-on-primary animate-pulse"></span>
                         I gang
                       </span>
                     } @else if (!session.completed) {
-                      <span class="rounded-full py-1 px-3 text-sm tabular-nums bg-white/10">{{ session.time }}</span>
+                      <span class="rounded-full py-1 px-3 text-sm tabular-nums bg-surface-container-highest">{{ session.time }}</span>
                     }
                   </span>
                 </mat-list-item>
@@ -94,6 +94,7 @@ interface ScheduleDay {
       --mat-list-list-item-disabled-label-text-opacity: 1;
       --mat-list-list-item-disabled-leading-icon-opacity: 1;
       --mat-list-list-item-disabled-trailing-icon-opacity: 1;
+      --mat-list-list-item-disabled-state-layer-opacity: 0;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

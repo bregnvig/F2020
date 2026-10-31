@@ -11,7 +11,7 @@ import { DisplayBidComponent } from '../display-bid.component';
   template: `
     @if (race()) {
       <mat-toolbar color="primary">
-        <fa-icon matListItemIcon class="text-white" [icon]="icon" size="2x" />
+        <fa-icon matListItemIcon class="text-on-surface" [icon]="icon" size="2x" />
         <span class="ml-2" matListItemTitle>Resultat {{ race().name }}</span>
       </mat-toolbar>
       <div class="py-3">

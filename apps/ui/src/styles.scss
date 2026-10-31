@@ -1,9 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
 @forward 'node_modules/@fontsource/roboto/300.css';
 @forward 'node_modules/@fontsource/roboto/400.css';
 @forward 'node_modules/@fontsource/roboto/500.css';
 @forward './scss/toolbar';
+
+// Light or dark follows the setting of the device
+html {
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$rose-palette,
+        tertiary: mat.$azure-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font-family: var(--mat-sys-body-medium-font);
+}
+
+// M3 ignores the color attribute, which the pages use for the band below the title bar and for dangerous buttons
+mat-toolbar[color='primary'] {
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: light-dark(var(--mat-sys-primary), var(--mat-sys-primary-container)),
+      container-text-color: light-dark(var(--mat-sys-on-primary), var(--mat-sys-on-primary-container)),
+    )
+  );
+}
+
+button[color='warn'] {
+  @include mat.button-overrides(
+    (
+      text-label-text-color: var(--mat-sys-error),
+    )
+  );
+}
 
 @tailwind base;
 @tailwind components;
@@ -16,6 +55,34 @@
 
   a {
     @apply underline;
+  }
+
+  // The sizes and spacing of the old theme, which M3 leaves out. :where keeps them below the Tailwind classes of a heading
+  :where(.mat-typography) {
+    h1 {
+      font: var(--mat-sys-headline-small);
+      margin: 0 0 16px;
+    }
+
+    h2 {
+      font: var(--mat-sys-title-large);
+      margin: 0 0 16px;
+    }
+
+    h3,
+    h4 {
+      font: var(--mat-sys-title-medium);
+      margin: 0 0 16px;
+    }
+
+    h5 {
+      font: var(--mat-sys-title-small);
+      margin: 0 0 12px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
   }
 }
 
@@ -37,7 +104,7 @@ button[mat-fab] {
   max-width: 100vw;
   padding: 16px 24px;
   border-radius: 0;
-  background: rgb(66 66 66 / 80%);
+  background: color-mix(in srgb, var(--mat-sys-surface-container) 80%, transparent);
   backdrop-filter: blur(8px);
 }
 

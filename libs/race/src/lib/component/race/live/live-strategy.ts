@@ -48,7 +48,7 @@ interface StintBar {
             <div *shaAnimatedFor="let row of rows(); key: rowKey" class="flex items-center gap-2 h-7 py-0.5">
               <button
                 type="button"
-                class="w-10 shrink-0 cursor-pointer border-0 bg-transparent p-0 text-start text-sm font-medium text-white"
+                class="w-10 shrink-0 cursor-pointer border-0 bg-transparent p-0 text-start text-sm font-medium text-on-surface"
                 [matMenuTriggerFor]="driverMenu"
                 [matMenuTriggerData]="{ driver: row.driver }">
                 {{ row.driver.code }}
@@ -56,7 +56,7 @@ interface StintBar {
               <div class="relative flex-1 h-full">
                 @for (bar of row.bars; track bar.key) {
                   <span
-                    class="absolute inset-y-0 rounded-sm text-xs font-bold flex items-center justify-center overflow-hidden border-e border-[#424242] {{ bar.colour }}"
+                    class="absolute inset-y-0 rounded-sm text-xs font-bold flex items-center justify-center overflow-hidden border-e border-surface-container-low {{ bar.colour }}"
                     [style.left.%]="bar.left"
                     [style.width.%]="bar.width"
                     [matTooltip]="bar.title"
@@ -70,7 +70,7 @@ interface StintBar {
             <!-- The lines split the laps in three, over the bars and under the tooltips -->
             <div class="absolute inset-y-0 left-12 right-0 pointer-events-none">
               @for (marker of markers(); track marker.lap) {
-                <span class="absolute inset-y-0 border-s border-dashed border-white/40" [style.left.%]="marker.left"></span>
+                <span class="absolute inset-y-0 border-s border-dashed border-outline" [style.left.%]="marker.left"></span>
               }
             </div>
           </div>
@@ -84,7 +84,7 @@ interface StintBar {
         <ng-template matMenuContent let-driver="driver">
           <div class="flex flex-col items-center gap-2 px-4 py-2">
             <sha-driver-headshot [driver]="driver" [size]="96" placeholder="assets/loading/red.svg" />
-            <span class="text-white">{{ driver.name }}</span>
+            <span class="text-on-surface">{{ driver.name }}</span>
           </div>
         </ng-template>
       </mat-menu>

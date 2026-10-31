@@ -20,6 +20,12 @@ import { driverHeadshotUrl } from '../../formula1-media';
     '[style.width.px]': 'size()',
     '[style.height.px]': 'size()',
   },
+  // The colour of a list avatar, so a headshot looks the same in and out of a list. Without specificity, so a class on the host wins
+  styles: `
+    :where(:host) {
+      background-color: var(--mat-sys-primary-container);
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgOptimizedImage],
 })
