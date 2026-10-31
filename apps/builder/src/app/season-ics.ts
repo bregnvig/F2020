@@ -122,6 +122,7 @@ export const buildNewSeason = async (seasonId: number) => {
       {
         raceStart: cr.raceStart,
         url: cr.url,
+        schedule: cr.schedule,
         state: !round ? 'open' : 'waiting',
         close: cr.close,
         round: round + 1,

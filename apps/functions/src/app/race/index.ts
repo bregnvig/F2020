@@ -4,6 +4,7 @@ export * from './drivers.trigger';
 export * from './open-race.trigger';
 export * from './reminder.crontab';
 export * from './reminder.trigger';
+export * from './session-result.call';
 export * from './standings.trigger';
 export * from './standings.call';
 export * from './sprint-standings.call';

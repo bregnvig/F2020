@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
-import { parseIcsCalendar, VCalendar } from 'ts-ics';
-import { Circuit } from '@f2020/data';
+import { getEventEnd, parseIcsCalendar, VCalendar, VEvent } from 'ts-ics';
+import { Circuit, IRaceSession, RaceSessionType } from '@f2020/data';
 import { requiredValue, StringUtils } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { resolveCircuit } from './circuit.resolver';
@@ -10,11 +10,34 @@ export interface SeasonRace {
   close: DateTime;
   raceStart: DateTime;
   url?: string;
+  schedule: IRaceSession[];
 }
 
 const isTesting = /.*TESTING 20.*/;
 const isPracticeOne = /.*Practice ?1$/;
 const isRace = /.*- Race$/i;
+
+const sessionTypes: [RegExp, RaceSessionType][] = [
+  [/- Practice ?\d$/, 'practice'],
+  [/- Sprint Qualification$/i, 'sprint-qualifying'],
+  [/- Sprint Race$/i, 'sprint'],
+  [/- Qualifying$/i, 'qualifying'],
+  [/- Race$/i, 'race'],
+];
+
+/** The session of a calendar event. Sessions still to be confirmed (TBC) only have a date and are left out */
+const sessionOf = (event: VEvent): IRaceSession | undefined => {
+  const type = sessionTypes.find(([pattern]) => pattern.test(event.summary))?.[1];
+  if (!type) {
+    return undefined;
+  }
+  return {
+    type,
+    ...(type === 'practice' && { number: Number(/(\d)$/.exec(event.summary)[1]) }),
+    start: DateTime.fromJSDate(event.start.date),
+    end: DateTime.fromJSDate(getEventEnd(event)),
+  };
+};
 
 const raceNameOf = (summary: string) =>
   /FORMULA 1(.*) -/
@@ -43,7 +66,7 @@ export const raceHubUrl = (description: string | undefined): string | undefined 
 };
 
 /**
- * Reads the races from an ics calendar file. A race closes when Practice 1 starts.
+ * Reads the races from an ics calendar file, with the sessions of each weekend. A race closes when Practice 1 starts.
  * Events that are still to be confirmed (TBC) are ignored, as they don't match Practice 1 or Race.
  */
 export const readCalendarRaces = async (icsFile: string, circuits: Circuit[]): Promise<SeasonRace[]> => {
@@ -61,6 +84,11 @@ export const readCalendarRaces = async (icsFile: string, circuits: Circuit[]): P
       );
       const circuit = await resolveCircuit(event.summary, event.location, circuits);
       const url = raceHubUrl(race.description);
+      const schedule = calendarParsed.events
+        .filter(e => raceNameOf(e.summary) === raceName)
+        .map(sessionOf)
+        .filter(session => !!session)
+        .sort((a, b) => a.start.toMillis() - b.start.toMillis());
       !url && console.warn('No Race Hub link found for', raceName);
       return [
         ...acc,
@@ -69,6 +97,7 @@ export const readCalendarRaces = async (icsFile: string, circuits: Circuit[]): P
           close: DateTime.fromJSDate(event.start.date),
           raceStart: DateTime.fromJSDate(race.start.date),
           url,
+          schedule,
         } as SeasonRace,
       ];
     },

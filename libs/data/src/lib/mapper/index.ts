@@ -19,6 +19,7 @@ import { map as sectors } from './sector.mapper';
 import { map as locations } from './location.mapper';
 import { map as championship } from './championship.mapper';
 import { map as weather } from './weather.mapper';
+import { map as sessionResult } from './session-result.mapper';
 
 export const mapper = {
   basisRace,
@@ -26,6 +27,7 @@ export const mapper = {
   liveRaceResult,
   liveQualifyResult,
   raceResult,
+  sessionResult,
   qualifyResult,
   driver,
   drivers,

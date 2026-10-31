@@ -14,6 +14,7 @@ export const documentPaths = {
   team: (seasonId: string, constructorId: string) => `${seasonsURL}/${seasonId}/${teamsURL}/${constructorId}`,
   circuit: (uid: number) => `${circuitsURL}/${uid}`,
   race: (seasonId: string | number, raceId: string | number) => `${seasonsURL}/${seasonId}/${racesURL}/${raceId}`,
+  sessionResult: (seasonId: string | number, raceId: string | number, sessionId: string) => `${seasonsURL}/${seasonId}/${racesURL}/${raceId}/sessions/${sessionId}`,
   standing: {
     allDriver: (seasonId: string | number) => `${seasonsURL}/${seasonId}/standings/all-drivers`,
     driver: (seasonId: string | number, resultSeasonId: string | number, driverId: string) => `${seasonsURL}/${seasonId}/standings/drivers/${resultSeasonId}/${driverId}`,

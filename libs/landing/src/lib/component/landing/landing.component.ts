@@ -12,6 +12,7 @@ import { hiddenLandingCards, LandingCard } from '@f2020/data';
 import { DriverChampionshipComponent } from '../card/championship/driver-championship';
 import { TeamChampionshipComponent } from '../card/championship/team-championship';
 import { WbcChampionshipComponent } from '../card/championship/wbc-championship';
+import { ScheduleComponent } from '../card/schedule/schedule';
 
 @Component({
   selector: 'f2020-landing',
@@ -21,6 +22,7 @@ import { WbcChampionshipComponent } from '../card/championship/wbc-championship'
     CardPageComponent,
     WhatElseComponent,
     RememberToPlayComponent,
+    ScheduleComponent,
     PreviousRaceComponent,
     DriverChampionshipComponent,
     TeamChampionshipComponent,

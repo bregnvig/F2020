@@ -61,6 +61,7 @@ export const updateSeasonFromCalendar = async (seasonId: number, icsFile: string
       {
         raceStart: cr.raceStart,
         url: cr.url,
+        schedule: cr.schedule,
         state: 'waiting',
         close: cr.close,
         round,
