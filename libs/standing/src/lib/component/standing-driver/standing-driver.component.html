@@ -5,9 +5,7 @@
 </mat-toolbar>
 <sha-card-page>
   @if (currentSeasonResult$ | async; as result) {
-    <f2020-number-card title="Start gennemsnit" [number]="result.averageGridPosition | number: '1.2-2'" [icon]="icon.fasFlagCheckered" />
-    <f2020-number-card title="Slut gennemsnit" [number]="result.averageFinishPosition | number: '1.2-2'" [icon]="icon.farTrophy" />
-    <f2020-number-card title="Udgået" [number]="result.retired" [icon]="icon.farCarCrash" />
+    <f2020-driver-season-numbers [result]="result" />
     <f2020-driver-season-graph [driverResult]="result" />
     <f2020-driver-season-tabs [year]="currentYear" [currentSeason]="result" [previousSeason]="previousSeasonResult$ | async" />
   } @else {
