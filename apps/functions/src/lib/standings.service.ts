@@ -44,7 +44,8 @@ export const setStandings = async (race: IRace) => {
   const results = await setDriverStatistics(weekendInfo);
   const sprintWinner = await sprintRaceWinner(weekendInfo);
   const winners = [results.find(r => r.position === 1)?.driver, sprintWinner].filter(driver => !!driver);
-  await setDriverStandings(weekendInfo, winners);
+  const fastestLap = results.find(r => r.fastestLap?.rank === 1)?.driver;
+  await setDriverStandings(weekendInfo, winners, fastestLap);
   await setTeamsStanding(token, season.id, weekendInfo.raceSession, weekendInfo.sprintSession, { round: race.round, winners });
 };
 
@@ -65,17 +66,16 @@ export const setSprintStandings = async (race: IRace) => {
     .get()
     .then(doc => (doc.exists ? doc.data() : { standing: [] }) as { standing: IDriverStanding[] });
   const championship = await driverStandings(token, sprintSession, drivers);
-  const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => ({
-    driver,
-    ...points,
-    wins: allDrivers.standing.find(s => s.driver.driverId === driver.driverId)?.wins ?? 0,
-  }));
+  const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => {
+    const previous = allDrivers.standing.find(s => s.driver.driverId === driver.driverId);
+    return { driver, ...points, wins: previous?.wins ?? 0, fastestLaps: previous?.fastestLaps ?? 0 };
+  });
   await db.doc(documentPaths.standing.allDriver(season.id)).set({ standing });
   await setTeamsStanding(token, season.id, sprintSession);
 };
 
-/** The winners are of the race and the sprint */
-const setDriverStandings = async ({ token, seasonId, drivers, raceSession, sprintSession }: WeekendInfo, winners: IDriver[]) => {
+/** The winners are of the race and the sprint. The fastest lap is of the race */
+const setDriverStandings = async ({ token, seasonId, drivers, raceSession, sprintSession }: WeekendInfo, winners: IDriver[], fastestLap?: IDriver) => {
   const db = getFirestore();
   const allDrivers = await db
     .doc(documentPaths.standing.allDriver(seasonId))
@@ -85,10 +85,12 @@ const setDriverStandings = async ({ token, seasonId, drivers, raceSession, sprin
   const standing: IDriverStanding[] = championship.map(({ driver, ...points }) => {
     const previous = allDrivers.standing.find(s => s.driver.driverId === driver.driverId);
     const wins = (previous?.wins ?? 0) + winners.filter(winner => winner.driverId === driver.driverId).length;
+    const fastestLaps = (previous?.fastestLaps ?? 0) + (fastestLap?.driverId === driver.driverId ? 1 : 0);
     return {
       driver,
       ...points,
       wins,
+      fastestLaps,
     };
   });
   return db.doc(documentPaths.standing.allDriver(seasonId)).set({ standing });
@@ -137,7 +139,7 @@ const sprintRaceWinner = async ({ token, sprintSession, drivers }: WeekendInfo):
   return winner ? findDriverFn(drivers)(winner.driver_number) : undefined;
 };
 
-type DriverPoints = Omit<IDriverStanding, 'wins'>;
+type DriverPoints = Omit<IDriverStanding, 'wins' | 'fastestLaps'>;
 
 /** OpenF1 answers 404 when there is no session, e.g. no sprint */
 const findSession = async (token: string, seasonId: string, circuitId: number, sessionName: 'Race' | 'Qualifying' | 'Sprint'): Promise<Session | undefined> => {

@@ -9,7 +9,7 @@ import { assetPath } from './app/assets';
 import { buildTracks } from './app/tracks';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { fixDriverStandings } from './app/fix-driver-standings';
+import { fixDriverStandings, fixFastestLaps } from './app/fix-driver-standings';
 import { fixDriverResults } from './app/fix-driver-results';
 import { cleanTeams, fixTeamStandings } from './app/fix-team-standings';
 import { fixSchedule } from './app/fix-schedule';
@@ -74,6 +74,12 @@ if (args.includes('--fix-driver-standings')) {
   // Rebuild the driver standing from OpenF1. Dry run unless --write is passed. --keep-wins keeps the stored wins and only fetches the last race.
   fixDriverStandings(seasonId, args.includes('--write'), args.includes('--keep-wins')).catch(error => {
     console.error('Fixing driver standings failed', error);
+    process.exitCode = 1;
+  });
+} else if (args.includes('--fix-fastest-laps')) {
+  // Count the fastest laps of the races from OpenF1, and write only them to the driver standing. Dry run unless --write is passed.
+  fixFastestLaps(seasonId, args.includes('--write')).catch(error => {
+    console.error('Fixing fastest laps failed', error);
     process.exitCode = 1;
   });
 } else if (args.includes('--fix-team-standings')) {

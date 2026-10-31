@@ -41,6 +41,8 @@ run next to the emulators used for development without touching their data. Java
 Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--write` is passed.
 
 - `--fix-driver-standings` - Rebuild `standings/all-drivers` from OpenF1. Add `--keep-wins` to keep the stored wins and only fetch the last race
+- `--fix-fastest-laps` - Count the fastest laps of the races from the OpenF1 laps, and write only them to `standings/all-drivers`.
+  `--fix-driver-standings` counts them too, and `--keep-wins` keeps them
 - `--fix-team-standings` - Rebuild the championship of the teams in `standings/teams` from OpenF1: points, positions, wins and the place after each race
 - `--clean-teams` - Remove the championship fields from the teams, which is in `standings/teams` now. Run it when the app reads
   `standings/teams`

@@ -26,6 +26,8 @@ export interface IFastestLap {
 
 export interface IDriverStanding extends IChampionshipPoints {
   wins: number;
+  /** Fastest laps in the races, not the sprints. Missing on standings stored before they were counted */
+  fastestLaps?: number;
   driver: IDriver;
 }
 
