@@ -31,7 +31,8 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
         </div>
         <mat-action-list>
           @for (standing of standings(); track standing) {
-            <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
+            <!-- The wins and fastest laps are on lines of their own, so a row grows to fit them -->
+            <button mat-list-item class="!h-auto min-h-14 !py-2" [routerLink]="[standing.driver.driverId | lowercase]">
               <sha-driver-headshot matListItemAvatar [driver]="standing.driver" />
               <f2020-standing-list-item [standing]="standing" />
             </button>
