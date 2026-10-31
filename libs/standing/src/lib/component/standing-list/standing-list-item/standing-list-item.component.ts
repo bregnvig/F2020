@@ -33,7 +33,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
           }
           {{ standing().points }} point
         </span>
-        <span class="w-16 text-right">
+        <span class="w-16 text-right hidden sm:inline">
           <sha-position-change [change]="change()" />
         </span>
       </span>

@@ -2,32 +2,30 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SeasonStore, StandingService } from '@f2020/api';
 import { IDriverResult } from '@f2020/data';
-import { CardPageComponent, DriverHeadshotComponent, icon, LoadingComponent } from '@f2020/shared';
+import { CardPageComponent, DriverHeadshotComponent, LoadingComponent } from '@f2020/shared';
 import { shareLatest } from '@f2020/tools';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DriverPipe } from '@f2020/driver';
 import { DriverSeasonGraph } from './driver-season-graph/driver-season-graph';
 import { DriverSeasonTabs } from './driver-season-tabs/driver-season-tabs';
-import { NumberCardComponent } from './number-card/number-card.component';
-import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { DriverSeasonNumbers } from './driver-season-numbers';
+import { AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'f2020-standing-driver',
   templateUrl: './standing-driver.component.html',
-  styleUrls: ['./standing-driver.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatToolbarModule,
     CardPageComponent,
-    NumberCardComponent,
+    DriverSeasonNumbers,
     DriverSeasonGraph,
     DriverSeasonTabs,
     LoadingComponent,
     AsyncPipe,
-    DecimalPipe,
     DriverHeadshotComponent,
     DriverPipe,
   ],
@@ -40,8 +38,6 @@ export class StandingDriverComponent {
 
   currentYear: number;
   previousYear: number;
-
-  icon = icon;
 
   constructor() {
     const route = inject(ActivatedRoute);

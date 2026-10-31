@@ -3,6 +3,8 @@ import { IQualifyResult } from '@f2020/data';
 import { QualifyingTimesComponent } from './qualifying-times/qualifying-times.component';
 
 import { MatListModule } from '@angular/material/list';
+import { NgOptimizedImage } from '@angular/common';
+import { FlagURLPipe } from '@f2020/shared';
 
 @Component({
   selector: 'f2020-driver-qualifying',
@@ -10,6 +12,7 @@ import { MatListModule } from '@angular/material/list';
     <mat-list>
       @for (result of qualifyResults() ?? []; track $index) {
         <mat-list-item>
+          <img matListItemAvatar height="40" width="40" [alt]="result.countryCode" [ngSrc]="result.countryCode | flagURL" />
           <h3 matListItemTitle>{{ result.name }}</h3>
           <span matListItemLine><f2020-qualifying-times [qualifying]="result.results[0]" /></span>
           <span class="focus-meta" matListItemMeta>{{ result.results[0]?.position ?? 'Ingen tid' }}</span>
@@ -18,7 +21,7 @@ import { MatListModule } from '@angular/material/list';
     </mat-list>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatListModule, QualifyingTimesComponent],
+  imports: [MatListModule, NgOptimizedImage, FlagURLPipe, QualifyingTimesComponent],
 })
 export class DriverQualifyingComponent {
   qualifyResults = input.required<IQualifyResult[] | undefined>();
