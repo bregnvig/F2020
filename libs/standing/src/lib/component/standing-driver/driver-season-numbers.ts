@@ -14,10 +14,10 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
         <mat-card-title>Sæsonen</mat-card-title>
       </mat-card-header>
       <mat-card-content class="!pt-4">
-        <div class="grid grid-cols-3 divide-x divide-white/10">
+        <div class="grid grid-cols-3 divide-x divide-outline-variant">
           @for (stat of stats(); track stat.label) {
             <div class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4 px-2">
-              <fa-icon class="text-pink-400 sm:text-4xl" [icon]="stat.icon" [fixedWidth]="true" />
+              <fa-icon class="text-primary sm:text-4xl" [icon]="stat.icon" [fixedWidth]="true" />
               <div class="flex flex-col items-center sm:items-start">
                 <span class="text-3xl font-light tabular-nums">{{ stat.value }}</span>
                 <span class="text-xs opacity-70">{{ stat.label }}</span>
