@@ -13,6 +13,10 @@ interface TimingRow extends Omit<ILiveSessionDriver, 'gap' | 'tyre'> {
   time?: number;
   gap: string;
   tyre?: (typeof tyres)[keyof typeof tyres];
+  sectors?: IDriverSector;
+  /** A line is only shown when it has something, e.g. not before OpenF1 has the laps */
+  details: boolean;
+  lines: number;
 }
 
 const gap = (milliseconds: number) => `+${(milliseconds / 1000).toFixed(3)}`;
@@ -25,34 +29,41 @@ const gap = (milliseconds: number) => `+${(milliseconds / 1000).toFixed(3)}`;
       <p class="mt-2 mb-0 text-xs opacity-70">Opdateret {{ latestUpdate | dateTime: 'HH:mm:ss' }}</p>
     }
     @if (rows().length) {
+      @if (noTimes()) {
+        <p class="mt-1 mb-0 text-xs opacity-70">Ingen omgangstider endnu</p>
+      }
       <mat-list>
-        <mat-list-item *shaAnimatedFor="let row of rows(); key: driverKey" lines="3">
+        <mat-list-item *shaAnimatedFor="let row of rows(); key: driverKey" [lines]="row.lines">
           <sha-driver-headshot matListItemAvatar [driver]="row.driver" placeholder="assets/loading/red.svg" />
-          <!-- The layout is on an inline span inside, as Material styles the title and the lines itself -->
           <div matListItemTitle>
             <span class="inline-flex w-full flex-row justify-between gap-2">
               <span>{{ row.position }}. {{ row.driver.name }}</span>
-              <!-- A new element for each time, so the flash runs when there is a new time -->
               @for (time of [row.time]; track time) {
                 <span class="new-time rounded px-1 tabular-nums" [class.text-purple-400]="row.fastest" [class.font-bold]="row.fastest">{{ time | polePositionTime }}</span>
               }
             </span>
           </div>
-          <div matListItemLine>
-            <span class="inline-flex w-full flex-row justify-between gap-2 text-xs">
-              <span>
-                @if (row.tyre; as tyre) {
-                  <span class="font-bold" [class]="tyre.text" [title]="tyre.name">{{ tyre.letter }}</span>
-                  <span class="opacity-70">{{ row.tyreAge }} omg. ·</span>
-                }
-                <span class="opacity-70">Omgang {{ row.lap }}</span>
+          @if (row.details) {
+            <div matListItemLine>
+              <span class="inline-flex w-full flex-row justify-between gap-2 text-xs">
+                <span>
+                  @if (row.tyre; as tyre) {
+                    <span class="font-bold" [class]="tyre.text" [title]="tyre.name">{{ tyre.letter }}</span>
+                    <span class="opacity-70">{{ row.tyreAge }} omg.{{ row.lap ? ' ·' : '' }}</span>
+                  }
+                  @if (row.lap) {
+                    <span class="opacity-70">Omgang {{ row.lap }}</span>
+                  }
+                </span>
+                <span class="tabular-nums">{{ row.gap }}</span>
               </span>
-              <span class="tabular-nums">{{ row.gap }}</span>
-            </span>
-          </div>
-          <div matListItemLine>
-            <f2020-live-sector-status class="text-xs" [status]="sectors()?.get(row.driver.driverId)" />
-          </div>
+            </div>
+          }
+          @if (row.sectors; as sectors) {
+            <div matListItemLine>
+              <f2020-live-sector-status class="text-xs" [status]="sectors" />
+            </div>
+          }
         </mat-list-item>
       </mat-list>
     } @else {
@@ -102,13 +113,23 @@ export class LiveSessionTimingComponent {
   protected readonly sectors = computed(() => new Map((this.#sectorList.value() ?? []).map((sector: IDriverSector) => [sector.driver.driverId, sector])));
   protected readonly rows = computed((): TimingRow[] => {
     const byPosition = isRaceSession(this.session());
-    return (this.#timing.value() ?? []).map(row => ({
-      ...row,
-      // The sprint and the race show the last lap, as they are ordered by position. The other sessions show the best lap
-      time: byPosition ? row.lastLap : row.bestLap,
-      gap: row.lapsBehind ?? (row.gap ? gap(row.gap) : ''),
-      tyre: row.tyre ? (tyres[row.tyre] ?? unknownTyre) : undefined,
-    }));
+    return (this.#timing.value() ?? []).map(row => {
+      const tyre = row.tyre ? (tyres[row.tyre] ?? unknownTyre) : undefined;
+      const rowGap = row.lapsBehind ?? (row.gap ? gap(row.gap) : '');
+      const sectors = this.sectors().get(row.driver.driverId);
+      const details = !!tyre || !!row.lap || !!rowGap;
+      return {
+        ...row,
+        // The sprint and the race show the last lap, as they are ordered by position. The other sessions show the best lap
+        time: byPosition ? row.lastLap : row.bestLap,
+        gap: rowGap,
+        tyre,
+        sectors,
+        details,
+        lines: 1 + Number(details) + Number(!!sectors),
+      };
+    });
   });
+  protected readonly noTimes = computed(() => this.rows().every(row => !row.time));
   protected readonly driverKey = (row: TimingRow) => row.driver.driverId;
 }

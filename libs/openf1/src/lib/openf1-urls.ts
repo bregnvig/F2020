@@ -3,7 +3,7 @@ export type SessionName = 'Practice 1' | 'Practice 2' | 'Practice 3' | 'Sprint Q
 
 export const openF1Url = {
   session: (seasonId: string | number, circuitKey: number, sessionName: SessionName) =>
-    `https://api.openf1.org/v1/sessions?year=${seasonId}&circuit_key=${circuitKey}&session_name=${sessionName}`,
+    `https://api.openf1.org/v1/sessions?year=${seasonId}&circuit_key=${circuitKey}&session_name=${encodeURIComponent(sessionName)}`,
   positions: (sessionKey: number) => `https://api.openf1.org/v1/position?session_key=${sessionKey}`,
   intervals: (sessionKey: number) => `https://api.openf1.org/v1/intervals?session_key=${sessionKey}`,
   labs: (sessionKey: number) => `https://api.openf1.org/v1/laps?session_key=${sessionKey}`,

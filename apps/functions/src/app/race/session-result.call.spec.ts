@@ -69,7 +69,7 @@ describe('session result', () => {
 
   it('should fetch the result from OpenF1 the first time, and read it from Firestore afterwards', async () => {
     const first = await sessionResult();
-    expect(openF1List).toHaveBeenCalledWith('sessions?year=9999&circuit_key=10&session_name=Practice 1');
+    expect(openF1List).toHaveBeenCalledWith('sessions?year=9999&circuit_key=10&session_name=Practice%201');
     expect(first.map(r => [r.driver.driverId, r.position, r.duration, r.gapToLeader])).toEqual([
       ['rus', 1, 90_500, 0],
       ['lec', 2, 90_750, 250],
