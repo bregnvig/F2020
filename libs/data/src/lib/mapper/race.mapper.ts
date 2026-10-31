@@ -19,7 +19,7 @@ export function basisMap(source: Circuit, round: number, season: number | string
 
 const mapICS = (
   circuit: Circuit,
-  params: Pick<IRace, 'close' | 'round' | 'season' | 'state' | 'raceStart' | 'url'>,
+  params: Pick<IRace, 'close' | 'round' | 'season' | 'state' | 'raceStart' | 'url' | 'schedule'>,
   selectedDriver: IDriver | nullish,
   previousRace?: IRace,
   drivers?: IDriver[],
@@ -30,6 +30,7 @@ const mapICS = (
     close: params.close,
     raceStart: params.raceStart,
     url: params.url,
+    schedule: params.schedule,
     selectedDriver: selectedDriver?.driverId ?? '',
     drivers: (drivers || []).map(d => d.driverId),
     open: previousRace?.close.startOf('day').plus({ day: 3 }) ?? DateTime.local(),
@@ -39,7 +40,7 @@ const mapICS = (
 export function map(
   circuit: Circuit,
   selectedDriver: IDriver,
-  race: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart' | 'state' | 'url'>,
+  race: Pick<IRace, 'close' | 'round' | 'season' | 'raceStart' | 'state' | 'url' | 'schedule'>,
   previousRace?: IRace,
   drivers?: IDriver[],
 ): IRace {

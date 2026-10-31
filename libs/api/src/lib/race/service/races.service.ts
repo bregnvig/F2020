@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { collection, collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Bid, IDriver, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
+import { Bid, IDriver, IDriverSessionResult, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { requiredValue, unfreeze } from '@f2020/tools';
 import { catchError, combineLatest, Observable, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -89,6 +89,14 @@ export class RacesService {
         return mapper.qualifyResult({ sessionResults, race, drivers });
       }),
     );
+  }
+
+  /** The result of a session of the weekend that is over, e.g. `practice-1`. The function stores it, once OpenF1 has it */
+  getSessionResult(race: IRace, session: string): Promise<IDriverSessionResult[]> {
+    return httpsCallable<{ season: number; round: number; session: string }, IDriverSessionResult[]>(
+      this.#functions,
+      'sessionResultCall',
+    )({ season: race.season, round: race.round, session }).then(response => response.data);
   }
 
   /** The OpenF1 session of the qualifying, which has its start and end */

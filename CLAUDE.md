@@ -44,6 +44,8 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
 - `--fix-team-standings` - Rebuild the championship of the teams in `standings/teams` from OpenF1: points, positions, wins and the place after each race
 - `--clean-teams` - Remove the championship fields from the teams, which is in `standings/teams` now. Run it when the app reads
   `standings/teams`
+- `--fix-schedule` - Write the schedule (the sessions of the weekend) of the races from the calendar `f<season>.ics`, matched by circuit.
+  Only the schedule is written, so it works on races that are closed or completed
 - `--fix-driver-results` - Recalculate the driver results, from OpenF1 with `--reload`
 - `--build-last-year` - Rebuild `lastYear` and the driver results of last year (`standings/drivers/<last year>`) from OpenF1. Drivers are
   found by the number they had in each session, as numbers change between seasons. The circuit of a race may have to be picked by hand
@@ -96,6 +98,15 @@ a preflight never has the token. `OpenF1HttpService` calls the callable function
 - Only players may call it, and the path must be an endpoint with a query, so it can't fetch other URLs
 - OpenF1 answers 404 when it has no data. The proxy returns an empty list instead
 - The live updates over MQTT are not affected and connect from the browser, with a token from the `getToken` function
+
+### Race Schedule
+
+The builder reads the sessions of each weekend from the calendar into `race.schedule` (`IRaceSession`). Sessions still to be
+confirmed (TBC) are left out. Identify a session with `sessionId()` (`practice-1`, `qualifying`, ...) and show it with `sessionName()`.
+
+The result of a session that is over comes from the callable `sessionResultCall`. It fetches the result from OpenF1 the first time and
+stores it in `seasons/{season}/races/{round}/sessions/{sessionId}`, so later calls read Firestore. A result is only stored an hour after
+the session, as OpenF1 may correct it, and never when it is empty. Delete the document to fetch it again.
 
 ## Development Notes
 

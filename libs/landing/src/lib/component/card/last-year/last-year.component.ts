@@ -13,7 +13,7 @@ import { MatCardModule } from '@angular/material/card';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatCardModule, FaIconComponent, RouterLink, MatButtonModule, PolePositionTimePipe],
   host: {
-    '[hidden]': 'loading()',
+    '[hidden]': 'closed() || loading()',
   },
 })
 export class LastYearComponent {
@@ -21,10 +21,13 @@ export class LastYearComponent {
   icon = icon.farCalendar;
   url: Signal<string | undefined>;
   loading: Signal<boolean>;
+  /** Once the race is closed, the weekend has begun and last year is no longer of interest */
+  closed: Signal<boolean>;
 
   constructor() {
     const store = inject(RacesStore);
-    effect(() => store.currentRace() && store.loadLastYear());
+    this.closed = computed(() => store.currentRace()?.state === 'closed');
+    effect(() => store.currentRace() && !this.closed() && store.loadLastYear());
     this.url = computed(() => store.currentRace()?.url);
     this.lastYear = store.lastYear;
     // Without a current race there is nothing to load

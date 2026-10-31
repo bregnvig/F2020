@@ -7,6 +7,7 @@ import { LiveLiveComponent, LiveQualifyComponent, RaceComponent } from './compon
 import { RacesComponent } from './component/races/races.component';
 import { SubmitInterimResultComponent } from './component/submit-interim-result/submit-interim-result.component';
 import { SubmitResultComponent } from './component/submit-result/submit-result.component';
+import { SessionResultComponent } from './component/session-result/session-result';
 import { qualifySessionData, qualifySessionResolver, RaceStore } from '@f2020/api';
 import { inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -65,6 +66,10 @@ export const RaceRouting: Routes = [
       {
         path: 'result',
         component: DisplayResultComponent,
+      },
+      {
+        path: 'session/:session',
+        component: SessionResultComponent,
       },
       {
         path: 'qualify',
