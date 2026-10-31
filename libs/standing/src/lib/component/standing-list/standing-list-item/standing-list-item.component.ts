@@ -9,9 +9,20 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
     <span class="flex flex-row justify-between items-center">
       <span class="flex flex-col">
         <span>{{ standing().driver.name }}</span>
-        <span class="text-xs flex flex-row">
-          @for (_ of wins(); track _) {
-            <fa-icon class="mr-1" [icon]="trophyIcon" size="xs" />
+        <span class="text-xs flex flex-row gap-3">
+          @if (wins().length) {
+            <span>
+              @for (_ of wins(); track $index) {
+                <fa-icon class="mr-1" [icon]="trophyIcon" size="xs" />
+              }
+            </span>
+          }
+          @if (fastestLaps().length) {
+            <span>
+              @for (_ of fastestLaps(); track $index) {
+                <fa-icon class="mr-1" title="Hurtigste omgang" [icon]="fastestLapIcon" size="xs" />
+              }
+            </span>
           }
         </span>
       </span>
@@ -34,10 +45,12 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 export class StandingListItemComponent {
   readonly standing = input.required<IDriverStanding>();
   readonly wins = computed(() => Array(this.standing()?.wins ?? 0).fill(0));
+  readonly fastestLaps = computed(() => Array(this.standing()?.fastestLaps ?? 0).fill(0));
   readonly change = computed(() => positionChange(this.standing()));
   readonly gained = computed(() => {
     const { points, previousPoints } = this.standing();
     return previousPoints === undefined ? 0 : points - previousPoints;
   });
   readonly trophyIcon = icon.farTrophy;
+  readonly fastestLapIcon = icon.farWind;
 }

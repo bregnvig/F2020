@@ -19,6 +19,16 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
     </mat-toolbar>
     <div class="max-w-3xl mx-auto">
       @if (standings()) {
+        <div class="flex flex-row gap-4 px-4 pt-3 text-xs opacity-70">
+          <span>
+            <fa-icon class="mr-1" [icon]="trophyIcon" size="xs" />
+            Sejr
+          </span>
+          <span>
+            <fa-icon class="mr-1" [icon]="fastestLapIcon" size="xs" />
+            Hurtigste omgang
+          </span>
+        </div>
         <mat-action-list>
           @for (standing of standings(); track standing) {
             <button mat-list-item [routerLink]="[standing.driver.driverId | lowercase]">
@@ -42,6 +52,8 @@ import { StandingListItemComponent } from './standing-list-item/standing-list-it
 export class StandingListComponent {
   protected standings: Signal<IDriverStanding[]>;
   protected readonly chartIcon = icon.farChartLineUpDown;
+  protected readonly trophyIcon = icon.farTrophy;
+  protected readonly fastestLapIcon = icon.farWind;
 
   constructor() {
     const snackBar = inject(MatSnackBar);

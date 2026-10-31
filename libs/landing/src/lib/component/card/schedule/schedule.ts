@@ -1,4 +1,4 @@
-import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -49,49 +49,47 @@ interface ScheduleDay {
         <mat-card-content>
           @for (day of days(); track day.date) {
             <h3 class="mt-4 mb-0 px-4 text-xs font-medium uppercase tracking-widest opacity-60">{{ day.date }}</h3>
-            <mat-list>
+            <mat-action-list>
               @for (session of day.sessions; track session.id) {
-                @if (session.completed) {
-                  <a mat-list-item class="opacity-50" [routerLink]="['race', race.round, 'session', session.id]">
-                    <ng-container *ngTemplateOutlet="row; context: { $implicit: session }" />
-                  </a>
-                } @else {
-                  <mat-list-item>
-                    <ng-container *ngTemplateOutlet="row; context: { $implicit: session }" />
-                  </mat-list-item>
-                }
+                <mat-list-item
+                  [class.opacity-50]="session.completed"
+                  [disabled]="!session.completed"
+                  [routerLink]="session.completed ? ['race', race.round, 'session', session.id] : null">
+                  <fa-icon matListItemIcon class="text-center" [icon]="session.icon" />
+                  <span matListItemTitle [class.font-bold]="session.live">{{ session.name }}</span>
+                  @if (session.completed) {
+                    <span matListItemLine>Se resultatet</span>
+                  } @else if (session.startsIn) {
+                    <span matListItemLine>{{ session.startsIn }}</span>
+                  }
+                  <span matListItemMeta class="self-center">
+                    @if (session.live) {
+                      <span class="flex items-center gap-2 rounded-full py-1 px-3 text-sm font-medium bg-pink-600 text-white">
+                        <span class="size-2 rounded-full bg-white animate-pulse"></span>
+                        I gang
+                      </span>
+                    } @else if (!session.completed) {
+                      <span class="rounded-full py-1 px-3 text-sm tabular-nums bg-white/10">{{ session.time }}</span>
+                    }
+                  </span>
+                </mat-list-item>
               }
-            </mat-list>
+            </mat-action-list>
           }
         </mat-card-content>
       </mat-card>
     }
-    <ng-template #row let-session>
-      <span class="flex flex-row justify-between items-center gap-4">
-        <span class="flex flex-row items-center gap-4">
-          <fa-icon class="w-6 text-center opacity-70" [icon]="session.icon" />
-          <span class="flex flex-col">
-            <span [class.font-bold]="session.live">{{ session.name }}</span>
-            @if (session.startsIn) {
-              <span class="text-xs opacity-70">{{ session.startsIn }}</span>
-            }
-          </span>
-        </span>
-        @if (session.live) {
-          <span class="flex items-center gap-2 rounded-full py-1 px-3 text-sm font-medium bg-pink-600 text-white">
-            <span class="size-2 rounded-full bg-white animate-pulse"></span>
-            I gang
-          </span>
-        } @else if (session.completed) {
-          <span class="py-1 px-3 text-sm">Resultat</span>
-        } @else {
-          <span class="rounded-full py-1 px-3 text-sm tabular-nums bg-white/10">{{ session.time }}</span>
-        }
-      </span>
-    </ng-template>
+  `,
+  styles: `
+    /* Only a completed session has a result to open. The others are disabled, so they can't be activated, but read as normal */
+    mat-action-list {
+      --mat-list-list-item-disabled-label-text-opacity: 1;
+      --mat-list-list-item-disabled-leading-icon-opacity: 1;
+      --mat-list-list-item-disabled-trailing-icon-opacity: 1;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, MatListModule, NgOptimizedImage, NgTemplateOutlet, RouterLink, FlagURLPipe, FaIconComponent],
+  imports: [MatCardModule, MatListModule, NgOptimizedImage, RouterLink, FlagURLPipe, FaIconComponent],
   host: {
     '[hidden]': '!days().length',
   },
