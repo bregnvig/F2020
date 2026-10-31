@@ -128,6 +128,8 @@ from OpenF1 and the updates over MQTT. The race and the qualifying link to their
   (`color-scheme: light dark`). Never hard-code white or black for text and backgrounds. Use the colour roles of the theme, which are
   Tailwind colours in `tailwind.config.js` (`text-on-surface`, `bg-primary`, ...), or `var(--mat-sys-...)`. Add a role there when one is
   missing. Logos are shown in a white circle, so black logos show in both
+- **Fonts**: Titillium Web (semi-bold) in the titles and Inter in the text, set in the theme in `styles.scss`. Don't set a font on
+  a component, as everything inherits them
 - **Championship points**: drivers (`IDriverStanding`) and teams (`ITeamStanding`) extend `IChampionshipPoints` with `points`, `position`,
   `previousPoints` and `previousPosition`. They come from the OpenF1 championship endpoints, where `points_start` and `position_start`
   are before the session. On a sprint weekend pass the sprint's championship as `weekendStart`, so the previous standing is from before
