@@ -1,5 +1,5 @@
-import { IDriverSessionResult, IRace, IRaceSession, ISessionResult, mapper, sessionId } from '@f2020/data';
-import { Driver, openF1Url, Session, SessionName, SessionResult } from '@f2020/openf1';
+import { IDriverSessionResult, IRace, IRaceSession, ISessionResult, mapper, openF1SessionName, sessionId } from '@f2020/data';
+import { Driver, openF1Url, Session, SessionResult } from '@f2020/openf1';
 import { getFirestore } from 'firebase-admin/firestore';
 import { CallableRequest, onCall } from 'firebase-functions/v2/https';
 import { DateTime } from 'luxon';
@@ -10,15 +10,6 @@ const list = <T>(url: string) => openF1List<T>(url.replace(openF1ApiUrl, ''));
 
 /** OpenF1 may correct a result, e.g. after a penalty, for a while after the session */
 const storeAfter = { hours: 1 };
-
-const sessionNames: Record<Exclude<IRaceSession['type'], 'practice'>, SessionName> = {
-  'sprint-qualifying': 'Sprint Qualifying',
-  sprint: 'Sprint',
-  qualifying: 'Qualifying',
-  race: 'Race',
-};
-
-const openF1SessionName = (session: IRaceSession): SessionName => (session.type === 'practice' ? (`Practice ${session.number}` as SessionName) : sessionNames[session.type]);
 
 const fetchResult = async (race: IRace, session: IRaceSession): Promise<ISessionResult> => {
   const [openF1Session] = await list<Session>(openF1Url.session(race.season, race.circuitId, openF1SessionName(session)));

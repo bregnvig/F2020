@@ -8,15 +8,7 @@ import { RaceResultProvider } from '@f2020/api';
 import { AnimatedForDirective, DriverHeadshotComponent } from '@f2020/shared';
 import { IDriver, IRace, IStint, Tyre } from '@f2020/data';
 import { valueOf } from './track/car-progress';
-
-const tyres: Record<Tyre, { letter: string; name: string; colour: string }> = {
-  SOFT: { letter: 'S', name: 'Blød', colour: 'bg-red-600 text-white' },
-  MEDIUM: { letter: 'M', name: 'Medium', colour: 'bg-yellow-400 text-black' },
-  HARD: { letter: 'H', name: 'Hård', colour: 'bg-gray-100 text-black' },
-  INTERMEDIATE: { letter: 'I', name: 'Intermediate', colour: 'bg-green-600 text-white' },
-  WET: { letter: 'W', name: 'Regn', colour: 'bg-blue-600 text-white' },
-};
-const unknownTyre = { letter: '?', name: 'Ukendt', colour: 'bg-gray-500 text-white' };
+import { tyres, unknownTyre } from './tyres';
 
 interface StrategyRow {
   driver: IDriver;

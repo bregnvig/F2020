@@ -1,7 +1,8 @@
+import { SessionName } from '@f2020/openf1';
 import { DateTime } from 'luxon';
 import { Bid } from './bid.model';
 import { Coordinate } from './coordinate.model';
-import { IDriver, IDriverQualifying, IDriverRaceResult } from './driver.model';
+import { IDriver, IDriverQualifying, IDriverRaceResult, Tyre } from './driver.model';
 import { Player } from './player.model';
 import { ITeam } from './team.model';
 
@@ -30,6 +31,44 @@ const sessionNames: Record<Exclude<RaceSessionType, 'practice'>, string> = {
 
 /** The name of the session in the app, e.g. `1. træning` */
 export const sessionName = (session: Pick<IRaceSession, 'type' | 'number'>) => (session.type === 'practice' ? `${session.number}. træning` : sessionNames[session.type]);
+
+const openF1SessionNames: Record<Exclude<RaceSessionType, 'practice'>, SessionName> = {
+  'sprint-qualifying': 'Sprint Qualifying',
+  sprint: 'Sprint',
+  qualifying: 'Qualifying',
+  race: 'Race',
+};
+
+/** The name of the session in OpenF1, e.g. `Practice 1` */
+export const openF1SessionName = (session: Pick<IRaceSession, 'type' | 'number'>): SessionName =>
+  session.type === 'practice' ? (`Practice ${session.number}` as SessionName) : openF1SessionNames[session.type];
+
+/** From the start of the session until it is planned to end */
+export const isSessionLive = (session: Pick<IRaceSession, 'start' | 'end'>, now = DateTime.now()) => session.start <= now && now < session.end;
+
+/** The sprint and the race are ordered by position, the other sessions by the best lap */
+export const isRaceSession = (session: Pick<IRaceSession, 'type'>) => session.type === 'sprint' || session.type === 'race';
+
+/** A driver in a session while it is driven */
+export interface ILiveSessionDriver {
+  driver: IDriver;
+  position: number;
+  /** The lap the driver is on */
+  lap: number;
+  /** In milliseconds */
+  bestLap?: number;
+  /** In milliseconds */
+  lastLap?: number;
+  /** True for the best lap of the session */
+  fastest: boolean;
+  /** In milliseconds. To the best lap of the session, or to the leader in the sprint and the race */
+  gap?: number;
+  /** The laps behind the leader in the sprint and the race, e.g. `+1 LAP` */
+  lapsBehind?: string;
+  tyre?: Tyre;
+  /** Laps driven on the tyre, also before this stint */
+  tyreAge?: number;
+}
 
 export interface IDriverSessionResult {
   driver: IDriver;

@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { RacesStore } from '@f2020/api';
-import { IRace, RaceSessionType, sessionId, sessionName } from '@f2020/data';
+import { IRace, IRaceSession, isSessionLive, RaceSessionType, sessionId, sessionName } from '@f2020/data';
 import { FlagURLPipe, icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -27,9 +27,18 @@ interface ScheduleSession {
   time: string;
   live: boolean;
   completed: boolean;
+  /** To the times while the session is driven, and the result after. Missing before the session */
+  link?: (string | number)[];
   /** Only on the next session */
   startsIn?: string;
 }
+
+/** The race and the qualifying have their own live pages. The other sessions are followed on the page of the session */
+const link = (race: IRace, session: IRaceSession, now: DateTime): ScheduleSession['link'] => {
+  if (isSessionLive(session, now) && session.type === 'race') return ['race', race.round, 'live'];
+  if (isSessionLive(session, now) && session.type === 'qualifying') return ['race', race.round, 'live', 'qualify'];
+  return session.start <= now ? ['race', race.round, 'session', sessionId(session)] : undefined;
+};
 
 interface ScheduleDay {
   date: string;
@@ -51,14 +60,13 @@ interface ScheduleDay {
             <h3 class="mt-4 mb-0 px-4 text-xs font-medium uppercase tracking-widest opacity-60">{{ day.date }}</h3>
             <mat-action-list>
               @for (session of day.sessions; track session.id) {
-                <mat-list-item
-                  [class.opacity-50]="session.completed"
-                  [disabled]="!session.completed"
-                  [routerLink]="session.completed ? ['race', race.round, 'session', session.id] : null">
+                <mat-list-item [class.opacity-50]="session.completed" [disabled]="!session.link" [routerLink]="session.link ?? null">
                   <fa-icon matListItemIcon class="text-center" [icon]="session.icon" />
                   <span matListItemTitle [class.font-bold]="session.live">{{ session.name }}</span>
                   @if (session.completed) {
                     <span matListItemLine>Se resultatet</span>
+                  } @else if (session.live) {
+                    <span matListItemLine>Følg tiderne live</span>
                   } @else if (session.startsIn) {
                     <span matListItemLine>{{ session.startsIn }}</span>
                   }
@@ -81,7 +89,7 @@ interface ScheduleDay {
     }
   `,
   styles: `
-    /* Only a completed session has a result to open. The others are disabled, so they can't be activated, but read as normal */
+    /* Only a session that has started can be opened. The others are disabled, so they can't be activated, but read as normal */
     mat-action-list {
       --mat-list-list-item-disabled-label-text-opacity: 1;
       --mat-list-list-item-disabled-leading-icon-opacity: 1;
@@ -101,7 +109,8 @@ export class ScheduleComponent {
   protected readonly race: Signal<IRace | undefined> = inject(RacesStore).currentRace;
   protected readonly days = computed(() => {
     const now = this.#now();
-    const sessions = this.race()?.schedule ?? [];
+    const race = this.race();
+    const sessions = race?.schedule ?? [];
     const next = sessions.find(session => session.start > now);
     return sessions.reduce((days, session) => {
       const date = session.start.toFormat('cccc d. MMMM');
@@ -110,8 +119,9 @@ export class ScheduleComponent {
         name: sessionName(session),
         icon: sessionIcons[session.type],
         time: session.start.toFormat('HH:mm'),
-        live: session.start <= now && session.end > now,
+        live: isSessionLive(session, now),
         completed: session.end <= now,
+        link: link(race, session, now),
         startsIn: session === next ? session.start.toRelative({ base: now, locale: 'da' }) : undefined,
       };
       const day = days.at(-1);
