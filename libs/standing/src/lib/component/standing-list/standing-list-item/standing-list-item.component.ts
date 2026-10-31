@@ -9,7 +9,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
     <span class="flex flex-row justify-between items-center">
       <span class="flex flex-col">
         <span>{{ standing().driver.name }}</span>
-        <span class="text-xs flex flex-row gap-3">
+        <span class="text-xs flex flex-col gap-0.5">
           @if (wins().length) {
             <span>
               @for (_ of wins(); track $index) {

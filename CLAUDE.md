@@ -110,6 +110,9 @@ The result of a session that is over comes from the callable `sessionResultCall`
 stores it in `seasons/{season}/races/{round}/sessions/{sessionId}`, so later calls read Firestore. A result is only stored an hour after
 the session, as OpenF1 may correct it, and never when it is empty. Delete the document to fetch it again.
 
+While a session is driven, its page shows the times live with `SessionTimingService`, the same way as the live qualifying: the history
+from OpenF1 and the updates over MQTT. The race and the qualifying link to their own live pages instead.
+
 ## Development Notes
 
 - Uses Nx for monorepo management

@@ -12,18 +12,20 @@ import {
   Position,
   RaceControl,
   Session,
+  SessionName,
   SessionResult,
   Stint,
   TeamChampionship,
   TeamRadio as OpenF1TeamRadio,
   Weather,
+  Driver,
 } from '@f2020/openf1';
 import { requiredValue } from '@f2020/tools';
 import { DateTime } from 'luxon';
 import { catchError, combineLatest, defer, map, Observable, of, shareReplay, tap } from 'rxjs';
 
 // The season is part of the key, as a circuit is raced every year
-const sessionKey = (race: IRace, session: 'Race' | 'Qualifying' | 'Sprint') => `${session}-${race.season}-${race.circuitId}`;
+const sessionKey = (race: IRace, session: SessionName) => `${session}-${race.season}-${race.circuitId}`;
 const sessionCache = new Map<string, Observable<Session>>();
 const toISOOptions = { includeOffset: false, suppressMilliseconds: true };
 const openF1ApiUrl = 'https://api.openf1.org/v1/';
@@ -32,7 +34,7 @@ const openF1ApiUrl = 'https://api.openf1.org/v1/';
 export class OpenF1HttpService {
   #functions = inject(Functions);
 
-  getSession(race: IRace, sessionName: 'Race' | 'Qualifying' | 'Sprint'): Observable<Session> {
+  getSession(race: IRace, sessionName: SessionName): Observable<Session> {
     const key = sessionKey(race, sessionName);
     if (!sessionCache.has(key)) {
       const session = JSON.parse(localStorage.getItem(key)) as Session | null;
@@ -64,6 +66,11 @@ export class OpenF1HttpService {
 
   getLaps(sessionKey: number): Observable<Lap[]> {
     return this.#getList<Lap>(openF1Url.labs(sessionKey));
+  }
+
+  /** The drivers of the session, with the number each has in it */
+  getDrivers(sessionKey: number): Observable<Driver[]> {
+    return this.#getList<Driver>(openF1Url.driver(sessionKey));
   }
 
   getSessionResult(sessionKey: number): Observable<SessionResult[]> {

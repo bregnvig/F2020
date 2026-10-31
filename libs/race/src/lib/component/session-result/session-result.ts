@@ -3,9 +3,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, resource }
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { RacesService, RaceStore } from '@f2020/api';
-import { IDriverSessionResult, sessionId, sessionName } from '@f2020/data';
+import { IDriverSessionResult, isSessionLive, sessionId, sessionName } from '@f2020/data';
 import { CardPageComponent, DriverHeadshotComponent, FlagURLPipe, LoadingComponent } from '@f2020/shared';
 import { Duration } from 'luxon';
+import { LiveSessionTimingComponent } from './live-session-timing';
 
 const statuses: Record<NonNullable<IDriverSessionResult['status']>, string> = {
   dnf: 'Udgået',
@@ -35,7 +36,9 @@ const result = (entry: IDriverSessionResult, index: number): string => {
             <mat-card-subtitle>{{ race.name }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            @if (results.isLoading()) {
+            @if (live(); as session) {
+              <f2020-live-session-timing [race]="race" [session]="session" />
+            } @else if (results.isLoading()) {
               <sha-loading />
             } @else if (results.error()) {
               <p class="mt-4">Resultatet kunne ikke hentes. Prøv igen om lidt.</p>
@@ -71,7 +74,7 @@ const result = (entry: IDriverSessionResult, index: number): string => {
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, MatListModule, NgOptimizedImage, CardPageComponent, DriverHeadshotComponent, FlagURLPipe, LoadingComponent],
+  imports: [MatCardModule, MatListModule, NgOptimizedImage, CardPageComponent, DriverHeadshotComponent, FlagURLPipe, LoadingComponent, LiveSessionTimingComponent],
 })
 export class SessionResultComponent {
   #service = inject(RacesService);
@@ -80,12 +83,18 @@ export class SessionResultComponent {
   readonly session = input.required<string>();
 
   protected readonly race = inject(RaceStore).race;
+  #raceSession = computed(() => this.race()?.schedule?.find(s => sessionId(s) === this.session()));
+  /** The session while it is driven, when the page is opened. It has no result yet, so the times are shown live */
+  protected readonly live = computed(() => {
+    const session = this.#raceSession();
+    return session && isSessionLive(session) ? session : undefined;
+  });
   protected readonly title = computed(() => {
-    const session = this.race()?.schedule?.find(s => sessionId(s) === this.session());
+    const session = this.#raceSession();
     return session ? sessionName(session) : 'Resultat';
   });
   protected readonly results = resource({
-    params: () => (this.race() ? { race: this.race(), session: this.session() } : undefined),
+    params: () => (this.race() && !this.live() ? { race: this.race(), session: this.session() } : undefined),
     loader: ({ params }) => this.#service.getSessionResult(params.race, params.session),
   });
   protected readonly entries = computed(() => (this.results.value() ?? []).map((entry, index) => ({ ...entry, result: result(entry, index) })));
