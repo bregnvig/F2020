@@ -6,7 +6,7 @@ import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { RacesStore } from '@f2020/api';
 import { IRace, IRaceSession, isSessionLive, RaceSessionType, sessionId, sessionName } from '@f2020/data';
-import { FlagURLPipe, icon } from '@f2020/shared';
+import { FlagURLPipe, icon, RelativeToNowPipe } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { DateTime } from 'luxon';
@@ -56,6 +56,18 @@ interface ScheduleDay {
           <mat-card-subtitle>Weekendens program</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
+          @if (remind()) {
+            <mat-action-list>
+              <a mat-list-item class="!mt-2 rounded-xl bg-surface-container-highest" [routerLink]="['race', race.round, 'bid']">
+                <fa-icon matListItemIcon class="text-center text-primary" [icon]="playIcon" />
+                <span matListItemTitle class="font-bold">Du har ikke spillet endnu</span>
+                <span matListItemLine>Spillet lukker {{ race.close | relativeToNow }}</span>
+                <span matListItemMeta class="self-center">
+                  <span class="rounded-full py-1 px-3 text-sm font-medium bg-primary text-on-primary">Spil nu</span>
+                </span>
+              </a>
+            </mat-action-list>
+          }
           @for (day of days(); track day.date) {
             <h3 class="mt-4 mb-0 px-4 text-xs font-medium uppercase tracking-widest opacity-60">{{ day.date }}</h3>
             <mat-action-list>
@@ -98,16 +110,23 @@ interface ScheduleDay {
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, MatListModule, NgOptimizedImage, RouterLink, FlagURLPipe, FaIconComponent],
+  imports: [MatCardModule, MatListModule, NgOptimizedImage, RouterLink, FlagURLPipe, RelativeToNowPipe, FaIconComponent],
   host: {
-    '[hidden]': '!days().length',
+    '[hidden]': '!days().length && !remind()',
   },
 })
 export class ScheduleComponent {
+  #store = inject(RacesStore);
   /** Updated every minute, so a session is shown as completed when it ends */
   #now = toSignal(interval(60_000).pipe(map(() => DateTime.now())), { initialValue: DateTime.now() });
 
-  protected readonly race: Signal<IRace | undefined> = inject(RacesStore).currentRace;
+  protected readonly playIcon = icon.fasCoins;
+  protected readonly race: Signal<IRace | undefined> = this.#store.currentRace;
+  /** Until the game closes, when the player hasn't submitted a bid */
+  protected readonly remind = computed(() => {
+    const close = this.race()?.close;
+    return !!close && close > this.#now() && !this.#store.yourBid()?.submitted;
+  });
   protected readonly days = computed(() => {
     const now = this.#now();
     const race = this.race();

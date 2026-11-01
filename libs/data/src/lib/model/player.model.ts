@@ -3,12 +3,11 @@ import { DateTime } from 'luxon';
 export type Role = 'player' | 'admin' | 'bookie' | 'bank-admin' | 'anonymous';
 
 /** The cards on the landing page */
-export type LandingCard = 'what-else' | 'remember-to-play' | 'schedule' | 'previous-race' | 'wbc' | 'drivers' | 'teams' | 'join-wbc' | 'last-year' | 'weather';
+export type LandingCard = 'what-else' | 'schedule' | 'previous-race' | 'wbc' | 'drivers' | 'teams' | 'join-wbc' | 'last-year' | 'weather';
 
 /** The cards on the landing page in the order they are shown */
 export const landingCards: { card: LandingCard; title: string }[] = [
   { card: 'what-else', title: 'Hvad er nyt' },
-  { card: 'remember-to-play', title: 'Husk at spille' },
   { card: 'schedule', title: 'Program' },
   { card: 'previous-race', title: 'Seneste resultat' },
   { card: 'join-wbc', title: 'Deltag i WBC' },
