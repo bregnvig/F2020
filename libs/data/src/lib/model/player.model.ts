@@ -24,6 +24,9 @@ export const hiddenLandingCards = (player?: Pick<Player, 'hiddenLandingCards'>):
   return landingCards.every(c => hidden.includes(c.card)) ? [] : hidden;
 };
 
+/** Light, dark or as the device */
+export type ColorScheme = 'light' | 'dark' | 'system';
+
 export interface Player {
   uid: string;
   displayName: string;
@@ -41,6 +44,8 @@ export interface Player {
   hiddenWBCPlayers?: string[];
   /** Teams hidden in the graph of the teams, by constructor id. All are shown when missing */
   hiddenGraphTeams?: string[];
+  /** As the device when missing */
+  colorScheme?: ColorScheme;
   balance?: number;
   almostTimeReminder?: DateTime;
 }

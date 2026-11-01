@@ -39,6 +39,8 @@ import {
   faCloudRain,
   faSun,
   faArrowUp,
+  faMoon,
+  faCircleHalfStroke,
 } from '@fortawesome/pro-regular-svg-icons';
 import {
   faAngleDown,
@@ -99,6 +101,8 @@ const farIcons = [
   faCloudRain,
   faSun,
   faArrowUp,
+  faMoon,
+  faCircleHalfStroke,
 ];
 
 const fasIcons = [
