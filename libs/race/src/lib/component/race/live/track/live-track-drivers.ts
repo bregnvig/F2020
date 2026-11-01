@@ -24,7 +24,7 @@ import { TrackMapComponent, TrackMarker } from './track-map';
     }
   `,
   imports: [TrackMapComponent, TrackLapComponent],
-  host: { class: 'relative', style: 'font-family: Roboto, sans-serif' },
+  host: { class: 'relative' },
 })
 export class LiveTrackDriversComponent {
   race = input.required<IRace>();

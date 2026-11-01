@@ -18,7 +18,7 @@ export interface LiveTrackDriversData {
   selector: 'f2020-live-track-drivers-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col w-full h-full p-4 text-on-surface" style="font-family: Roboto, sans-serif">
+    <div class="flex flex-col w-full h-full p-4 text-on-surface">
       <f2020-live-track-drivers class="block flex-1 min-h-0 w-full" [race]="data.race" [drivers]="data.drivers" />
       @if (data.relive) {
         <f2020-relive-controls class="block w-full max-w-2xl mx-auto" />

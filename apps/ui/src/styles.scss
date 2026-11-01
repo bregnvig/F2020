@@ -1,8 +1,9 @@
 @use '@angular/material' as mat;
 
-@forward 'node_modules/@fontsource/roboto/300.css';
-@forward 'node_modules/@fontsource/roboto/400.css';
-@forward 'node_modules/@fontsource/roboto/500.css';
+@forward 'node_modules/@fontsource/titillium-web/400.css';
+@forward 'node_modules/@fontsource/titillium-web/600.css';
+@forward 'node_modules/@fontsource/titillium-web/700.css';
+@forward 'node_modules/@fontsource-variable/inter/index.css';
 @forward './scss/toolbar';
 
 // Light or dark follows the setting of the device
@@ -14,8 +15,26 @@ html {
         primary: mat.$rose-palette,
         tertiary: mat.$azure-palette,
       ),
-      typography: Roboto,
+      // Titillium Web in the titles, as on F1 before it got a font of its own, and Inter in the text, as it reads well in long lists
+      typography: (
+          brand-family: 'Titillium Web',
+          plain-family: 'Inter Variable',
+        ),
       density: 0,
+    )
+  );
+  // Titillium Web is thin at the regular weight, so the roles in it are semi-bold. The shorthands are set too, as they don't use the weight
+  @include mat.theme-overrides(
+    (
+      display-large-weight: 600,
+      display-medium-weight: 600,
+      display-small-weight: 600,
+      headline-large-weight: 600,
+      headline-medium-weight: 600,
+      headline-small-weight: 600,
+      title-large-weight: 600,
+      title-large: 600 1.375rem #{'/'} 1.75rem 'Titillium Web',
+      headline-small: 600 1.5rem #{'/'} 2rem 'Titillium Web',
     )
   );
 }
@@ -49,10 +68,6 @@ button[color='warn'] {
 @tailwind utilities;
 
 @layer base {
-  html {
-    font-family: 'Times New Roman';
-  }
-
   a {
     @apply underline;
   }

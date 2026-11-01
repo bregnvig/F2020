@@ -8,8 +8,6 @@ import { IRace } from '@f2020/data';
 @Component({
   selector: 'f2020-track-lap',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // The font is set, as the page's is Times New Roman and Material only sets Roboto on its own components
-  host: { style: 'font-family: Roboto, sans-serif' },
   template: `
     @if (lap() && laps(); as laps) {
       Omgang {{ lap() }} af {{ laps }}

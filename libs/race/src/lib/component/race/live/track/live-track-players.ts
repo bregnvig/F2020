@@ -82,7 +82,7 @@ const tieSteps = (bids: Bid[]): Map<string, number> => {
   selector: 'f2020-live-track-players',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex w-full h-full text-on-surface" style="font-family: Roboto, sans-serif">
+    <div class="flex w-full h-full text-on-surface">
       <div class="relative flex flex-col flex-1 min-w-0 p-4">
         <f2020-track-lap class="absolute top-4 left-4 text-sm font-medium" [race]="data.race" />
         <div class="flex-1 min-h-0">

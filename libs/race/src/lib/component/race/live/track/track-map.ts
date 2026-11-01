@@ -35,10 +35,8 @@ const aheadPixels = 5;
         <path [attr.d]="view().path" stroke="#fff" [attr.stroke-width]="view().unit * 1.6" />
         <path [attr.d]="view().path" stroke="#000" [attr.stroke-width]="view().unit" />
       </g>
-      <!-- The font is set, as the page's is Times New Roman and Material only sets Roboto on its own components -->
       <g
         [attr.font-size]="view().unit * 2"
-        font-family="Roboto, sans-serif"
         font-weight="500"
         text-anchor="middle"
         fill="#fff"
