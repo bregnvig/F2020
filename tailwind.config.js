@@ -18,6 +18,7 @@ module.exports = {
           'surface-container-highest',
           'outline',
           'outline-variant',
+          'error',
         ].map(role => [role, `var(--mat-sys-${role})`]),
       ),
     },

@@ -5,15 +5,16 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { SeasonStore, TeamService } from '@f2020/api';
+import { PlayerStore, SeasonStore, TeamService } from '@f2020/api';
 import { IDriver, IRace, ITeam } from '@f2020/data';
 import { AddDriverComponent, DriverPipe } from '@f2020/driver';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { first, map, switchMap } from 'rxjs';
-import { CardPageComponent, HasRoleDirective, LoadingComponent } from '..';
+import { filter, first, map, switchMap } from 'rxjs';
+import { CardPageComponent, LoadingComponent } from '..';
 import { TeamLogoComponent } from '../team-logo/team-logo';
 import { DriverHeadshotComponent } from '../driver-headshot/driver-headshot';
 import { icon } from '../../font-awesome';
+import { TeamDriverAction, TeamDriverDialog, TeamDriverDialogData } from './team-driver-dialog';
 
 @Component({
   selector: 'sha-teams-list',
@@ -23,7 +24,6 @@ import { icon } from '../../font-awesome';
     MatToolbarModule,
     CardPageComponent,
     MatListModule,
-    HasRoleDirective,
     MatDialogModule,
     MatButtonModule,
     FaIconComponent,
@@ -33,20 +33,32 @@ import { icon } from '../../font-awesome';
     DriverHeadshotComponent,
     TeamLogoComponent,
   ],
+  styles: `
+    /* Only an admin can open a driver. For the others the drivers are disabled, but read as normal */
+    mat-action-list {
+      --mat-list-list-item-disabled-label-text-opacity: 1;
+      --mat-list-list-item-disabled-leading-icon-opacity: 1;
+      --mat-list-list-item-disabled-trailing-icon-opacity: 1;
+      --mat-list-list-item-disabled-state-layer-opacity: 0;
+    }
+  `,
 })
 export class TeamsList {
   readonly #dialog = inject(MatDialog);
   readonly #service = inject(TeamService);
   readonly #snackBar = inject(MatSnackBar);
   readonly #season = inject(SeasonStore).season;
+  readonly #player = inject(PlayerStore).player;
   race = input<IRace | undefined>(undefined);
   header = computed(() => (this.race() ? `Hold - ${this.race().name}` : 'Hold'));
   teams = input.required<ITeam[]>();
   drivers = input.required<IDriver[]>();
   protected icon = icon;
   protected readonly seasonId = computed(() => this.#season()?.id);
+  protected readonly admin = computed(() => !!this.#player()?.roles?.includes('admin'));
 
-  protected noDrivers = computed(() => !this.drivers()?.length);
+  /** An admin adds a driver by clicking the team, when there are drivers to add */
+  protected readonly canAdd = computed(() => this.admin() && !!this.drivers()?.length);
 
   /** The teams with the most points first, with a trophy for each win */
   protected readonly sorted = computed(() =>
@@ -76,7 +88,16 @@ export class TeamsList {
       .subscribe(driver => this.#snackBar.open(`${this.#getDriverName(driver)} tilføjet til ${team.name}`, undefined, { duration: 1000 }));
   }
 
-  removeDriver(driver: string, team: ITeam) {
+  protected editDriver(driver: IDriver | undefined, driverId: string, team: ITeam) {
+    const data: TeamDriverDialogData = { driver, team, previous: !!team.previousDrivers?.includes(driverId) };
+    this.#dialog
+      .open<TeamDriverDialog, TeamDriverDialogData, TeamDriverAction>(TeamDriverDialog, { data })
+      .afterClosed()
+      .pipe(filter(action => !!action))
+      .subscribe(action => (action === 'remove' ? this.#removeDriver(driverId, team) : this.#previousDriver(driverId, team)));
+  }
+
+  #removeDriver(driver: string, team: ITeam) {
     const payload: ITeam = {
       ...team,
       drivers: team.drivers.filter(existing => existing !== driver),
@@ -84,7 +105,7 @@ export class TeamsList {
     this.#service.updateTeam(payload).then(() => this.#snackBar.open(`${this.#getDriverName(driver)} fjernet fra ${team.name}`, undefined, { duration: 1000 }));
   }
 
-  previousDriver(driver: string, team: ITeam) {
+  #previousDriver(driver: string, team: ITeam) {
     const alreadyPrevious = team.previousDrivers.includes(driver);
     const payload: ITeam = {
       ...team,
