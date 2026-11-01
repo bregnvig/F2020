@@ -2,6 +2,22 @@
 <sha-card-page>
   <mat-card>
     <mat-card-header>
+      <mat-card-title>Udseende</mat-card-title>
+      <mat-card-subtitle>System følger indstillingen på din enhed</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="!pt-4">
+      <mat-button-toggle-group class="w-full" hideSingleSelectionIndicator [value]="colorScheme()" (change)="updateColorScheme($event.value)" aria-label="Udseende">
+        @for (option of colorSchemes; track option.value) {
+          <mat-button-toggle class="flex-1" [value]="option.value">
+            <fa-icon class="me-2" [icon]="option.icon" />
+            {{ option.label }}
+          </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
       <mat-card-title>Påmindelser</mat-card-title>
     </mat-card-header>
     <mat-card-content>

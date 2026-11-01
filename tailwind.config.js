@@ -2,6 +2,8 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
+  // The dark class is set by ColorSchemeService, so dark: follows the choice of the player instead of the device
+  darkMode: 'selector',
   content: ['./apps/ui/src/**/*.{html,ts}', './libs/**/*.{html,ts}'],
   theme: {
     extend: {

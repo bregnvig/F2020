@@ -10,6 +10,15 @@
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff8f8" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171213" />
     <script>
+      // The colour scheme chosen in the profile, before the app has loaded. ColorSchemeService does the same afterwards
+      (() => {
+        const scheme = localStorage.getItem('color-scheme');
+        const dark = scheme === 'dark' || (scheme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.style.colorScheme = scheme === 'light' || scheme === 'dark' ? scheme : 'light dark';
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
+    <script>
       (g => {
         var h,
           a,
@@ -53,10 +62,8 @@
         background-color: #fff8f8;
       }
 
-      @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #171213;
-        }
+      html.dark body {
+        background-color: #171213;
       }
 
       img.loading {

@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { AnalyticsService, DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
+import { AnalyticsService, ColorSchemeService, DriversStore, PlayerStore, RacesStore, VersionService } from '@f2020/api';
 import { icon, SidebarComponent } from '@f2020/shared';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -31,6 +31,8 @@ export class AppComponent {
   readonly #bottomSheet = inject(MatBottomSheet);
 
   constructor() {
+    // Applies the colour scheme of the player
+    inject(ColorSchemeService);
     const racesStore = inject(RacesStore);
     racesStore.loadRaces();
     this.#checkForVersionUpdate();

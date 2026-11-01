@@ -124,8 +124,9 @@ from OpenF1 and the updates over MQTT. The race and the qualifying link to their
 ## Domain Notes
 
 - **UI text is Danish**, code and comments are English
-- **Light and dark theme**: an M3 Material theme in `apps/ui/src/styles.scss` follows the light or dark setting of the device
-  (`color-scheme: light dark`). Never hard-code white or black for text and backgrounds. Use the colour roles of the theme, which are
+- **Light and dark theme**: an M3 Material theme in `apps/ui/src/styles.scss`. A player chooses light, dark or system in the profile
+  (`player.colorScheme`), which `ColorSchemeService` applies with `color-scheme` and the `dark` class of Tailwind (`darkMode: 'selector'`).
+  A script in `index.html` applies it before the app has loaded. Never hard-code white or black for text and backgrounds. Use the colour roles of the theme, which are
   Tailwind colours in `tailwind.config.js` (`text-on-surface`, `bg-primary`, ...), or `var(--mat-sys-...)`. Add a role there when one is
   missing. Logos are shown in a white circle, so black logos show in both
 - **Fonts**: Titillium Web (semi-bold) in the titles and Inter in the text, set in the theme in `styles.scss`. Don't set a font on
