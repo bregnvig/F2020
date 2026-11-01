@@ -2,6 +2,16 @@
 <sha-card-page>
   <mat-card>
     <mat-card-header>
+      <mat-card-title>Påmindelser</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-selection-list (selectionChange)="updateReceiveReminders($event.options[0].selected)">
+        <mat-list-option [selected]="receiveReminders()">Modtag påmindelser</mat-list-option>
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
       <mat-card-title>Udseende</mat-card-title>
       <mat-card-subtitle>System følger indstillingen på din enhed</mat-card-subtitle>
     </mat-card-header>
@@ -9,21 +19,11 @@
       <mat-button-toggle-group class="w-full" hideSingleSelectionIndicator [value]="colorScheme()" (change)="updateColorScheme($event.value)" aria-label="Udseende">
         @for (option of colorSchemes; track option.value) {
           <mat-button-toggle class="flex-1" [value]="option.value">
-            <fa-icon class="me-2" [icon]="option.icon" />
+            <fa-icon class="me-2" [icon]="option.icon"/>
             {{ option.label }}
           </mat-button-toggle>
         }
       </mat-button-toggle-group>
-    </mat-card-content>
-  </mat-card>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Påmindelser</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-selection-list (selectionChange)="updateReceiveReminders($event.options[0].selected)">
-        <mat-list-option [selected]="receiveReminders()">Modtag påmindelser</mat-list-option>
-      </mat-selection-list>
     </mat-card-content>
   </mat-card>
   <mat-card>
@@ -49,7 +49,7 @@
       <mat-selection-list (selectionChange)="selectionChanged($event)">
         @for (player of players(); track player[0].uid) {
           <mat-list-option [selected]="player[1]" [value]="player[0].uid">
-            <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName" />
+            <img height="40" width="40" [ngSrc]="player[0].photoURL" matListItemAvatar [alt]="player[0].displayName"/>
             <h3 matListItemTitle>{{ player[0].displayName }}</h3>
           </mat-list-option>
         }
@@ -59,7 +59,7 @@
   @if (analyticsEnabled) {
     <mat-card class="mt-6 mb-4">
       <mat-card-header>
-        <img mat-card-avatar class="rounded-full bg-white p-1.5" src="assets/google-analytics.svg" alt="Google Analytics" />
+        <img mat-card-avatar class="rounded-full bg-white p-1.5" src="assets/google-analytics.svg" alt="Google Analytics"/>
         <mat-card-title>Statistik</mat-card-title>
         <mat-card-subtitle>Google Analytics viser hvordan appen bliver brugt, og sætter cookies fra Google</mat-card-subtitle>
       </mat-card-header>
