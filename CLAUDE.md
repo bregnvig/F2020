@@ -170,6 +170,10 @@ The schedule card also reminds a player who hasn't played yet, with a link to th
 `webpush.fcmOptions.link`. Without a link the Firebase service worker ignores a click. Give notifications about a race
 `raceLink(season, round)`, and other pages `appLink(...)`. Without `link` the notification opens the home page.
 
+A player can get a notification 5 minutes before a session starts, chosen per kind of session in the profile
+(`player.sessionReminders`). `sessionReminderCrontab` runs at :25 and :55 from Friday to Sunday, so a session starting at another minute
+gets no reminder.
+
 ### Library Boundaries
 
 Feature libraries loaded by the router (e.g. `@f2020/standing`) must not be imported statically by other libraries. Put shared

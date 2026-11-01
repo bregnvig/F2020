@@ -3,6 +3,7 @@ export * from './close-race.crontab';
 export * from './drivers.trigger';
 export * from './open-race.trigger';
 export * from './reminder.crontab';
+export * from './session-reminder.crontab';
 export * from './reminder.trigger';
 export * from './session-result.call';
 export * from './standings.trigger';

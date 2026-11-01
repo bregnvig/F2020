@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 import { icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
-const versionNo = '51';
+const versionNo = '52';
 
 @Component({
   selector: 'f2020-what-else',
   templateUrl: './what-else.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCardModule, FaIconComponent, MatButtonModule],
+  imports: [MatCardModule, FaIconComponent, MatButtonModule, RouterLink],
   host: {
     '[hidden]': 'isHidden()',
   },
