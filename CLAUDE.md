@@ -161,6 +161,8 @@ Players choose which cards to show in their profile. To add a card:
 
 `hiddenLandingCards` stores the hidden cards, so new cards are shown by default. When every card is hidden, all are shown.
 
+The schedule card also reminds a player who hasn't played yet, with a link to the bid, until the game closes.
+
 ### Notifications
 
 `sendNotification(tokens, title, body, { badge, link, data })` in `apps/functions/src/lib/message.service.ts` always sends

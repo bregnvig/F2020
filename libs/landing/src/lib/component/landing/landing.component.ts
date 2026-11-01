@@ -4,7 +4,6 @@ import { WeatherComponent } from '../card/weather/weather.component';
 import { LastYearComponent } from '../card/last-year/last-year.component';
 import { JoinWbcComponent } from '../card/join-wbc/join-wbc.component';
 import { PreviousRaceComponent } from '../card/previous-race/previous-race.component';
-import { RememberToPlayComponent } from '../card/remember-to-play/remember-to-play.component';
 import { WhatElseComponent } from '../card/what-else/what-else.component';
 import { CardPageComponent, HasRoleDirective, LoadingComponent } from '@f2020/shared';
 import { SprintStandingsComponent } from '../card/sprint-standings/sprint-standings';
@@ -21,7 +20,6 @@ import { ScheduleComponent } from '../card/schedule/schedule';
   imports: [
     CardPageComponent,
     WhatElseComponent,
-    RememberToPlayComponent,
     ScheduleComponent,
     PreviousRaceComponent,
     DriverChampionshipComponent,
