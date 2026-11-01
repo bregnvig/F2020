@@ -2,12 +2,20 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { AnalyticsService, ColorSchemeService, PlayersStore, PlayerStore } from '@f2020/api';
-import { ColorScheme, hiddenLandingCards, LandingCard, landingCards, Player } from '@f2020/data';
+import { ColorScheme, hiddenLandingCards, LandingCard, landingCards, Player, RaceSessionType } from '@f2020/data';
 import { CardPageComponent, icon } from '@f2020/shared';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgOptimizedImage } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+
+const sessionTypes: { type: RaceSessionType; label: string }[] = [
+  { type: 'practice', label: 'Træning' },
+  { type: 'sprint-qualifying', label: 'Sprint kvalifikation' },
+  { type: 'sprint', label: 'Sprint' },
+  { type: 'qualifying', label: 'Kvalifikation' },
+  { type: 'race', label: 'Løb' },
+];
 
 @Component({
   selector: 'f2020-profile',
@@ -28,6 +36,10 @@ export class ProfileComponent {
     { value: 'system', label: 'System', icon: icon.farCircleHalfStroke },
   ];
   protected readonly colorScheme = this.#colorScheme.scheme;
+  protected readonly sessionReminderOptions = computed(() => {
+    const selected = this.#store.player()?.sessionReminders ?? [];
+    return sessionTypes.map(option => ({ ...option, selected: selected.includes(option.type) }));
+  });
   protected readonly receiveReminders = computed(() => this.#store.player()?.receiveReminders ?? true);
   protected readonly analyticsEnabled = this.#analytics.enabled;
   protected readonly analyticsGranted = computed(() => this.#analytics.consent() === 'granted');
@@ -61,6 +73,11 @@ export class ProfileComponent {
   protected updateColorScheme(colorScheme: ColorScheme) {
     this.#colorScheme.set(colorScheme);
     this.#store.updatePlayer({ colorScheme });
+  }
+
+  protected sessionRemindersChanged(change: MatSelectionListChange) {
+    const sessionReminders: RaceSessionType[] = change.source.selectedOptions.selected.map(s => s.value);
+    this.#store.updatePlayer({ sessionReminders });
   }
 
   protected updateReceiveReminders(receiveReminders: boolean) {

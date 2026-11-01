@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { RaceSessionType } from './race.model';
 
 export type Role = 'player' | 'admin' | 'bookie' | 'bank-admin' | 'anonymous';
 
@@ -35,6 +36,8 @@ export interface Player {
   roles?: Role[];
   tokens?: string[];
   receiveReminders?: boolean;
+  /** The kinds of session to get a notification about, 5 minutes before they start. None when missing */
+  sessionReminders?: RaceSessionType[];
   receiveBettingStarted?: string[];
   /** Cards hidden on the landing page. All are shown when missing, so new cards are shown by default */
   hiddenLandingCards?: LandingCard[];
