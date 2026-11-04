@@ -106,11 +106,12 @@ export class TeamsList {
   }
 
   #previousDriver(driver: string, team: ITeam) {
-    const alreadyPrevious = team.previousDrivers.includes(driver);
+    const previousDrivers = team.previousDrivers ?? [];
+    const alreadyPrevious = previousDrivers.includes(driver);
     const payload: ITeam = {
       ...team,
       drivers: alreadyPrevious ? team.drivers.concat(driver) : team.drivers.filter(existing => existing !== driver),
-      previousDrivers: alreadyPrevious ? team.previousDrivers.filter(p => p !== driver) : [...new Set([...(team.previousDrivers ?? []), driver])],
+      previousDrivers: alreadyPrevious ? previousDrivers.filter(p => p !== driver) : [...new Set([...previousDrivers, driver])],
     };
     this.#service
       .updateTeam(payload)
