@@ -48,6 +48,8 @@ Data fixes run with `nx serve builder --args="..."` and are dry runs unless `--w
   `standings/teams`
 - `--fix-schedule` - Write the schedule (the sessions of the weekend) of the races from the calendar `f<season>.ics`, matched by circuit.
   Only the schedule is written, so it works on races that are closed or completed
+- `--add-drivers` - Add the drivers OpenF1 doesn't have yet, listed in `apps/builder/src/app/add-drivers.ts`, e.g. a driver replacing
+  another mid season. The id is the acronym in lower case, as OpenF1 will have it
 - `--fix-driver-results` - Recalculate the driver results, from OpenF1 with `--reload`
 - `--build-last-year` - Rebuild `lastYear` and the driver results of last year (`standings/drivers/<last year>`) from OpenF1. Drivers are
   found by the number they had in each session, as numbers change between seasons. The circuit of a race may have to be picked by hand
