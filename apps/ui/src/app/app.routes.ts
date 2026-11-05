@@ -16,6 +16,14 @@ const mustBeAuthorized = () => {
   );
 };
 
+const mustBeAdmin = () => {
+  const router = inject(Router);
+  return toObservable(inject(PlayerStore).player).pipe(
+    truthy(),
+    map(player => !!player.roles?.includes('admin') || router.createUrlTree(['/'])),
+  );
+};
+
 const seasonLoader = (route: ActivatedRouteSnapshot) => {
   inject(SeasonStore).loadSeason(route.params['season']);
   return toObservable(inject(SeasonStore).loaded).pipe(truthy());
@@ -39,6 +47,11 @@ export const routes: Routes = [
     path: 'players',
     canActivate: [mustBeAuthorized],
     loadChildren: () => import('@f2020/players').then(r => r.PlayersRoutes),
+  },
+  {
+    path: 'drivers',
+    canActivate: [mustBeAuthorized, mustBeAdmin],
+    loadChildren: () => import('@f2020/drivers').then(r => r.DriversRoutes),
   },
   {
     path: 'accounts',

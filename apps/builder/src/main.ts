@@ -13,6 +13,7 @@ import { fixDriverStandings, fixFastestLaps } from './app/fix-driver-standings';
 import { fixDriverResults } from './app/fix-driver-results';
 import { cleanTeams, fixTeamStandings } from './app/fix-team-standings';
 import { fixSchedule } from './app/fix-schedule';
+import { addDrivers } from './app/add-drivers';
 
 /**
  * REMEMBER THAT THE PROJECT ID FROM THE ENVIRONMENT MUST BE THE SAME AS THE PROJECT ID IN THE EMULATOR
@@ -104,6 +105,12 @@ if (args.includes('--fix-driver-standings')) {
   // Write the schedule of the races in Firestore from the calendar. Dry run unless --write is passed.
   fixSchedule(seasonId, assetPath(`f${seasonId}.ics`), args.includes('--write')).catch(error => {
     console.error('Fixing the schedule failed', error);
+    process.exitCode = 1;
+  });
+} else if (args.includes('--add-drivers')) {
+  // Add the drivers OpenF1 doesn't have yet to the drivers collection. Dry run unless --write is passed.
+  addDrivers(args.includes('--write')).catch(error => {
+    console.error('Adding drivers failed', error);
     process.exitCode = 1;
   });
 } else if (args.includes('--build-last-year')) {

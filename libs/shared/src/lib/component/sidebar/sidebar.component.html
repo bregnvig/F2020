@@ -19,6 +19,7 @@
   </sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'bank-admin'" [icon]="icon.farPiggyBank" routerLink="accounts" (click)="closing.emit()">Bank</sha-sidenav-button>
   <sha-sidenav-button *shaHasRole="'admin'" [icon]="icon.fasUserAstronaut" [routerLink]="['players']" (click)="closing.emit()">Spillere</sha-sidenav-button>
+  <sha-sidenav-button *shaHasRole="'admin'" [icon]="icon.farPen" [routerLink]="['drivers']" (click)="closing.emit()">Rediger kørere</sha-sidenav-button>
   <mat-divider />
   <sha-sidenav-button [icon]="icon.farUserFriends" [routerLink]="['info', 'about']" (click)="closing.emit()">Om spillet</sha-sidenav-button>
   <sha-sidenav-button [icon]="icon.farBookAlt" [routerLink]="['info', 'rules']" (click)="closing.emit()">Regler</sha-sidenav-button>
