@@ -11,9 +11,8 @@ const manualDrivers: IDriver[] = [
     code: 'CAM',
     name: 'Rafael Câmara',
     countryCode: 'BR',
-    // Announced for his debut at Haas in São Paulo 2026, but not confirmed by the entry list. Hirakawa drove with it in Mexico
-    permanentNumbers: [50],
-    activeNumber: 50,
+    permanentNumbers: [51],
+    activeNumber: 51,
     teamName: 'Haas F1 Team',
     teamColor: '9C9FA2',
   },

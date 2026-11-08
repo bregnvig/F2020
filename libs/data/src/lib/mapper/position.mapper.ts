@@ -1,7 +1,7 @@
 import { Position } from '@f2020/openf1';
 import { requiredValue, toMap } from '@f2020/tools';
 import { IDriver, IDriverGridPosition, IDriverRaceResult, IRaceBasis } from '../model';
-import { getDrivers, getGridPositions } from './mapper-utils';
+import { findDriver, getDrivers, getGridPositions } from './mapper-utils';
 
 interface OpenF1PositionParams {
   positions: Position[];
@@ -15,15 +15,11 @@ const openF1Map = (source: OpenF1PositionParams): IDriverRaceResult[] => {
   const currentPositions = [...source.positions.reduce(toMap<Position, number>('driver_number'), new Map<number, Position>()).values()].toSorted((a, b) => a.position - b.position);
   const drivers = getDrivers(source.drivers);
 
-  return currentPositions.map(position => {
-    const driver = requiredValue(drivers.get(position.driver_number), 'Result driver with driver number', position.driver_number);
+  return currentPositions.flatMap(position => {
+    const driver = findDriver(drivers, position.driver_number, 'Position');
+    if (!driver) return [];
     const grid = requiredValue(gridPositions.get(driver.driverId), 'Grid position', driver.driverId);
-    return {
-      driver,
-      position: position.position,
-      grid,
-      status: 'Racing',
-    } as IDriverRaceResult;
+    return [{ driver, position: position.position, grid, status: 'Racing' } as IDriverRaceResult];
   });
 };
 

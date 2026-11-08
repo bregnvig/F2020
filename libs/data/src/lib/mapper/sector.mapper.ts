@@ -1,8 +1,8 @@
 import { Lap } from '@f2020/openf1';
-import { isTruthy, requiredValue } from '@f2020/tools';
+import { isTruthy } from '@f2020/tools';
 import { IDriver, ISector, SectorColor, SectorColorMap } from '../model';
 import { IDriverSector } from '../model/sector.model';
-import { getDrivers } from './mapper-utils';
+import { findDriver, getDrivers } from './mapper-utils';
 
 export interface OpenF1SectorParams {
   laps: Lap[];
@@ -51,8 +51,10 @@ export const map = ({ laps, drivers, now }: OpenF1SectorParams): IDriverSector[]
     return best.set(lap.driver_number, sectors.map((time, sector) => minimum([time, current?.[sector]])) as SectorTimes);
   }, new Map<number, SectorTimes>());
 
-  return [...lapsByDriver.values()].map(driverLaps => {
+  return [...lapsByDriver.values()].flatMap(driverLaps => {
     const latest = driverLaps.at(-1)!;
+    const driver = findDriver(driverMap, latest.lap.driver_number, 'Sector');
+    if (!driver) return [];
     // The sectors of the lap before are shown until the first sector of the new lap is driven
     const { lap, sectors } = latest.sectors[0] === undefined && driverLaps.length > 1 ? driverLaps.at(-2)! : latest;
     const [sector1, sector2, sector3] = [0, 1, 2].map((sector): ISector => {
@@ -64,13 +66,6 @@ export const map = ({ laps, drivers, now }: OpenF1SectorParams): IDriverSector[]
         mini: now === undefined || status ? segments?.filter(isTruthy).map(segment => SectorColorMap[segment]) : undefined,
       };
     });
-    return {
-      driver: requiredValue(driverMap.get(lap.driver_number), 'Driver'),
-      lap: latest.lap.lap_number,
-      sectorsLap: lap.lap_number,
-      sector1,
-      sector2,
-      sector3,
-    };
+    return [{ driver, lap: latest.lap.lap_number, sectorsLap: lap.lap_number, sector1, sector2, sector3 }];
   });
 };
