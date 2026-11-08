@@ -41,6 +41,7 @@ import {
   faArrowUp,
   faMoon,
   faCircleHalfStroke,
+  faMinus,
 } from '@fortawesome/pro-regular-svg-icons';
 import {
   faAngleDown,
@@ -64,6 +65,7 @@ import { faCircleDot } from '@fortawesome/free-regular-svg-icons';
 
 const farIcons = [
   faSunCloud,
+  faMinus,
   faCalendarAlt,
   farTrophyAlt,
   faPiggyBank,

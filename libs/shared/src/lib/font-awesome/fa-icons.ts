@@ -15,6 +15,7 @@ type Icon =
   | 'farSignInAlt'
   | 'farTrash'
   | 'farPlus'
+  | 'farMinus'
   | 'farCarCrash'
   | 'farUniversity'
   | 'farGavel'
@@ -84,6 +85,7 @@ export const icon: Record<Icon, [IconPrefix, IconName]> = {
   farUniversity: ['far', 'university'],
   farGavel: ['far', 'gavel'],
   farPlus: ['far', 'plus'],
+  farMinus: ['far', 'minus'],
   farUserPlus: ['far', 'user-plus'],
   farEgg: ['far', 'egg'],
   farPen: ['far', 'pen'],

@@ -26,6 +26,40 @@ export const latestByDriver =
 export const forSession = <T extends { session_key: number }>(sessionKey: number): MonoTypeOperatorFunction<T | undefined> =>
   filter(item => !item || item.session_key === sessionKey);
 
+/** How often the values held back are checked */
+const releaseInterval = 250;
+
+/**
+ * Holds each value back until `delay()` milliseconds after it arrived. The delay is read every time it is checked, so a shorter
+ * delay releases what is held at once, and a longer one holds the next values until they are old enough
+ */
+export const holdBack =
+  <T>(delay: () => number): MonoTypeOperatorFunction<T> =>
+  source =>
+    new Observable<T>(subscriber => {
+      const held: { value: T; arrived: number }[] = [];
+      let timer: ReturnType<typeof setInterval> | undefined;
+      const release = () => {
+        const until = Date.now() - delay();
+        while (held.length && held[0].arrived <= until) {
+          subscriber.next(held.shift()!.value);
+        }
+        if (!held.length) {
+          clearInterval(timer);
+          timer = undefined;
+        }
+      };
+      const subscription = source.subscribe(value => {
+        held.push({ value, arrived: Date.now() });
+        release();
+        held.length && (timer ??= setInterval(release, releaseInterval));
+      });
+      return () => {
+        clearInterval(timer);
+        subscription.unsubscribe();
+      };
+    });
+
 /**
  * Combines the history from the HTTP API with the live updates. A failed history is retried and then reported in the status,
  * while the live updates keep coming

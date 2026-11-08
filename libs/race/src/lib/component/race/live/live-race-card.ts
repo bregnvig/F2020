@@ -4,13 +4,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardAvatar, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { RaceResultProvider } from '@f2020/api';
+import { LiveDelayService, RaceResultProvider } from '@f2020/api';
 import { Bid, IDriver, IRace } from '@f2020/data';
 import { DateTimePipe, FlagURLPipe, icon } from '@f2020/shared';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { DateTime } from 'luxon';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { LiveDelayComponent } from './live-delay';
 import { LiveRaceComponent } from './live-race.component';
 import { LiveStatusComponent } from './live-status.component';
 import { ReliveControlsComponent } from './relive-controls';
@@ -33,12 +34,20 @@ import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-tr
             Live live
           }
         </mat-card-title>
-        <button mat-icon-button class="ms-auto" aria-label="Vis spillerne på banen" (click)="openPlayersTrack()">
+        @if (!relive()) {
+          <button mat-icon-button class="ms-auto" aria-label="Forsinkelse" [attr.aria-expanded]="showDelay()" (click)="showDelay.set(!showDelay())">
+            <fa-icon [icon]="icons.farClock" />
+          </button>
+        }
+        <button mat-icon-button [class.ms-auto]="relive()" aria-label="Vis spillerne på banen" (click)="openPlayersTrack()">
           <fa-icon [icon]="icons.farExpand" />
         </button>
         <mat-card-subtitle>
           @if (latestUpdate()) {
             Sidst opdateret {{ latestUpdate() | dateTime: 'HH:mm.ss' }}
+          }
+          @if (!relive() && delay()) {
+            · {{ delay() }} sek. forsinket
           }
           @if (error()) {
             <fa-icon class="text-red-400 mx-2" [icon]="icons.falTireFlat" />
@@ -49,6 +58,8 @@ import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-tr
       <mat-card-content>
         @if (relive()) {
           <f2020-relive-controls class="block" />
+        } @else if (showDelay()) {
+          <f2020-live-delay class="block" />
         }
         <f2020-live-race [race]="race()" [bids]="bids()" [drivers]="drivers()" (latestUpdate)="latestUpdate.set($event)" />
       </mat-card-content>
@@ -67,6 +78,7 @@ import { LiveTrackPlayersComponent, LiveTrackPlayersData } from './track/live-tr
     DateTimePipe,
     FaIconComponent,
     ReliveControlsComponent,
+    LiveDelayComponent,
     LiveRaceComponent,
   ],
 })
@@ -74,6 +86,7 @@ export class LiveRaceCardComponent {
   #live = inject(RaceResultProvider);
   #bottomSheet = inject(MatBottomSheet);
   #openFullscreen = injectOpenFullscreen();
+  #delay = inject(LiveDelayService);
 
   race = input.required<IRace>();
   drivers = input.required<IDriver[]>();
@@ -82,6 +95,8 @@ export class LiveRaceCardComponent {
 
   protected readonly icons = icon;
   protected readonly latestUpdate = signal<DateTime | undefined>(undefined);
+  protected readonly delay = this.#delay.seconds;
+  protected readonly showDelay = signal(false);
 
   protected readonly error = toSignal(
     combineLatest({

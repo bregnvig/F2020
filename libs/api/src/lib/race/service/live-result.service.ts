@@ -26,6 +26,7 @@ import { catchError, concatMap, first, map, retry } from 'rxjs/operators';
 import { OpenF1HttpService } from './openf1-http.service';
 import { OpenF1WSSService } from './openf1-wss.service';
 import { addLocationSamples, forSession, historyRetry, latestByDriver, mergeLaps, toMillis, withLiveUpdates } from './live-utils';
+import { LiveDelayService } from './live-delay.service';
 import { LiveStatus, RaceResultService } from './race-result.service';
 
 /** The cars are drawn this long behind the latest locations */
@@ -42,6 +43,7 @@ interface LapsAndPositions {
 export class LiveResultService extends RaceResultService {
   #openF1HttpService = inject(OpenF1HttpService);
   #openF1WSSService = inject(OpenF1WSSService);
+  #delay = inject(LiveDelayService);
 
   #resultStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
   #radioStatus$ = new BehaviorSubject<LiveStatus>({ latestUpdate: null });
@@ -260,7 +262,8 @@ export class LiveResultService extends RaceResultService {
 
   /**
    * The cars are drawn a second behind the latest locations, so there is a location on both sides of the time drawn.
-   * The clocks of the browser and OpenF1 differ, so the time is from the shortest delay seen from a location being recorded to it arriving
+   * The clocks of the browser and OpenF1 differ, so the time is from the shortest delay seen from a location being recorded to it arriving.
+   * The locations are not held back like the other updates, as the cars are drawn further behind by the delay instead
    */
   getLocationPlayback(race: IRace, drivers: IDriver[]): Observable<LocationPlayback> {
     const latestEndTime = race.raceStart.toUTC().plus({ hour: 3 });
@@ -270,7 +273,7 @@ export class LiveResultService extends RaceResultService {
     // The track card and the fullscreen share the locations
     this.#locationPlayback$ ??= defer(() => {
       let lag = Number.MAX_VALUE;
-      const now = () => Date.now() - lag - liveDelay;
+      const now = () => Date.now() - lag - liveDelay - this.#delay.milliseconds();
       return this.#raceSessionKey(race).pipe(
         switchMap(sessionKey =>
           this.#openF1WSSService.locations$.pipe(

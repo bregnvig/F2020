@@ -4,6 +4,8 @@ import mqtt, { MqttClient } from 'mqtt';
 import { BehaviorSubject, catchError, EMPTY, Observable, retry, Subject, Subscription, tap } from 'rxjs';
 import { OpenF1HttpService } from './openf1-http.service';
 import { firestoreWebUtils } from '../../firestore-utils';
+import { LiveDelayService } from './live-delay.service';
+import { holdBack } from './live-utils';
 
 const websocketUrl = 'wss://mqtt.openf1.org:8084/mqtt';
 const reconnectPeriod = 5000;
@@ -29,6 +31,7 @@ const locationTopic = 'v1/location';
 @Service({ autoProvided: false })
 export class OpenF1WSSService implements OnDestroy {
   #openF1Http = inject(OpenF1HttpService);
+  #delay = inject(LiveDelayService);
   #laps = new BehaviorSubject<Lap | undefined>(undefined);
   #positions = new BehaviorSubject<Position | undefined>(undefined);
   #intervals = new BehaviorSubject<Interval | undefined>(undefined);
@@ -41,6 +44,9 @@ export class OpenF1WSSService implements OnDestroy {
   #subscribedLocations = false;
   #client: MqttClient | null = null;
   #tokenRequest?: Subscription;
+  /** The updates are held back by the delay, as a TV is behind OpenF1 */
+  #received = new Subject<{ subject: Subject<unknown>; value: unknown }>();
+  #release = this.#received.pipe(holdBack(this.#delay.milliseconds)).subscribe(({ subject, value }) => subject.next(value));
 
   #topicSubjects: Record<string, Subject<any>> = {
     [topics.laps]: this.#laps,
@@ -66,6 +72,7 @@ export class OpenF1WSSService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.#tokenRequest?.unsubscribe();
+    this.#release.unsubscribe();
     // The 'true' flag forces a disconnection without waiting for the offline queue
     this.#client?.end(true, () => console.debug('MQTT client disconnected'));
     this.#client = null;
@@ -141,7 +148,9 @@ export class OpenF1WSSService implements OnDestroy {
       return;
     }
     try {
-      subject.next(firestoreWebUtils.convertJSONDates(JSON.parse(textDecoder.decode(message))));
+      const value = firestoreWebUtils.convertJSONDates(JSON.parse(textDecoder.decode(message)));
+      // The cars on the track are drawn behind the latest locations instead, by the time they were recorded
+      subject === this.#locations ? subject.next(value) : this.#received.next({ subject, value });
     } catch (error) {
       console.error(`Failed to parse a message on ${topic}`, error);
     }
