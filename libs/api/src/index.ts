@@ -4,6 +4,7 @@ export * from './lib/players/+state';
 export * from './lib/players/service/players-api.service';
 export * from './lib/race/+state';
 export * from './lib/race/service/races.service';
+export * from './lib/race/service/live-delay.service';
 export * from './lib/race/service/live-result.service';
 export * from './lib/race/service/replay-result.service';
 export * from './lib/race/service/race-result.service';
