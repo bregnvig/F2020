@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { collection, collectionData, doc, docData, Firestore, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { collection, collectionData, doc, docData, Firestore, getDoc, getDocs, limit, query, setDoc, updateDoc, where } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Bid, IDriver, IDriverSessionResult, IPitStop, IQualifyResult, IRace, IRaceResult, ITeam, mapper, Participant, Player, RoundResult } from '@f2020/data';
 import { requiredValue, unfreeze } from '@f2020/tools';
@@ -117,8 +117,14 @@ export class RacesService {
     );
   }
 
-  getLastYearResult(seasonId: number, circuitId: string): Promise<RoundResult> {
-    return getDoc(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${circuitId}`)).then(snapshot => snapshot.data() as RoundResult);
+  getLastYearResult(seasonId: number | string, circuitId: number | string): Promise<RoundResult | undefined> {
+    return getDoc(doc(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/lastYear/${circuitId}`)).then(snapshot => snapshot.data() as RoundResult | undefined);
+  }
+
+  /** The result of a round of last year. The rounds are stored by circuit, but the driver results of last year only have the round */
+  getLastYearRound(seasonId: number | string, round: number): Promise<RoundResult | undefined> {
+    const lastYear = collection(this.#firestore, `${SeasonService.seasonsURL}/${seasonId}/lastYear`);
+    return getDocs(query(lastYear, where('result.round', '==', round), limit(1))).then(snapshot => snapshot.docs[0]?.data() as RoundResult | undefined);
   }
 
   updateStandings(race: IRace): Promise<unknown> {

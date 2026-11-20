@@ -14,6 +14,10 @@ export const StandingRoutes: Routes = [
     component: StandingLastYearComponent,
   },
   {
+    path: 'last-year/:round/:session',
+    component: StandingLastYearComponent,
+  },
+  {
     path: 'graph',
     component: StandingGraph,
   },
