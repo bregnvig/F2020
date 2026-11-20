@@ -1,5 +1,5 @@
 import { NgOptimizedImage, UpperCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, resource, Signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -64,6 +64,16 @@ export class RaceComponent {
     if (!session || !isQualifyStarted(session)) return undefined;
     return isQualifyLive(session) ? 'Live kvalifikation' : 'Genoplev kvalifikationen';
   });
+
+  #lastYear = resource({
+    params: () => {
+      const race = this.race();
+      return race?.circuitId ? { season: race.season, circuitId: race.circuitId } : undefined;
+    },
+    loader: ({ params }) => this.#racesService.getLastYearResult(params.season, params.circuitId),
+  });
+  /** A new circuit has no result from last year */
+  protected readonly hasLastYear = computed(() => this.#lastYear.hasValue() && !!this.#lastYear.value());
 
   constructor() {
     const playerStore = inject(PlayerStore);

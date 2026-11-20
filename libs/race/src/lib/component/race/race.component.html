@@ -10,6 +10,9 @@
         <f2020-race-map [race]="race()" />
       </mat-card-content>
       <mat-card-actions>
+        @if (hasLastYear()) {
+          <a mat-button [routerLink]="['/', race().season, 'standings', 'last-year']" [queryParams]="{ circuit: race().circuitId }">SIDSTE ÅR</a>
+        }
         <a mat-button [href]="race().url" target="_blank">INFO</a>
         <div *shaHasRole="'admin'" class="flex-1 flex items-center">
           @if (race().state !== 'completed') {

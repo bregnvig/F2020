@@ -15,10 +15,10 @@ import { DriverResultComponent } from '../driver-result/driver-result.component'
         <f2020-driver-result [driverResult]="currentSeason()" />
       </mat-tab>
       <mat-tab [label]="'Kvalifikation ' + previousYear()">
-        <f2020-driver-qualifying [qualifyResults]="previousSeason()?.qualify" />
+        <f2020-driver-qualifying [qualifyResults]="previousSeason()?.qualify" lastYear />
       </mat-tab>
       <mat-tab [label]="'Resultat ' + previousYear()">
-        <f2020-driver-result [driverResult]="previousSeason()" />
+        <f2020-driver-result [driverResult]="previousSeason()" lastYear />
       </mat-tab>
     </mat-tab-group>
   `,
